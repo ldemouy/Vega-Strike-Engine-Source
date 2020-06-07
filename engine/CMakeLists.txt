@@ -683,12 +683,10 @@ SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${vsUTCS_SOURCE_DIR})
 # Python 3 has a SASL compatibility issue which causes an error
 # on some installations that prefer Python 3
 # -- Python 2.7 is default for now
-OPTION(USE_PYTHON_3 "Use Python 3 instead of Python 2.7 (default is 2.7)" OFF)
+OPTION(USE_PYTHON_3 "Use Python 3 instead of Python 2.7 (default is 2.7)" ON)
 IF (USE_PYTHON_3)
     # We want at least Python 3.4, but we prefer newer versions
     SET(Python_ADDITIONAL_VERSIONS 3.8 3.7 3.6 3.5 3.4)
-ELSE (USE_PYTHON_3)
-    SET(Python_ADDITIONAL_VERSIONS 2.7)
 ENDIF (USE_PYTHON_3)
 # If we don't unset cache variables
 # ccmake won't pick up changes to the USE_PYTHON_3 option
@@ -720,10 +718,7 @@ IF (USE_SYSTEM_BOOST)
     UNSET(Boost_python_FOUND CACHE)
     IF (USE_PYTHON_3)
         MESSAGE("++ Looking for System Boost::python3")
-        FIND_PACKAGE(Boost COMPONENTS python3 log log_setup REQUIRED)
-    ELSE (USE_PYTHON_3)
-        MESSAGE("++ Looking for System Boost::python (py2)")
-        FIND_PACKAGE(Boost COMPONENTS python log log_setup REQUIRED)
+        FIND_PACKAGE(Boost COMPONENTS python38 log log_setup REQUIRED)    
     ENDIF (USE_PYTHON_3)
 
     IF (Boost_FOUND)
@@ -763,10 +758,7 @@ IF (NOT USE_SYSTEM_BOOST)
     SET(TST_INCLUDES ${TST_INCLUDES} ${vsUTCS_SOURCE_DIR}/${Boost_DIR})
     IF (USE_PYTHON_3)
         MESSAGE("++ Using Internal Boost::python3")
-        SET(TST_LIBS ${TST_LIBS} boost_python3)
-    ELSE (USE_PYTHON_3)
-        MESSAGE("++ Using Internal Boost::python (py2)")
-        SET(TST_LIBS ${TST_LIBS} boost_python)
+        SET(TST_LIBS ${TST_LIBS} boost_python3)    
     ENDIF (USE_PYTHON_3)
     INCLUDE_DIRECTORIES(${TST_INCLUDES})
     ADD_SUBDIRECTORY(${Boost_DIR} build)
