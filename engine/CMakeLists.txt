@@ -18,7 +18,7 @@
 # > cmake -DCMAKE_BUILD_TYPE=Debug <path to source tree>
 #====================================
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.17)
 SET(CMAKE_CXX_STANDARD 17)
 
 PROJECT(vsUTCS)
