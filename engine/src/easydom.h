@@ -33,145 +33,155 @@
 #include <stdlib.h>
 #include "vsfilesystem.h"
 //using namespace VSFileSystem;
-using VSFileSystem::VSFile;
-using VSFileSystem::VSError;
-using VSFileSystem::Ok;
+using VSFileSystem::AiFile;
 using VSFileSystem::FileNotFound;
 using VSFileSystem::MissionFile;
+using VSFileSystem::Ok;
 using VSFileSystem::UnitFile;
 using VSFileSystem::UnknownFile;
-using VSFileSystem::AiFile;
+using VSFileSystem::VSError;
+using VSFileSystem::VSFile;
 #include "xml_support.h"
 
+using std::ostream;
+using std::stack;
 using std::string;
 using std::vector;
-using std::stack;
-using std::ostream;
 
 using XMLSupport::AttributeList;
 
-extern string parseCalike( char const *filename );
+extern string parseCalike(char const *filename);
 
 class easyDomNode
 {
-public: easyDomNode();
+public:
+    easyDomNode();
 
-    void set( easyDomNode *parent, string name, const XML_Char **atts );
-    void printNode( ostream &out, int recurse_level, int level );
+    void set(easyDomNode *parent, string name, const XML_Char **atts);
+    void printNode(ostream &out, int32_t recurse_level, int32_t level);
 
-    void addChild( easyDomNode *child );
+    void addChild(easyDomNode *child);
 
     string Name()
     {
         return name;
     }
 
-    void set_attribute( string name, string value )
+    void set_attribute(string name, string value)
     {
         attribute_map[name] = value;
     }
 
-    string attr_value( string attr_name );
-    vector< easyDomNode* >subnodes;
+    string attr_value(string attr_name);
+    vector<easyDomNode *> subnodes;
 
 private:
-    easyDomNode   *parent;
+    easyDomNode *parent;
     AttributeList *attributes;
-    vsUMap< string, string >attribute_map;
-//vector<string> att_name;
-//vector<string> att_value;
+    vsUMap<string, string> attribute_map;
+    //vector<string> att_name;
+    //vector<string> att_value;
 
     string name;
 };
 
-typedef vsUMap< string, int >tagMap;
+typedef vsUMap<string, int> tagMap;
 
 class tagDomNode : public easyDomNode
 {
 public:
-    int tag;
+    int32_t tag;
 
-    void Tag( tagMap *tagmap )
+    void Tag(tagMap *tagmap)
     {
         tag = (*tagmap)[Name()];
-        if (tag == 0) {
+        if (tag == 0)
+        {
             //cout << "cannot translate tag " << Name() << endl;
         }
-        vector< easyDomNode* >::const_iterator siter;
-        for (siter = subnodes.begin(); siter != subnodes.end(); siter++) {
-            tagDomNode *tnode = (tagDomNode*) (*siter);
-            tnode->Tag( tagmap );
+        vector<easyDomNode *>::const_iterator siter;
+        for (siter = subnodes.begin(); siter != subnodes.end(); siter++)
+        {
+            tagDomNode *tnode = (tagDomNode *)(*siter);
+            tnode->Tag(tagmap);
         }
     }
 };
 
-extern const char *textAttr;   //should be a static const inside easyDomFactory...
+extern const char *textAttr; //should be a static const inside easyDomFactory...
 
-template < class domNodeType >
+template <class domNodeType>
 class easyDomFactory
 {
-public: easyDomFactory() {}
+public:
+    easyDomFactory() {}
 
-    void getColor( char *name, float color[4] );
-    char * getVariable( char *section, char *name );
+    void getColor(char *name, float color[4]);
+    char *getVariable(char *section, char *name);
 
-    void c_alike_to_xml( const char *filename );
+    void c_alike_to_xml(const char *filename);
 
     struct easyDomFactoryXML
     {
-        int   currentindex;
+        int32_t currentindex;
         char *buffer;
         easyDomFactoryXML()
         {
             buffer = 0;
             currentindex = 0;
         }
-    }
-    *xml;
+    } * xml;
 
-    domNodeType * LoadXML( const char *filename )
+    domNodeType *LoadXML(const char *filename)
     {
         topnode = NULL;
         //Not really nice but should do its job
-        unsigned int length = strlen( filename );
-        VSFile  f;
+        uint32_t length = strlen(filename);
+        VSFile f;
         VSError err = FileNotFound;
-        if ( length > 8 && !memcmp( (filename+length-7), "mission", 7 ) )
-            err = f.OpenReadOnly( filename, MissionFile );
-        if (err > Ok) {
-            err = f.OpenReadOnly( filename, UnknownFile );
-            if (err > Ok) {
-                string rootthis = string( "/" )+filename;
-                err = f.OpenReadOnly( rootthis, UnknownFile );
+        if (length > 8 && !memcmp((filename + length - 7), "mission", 7))
+            err = f.OpenReadOnly(filename, MissionFile);
+        if (err > Ok)
+        {
+            err = f.OpenReadOnly(filename, UnknownFile);
+            if (err > Ok)
+            {
+                string rootthis = string("/") + filename;
+                err = f.OpenReadOnly(rootthis, UnknownFile);
             }
         }
-        if (err > Ok) {
+        if (err > Ok)
+        {
             string prefix = ("../mission/");
             prefix += filename;
-            err     = f.OpenReadOnly( prefix.c_str(), UnknownFile );
-        }
-        if (err > Ok) {
-            string prefix = ("mission/");
-            prefix += filename;
-            err     = f.OpenReadOnly( prefix.c_str(), UnknownFile );
-        }
-        if (err > Ok) {
-            string prefix = ("../");
-            prefix += filename;
-            err     = f.OpenReadOnly( prefix.c_str(), UnknownFile );
+            err = f.OpenReadOnly(prefix.c_str(), UnknownFile);
         }
         if (err > Ok)
+        {
+            string prefix = ("mission/");
+            prefix += filename;
+            err = f.OpenReadOnly(prefix.c_str(), UnknownFile);
+        }
+        if (err > Ok)
+        {
+            string prefix = ("../");
+            prefix += filename;
+            err = f.OpenReadOnly(prefix.c_str(), UnknownFile);
+        }
+        if (err > Ok)
+        {
             //cout << "warning: could not open file: " << filename << endl;
             //assert(0);
             return NULL;
+        }
         xml = new easyDomFactoryXML;
 
-        XML_Parser parser = XML_ParserCreate( NULL );
-        XML_SetUserData( parser, this );
-        XML_SetElementHandler( parser, &easyDomFactory::beginElement, &easyDomFactory::endElement );
-        XML_SetCharacterDataHandler( parser, &easyDomFactory::charHandler );
+        XML_Parser parser = XML_ParserCreate(NULL);
+        XML_SetUserData(parser, this);
+        XML_SetElementHandler(parser, &easyDomFactory::beginElement, &easyDomFactory::endElement);
+        XML_SetCharacterDataHandler(parser, &easyDomFactory::charHandler);
 
-        XML_Parse( parser, ( f.ReadFull() ).c_str(), f.Size(), 1 );
+        XML_Parse(parser, (f.ReadFull()).c_str(), f.Size(), 1);
         /*
          *  do {
          * #ifdef BIDBG
@@ -191,131 +201,155 @@ public: easyDomFactory() {}
          *  } while(!feof(inFile));
          */
         f.Close();
-        XML_ParserFree( parser );
+        XML_ParserFree(parser);
         delete xml;
-        return (domNodeType*) topnode;
+        return (domNodeType *)topnode;
     }
 
-    static void charHandler( void *userData, const XML_Char *s, int len )
+    static void charHandler(void *userData, const XML_Char *s, int len)
     {
-        easyDomFactoryXML *xml = ( (easyDomFactory< domNodeType >*)userData )->xml;
+        easyDomFactoryXML *xml = ((easyDomFactory<domNodeType> *)userData)->xml;
         if (!xml->buffer)
-            xml->buffer = (char*) malloc( sizeof (char)*(len+1) );
+        {
+            xml->buffer = (char *)malloc(sizeof(char) * (len + 1));
+        }
         else
-            xml->buffer = (char*) realloc( xml->buffer, sizeof (char)*(len+1+xml->currentindex) );
-        strncpy( xml->buffer+xml->currentindex, s, len );
+        {
+            xml->buffer = (char *)realloc(xml->buffer, sizeof(char) * (len + 1 + xml->currentindex));
+        }
+        strncpy(xml->buffer + xml->currentindex, s, len);
         xml->currentindex += len;
     }
 
-    domNodeType * LoadCalike( const char *filename )
+    domNodeType *LoadCalike(const char *filename)
     {
-        const int chunk_size = 262144;
+        const uint32_t chunk_size = 262144;
 
-        string    module_str = parseCalike( filename );
-        if ( module_str.empty() )
+        string module_str = parseCalike(filename);
+        if (module_str.empty())
+        {
             //cout << "warning: could not open file: " << filename << endl;
             //assert(0);
             return NULL;
+        }
         xml = new easyDomFactoryXML;
 
-        XML_Parser parser = XML_ParserCreate( NULL );
-        XML_SetUserData( parser, this );
-        XML_SetElementHandler( parser, &easyDomFactory::beginElement, &easyDomFactory::endElement );
-        XML_SetCharacterDataHandler( parser, &easyDomFactory::charHandler );
+        XML_Parser parser = XML_ParserCreate(NULL);
+        XML_SetUserData(parser, this);
+        XML_SetElementHandler(parser, &easyDomFactory::beginElement, &easyDomFactory::endElement);
+        XML_SetCharacterDataHandler(parser, &easyDomFactory::charHandler);
 
-        int index       = 0;
-        int string_size = module_str.size();
-        int incr        = chunk_size-2;
-        int is_final    = false;
-        do {
+        int32_t index = 0;
+        int32_t string_size = module_str.size();
+        int32_t incr = chunk_size - 2;
+        int32_t is_final = false;
+        do
+        {
             char buf[chunk_size];
 
-            int  max_index = index+incr;
-            int  newlen    = incr;
+            int max_index = index + incr;
+            int newlen = incr;
             //printf("max_index=%d,string_size=%d\n",max_index,string_size);
-            if (max_index >= string_size) {
-                newlen = module_str.size()-index;
+            if (max_index >= string_size)
+            {
+                newlen = module_str.size() - index;
                 //printf("getting string from %d length %d\n",index,newlen);
                 const char *strbuf = module_str.c_str();
-                memcpy( buf, strbuf+index, sizeof (char)*newlen );
-            } else {
+                memcpy(buf, strbuf + index, sizeof(char) * newlen);
+            }
+            else
+            {
                 //printf("getting string from %d length %d\n",index,incr);
                 const char *strbuf = module_str.c_str();
-                memcpy( buf, strbuf+index, sizeof (char)*incr );
+                memcpy(buf, strbuf + index, sizeof(char) * incr);
                 newlen = incr;
             }
             index += newlen;
             if (index >= string_size)
+            {
                 is_final = true;
-            XML_Parse( parser, buf, newlen, is_final );
+            }
+            XML_Parse(parser, buf, newlen, is_final);
         } while (!is_final);
-        XML_ParserFree( parser );
+        XML_ParserFree(parser);
         delete xml;
-        return (domNodeType*) topnode;
+        return (domNodeType *)topnode;
     }
 
-    static void beginElement( void *userData, const XML_Char *name, const XML_Char **atts )
+    static void beginElement(void *userData, const XML_Char *name, const XML_Char **atts)
     {
-        ( (easyDomFactory*) userData )->beginElement( name, atts );
+        ((easyDomFactory *)userData)->beginElement(name, atts);
     }
-    static void endElement( void *userData, const XML_Char *name )
+    static void endElement(void *userData, const XML_Char *name)
     {
-        ( (easyDomFactory*) userData )->endElement( name );
+        ((easyDomFactory *)userData)->endElement(name);
     }
 
-//void beginElement(const string &name, const AttributeList &attributes){
+    //void beginElement(const string &name, const AttributeList &attributes){
     void doTextBuffer()
     {
-        if ( !nodestack.size() )
+        if (!nodestack.size())
+        {
             return;
+        }
         domNodeType *stacktop = nodestack.top();
-        if (xml->buffer) {
+        if (xml->buffer)
+        {
             xml->buffer[xml->currentindex] = '\0';
-            stacktop->set_attribute( textAttr, ( stacktop->attr_value( textAttr ) )+(xml->buffer) );
-            free( xml->buffer );
+            stacktop->set_attribute(textAttr, (stacktop->attr_value(textAttr)) + (xml->buffer));
+            free(xml->buffer);
         }
         xml->buffer = 0;
         xml->currentindex = 0;
     }
 
-    void beginElement( const string &name, const XML_Char **atts )
+    void beginElement(const string &name, const XML_Char **atts)
     {
         //AttributeList::const_iterator iter;
 
         doTextBuffer();
         domNodeType *parent;
         bool hasParent = false;
-        if ( nodestack.empty() ) {
+        if (nodestack.empty())
+        {
             parent = NULL;
-        } else {
+        }
+        else
+        {
             hasParent = true;
-            parent    = nodestack.top();
+            parent = nodestack.top();
         }
         domNodeType *thisnode = new domNodeType();
-        thisnode->set( parent, name, atts );
+        thisnode->set(parent, name, atts);
         if (!hasParent)
+        {
             topnode = thisnode;
+        }
         else
-            parent->addChild( thisnode );
-        nodestack.push( thisnode );
+        {
+            parent->addChild(thisnode);
+        }
+        nodestack.push(thisnode);
     }
 
-    void endElement( const string &name )
+    void endElement(const string &name)
     {
         doTextBuffer();
         domNodeType *stacktop = nodestack.top();
-        if (stacktop->Name() != name) {
-            std::cout<<"error: expected "<<stacktop->Name()<<" , got "<<name<<std::endl;
-            exit( 1 );
-        } else {
+        if (stacktop->Name() != name)
+        {
+            std::cout << "error: expected " << stacktop->Name() << " , got " << name << std::endl;
+            exit(1);
+        }
+        else
+        {
             nodestack.pop();
         }
     }
 
-    stack< domNodeType* >nodestack;
+    stack<domNodeType *> nodestack;
 
     domNodeType *topnode;
 };
 
 #endif //_EASYDOM_H_
-

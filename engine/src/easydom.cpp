@@ -26,18 +26,20 @@
 #include <expat.h>
 #include "easydom.h"
 
-#include <assert.h>     /// needed for assert() calls.
+#include <assert.h> /// needed for assert() calls.
 
-using std::cout;
 using std::cerr;
+using std::cout;
 using std::endl;
 easyDomNode::easyDomNode() {}
 
-void easyDomNode::set( easyDomNode *_parent, string _name, const XML_Char **atts )
+void easyDomNode::set(easyDomNode *_parent, string _name, const XML_Char **atts)
 {
     parent = _parent;
-    if (atts != NULL) {
-        for (; *atts != NULL; atts += 2) {
+    if (atts != NULL)
+    {
+        for (; *atts != NULL; atts += 2)
+        {
 #if 0
             att_name.push_back( (*iter).name );
             att_value.push_back( (*iter).value );
@@ -48,32 +50,39 @@ void easyDomNode::set( easyDomNode *_parent, string _name, const XML_Char **atts
     name = _name;
 }
 
-void easyDomNode::addChild( easyDomNode *child )
+void easyDomNode::addChild(easyDomNode *child)
 {
-    subnodes.push_back( child );
+    subnodes.push_back(child);
 }
 
-string easyDomNode::attr_value( string search_name )
+string easyDomNode::attr_value(string search_name)
 {
     return attribute_map[search_name];
 }
 
-void easyDomNode::printNode( ostream &out, int recurse_level, int level )
+void easyDomNode::printNode(ostream &out, int32_t recurse_level, int32_t level)
 {
-    vsUMap< string, string >::const_iterator iter;
+    vsUMap<string, string>::const_iterator iter;
 
-    out<<"<"<<name;
+    out << "<" << name;
     for (iter = attribute_map.begin(); iter != attribute_map.end(); iter++)
-        out<<" "<<(*iter).first<<"=\""<<(*iter).second<<"\"";
-    out<<">"<<endl;
+    {
+        out << " " << (*iter).first << "=\"" << (*iter).second << "\"";
+    }
+    out << ">" << endl;
 
-    vector< easyDomNode* >::const_iterator siter;
+    vector<easyDomNode *>::const_iterator siter;
     if (recurse_level > 0)
+    {
         for (siter = subnodes.begin(); siter != subnodes.end(); siter++)
-            (*siter)->printNode( out, recurse_level-1, level+1 );
-    if ( !(recurse_level == 0 && level == 0) )
-        out<<"</"<<name<<">"<<endl;
+        {
+            (*siter)->printNode(out, recurse_level - 1, level + 1);
+        }
+    }
+    if (!(recurse_level == 0 && level == 0))
+    {
+        out << "</" << name << ">" << endl;
+    }
 }
 
 const char *textAttr = "Text_Attr";
-
