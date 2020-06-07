@@ -24,7 +24,7 @@
  */
 
 //#define  HAVE_FORCE_FEEDBACK 1
-
+#include <stdint.h>
 #ifndef _FORCE_FEEDBACK_H_
 #define _FORCE_FEEDBACK_H_
 #ifndef _WIN32
@@ -42,13 +42,13 @@
 
 #include <linux/input.h>
 
-#define BITS_PER_LONG (sizeof (long)*8)
-#define OFF( x ) ( (x)%BITS_PER_LONG )
-#define BIT( x ) ( 1UL<<OFF( x ) )
-#define LONG( x ) ( (x)/BITS_PER_LONG )
-#define test_bit( bit, array ) ( ( array[LONG( bit )]>>OFF( bit ) )&1 )
+#define BITS_PER_LONG (sizeof(int64_t) * 8)
+#define OFF(x) ((x) % BITS_PER_LONG)
+#define BIT(x) (1UL << OFF(x))
+#define LONG(x) ((x) / BITS_PER_LONG)
+#define test_bit(bit, array) ((array[LONG(bit)] >> OFF(bit)) & 1)
 
-#define _is( x ) ( (int) ( 3.2768*( (float) x ) ) )
+#define _is(x) ((int)(3.2768 * ((float)x)))
 
 #endif //have_force_feedback
 
@@ -56,16 +56,23 @@
 
 enum vseffects
 {
-    eff_speed_damper=0,     //the higher the speed, the more damped
-    eff_ab_wiggle_x, eff_ab_wiggle_y, eff_ab_jerk,     //afterburner on
-    eff_ab_off_x, eff_ab_off_y,     //afterburner off
-    eff_laser_jerk, eff_laser_vibrate,     //laser fired
+    eff_speed_damper = 0, //the higher the speed, the more damped
+    eff_ab_wiggle_x,
+    eff_ab_wiggle_y,
+    eff_ab_jerk, //afterburner on
+    eff_ab_off_x,
+    eff_ab_off_y, //afterburner off
+    eff_laser_jerk,
+    eff_laser_vibrate, //laser fired
 #if ALL_EFFECTS
-    eff_beam_on, eff_beam_off,     //beam
-    eff_missile_jerk, eff_missile_vibrate,     //missile
-    eff_hit_jerk, eff_hit_vibrate,     //shield hits
+    eff_beam_on,
+    eff_beam_off, //beam
+    eff_missile_jerk,
+    eff_missile_vibrate, //missile
+    eff_hit_jerk,
+    eff_hit_vibrate, //shield hits
 #endif
-    eff_force     //additional force
+    eff_force //additional force
 };
 
 #if ALL_EFFECTS
@@ -76,18 +83,19 @@ enum vseffects
 
 class ForceFeedback
 {
-public: ForceFeedback();
+public:
+    ForceFeedback();
     ~ForceFeedback();
 
     bool haveFF();
 
-    void playDurationEffect( unsigned int eff_nr, bool activate );
-    void playShortEffect( unsigned int eff_nr );
+    void playDurationEffect(uint32_t eff_nr, bool activate);
+    void playShortEffect(uint32_t eff_nr);
 
-    void playHit( float angle, float strength );
-    void updateForce( float angle, float strength );
-    void updateSpeedEffect( float strength );
-    void playAfterburner( bool activate );
+    void playHit(float angle, float strength);
+    void updateForce(float angle, float strength);
+    void updateSpeedEffect(float strength);
+    void playAfterburner(bool activate);
     void playLaser();
 
 private:
@@ -97,25 +105,24 @@ private:
 private:
     void init();
 
-    void init_bogus( int i );
-    void playEffect( unsigned int eff_nr );
-    void stopEffect( unsigned int eff_nr );
+    void init_bogus(int32_t i);
+    void playEffect(uint32_t eff_nr);
+    void stopEffect(uint32_t eff_nr);
 
-    int device_nr;
+    int32_t device_nr;
 
-    struct ff_effect   effects[N_EFFECTS];
+    struct ff_effect effects[N_EFFECTS];
     struct input_event play, stop;
-    int    ff_fd;
+    int32_t ff_fd;
     unsigned long features[4];
-    int    n_effects;   /* Number of effects the device can play at the same time */
+    int32_t n_effects; /* Number of effects the device can play at the same time */
 
     double eff_last_time[N_EFFECTS];
 
     double min_effect_time;
 
-    bool   is_played[N_EFFECTS];
+    bool is_played[N_EFFECTS];
 #endif //have_force_feedback
 };
 
 #endif //_FORCE_FEEDBACK_H_
-
