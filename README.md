@@ -12,6 +12,25 @@
 #====================================
 ```
 
+**Goals of Fork**
+=====================================
+
+This is likely to end up being a hard fork of Vega Strike, you can find the original here: https://github.com/vegastrike/Vega-Strike-Engine-Source
+
+Why? Well I have somewhat radical ideas as far as the direction I want to take.
+
+So what are my goals:
+
+1. Update all dependencies to something modern (SDL-> SDL2, GTK2->GTK3, etc) 
+2. Update current C++ code to C++17, and clean up build
+3. Incrementally rewrite to Rust
+4. Rewrite OpenGL code into Vulkan
+5. When all of the current code has been replaced by new code, relicense under MIT
+6. Move settings into the game and make other changes that are expected of modern games
+
+I plan on maintaining compatibility with Vega Strike's Data files but it's plausible that it will need to be modified at which point I will fork that repo. 
+
+
 **Vega Strike Space Simulation Engine**
 =====================================
 
