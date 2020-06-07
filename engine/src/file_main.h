@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- #ifndef _FILE_MAIN_H_
- #define _FILE_MAIN_H_
+#ifndef _FILE_MAIN_H_
+#define _FILE_MAIN_H_
 #include <stdio.h>
 #include <string.h>
 //#include "gfxlib.h"
@@ -30,127 +30,127 @@ using VSFileSystem::VSFile;
 extern VSFile fpread;
 
 /*File utility functions*/
-inline void LoadFile( const char *filename )
+inline void LoadFile(const char *filename)
 {
-    fpread.OpenReadOnly( filename );
+    fpread.OpenReadOnly(filename);
 }
 inline void CloseFile()
 {
     fpread.Close();
 }
 
-inline float readf( VSFileSystem::VSFile &f )
+inline float readf(VSFileSystem::VSFile &f)
 {
-    union
-    {
+    union {
         float fval;
         unsigned int ival;
-    }
-    t;
-    f.Read( &t.fval, sizeof t.fval );
-    t.ival = le32_to_cpu( t.ival );
+    } t;
+    f.Read(&t.fval, sizeof t.fval);
+    t.ival = le32_to_cpu(t.ival);
     return t.fval;
 }
-inline size_t readf( VSFileSystem::VSFile &f, float *b, int n )
+inline size_t readf(VSFileSystem::VSFile &f, float *b, int32_t n)
 {
-    int    i;
-    size_t rode = f.Read( b, sizeof (*b)*n );
+    size_t rode = f.Read(b, sizeof(*b) * n);
 #ifndef NATURAL_ENDIANNESS
-    for (i = 0; i < n; i++)
-        ( (unsigned int*) b )[i] = le32_to_cpu( ( (unsigned int*) b )[i] );
+    for (size_t i = 0; i < n; i++)
+    {
+        ((uint32_t *)b)[i] = le32_to_cpu(((uint32_t *)b)[i]);
+    }
 #endif
-    return (rode > 0) ? ( rode/sizeof (*b) ) : rode;
+    return (rode > 0) ? (rode / sizeof(*b)) : rode;
 }
-inline short reads( VSFileSystem::VSFile &f )
+inline int16_t reads(VSFileSystem::VSFile &f)
 {
-    short temp;
-    f.Read( &temp, sizeof (short) );
-    return le16_to_cpu( temp );
+    int16_t temp;
+    f.Read(&temp, sizeof(int16_t));
+    return le16_to_cpu(temp);
 }
-inline int readi( VSFileSystem::VSFile &f )
+inline int32_t readi(VSFileSystem::VSFile &f)
 {
-    int i;
-    f.Read( &i, sizeof (int) );
-    return le32_to_cpu( i );
+    int32_t i;
+    f.Read(&i, sizeof(int32_t));
+    return le32_to_cpu(i);
 }
-inline size_t readi( VSFileSystem::VSFile &f, int *b, int n )
+inline size_t readi(VSFileSystem::VSFile &f, int32_t *b, int32_t n)
 {
-    int    i;
-    size_t rode = f.Read( b, sizeof (*b)*n );
+    size_t rode = f.Read(b, sizeof(*b) * n);
 #ifndef NATURAL_ENDIANNESS
-    for (i = 0; i < n; i++)
-        b[i] = le32_to_cpu( b[i] );
+    for (size_t i = 0; i < n; i++)
+    {
+        b[i] = le32_to_cpu(b[i]);
+    }
 #endif
-    return (rode > 0) ? ( rode/sizeof (*b) ) : rode;
+    return (rode > 0) ? (rode / sizeof(*b)) : rode;
 }
-inline unsigned char readc( VSFileSystem::VSFile &f )
+inline uint8_t readc(VSFileSystem::VSFile &f)
 {
-    unsigned char temp;
-    f.Read( &temp, sizeof (char) );
+    uint8_t temp;
+    f.Read(&temp, sizeof(uint8_t));
     return temp;
 }
 
 /*Read simple data*/
-inline void ReadInt( int &integer )
+inline void ReadInt(int32_t &integer)
 {
-    fpread.Read( &integer, sizeof (int) );
-    integer = le32_to_cpu( integer );
+    fpread.Read(&integer, sizeof(int32_t));
+    integer = le32_to_cpu(integer);
 }
-inline void ReadFloat( float &num )
+inline void ReadFloat(float &num)
 {
-    fpread.Read( &num, sizeof (float) );
-    *( (int*) &num ) = le32_to_cpu( *( (int*) &num ) );
+    fpread.Read(&num, sizeof(float));
+    *((int32_t *)&num) = le32_to_cpu(*((int32_t *)&num));
 }
 
-inline void ReadString( char *string )
+inline void ReadString(char *string)
 {
-    int length = strlen( string );
+    int32_t length = strlen(string);
 
-    ReadInt( length );
-    fpread.Read( string, length );
+    ReadInt(length);
+    fpread.Read(string, length);
     string[length] = '\0';
 }
 
 /*Read aggregated data*/
-inline void ReadVector( float &x, float &y, float &z )
+inline void ReadVector(float &x, float &y, float &z)
 {
-    ReadFloat( x );
-    ReadFloat( y );
-    ReadFloat( z );
+    ReadFloat(x);
+    ReadFloat(y);
+    ReadFloat(z);
 }
 
-inline void ReadVector( Vector &v )
+inline void ReadVector(Vector &v)
 {
-    ReadVector( v.i, v.j, v.k );
+    ReadVector(v.i, v.j, v.k);
 }
 
-inline void ReadGeneric( char *string, float &x, float &y, float &z )
+inline void ReadGeneric(char *string, float &x, float &y, float &z)
 {
-    ReadString( string );
-    ReadVector( x, y, z );
+    ReadString(string);
+    ReadVector(x, y, z);
 }
 
 /*The goods*/
-inline void ReadUnit( char *filename, int &type, float &x, float &y, float &z )
+inline void ReadUnit(char *filename, int32_t &type, float &x, float &y, float &z)
 {
-    ReadGeneric( filename, x, y, z );
+    ReadGeneric(filename, x, y, z);
 }
 
-inline void ReadMesh( char *filename, float &x, float &y, float &z )
+inline void ReadMesh(char *filename, float &x, float &y, float &z)
 {
-    ReadGeneric( filename, x, y, z );
+    ReadGeneric(filename, x, y, z);
 }
 
-inline void ReadWeapon( char *filename, float &x, float &y, float &z )
+inline void ReadWeapon(char *filename, float &x, float &y, float &z)
 {
-    ReadGeneric( filename, x, y, z );
+    ReadGeneric(filename, x, y, z);
 }
 
-inline void ReadRestriction( int &isrestricted, float &start, float &end )
+inline void ReadRestriction(int32_t &isrestricted, float &start, float &end)
 {
-    ReadInt( isrestricted );
-    ReadFloat( start );
-    ReadFloat( end );
+    ReadInt(isrestricted);
+    ReadFloat(start);
+    ReadFloat(end);
 }
 
 inline long GetPosition()
@@ -158,9 +158,9 @@ inline long GetPosition()
     return fpread.GetPosition();
 }
 
-inline void SetPosition( long position )
+inline void SetPosition(int64_t position)
 {
-    fpread.GoTo( position );
+    fpread.GoTo(position);
 }
 
 #endif
