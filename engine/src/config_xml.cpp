@@ -51,13 +51,13 @@ GameVegaConfig::GameVegaConfig(const char *configfile) : VegaConfig(configfile)
     initCommandMap();
     initKeyMap();
     //set hatswitches to off
-    for (int h = 0; h < MAX_HATSWITCHES; h++)
+    for (size_t h = 0; h < MAX_HATSWITCHES; h++)
     {
         hatswitch_margin[h] = 2.0;
         for (int v = 0; v < MAX_VALUES; v++)
             hatswitch[h][v] = 2.0;
     }
-    for (int i = 0; i < MAX_AXES; i++)
+    for (size_t i = 0; i < MAX_AXES; i++)
     {
         axis_axis[i] = -1;
         axis_joy[i] = -1;
@@ -280,16 +280,21 @@ void GameVegaConfig::doAxis(configNode *node)
         cout << "no correct axis desription given " << endl;
         return;
     }
-    int joy_nr = atoi(myjoystick.c_str());
+    int32_t joy_nr = atoi(myjoystick.c_str());
     if (!mouse_str.empty())
+    {
         joy_nr = MOUSE_JOYSTICK;
-    int axis_nr = atoi(axis.c_str());
+    }
+    int32_t axis_nr = atoi(axis.c_str());
 
     //no checks for correct number yet
 
     bool inverse = false;
     if (!invertstr.empty())
+    {
         inverse = XMLSupport::parse_bool(invertstr);
+    }
+
     if (name == "x")
     {
         axis_joy[0] = joy_nr;
@@ -323,7 +328,7 @@ void GameVegaConfig::doAxis(configNode *node)
             cout << "you have to assign a number and a margin to the hatswitch" << endl;
             return;
         }
-        int nr = atoi(nr_str.c_str());
+        int32_t nr = atoi(nr_str.c_str());
 
         float margin = atof(margin_str.c_str());
         hatswitch_margin[nr] = margin;
@@ -358,7 +363,7 @@ void GameVegaConfig::checkHatswitch(int nr, configNode *node)
     }
     string strval = node->attr_value("value");
     float val = atof(strval.c_str());
-    if (val > 1.0 || val < -1.0)
+    if (val > 1.0f || val < -1.0f)
     {
         cout << "only hatswitch values from -1.0 to 1.0 allowed" << endl;
         return;
@@ -383,7 +388,9 @@ void GameVegaConfig::checkBind(configNode *node)
     string cmdstr = node->attr_value("command");
     string player_bound = node->attr_value("player");
     if (player_bound.empty())
+    {
         player_bound = "0";
+    }
     KBHandler handler = commandMap[cmdstr];
     if (handler == NULL)
     {
@@ -403,9 +410,11 @@ void GameVegaConfig::checkBind(configNode *node)
     {
         if (!joy_str.empty())
         {
-            int jn = atoi(joy_str.c_str());
+            int32_t jn = atoi(joy_str.c_str());
             if (jn < MAX_JOYSTICKS)
+            {
                 joystick[jn]->player = atoi(player_str.c_str());
+            }
         }
         else if (!mouse_str.empty())
         {
@@ -422,7 +431,7 @@ void GameVegaConfig::checkBind(configNode *node)
         }
         else
         {
-            int glut_key = key_map[keystr];
+            int32_t glut_key = key_map[keystr];
             if (glut_key == 0)
             {
                 cout << "No such special key: " << keystr << endl;
@@ -434,7 +443,7 @@ void GameVegaConfig::checkBind(configNode *node)
     else if (!buttonstr.empty())
     {
         //maps a joystick button or analogue hatswitch button
-        int button_nr = atoi(buttonstr.c_str());
+        int32_t button_nr = atoi(buttonstr.c_str());
         if (joy_str.empty() && mouse_str.empty())
         {
             //it has to be the analogue hatswitch
@@ -450,11 +459,16 @@ void GameVegaConfig::checkBind(configNode *node)
         else
         {
             //joystick button
-            int joystick_nr;
+            int32_t joystick_nr;
             if (mouse_str.empty())
+            {
                 joystick_nr = atoi(joy_str.c_str());
+            }
             else
+            {
                 joystick_nr = (MOUSE_JOYSTICK);
+            }
+
             if (joystick[joystick_nr]->isAvailable())
             {
                 //now map the command to a callback function and bind it
@@ -482,19 +496,24 @@ void GameVegaConfig::checkBind(configNode *node)
             cout << "you have to specify joystick,digital-hatswitch,direction" << endl;
             return;
         }
-        int hsw_nr = atoi(dighswitch.c_str());
+        int32_t hsw_nr = atoi(dighswitch.c_str());
 
-        int joy_nr;
+        int32_t joy_nr;
         if (mouse_str.empty())
+        {
             joy_nr = atoi(joy_str.c_str());
+        }
         else
+        {
             joy_nr = MOUSE_JOYSTICK;
+        }
+
         if (!(joystick[joy_nr]->isAvailable() && hsw_nr < joystick[joy_nr]->nr_of_hats))
         {
             cout << "refusing to bind digital hatswitch: no such hatswitch" << endl;
             return;
         }
-        int dir_index;
+        int32_t dir_index;
         if (direction == "center")
         {
             dir_index = VS_HAT_CENTERED;
