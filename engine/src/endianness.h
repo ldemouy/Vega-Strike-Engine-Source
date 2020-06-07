@@ -1,3 +1,4 @@
+#include <stdint.h>
 #ifndef _ENDIANNESS_H
 #define _ENDIANNESS_H
 double DONTUSE__NXSwapBigDoubleToLittleEndian(double x);
