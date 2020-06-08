@@ -11,13 +11,13 @@ struct SystemInfo
     string sector;
     string name;
     string filename;
-    float  sunradius;
-    float  compactness;
-    int    numstars;
-    bool   nebulae;
-    bool   asteroids;
-    int    numun1;
-    int    numun2;
+    float sunradius;
+    float compactness;
+    int32_t numstars;
+    bool nebulae;
+    bool asteroids;
+    int32_t numun1;
+    int32_t numun2;
     string faction;
     string names;
     string stars;
@@ -27,19 +27,18 @@ struct SystemInfo
     string asteroidslist;
     string ringlist;
     string backgrounds;
-    vector< string >jumps;
-    int    seed;
-    bool   force;
+    vector<string> jumps;
+    int32_t seed;
+    bool force;
 };
 
 ///appends .system
-std::string getStarSystemFileName( const std::string &input );
+std::string getStarSystemFileName(const std::string &input);
 ///finds the name after all / characters and capitalizes the first letter
-std::string getStarSystemName( const std::string &in );
+std::string getStarSystemName(const std::string &in);
 ///finds the name before the first /  this is the sector name
-std::string getStarSystemSector( const std::string &in );
+std::string getStarSystemSector(const std::string &in);
 string getUniversePath();
-void readnames( vector< string > &entity, const char *filename );
-void generateStarSystem( SystemInfo &si );
+void readnames(vector<string> &entity, const char *filename);
+void generateStarSystem(SystemInfo &si);
 #endif
-
