@@ -6,16 +6,16 @@
 
 namespace InitializationFunctors
 {
-template < typename T >
-class DefaultConstructor
-{
-public:
-    T*operator()() const
+    template <typename T>
+    class DefaultConstructor
     {
-        return new T();
-    }
-};
-};
+    public:
+        T *operator()() const
+        {
+            return new T();
+        }
+    };
+}; // namespace InitializationFunctors
 
 /**
  * Singleton template
@@ -29,7 +29,7 @@ public:
  *      You must add an extern Singleton<T,INIT>::_singletonInstance in your class implementation
  *      or linking against derived classes will fail.
  */
-template < typename T, typename INIT = InitializationFunctors::DefaultConstructor< T > >
+template <typename T, typename INIT = InitializationFunctors::DefaultConstructor<T>>
 class Singleton
 {
 protected:
@@ -56,7 +56,7 @@ protected:
     }
 
 public:
-    static T * getSingleton()
+    static T *getSingleton()
     {
         if (_singletonInstance == 0)
             initializeSingleton();
@@ -65,4 +65,3 @@ public:
 };
 
 #endif //__SINGLETON_H__INCLUDED__
-

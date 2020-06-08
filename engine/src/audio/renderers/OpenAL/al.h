@@ -1,13 +1,12 @@
 #ifndef __AL_INCLUDES__INCLUDED__
 #define __AL_INCLUDES__INCLUDED__
 
-
 #ifdef __APPLE__
-    #include <al.h>
-    #include <alc.h>
+#include <al.h>
+#include <alc.h>
 #else
-    #include <AL/al.h>
-    #include <AL/alc.h>
+#include <AL/al.h>
+#include <AL/alc.h>
 #endif
 
 typedef ALuint ALSourceHandle;
@@ -27,10 +26,9 @@ typedef ALuint ALBufferHandle;
 
 // Both are major=0x1000 and minor=0x1001, but are completely different!?!?!?
 #ifdef ALC_VERSION_0_1
-#define ALCstring const ALCchar*
+#define ALCstring const ALCchar *
 #else
-#define ALCstring ALCubyte*
+#define ALCstring ALCubyte *
 #endif
 
-#endif//__AL_INCLUDES__INCLUDED__
-
+#endif //__AL_INCLUDES__INCLUDED__

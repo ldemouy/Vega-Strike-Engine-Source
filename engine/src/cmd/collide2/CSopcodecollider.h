@@ -65,92 +65,89 @@
 	csOPCodeCollider.GetCollisionPairCount();
 */
 
-
 // Low level collision detection using Opcode library.
-class csOPCODECollider 
+class csOPCODECollider
 {
-	private:
-		/* does what it says.  Takes our mesh_polygon vector and turns it into 
+private:
+	/* does what it says.  Takes our mesh_polygon vector and turns it into 
 		* a linear list of vertexes that we reference in collision trees
 		* radius is set in here as well
 		*/
-		void GeometryInitialize (const std::vector <mesh_polygon> &polygons);
-		
-		/* callback used to return vertex points when requested from opcode*/
-		static void MeshCallback (udword triangle_index,
-							Opcode::VertexPointers& triangle, void* user_data);
-        
-        /* returns face of mesh where ray collided */
-		static void RayCallback(const Opcode::CollisionFace &, void*);
-    
-		/* Radius around unit using center of unit and furthest part of unit */
-		float radius;
-		
-		/* Array of Point's corresponding to vertices of triangles given by mesh_polygon */
-		Opcode::Point *vertholder;
-		
-		/* OPCODE interfaces. */
-		Opcode::Model* m_pCollisionModel;
-		Opcode::MeshInterface opcMeshInt;
-		Opcode::BVTCache ColCache;
-		Opcode::CollisionFace collFace;
-		/* Collider type: Tree - Used primarily for mesh on mesh collisions */
-		Opcode::AABBTreeCollider TreeCollider;
-		
-        /* Collider type: Ray - used to check if a ray collided with the tree collider above */
-        Opcode::RayCollider rCollider;
-        
-		/* We have to copy our Points to csVector3's because opcode likes Point
-		* and VS likes Vector.  */
-		void CopyCollisionPairs (csOPCODECollider* col1, csOPCODECollider* col2);
-		
-	public:
-		csOPCODECollider (const std::vector <mesh_polygon> &polygons);
-		~csOPCODECollider ();
-		
-		/* Not used in 0.5 */
-		int inline GetColliderType () const {return CS_MESH_COLLIDER;}
-		
-        /* Collides the bolt or beam with this collider, returning true if it occurred */
-    bool rayCollide (const Opcode::Ray &boltbeam, Vector&norm, float&distance);
-        
-        
-        
-		/* Collides the argument collider with this collider, returning true if it occurred */
-		bool Collide (csOPCODECollider &pOtherCollider,
-			const csReversibleTransform *pThisTransform = 0,
-			const csReversibleTransform *pOtherTransform = 0);
+	void GeometryInitialize(const std::vector<mesh_polygon> &polygons);
 
-		/* Returns the pair array, as of 0.5 this is a global static var
+	/* callback used to return vertex points when requested from opcode*/
+	static void MeshCallback(udword triangle_index,
+							 Opcode::VertexPointers &triangle, void *user_data);
+
+	/* returns face of mesh where ray collided */
+	static void RayCallback(const Opcode::CollisionFace &, void *);
+
+	/* Radius around unit using center of unit and furthest part of unit */
+	float radius;
+
+	/* Array of Point's corresponding to vertices of triangles given by mesh_polygon */
+	Opcode::Point *vertholder;
+
+	/* OPCODE interfaces. */
+	Opcode::Model *m_pCollisionModel;
+	Opcode::MeshInterface opcMeshInt;
+	Opcode::BVTCache ColCache;
+	Opcode::CollisionFace collFace;
+	/* Collider type: Tree - Used primarily for mesh on mesh collisions */
+	Opcode::AABBTreeCollider TreeCollider;
+
+	/* Collider type: Ray - used to check if a ray collided with the tree collider above */
+	Opcode::RayCollider rCollider;
+
+	/* We have to copy our Points to csVector3's because opcode likes Point
+		* and VS likes Vector.  */
+	void CopyCollisionPairs(csOPCODECollider *col1, csOPCODECollider *col2);
+
+public:
+	csOPCODECollider(const std::vector<mesh_polygon> &polygons);
+	~csOPCODECollider();
+
+	/* Not used in 0.5 */
+	int inline GetColliderType() const { return CS_MESH_COLLIDER; }
+
+	/* Collides the bolt or beam with this collider, returning true if it occurred */
+	bool rayCollide(const Opcode::Ray &boltbeam, Vector &norm, float &distance);
+
+	/* Collides the argument collider with this collider, returning true if it occurred */
+	bool Collide(csOPCODECollider &pOtherCollider,
+				 const csReversibleTransform *pThisTransform = 0,
+				 const csReversibleTransform *pOtherTransform = 0);
+
+	/* Returns the pair array, as of 0.5 this is a global static var
 		* The pair array contains the vertices that have collided as returned
 		* by the last collision.   This is concatenated, meaning, if it's not 
 		* cleared by the client code, the collisions just get pushed onto the 
 		* array indefinitely.   It should be cleared between collide calls */
-		static csCollisionPair *GetCollisions();
-		
-		/* clears the pair array */
-		static void ResetCollisionPairs ();
-		
-		/* Returns the size of the pair array */
-		static size_t GetCollisionPairCount();
+	static csCollisionPair *GetCollisions();
 
-		/* Sets First contact to argument. 
+	/* clears the pair array */
+	static void ResetCollisionPairs();
+
+	/* Returns the size of the pair array */
+	static size_t GetCollisionPairCount();
+
+	/* Sets First contact to argument. 
 		* This means that Collide will return true as soon as the first
 		* contact is detected, rather than return the contacts for all 
 		* detected vertex collisions */
-		void SetOneHitOnly (bool fh);
-		inline bool GetOneHitOnly () const { return(TreeCollider.FirstContactEnabled());}
-		
-		/* Returns the radius of our collision mesh.  This is the max radius
+	void SetOneHitOnly(bool fh);
+	inline bool GetOneHitOnly() const { return (TreeCollider.FirstContactEnabled()); }
+
+	/* Returns the radius of our collision mesh.  This is the max radius
 		* of the mesh we were initialized with */
-		inline float GetRadius () const  {return radius;};
-		
-		/* Function that returns the Vector given the vertex index 
+	inline float GetRadius() const { return radius; };
+
+	/* Function that returns the Vector given the vertex index 
 		* Used for displaying the annoying damage particles */
-		Vector getVertex (unsigned int which) const;
-		
-		/* Returns number of vertexes in model */
-		inline unsigned int getNumVertex() const { return(m_pCollisionModel->GetMeshInterface()->GetNbVertices());}
+	Vector getVertex(unsigned int which) const;
+
+	/* Returns number of vertexes in model */
+	inline unsigned int getNumVertex() const { return (m_pCollisionModel->GetMeshInterface()->GetNbVertices()); }
 };
 
 #endif

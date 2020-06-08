@@ -4,15 +4,15 @@
 
 #include "Scene.h"
 
-namespace Audio {
+namespace Audio
+{
 
-    Scene::Scene(const std::string &nam) :
-        name(nam)
+    Scene::Scene(const std::string &nam) : name(nam)
     {
     }
-    
+
     Scene::~Scene()
     {
     }
 
-};
+}; // namespace Audio

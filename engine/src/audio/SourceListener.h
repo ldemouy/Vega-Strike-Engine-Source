@@ -8,12 +8,12 @@
 #include "Types.h"
 #include "RenderableSource.h"
 
-namespace Audio {
+namespace Audio
+{
 
     // Forward declarations
-    
+
     class Source;
-    
 
     /**
      * Source event listener abstract class
@@ -24,27 +24,28 @@ namespace Audio {
     class SourceListener
     {
     protected:
-        struct {
+        struct
+        {
             int attach : 1;
             int play : 1;
             int update : 1;
         } events;
-        
+
         SourceListener()
         {
             // Want everything
             events.attach =
-            events.update =
-            events.play = 1;
+                events.update =
+                    events.play = 1;
         }
-        
+
     public:
-        virtual ~SourceListener() { }
-        
+        virtual ~SourceListener() {}
+
         bool wantAttachEvents() const { return events.attach != 0; }
         bool wantPlayEvents() const { return events.play != 0; }
         bool wantUpdateEvents() const { return events.update != 0; }
-        
+
         /**
          * Called when the source is ABOUT TO be attached or detached
          * @param source the source to be attached or detached
@@ -57,7 +58,7 @@ namespace Audio {
          *      calls.
          */
         virtual void onPreAttach(Source &source, bool detach) = 0;
-        
+
         /**
          * Called after the source has been attached or detached
          * @param source the source to be attached or detached
@@ -65,8 +66,7 @@ namespace Audio {
          *      it's been attached
          */
         virtual void onPostAttach(Source &source, bool detach) = 0;
-        
-        
+
         /**
          * Called when the source is ABOUT TO be updated.
          * @param source the source to be updated
@@ -75,7 +75,7 @@ namespace Audio {
          * @see RenderableSource::UpdateFlags
          */
         virtual void onUpdate(Source &source, int updateFlags) = 0;
-        
+
         /**
          * Called when the source is ABOUT TO be played (rendered) or stopped
          * @param source the source to be played or stopped
@@ -83,7 +83,7 @@ namespace Audio {
          *      it's about to be stopped
          */
         virtual void onPrePlay(Source &source, bool stop) = 0;
-        
+
         /**
          * Called after the source has been played or stopped
          * @param source the source to be played or stopped
@@ -91,7 +91,7 @@ namespace Audio {
          *      it's been stopped
          */
         virtual void onPostPlay(Source &source, bool stop) = 0;
-        
+
         /**
          * Called after the source has been stopped due to
          * end-of-stream conditions.
@@ -100,7 +100,6 @@ namespace Audio {
          */
         virtual void onEndOfStream(Source &source) = 0;
     };
-
 
     /**
      * Source update event listener abstract class
@@ -117,46 +116,46 @@ namespace Audio {
         {
             // Just updates
             events.attach =
-            events.play = 0;
+                events.play = 0;
             events.update = 1;
         }
-        
+
         /**
          * No-op implementation to apease the compiler.
          * @remarks This will never be called since attach events will be
          *      disabled by the constructor.
          */
-        virtual void onPreAttach(Source &source, bool detach) {};
-        
+        virtual void onPreAttach(Source &source, bool detach){};
+
         /**
          * No-op implementation to apease the compiler.
          * @remarks This will never be called since attach events will be
          *      disabled by the constructor.
          */
-        virtual void onPostAttach(Source &source, bool detach) {};
-        
+        virtual void onPostAttach(Source &source, bool detach){};
+
         /**
          * No-op implementation to apease the compiler.
          * @remarks This will never be called since play events will be
          *      disabled by the constructor.
          */
-        virtual void onPrePlay(Source &source, bool stop) {};
-        
+        virtual void onPrePlay(Source &source, bool stop){};
+
         /**
          * No-op implementation to apease the compiler.
          * @remarks This will never be called since play events will be
          *      disabled by the constructor.
          */
-        virtual void onPostPlay(Source &source, bool stop) {};
-        
+        virtual void onPostPlay(Source &source, bool stop){};
+
         /**
          * No-op implementation to apease the compiler.
          * @remarks This will never be called since play events will be
          *      disabled by the constructor.
          */
-        virtual void onEndOfStream(Source &source) {};
+        virtual void onEndOfStream(Source &source){};
     };
 
-};
+}; // namespace Audio
 
-#endif//__AUDIO_SOURCELISTENER_H__INCLUDED__
+#endif //__AUDIO_SOURCELISTENER_H__INCLUDED__

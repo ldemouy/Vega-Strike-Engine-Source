@@ -2,21 +2,22 @@
 #define _IKARUS_H_
 namespace Orders
 {
-class Ikarus : public AggressiveAI
-{
-    void ExecuteStrategy( Unit *target );
-    void DecideTarget();
-    void WillFire( Unit *target );
-    double last_time;
-    double cur_time;
-public: Ikarus();
-    virtual void Execute();
-    virtual string getOrderDescription()
+    class Ikarus : public AggressiveAI
     {
-        return "ikarus";
-    }
-};
-}
+        void ExecuteStrategy(Unit *target);
+        void DecideTarget();
+        void WillFire(Unit *target);
+        double last_time;
+        double cur_time;
+
+    public:
+        Ikarus();
+        virtual void Execute();
+        virtual string getOrderDescription()
+        {
+            return "ikarus";
+        }
+    };
+} // namespace Orders
 
 #endif
-

@@ -9,7 +9,8 @@
 #include "../../Exceptions.h"
 #include "../../Types.h"
 
-namespace Audio {
+namespace Audio
+{
 
     /**
      * OpenAL Renderable Listener class
@@ -22,14 +23,14 @@ namespace Audio {
     {
     public:
         OpenALRenderableListener(Listener *listener);
-        
+
         virtual ~OpenALRenderableListener();
-    
+
     protected:
         /** @see RenderableListener::update. */
         virtual void updateImpl(int flags);
     };
 
-};
+}; // namespace Audio
 
-#endif//__AUDIO_OPENALRENDERABLELISTENER_H__INCLUDED__
+#endif //__AUDIO_OPENALRENDERABLELISTENER_H__INCLUDED__

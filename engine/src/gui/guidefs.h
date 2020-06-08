@@ -30,22 +30,20 @@ struct Point
     float x, y;
 
     //OPERATORS
-    bool operator==( const Point &other )
+    bool operator==(const Point &other)
     {
         return x == other.x && y == other.y;
     }
-    bool operator!=( const Point &other )
+    bool operator!=(const Point &other)
     {
         return !(*this == other);
     }
 
     //CONSTRUCTION
-    Point() : x( 0.0 )
-        , y( 0.0 ) {}
-    Point( float cx, float cy ) :
-        x( cx )
-        , y( cy )
-    {}
+    Point() : x(0.0), y(0.0) {}
+    Point(float cx, float cy) : x(cx), y(cy)
+    {
+    }
 };
 
 //Extent of an area in 2d.  This is not the same as a point.
@@ -54,102 +52,98 @@ struct Size
     float width, height;
 
     //OPERATORS
-    bool operator==( const Size &other )
+    bool operator==(const Size &other)
     {
         return width == other.width && height == other.height;
     }
-    bool operator!=( const Size &other )
+    bool operator!=(const Size &other)
     {
         return !(*this == other);
     }
 
     //CONSTRUCTION
-    Size() : width( 0.0 )
-        , height( 0.0 ) {}
-    Size( float cwidth, float cheight ) :
-        width( cwidth )
-        , height( cheight )
-    {}
+    Size() : width(0.0), height(0.0) {}
+    Size(float cwidth, float cheight) : width(cwidth), height(cheight)
+    {
+    }
 };
 
 //Rectangle in 2d.
 class Rect
 {
 public:
-//Data
+    //Data
     Point origin;
-    Size  size;
+    Size size;
 
-    float left( void ) const
+    float left(void) const
     {
         return origin.x;
     }
-    float right( void ) const
+    float right(void) const
     {
-        return origin.x+size.width;
+        return origin.x + size.width;
     }
-    float bottom( void ) const
+    float bottom(void) const
     {
         return origin.y;
     }
-    float top( void ) const
+    float top(void) const
     {
-        return origin.y+size.height;
+        return origin.y + size.height;
     }
 
-//The center of this rectangle.
-    Point center( void ) const
+    //The center of this rectangle.
+    Point center(void) const
     {
-        return Point( origin.x+size.width/2, origin.y+size.height/2 );
+        return Point(origin.x + size.width / 2, origin.y + size.height / 2);
     }
 
-//Whether a Point is inside this Rect.
-    bool inside( const Point &p ) const
+    //Whether a Point is inside this Rect.
+    bool inside(const Point &p) const
     {
         return p.x >= left() && p.x < right() && p.y >= bottom() && p.y < top();
     }
 
-//Make a new Rect that is inset by the specified margins.
-    void inset( const Size &s )
+    //Make a new Rect that is inset by the specified margins.
+    void inset(const Size &s)
     {
-        origin.x    += s.width;
-        origin.y    += s.height;
-        size.width  -= s.width*2;
-        size.height -= s.height*2;
+        origin.x += s.width;
+        origin.y += s.height;
+        size.width -= s.width * 2;
+        size.height -= s.height * 2;
     }
 
-//Return a copy of the rect inset by specified margins.
-    Rect copyAndInset( const Size &s )
+    //Return a copy of the rect inset by specified margins.
+    Rect copyAndInset(const Size &s)
     {
         Rect result = *this;
-        result.inset( s );
+        result.inset(s);
         return result;
     }
 
-//OPERATORS
-    bool operator==( const Rect &other )
+    //OPERATORS
+    bool operator==(const Rect &other)
     {
         return origin == other.origin && size == other.size;
     }
-    bool operator!=( const Rect &other )
+    bool operator!=(const Rect &other)
     {
         return !(*this == other);
     }
 
-//CONSTRUCTION
+    //CONSTRUCTION
     Rect() {}
-    Rect( Point &p, Size &s ) :
-        origin( p )
-        , size( s )
-    {}
-    Rect( float x, float y, float width, float height ) :
-        origin( x, y )
-        , size( width, height )
-    {}
+    Rect(Point &p, Size &s) : origin(p), size(s)
+    {
+    }
+    Rect(float x, float y, float width, float height) : origin(x, y), size(width, height)
+    {
+    }
 };
 
 //Rect that describes the coordinates of a full screen.
-static const Rect FULL_SCREEN_RECT( -1, -1, 2, 2 );
+static const Rect FULL_SCREEN_RECT(-1, -1, 2, 2);
 
 //Type of input event.
 typedef enum
@@ -173,10 +167,10 @@ typedef unsigned int EventKeyCode;
 typedef EventKeyCode EventButton;
 
 //Mouse button constants
-static const unsigned int LEFT_MOUSE_BUTTON      = WS_LEFT_BUTTON;
-static const unsigned int MIDDLE_MOUSE_BUTTON    = WS_MIDDLE_BUTTON;
-static const unsigned int RIGHT_MOUSE_BUTTON     = WS_RIGHT_BUTTON;
-static const unsigned int WHEELUP_MOUSE_BUTTON   = WS_WHEEL_UP;
+static const unsigned int LEFT_MOUSE_BUTTON = WS_LEFT_BUTTON;
+static const unsigned int MIDDLE_MOUSE_BUTTON = WS_MIDDLE_BUTTON;
+static const unsigned int RIGHT_MOUSE_BUTTON = WS_RIGHT_BUTTON;
+static const unsigned int WHEELUP_MOUSE_BUTTON = WS_WHEEL_UP;
 static const unsigned int WHEELDOWN_MOUSE_BUTTON = WS_WHEEL_DOWN;
 
 /* This describes an event from an input device: mouse, keyboard, etc.
@@ -184,21 +178,14 @@ static const unsigned int WHEELDOWN_MOUSE_BUTTON = WS_WHEEL_DOWN;
  */
 struct InputEvent
 {
-    InputEventType type;      //Kind of event.
-    unsigned int   code;      //Key or mouse button.
-    EventModMask   mask;      //Modifier keys or buttons.
-    Point loc;                //Coordinate of mouse.
+    InputEventType type; //Kind of event.
+    unsigned int code;   //Key or mouse button.
+    EventModMask mask;   //Modifier keys or buttons.
+    Point loc;           //Coordinate of mouse.
 
     //CONSTRUCTION
-    InputEvent( InputEventType t, unsigned int c, EventModMask m, const Point &l ) :
-          type( t )
-        , code( c )
-        , mask( m )
-        , loc( l ) {}
-    InputEvent() : type( MOUSE_UP_EVENT )
-        , code( LEFT_MOUSE_BUTTON )
-        , mask( 0 )
-        , loc( Point( 0, 0 ) ) {}
+    InputEvent(InputEventType t, unsigned int c, EventModMask m, const Point &l) : type(t), code(c), mask(m), loc(l) {}
+    InputEvent() : type(MOUSE_UP_EVENT), code(LEFT_MOUSE_BUTTON), mask(0), loc(Point(0, 0)) {}
 };
 
 //Text justification possibilities.
@@ -209,24 +196,24 @@ enum Justification
     LEFT_JUSTIFY
 };
 
-GFXColor SaturatedColor( float r, float g, float b, float a = 1.0f );
+GFXColor SaturatedColor(float r, float g, float b, float a = 1.0f);
 //Predefined colors.
 GFXColor GUI_OPAQUE_BLACK(); //(0.0,0.0,0.0);
 GFXColor GUI_OPAQUE_WHITE(); //(1.0,1.0,1.0);
-const GFXColor GUI_CLEAR( 0.0, 0.0, 0.0, 0.0 );
-GFXColor GUI_OPAQUE_LIGHT_GRAY(); //(0.25,0.25,0.25);
+const GFXColor GUI_CLEAR(0.0, 0.0, 0.0, 0.0);
+GFXColor GUI_OPAQUE_LIGHT_GRAY();  //(0.25,0.25,0.25);
 GFXColor GUI_OPAQUE_MEDIUM_GRAY(); //(0.5,0.5,0.5);
-GFXColor GUI_OPAQUE_DARK_GRAY(); //(0.75,0.75,0.75);
+GFXColor GUI_OPAQUE_DARK_GRAY();   //(0.75,0.75,0.75);
 
 //Whether a color is clear -- totally transparent.
-inline bool isClear( const GFXColor &c )
+inline bool isClear(const GFXColor &c)
 {
     return c.a <= 0.0;
 }
 
 //Compare two colors.
 //Used in upgrade/downgrade to decide whether an item is OK.
-inline bool equalColors( const GFXColor &c1, const GFXColor &c2 )
+inline bool equalColors(const GFXColor &c1, const GFXColor &c2)
 {
     return c1.r == c2.r && c1.g == c2.g && c1.b == c2.b && c1.a == c2.a;
 }
@@ -234,24 +221,23 @@ inline bool equalColors( const GFXColor &c1, const GFXColor &c2 )
 //////////////////   DRAWING UTILITIES   ////////////////////
 
 //Draw a rectangle using the specified color.
-void drawRect( const Rect &rect, const GFXColor &color );
+void drawRect(const Rect &rect, const GFXColor &color);
 
 //Draw the outline of a rectangle using the specified color.
-void drawRectOutline( const Rect &rect, const GFXColor &color, float lineWidth );
+void drawRectOutline(const Rect &rect, const GFXColor &color, float lineWidth);
 
 //Draw upper-left part of rectangle's "shadow".
-void drawUpLeftShadow( const Rect &rect, const GFXColor &color, float lineWidth );
+void drawUpLeftShadow(const Rect &rect, const GFXColor &color, float lineWidth);
 
 //Draw lower-right part of rectangle's "shadow".
-void drawLowRightShadow( const Rect &rect, const GFXColor &color, float lineWidth );
+void drawLowRightShadow(const Rect &rect, const GFXColor &color, float lineWidth);
 
 //Fill a closed polygon.
-void drawFilledPolygon( const std::vector< Point > &coords, const GFXColor &color );
+void drawFilledPolygon(const std::vector<Point> &coords, const GFXColor &color);
 
 //////////////////   MIN AND MAX FUNCTIONS   ////////////////////
 
-#define guiMin( a, b ) ( (a) < (b) ? (a) : (b) )
-#define guiMax( a, b ) ( (a) > (b) ? (a) : (b) )
+#define guiMin(a, b) ((a) < (b) ? (a) : (b))
+#define guiMax(a, b) ((a) > (b) ? (a) : (b))
 
-#endif   //__GUIDEFS_H__
-
+#endif //__GUIDEFS_H__

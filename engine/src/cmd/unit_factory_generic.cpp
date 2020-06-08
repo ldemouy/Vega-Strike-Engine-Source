@@ -6,12 +6,14 @@
 #include "missile_generic.h"
 #include "nebula_generic.h"
 
-Unit*UnitFactory::_masterPartList = NULL;
-Unit* UnitFactory::getMasterPartList()
+Unit *UnitFactory::_masterPartList = NULL;
+Unit *UnitFactory::getMasterPartList()
 {
-    if (_masterPartList == NULL) {
+    if (_masterPartList == NULL)
+    {
         static bool making = true;
-        if (making) {
+        if (making)
+        {
             making = false;
             _masterPartList = Unit::makeMasterPartList();
             making = true;
@@ -19,16 +21,3 @@ Unit* UnitFactory::getMasterPartList()
     }
     return _masterPartList;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

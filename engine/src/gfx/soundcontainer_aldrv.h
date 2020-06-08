@@ -14,15 +14,15 @@ class AldrvSoundContainer : public GameSoundContainer
 {
 private:
     int sound;
-    
+
 public:
     /**
      * Create a refernece to an optionally-looping sound file.
      */
-    AldrvSoundContainer( const SoundContainer &other );
-    
+    AldrvSoundContainer(const SoundContainer &other);
+
     virtual ~AldrvSoundContainer();
-    
+
 protected:
     virtual void loadImpl();
     virtual void unloadImpl();
@@ -32,4 +32,3 @@ protected:
 };
 
 #endif
-

@@ -13,34 +13,35 @@ class Terrain : public QuadTree
     float TotalSizeX;
     float TotalSizeZ;
     float mass;
-    int   whichstage;
-    char  draw;
-    void ApplyForce( Unit *un, const Vector &norm, float distance );
-public: Terrain( const char *filename,
-                 const Vector &Scales,
-                 const float mass,
-                 const float radius,
-                 updateparity *updatetransform = identityparity );
-    void SetTotalSize( float X, float Z )
+    int whichstage;
+    char draw;
+    void ApplyForce(Unit *un, const Vector &norm, float distance);
+
+public:
+    Terrain(const char *filename,
+            const Vector &Scales,
+            const float mass,
+            const float radius,
+            updateparity *updatetransform = identityparity);
+    void SetTotalSize(float X, float Z)
     {
         TotalSizeX = X;
         TotalSizeZ = Z;
     }
     ~Terrain();
-    void Collide( Unit *un, const Matrix &t );
-    void Collide( Unit *un );
+    void Collide(Unit *un, const Matrix &t);
+    void Collide(Unit *un);
     void Collide();
-    void SetTransformation( const Matrix &mat );
+    void SetTransformation(const Matrix &mat);
     static void CollideAll();
     static void DeleteAll();
     void Render();
     static void RenderAll();
-    static void UpdateAll( int resolution );
+    static void UpdateAll(int resolution);
     void DisableDraw();
     void EnableDraw();
     void DisableUpdate();
     void EnableUpdate();
-    Vector GetUpVector( const Vector &pos );
+    Vector GetUpVector(const Vector &pos);
 };
 #endif
-

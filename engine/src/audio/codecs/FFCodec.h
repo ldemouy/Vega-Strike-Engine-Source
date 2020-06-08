@@ -6,7 +6,8 @@
 
 #include "Codec.h"
 
-namespace Audio {
+namespace Audio
+{
 
     /**
      * OggCodec factory class, for Ogg audio streams.
@@ -16,16 +17,16 @@ namespace Audio {
     {
     public:
         FFCodec();
-        
+
         virtual ~FFCodec();
-        
+
         /** @see Codec::canHandle */
-        virtual bool canHandle(const std::string& path, bool canOpen, VSFileSystem::VSFileType type = VSFileSystem::UnknownFile);
-        
+        virtual bool canHandle(const std::string &path, bool canOpen, VSFileSystem::VSFileType type = VSFileSystem::UnknownFile);
+
         /** @see Codec::open */
-        virtual Stream* open(const std::string& path, VSFileSystem::VSFileType type = VSFileSystem::UnknownFile);
+        virtual Stream *open(const std::string &path, VSFileSystem::VSFileType type = VSFileSystem::UnknownFile);
     };
 
-};
+}; // namespace Audio
 
-#endif//__AUDIO_FFCODEC_H__INCLUDED__
+#endif //__AUDIO_FFCODEC_H__INCLUDED__

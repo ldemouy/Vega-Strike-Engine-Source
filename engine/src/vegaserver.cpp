@@ -32,42 +32,41 @@
 //#include <fenv.h>
 //#endif
 char SERVER = 1;
-Universe  *_Universe;
-LeakVector< Mission* >active_missions;
+Universe *_Universe;
+LeakVector<Mission *> active_missions;
 
 vs_options game_options;
 
 float SIMULATION_ATOM = 0.0f;
 float AUDIO_ATOM = 0.0f;
 
-void VSExit( int code )
+void VSExit(int code)
 {
     VSServer->closeAllSockets();
-    exit( 1 );
+    exit(1);
 }
 
-// I dont think vegaserver makes use of this but it has to be defined.  
+// I dont think vegaserver makes use of this but it has to be defined.
 Unit *TheTopLevelUnit = NULL;
 
-int main( int argc, char **argv )
+int main(int argc, char **argv)
 {
 
     //#ifndef _WIN32
     //feenableexcept(FE_DIVBYZERO|FE_INVALID);//|FE_OVERFLOW|FE_UNDERFLOW)
     //#endif
-    VSFileSystem::ChangeToProgramDirectory( argv[0] );
+    VSFileSystem::ChangeToProgramDirectory(argv[0]);
 
     //Stupid static variable somewhere, so need to initialize it twice.
     InitTime();
-    setNewTime( 0 );
-    setNewTime( ( (double) time( NULL ) )-VEGA_EPOCH );
+    setNewTime(0);
+    setNewTime(((double)time(NULL)) - VEGA_EPOCH);
     VSServer = new NetServer;
     //Fake forcefeedback
     forcefeedback = new ForceFeedback();
-    VSServer->start( argc, argv );
+    VSServer->start(argc, argv);
 
     delete VSServer;
 
     return 0;
 }
-

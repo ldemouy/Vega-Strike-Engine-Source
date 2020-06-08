@@ -14,8 +14,4 @@ class process
 public
 };
 
-
-
 #endif
-
-

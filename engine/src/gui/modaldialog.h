@@ -37,7 +37,7 @@
 class ModalDialogCallback
 {
 public:
-    virtual void modalDialogResult( const std::string &id, int result, WindowController &controller ) = 0;
+    virtual void modalDialogResult(const std::string &id, int result, WindowController &controller) = 0;
 };
 
 //This class controls a modal "dialog" with the user.  It puts up a modal
@@ -53,73 +53,73 @@ public:
 class ModalDialog : public WindowController
 {
 public:
-//The class that gets called when the window closes.
-    virtual void setCallback( ModalDialogCallback *cb, const std::string &id );
+    //The class that gets called when the window closes.
+    virtual void setCallback(ModalDialogCallback *cb, const std::string &id);
 
-//Set up the window and get everything ready.
-    virtual void init( void ) {}
+    //Set up the window and get everything ready.
+    virtual void init(void) {}
 
-//Start everything up.
-    virtual void run( void );
+    //Start everything up.
+    virtual void run(void);
 
-//Process a command event from the window.
-    virtual bool processWindowCommand( const EventCommandId &command, Control *control );
+    //Process a command event from the window.
+    virtual bool processWindowCommand(const EventCommandId &command, Control *control);
 
-    void modalFinished( void );
+    void modalFinished(void);
 
-//CONSTRUCTION
+    //CONSTRUCTION
     ModalDialog();
-    virtual ~ModalDialog( void ) {}
+    virtual ~ModalDialog(void) {}
 
 protected:
-
-//VARIABLES
-    std::string m_callbackId;           //"Id" to pass callback function.
-    ModalDialogCallback *m_callback;    //The callback class.
-    int m_result;                       //A simple result for the dialog.
+    //VARIABLES
+    std::string m_callbackId;        //"Id" to pass callback function.
+    ModalDialogCallback *m_callback; //The callback class.
+    int m_result;                    //A simple result for the dialog.
 };
 
 //Display a modal message to the user.  The message will be shown until the user
 //hits the OK button.
-void showAlert( const std::string &title );
+void showAlert(const std::string &title);
 
 //Display a modal yes/no question.
 //The result is supplied in the callback.
-void showYesNoQuestion( const std::string &title, ModalDialogCallback *cb, const std::string &id );
+void showYesNoQuestion(const std::string &title, ModalDialogCallback *cb, const std::string &id);
 static const int YES_ANSWER = 1;
-static const int NO_ANSWER  = 0;
+static const int NO_ANSWER = 0;
 
 //Display a modal list of options.
 //The result is supplied in the callback.
-void showListQuestion( const std::string &title,
-                       const std::vector< std::string > &options,
-                       ModalDialogCallback *cb,
-                       const std::string &id );
+void showListQuestion(const std::string &title,
+                      const std::vector<std::string> &options,
+                      ModalDialogCallback *cb,
+                      const std::string &id);
 
 //This class is used to display predefined alerts and questions.
 //It creates a Window, loads controls, etc.
 class QuestionDialog : public ModalDialog
 {
 public:
-//Load the controls for this dialog.
-    virtual void initControls( void ) = 0;
+    //Load the controls for this dialog.
+    virtual void initControls(void) = 0;
 
-//Set up the window and get everything ready.
-    virtual void init( const std::string &title );
+    //Set up the window and get everything ready.
+    virtual void init(const std::string &title);
 
-//Start everything up.
-    virtual void run( void );
+    //Start everything up.
+    virtual void run(void);
 
-//CONSTRUCTION
-    QuestionDialog() : m_deleteWindow( true ) {}
-    virtual ~QuestionDialog( void )
+    //CONSTRUCTION
+    QuestionDialog() : m_deleteWindow(true) {}
+    virtual ~QuestionDialog(void)
     {
-        if (m_window != NULL && m_deleteWindow) delete m_window;
+        if (m_window != NULL && m_deleteWindow)
+            delete m_window;
     }
 
 protected:
-//VARIABLES
-    bool m_deleteWindow;                //True = Delete window when we are deleted.
+    //VARIABLES
+    bool m_deleteWindow; //True = Delete window when we are deleted.
 };
 
 //Class that supports showListQuestion().
@@ -129,20 +129,19 @@ protected:
 class ListQuestionDialog : public QuestionDialog
 {
 public:
-//Load the controls for this dialog into the window.
-    virtual void initControls( void )
+    //Load the controls for this dialog into the window.
+    virtual void initControls(void)
     {
-        CreateControlsForListWindow( window() );
+        CreateControlsForListWindow(window());
     }
 
-//Process a command event from the window.
-    virtual bool processWindowCommand( const EventCommandId &command, Control *control );
+    //Process a command event from the window.
+    virtual bool processWindowCommand(const EventCommandId &command, Control *control);
 
-    class SimplePicker * getPicker();
+    class SimplePicker *getPicker();
 
 protected:
-    static void CreateControlsForListWindow( Window *w );
+    static void CreateControlsForListWindow(Window *w);
 };
 
-#endif   //__MODALDIALOG_H__
-
+#endif //__MODALDIALOG_H__

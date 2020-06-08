@@ -5,68 +5,81 @@
 #include "RenderableSource.h"
 #include <stdio.h>
 
-namespace Audio {
+namespace Audio
+{
 
-    RenderableSource::RenderableSource(Source *_source) :
-        source(_source)
+    RenderableSource::RenderableSource(Source *_source) : source(_source)
     {
     }
-    
+
     RenderableSource::~RenderableSource()
     {
         // Just in case.
         source = 0;
     }
-    
-    void RenderableSource::startPlaying(Timestamp start) 
+
+    void RenderableSource::startPlaying(Timestamp start)
     {
-        try {
+        try
+        {
             startPlayingImpl(start);
-        } catch(const EndOfStreamException&) {
+        }
+        catch (const EndOfStreamException &)
+        {
             // Silently discard EOS, results in the more transparent
             // behavior of simply notifying listeners of source
             // termination ASAP, which is also accurate.
         };
     }
-    
-    void RenderableSource::stopPlaying() 
+
+    void RenderableSource::stopPlaying()
     {
-        // Cannot be playing if an exception rises, 
+        // Cannot be playing if an exception rises,
         // as that implies a problem with the underlying API
-        try {
+        try
+        {
             if (isPlaying())
                 stopPlayingImpl();
-        } catch(const Exception& e) {}
+        }
+        catch (const Exception &e)
+        {
+        }
     }
-    
-    bool RenderableSource::isPlaying() const 
+
+    bool RenderableSource::isPlaying() const
     {
-        try {
+        try
+        {
             return isPlayingImpl();
-        } catch(const Exception& e) {
-            // Cannot be playing if an exception rises, 
+        }
+        catch (const Exception &e)
+        {
+            // Cannot be playing if an exception rises,
             // as that implies a problem with the underlying API
             return false;
         }
     }
-    
-    Timestamp RenderableSource::getPlayingTime() const 
+
+    Timestamp RenderableSource::getPlayingTime() const
     {
         return getPlayingTimeImpl();
     }
-    
-    void RenderableSource::update(int flags, const Listener& sceneListener) 
+
+    void RenderableSource::update(int flags, const Listener &sceneListener)
     {
-        try {
+        try
+        {
             updateImpl(flags, sceneListener);
-        } catch(const Exception& e) {
+        }
+        catch (const Exception &e)
+        {
             fprintf(stderr, "Ignoring exception in renderable update: %s", e.what());
         }
     }
-    
-    void RenderableSource::seek(Timestamp time) 
+
+    void RenderableSource::seek(Timestamp time)
     {
         seekImpl(time);
     }
 
-};
+}; // namespace Audio

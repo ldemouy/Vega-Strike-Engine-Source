@@ -35,79 +35,75 @@
 class WindowController
 {
 public:
-//Set up the window and get everything ready.
-//This is separate from run() so the creator gets a chance to get involved
-//with the window settings.
-    virtual void init( void ) = 0;
+    //Set up the window and get everything ready.
+    //This is separate from run() so the creator gets a chance to get involved
+    //with the window settings.
+    virtual void init(void) = 0;
 
-//Make everything happen.
-    virtual void run( void );
+    //Make everything happen.
+    virtual void run(void);
 
-    virtual void draw( void );
+    virtual void draw(void);
 
-//The window we are controlling.
-    virtual Window * window( void )
+    //The window we are controlling.
+    virtual Window *window(void)
     {
         return m_window;
     }
-    virtual void setWindow( Window *w )
+    virtual void setWindow(Window *w)
     {
         m_window = w;
     }
 
-//Process a command event from the window.
-    virtual bool processWindowCommand( const EventCommandId &command, Control *control );
+    //Process a command event from the window.
+    virtual bool processWindowCommand(const EventCommandId &command, Control *control);
 
-//CONSTRUCTION
+    //CONSTRUCTION
     WindowController();
-    virtual ~WindowController( void );
+    virtual ~WindowController(void);
 
 protected:
-
-//VARIABLES
-    Window *m_window;               //The window we control.
-    bool    m_deleteOnWindowClose;  //True = Delete this object when the window closes.
+    //VARIABLES
+    Window *m_window;           //The window we control.
+    bool m_deleteOnWindowClose; //True = Delete this object when the window closes.
 };
 
-template < class T >
+template <class T>
 struct WindowControllerTableEntry
 {
-    typedef bool (T::*Handler)( const EventCommandId &command, Control *control );
+    typedef bool (T::*Handler)(const EventCommandId &command, Control *control);
 
     EventCommandId command;
-    std::string    controlId;
+    std::string controlId;
     Handler function;
-    WindowControllerTableEntry( const EventCommandId &cmd, const std::string &cid, const Handler &func ) :
-            command( cmd )
-        ,   controlId( cid )
-        ,   function( func ) {}
+    WindowControllerTableEntry(const EventCommandId &cmd, const std::string &cid, const Handler &func) : command(cmd), controlId(cid), function(func) {}
 };
 
-template < class Subclass >
+template <class Subclass>
 class WctlBase : public WindowController
 {
 public:
-    typedef WindowControllerTableEntry< Subclass >WctlTableEntry;
+    typedef WindowControllerTableEntry<Subclass> WctlTableEntry;
 
-    virtual bool processWindowCommand( const EventCommandId &command, Control *control )
+    virtual bool processWindowCommand(const EventCommandId &command, Control *control)
     {
         //Iterate through the dispatch table.
         for (const WctlTableEntry *p = &WctlCommandTable[0]; p->function; p++)
             if (p->command == command)
-                if ( p->controlId.size() == 0 || p->controlId == control->id() )
+                if (p->controlId.size() == 0 || p->controlId == control->id())
                     //Found a handler for the command.
-                    return ( ( static_cast< Subclass* > (this) )->*(p->function) )( command, control );
+                    return ((static_cast<Subclass *>(this))->*(p->function))(command, control);
         //Let the base class have a try at the command first.
-        if ( WindowController::processWindowCommand( command, control ) )
+        if (WindowController::processWindowCommand(command, control))
             return true;
         //Didn't find a handler.
         return false;
     }
+
 protected:
-//Dispatch table declarations.
-//This is a member table so the handler functions don't need to be public.
+    //Dispatch table declarations.
+    //This is a member table so the handler functions don't need to be public.
     static const WctlTableEntry WctlCommandTable[];
 };
 
-#endif   //__WINDOWCONTROLLER_H__
-
+#endif //__WINDOWCONTROLLER_H__

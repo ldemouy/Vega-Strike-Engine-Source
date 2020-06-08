@@ -5,13 +5,14 @@
 class CoordinateSelect
 {
 protected:
-    float       CrosshairSize;
-    Animation   LocSelAni;
-    QVector     LocalPosition;
+    float CrosshairSize;
+    Animation LocSelAni;
+    QVector LocalPosition;
     void UpdateMouse();
+
 public:
-    static void MouseMoveHandle( KBSTATE, int, int, int, int, int );
-    CoordinateSelect( QVector ); //wish I could warp mouse pointer there
+    static void MouseMoveHandle(KBSTATE, int, int, int, int, int);
+    CoordinateSelect(QVector); //wish I could warp mouse pointer there
     ~CoordinateSelect() {}
     inline QVector GetVector()
     {
@@ -19,4 +20,3 @@ public:
     }
     void Draw();
 };
-

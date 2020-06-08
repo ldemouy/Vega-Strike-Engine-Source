@@ -7,12 +7,12 @@
 #include "Exceptions.h"
 #include "Types.h"
 
-namespace Audio {
+namespace Audio
+{
 
     // Forward declarations
-    
+
     class Listener;
-    
 
     /**
      * Renderable Listener abstract class
@@ -31,25 +31,26 @@ namespace Audio {
     {
     private:
         Listener *listener;
-        
+
     protected:
         /** Internal constructor used by derived classes */
         RenderableListener(Listener *listener);
-        
+
     public:
         virtual ~RenderableListener();
-        
-        enum UpdateFlags {
-            UPDATE_ALL          = 0x0F,
-            UPDATE_LOCATION     = 0x01,
-            UPDATE_ATTRIBUTES   = 0x02,
-            UPDATE_EFFECTS      = 0x04,
-            UPDATE_GAIN         = 0x08
+
+        enum UpdateFlags
+        {
+            UPDATE_ALL = 0x0F,
+            UPDATE_LOCATION = 0x01,
+            UPDATE_ATTRIBUTES = 0x02,
+            UPDATE_EFFECTS = 0x04,
+            UPDATE_GAIN = 0x08
         };
-        
+
         /** Get the attached listener */
-        Listener* getListener() const { return listener; }
-        
+        Listener *getListener() const { return listener; }
+
         /** Update the underlying API with dirty attributes 
          * @param flags You may specify which attributes to update. Not all attributes are
          *      equally costly, so you'll want to ease up on some, pump up some others.
@@ -59,16 +60,15 @@ namespace Audio {
          *      and may fail silently.
          */
         void update(int flags);
-        
+
         // The following section contains all the virtual functions that need be implemented
         // by a concrete class. All are protected, so the interface is independent
         // of implementations.
     protected:
-        
         /** @see update. */
         virtual void updateImpl(int flags) = 0;
     };
 
-};
+}; // namespace Audio
 
-#endif//__AUDIO_RENDERABLELISTENER_H__INCLUDED__
+#endif //__AUDIO_RENDERABLELISTENER_H__INCLUDED__

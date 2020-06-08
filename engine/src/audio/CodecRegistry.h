@@ -12,7 +12,8 @@
 
 #include "vsfilesystem.h"
 
-namespace Audio {
+namespace Audio
+{
 
     // The registry needs not know what it's managing... right?
     // At least not its interface.
@@ -31,38 +32,38 @@ namespace Audio {
     {
     private:
         // The many required indexes
-        typedef std::set<Codec*> CodecSet;
-        typedef std::map<Codec*,int> CodecPriority;
+        typedef std::set<Codec *> CodecSet;
+        typedef std::map<Codec *, int> CodecPriority;
         typedef std::map<std::string, CodecSet> ExtensionCodecs;
-        typedef std::map<std::string, Codec*> NameCodec;
-        
+        typedef std::map<std::string, Codec *> NameCodec;
+
         CodecPriority codecPriority;
         ExtensionCodecs extensionCodecs;
         CodecSet universalCodecs;
         NameCodec nameCodec;
-    
+
     public:
         /** Construct an empty registry 
          * @remarks End-users of the class shouldn't be using this. Singletons need it*/
         CodecRegistry();
-        
+
         ~CodecRegistry();
-        
+
         /**
          * Add a codec to the registry
          * @remarks You may add a codec multiple times if you wish. The class guarantees
          *      that any further call will be a no-op. Previos priority will still apply.
          * @param codec The codec to be added to the registry.
          */
-        void add(Codec* codec, int priority = 0);
-        
+        void add(Codec *codec, int priority = 0);
+
         /**
          * Remove a codec from the registry
          * @remarks If the codec had already been removed, this is a no-op.
          * @param codec The codec to be removed from the registry.
          */
-        void remove(Codec* codec);
-        
+        void remove(Codec *codec);
+
         /**
          * Find a codec by its name
          * @returns A codec instance named by the specified name, never null.
@@ -71,8 +72,8 @@ namespace Audio {
          *      @par Instead of returning null, if a codec of such characteristics cannot be found, 
          *      a CodecNotFound exception is risen.
          */
-        Codec* findByName(const std::string& name) const;
-        
+        Codec *findByName(const std::string &name) const;
+
         /**
          * Find a codec that can handle the file.
          * @returns A codec instance that can handle the specified file (ie: canHandle() returns true).
@@ -83,24 +84,24 @@ namespace Audio {
          *      @par Instead of returning null, if a codec of such characteristics cannot be found, 
          *      an CodecNotFound exception is risen.
          */
-        Codec* findByFile(const std::string& path, VSFileSystem::VSFileType type = VSFileSystem::UnknownFile) const;
-        
+        Codec *findByFile(const std::string &path, VSFileSystem::VSFileType type = VSFileSystem::UnknownFile) const;
+
         /**
          * Open the specified file with a suitable codec.
          * @see findByFile
          */
-        Stream* open(const std::string& path, VSFileSystem::VSFileType type = VSFileSystem::UnknownFile) const;
-        
+        Stream *open(const std::string &path, VSFileSystem::VSFileType type = VSFileSystem::UnknownFile) const;
     };
-    
+
     class CodecRegistration
     {
         Codec *codec;
+
     public:
-        CodecRegistration(Codec* codec, int priority = 0);
+        CodecRegistration(Codec *codec, int priority = 0);
         ~CodecRegistration();
     };
 
-};
+}; // namespace Audio
 
-#endif//__AUDIO_CODECREGISTRY_H__INCLUDED__
+#endif //__AUDIO_CODECREGISTRY_H__INCLUDED__

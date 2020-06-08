@@ -39,16 +39,16 @@ using namespace Opcode;
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 OPCODECREATE::OPCODECREATE()
 {
-	mIMesh				= null;
-	mSettings.mRules	= SPLIT_SPLATTER_POINTS | SPLIT_GEOM_CENTER;
-	mSettings.mLimit	= 1;	// Mandatory for complete trees
-	mNoLeaf				= true;
-	mQuantized			= true;
+	mIMesh = null;
+	mSettings.mRules = SPLIT_SPLATTER_POINTS | SPLIT_GEOM_CENTER;
+	mSettings.mLimit = 1; // Mandatory for complete trees
+	mNoLeaf = true;
+	mQuantized = true;
 #ifdef __MESHMERIZER_H__
-	mCollisionHull		= false;
+	mCollisionHull = false;
 #endif // __MESHMERIZER_H__
-	mKeepOriginal		= false;
-	mCanRemap			= false;
+	mKeepOriginal = false;
+	mCanRemap = false;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -94,22 +94,30 @@ bool BaseModel::CreateTree(bool no_leaf, bool quantized)
 	DELETESINGLE(mTree);
 
 	// Setup model code
-	if(no_leaf)		mModelCode |= OPC_NO_LEAF;
-	else			mModelCode &= ~OPC_NO_LEAF;
+	if (no_leaf)
+		mModelCode |= OPC_NO_LEAF;
+	else
+		mModelCode &= ~OPC_NO_LEAF;
 
-	if(quantized)	mModelCode |= OPC_QUANTIZED;
-	else			mModelCode &= ~OPC_QUANTIZED;
+	if (quantized)
+		mModelCode |= OPC_QUANTIZED;
+	else
+		mModelCode &= ~OPC_QUANTIZED;
 
 	// Create the correct class
-	if(mModelCode & OPC_NO_LEAF)
+	if (mModelCode & OPC_NO_LEAF)
 	{
-		if(mModelCode & OPC_QUANTIZED)	mTree = new AABBQuantizedNoLeafTree;
-		else							mTree = new AABBNoLeafTree;
+		if (mModelCode & OPC_QUANTIZED)
+			mTree = new AABBQuantizedNoLeafTree;
+		else
+			mTree = new AABBNoLeafTree;
 	}
 	else
 	{
-		if(mModelCode & OPC_QUANTIZED)	mTree = new AABBQuantizedTree;
-		else							mTree = new AABBCollisionTree;
+		if (mModelCode & OPC_QUANTIZED)
+			mTree = new AABBQuantizedTree;
+		else
+			mTree = new AABBCollisionTree;
 	}
 	CHECKALLOC(mTree);
 
@@ -129,10 +137,10 @@ bool BaseModel::Refit()
 	// Refit the optimized tree
 	return mTree->Refit(mIMesh);
 
-// Old code kept for reference : refit the source tree then rebuild !
-//	if(!mSource)	return false;
-//	// Ouch...
-//	mSource->Refit(&mTB);
-//	// Ouch...
-//	return mTree->Build(mSource);
+	// Old code kept for reference : refit the source tree then rebuild !
+	//	if(!mSource)	return false;
+	//	// Ouch...
+	//	mSource->Refit(&mTB);
+	//	// Ouch...
+	//	return mTree->Build(mSource);
 }

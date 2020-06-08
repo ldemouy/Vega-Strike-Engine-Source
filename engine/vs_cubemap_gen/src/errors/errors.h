@@ -16,11 +16,12 @@ class Exception : public std::exception
 private:
     std::string _message;
 
-public: Exception() {}
-    Exception( const Exception &other ) : _message( other._message ) {}
-    explicit Exception( const std::string &message ) : _message( message ) {}
+public:
+    Exception() {}
+    Exception(const Exception &other) : _message(other._message) {}
+    explicit Exception(const std::string &message) : _message(message) {}
     virtual ~Exception() {}
-    virtual const char * what() const noexcept
+    virtual const char *what() const noexcept
     {
         return _message.c_str();
     }
@@ -29,11 +30,8 @@ public: Exception() {}
 class MissingTexture : public Exception
 {
 public:
-    explicit MissingTexture( const string &msg ) : Exception( msg ) {}
+    explicit MissingTexture(const string &msg) : Exception(msg) {}
     MissingTexture() {}
 };
 
-
 #endif
-
-

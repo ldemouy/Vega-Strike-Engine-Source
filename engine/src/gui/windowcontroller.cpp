@@ -26,29 +26,34 @@
 #include "windowcontroller.h"
 
 //Make everything happen.
-void WindowController::run( void )
+void WindowController::run(void)
 {
-    if (m_window) {
-        m_window->setDeleteOnClose( true );         //We want the window to delete itself.
-        m_window->setController( this );
+    if (m_window)
+    {
+        m_window->setDeleteOnClose(true); //We want the window to delete itself.
+        m_window->setController(this);
         m_window->open();
-    } else {
+    }
+    else
+    {
         //We have no window.  Close down.
         delete this;
     }
 }
 
-void WindowController::draw( void )
+void WindowController::draw(void)
 {
     //Do nothing.
 }
 
 //Process a command from the window.
-bool WindowController::processWindowCommand( const EventCommandId &command, Control *control )
+bool WindowController::processWindowCommand(const EventCommandId &command, Control *control)
 {
-    if (command == "Window::Close") {
+    if (command == "Window::Close")
+    {
         //Our window is closing.
-        if (m_deleteOnWindowClose) {
+        if (m_deleteOnWindowClose)
+        {
             delete this;
             //We return false so that the window itself can see this command.
             return false;
@@ -59,10 +64,9 @@ bool WindowController::processWindowCommand( const EventCommandId &command, Cont
 }
 
 //CONSTRUCTOR
-WindowController::WindowController() : m_window( NULL )
-    , m_deleteOnWindowClose( true )
-{}
+WindowController::WindowController() : m_window(NULL), m_deleteOnWindowClose(true)
+{
+}
 
 //DESTRUCTOR
-WindowController::~WindowController( void ) {}
-
+WindowController::~WindowController(void) {}

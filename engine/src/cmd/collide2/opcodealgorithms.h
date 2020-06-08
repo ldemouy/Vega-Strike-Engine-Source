@@ -31,7 +31,7 @@ namespace CS
    * Swap two elements
    */
   template <class T>
-  CS_FORCEINLINE_TEMPLATEMETHOD void Swap (T& a, T& b)
+  CS_FORCEINLINE_TEMPLATEMETHOD void Swap(T &a, T &b)
   {
     T tmp = a;
     a = b;
@@ -49,11 +49,11 @@ namespace CS
    * \endcode
    */
   template <class T, class Fn>
-  CS_FORCEINLINE_TEMPLATEMETHOD Fn& ForEach (T it, Fn& Func)
+  CS_FORCEINLINE_TEMPLATEMETHOD Fn &ForEach(T it, Fn &Func)
   {
-    while (it.HasNext ())
+    while (it.HasNext())
     {
-      Func (it.Next ());
+      Func(it.Next());
     }
     return Func;
   }
@@ -63,11 +63,11 @@ namespace CS
    * given by Func.
    */
   template <class T, class Fn>
-  CS_FORCEINLINE_TEMPLATEMETHOD Fn& ForEach (T* start, T* end, Fn& Func)
+  CS_FORCEINLINE_TEMPLATEMETHOD Fn &ForEach(T *start, T *end, Fn &Func)
   {
     while (start != end)
     {
-      Func (*start);
+      Func(*start);
       start++;
     }
     return Func;
@@ -78,16 +78,15 @@ namespace CS
    * given by Func.
    */
   template <class T, class Fn, class P>
-  CS_FORCEINLINE_TEMPLATEMETHOD Fn& ForEach (T it, Fn& Func, P& p)
+  CS_FORCEINLINE_TEMPLATEMETHOD Fn &ForEach(T it, Fn &Func, P &p)
   {
-    while (it.HasNext ())
+    while (it.HasNext())
     {
-      Func (it.Next (), p);
+      Func(it.Next(), p);
     }
     return Func;
   }
 
-
-}
+} // namespace CS
 
 #endif // __CSUTIL_ALGORITHMS_H__

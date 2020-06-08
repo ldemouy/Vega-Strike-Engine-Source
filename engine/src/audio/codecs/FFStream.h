@@ -10,9 +10,11 @@
 
 #include "vsfilesystem.h"
 
-namespace Audio {
+namespace Audio
+{
 
-    namespace __impl {
+    namespace __impl
+    {
         struct FFData;
     };
 
@@ -28,9 +30,9 @@ namespace Audio {
      */
     class FFStream : public Stream
     {
-    private: 
+    private:
         __impl::FFData *ffData;
-        
+
     public:
         /** Open the specified OGG file, or whine about it
          * @param path the file path
@@ -38,30 +40,29 @@ namespace Audio {
          *      default, the first audio stream is opened.
          * @param type the file type, used by resource management APIs
          */
-        FFStream(const std::string& path, int streamIndex = 0, VSFileSystem::VSFileType type = VSFileSystem::UnknownFile);
-        
+        FFStream(const std::string &path, int streamIndex = 0, VSFileSystem::VSFileType type = VSFileSystem::UnknownFile);
+
         virtual ~FFStream();
-        
+
     protected:
-        
         /** @see Stream::getLengthImpl */
         virtual double getLengthImpl() const;
-        
+
         /** @see Stream::getPositionImpl */
         virtual double getPositionImpl() const;
-        
+
         /** @see Stream::seekImpl */
         virtual void seekImpl(double position);
-        
+
         /** @see Stream::getBufferImpl */
         virtual void getBufferImpl(void *&buffer, unsigned int &bufferSize);
-        
+
         /** @see Stream::nextBufferImpl */
         virtual void nextBufferImpl();
     };
 
-};
+}; // namespace Audio
 
-#endif//HAVE_FFMPEG
+#endif //HAVE_FFMPEG
 
-#endif//__AUDIO_FF_STREAM_H__INCLUDED__
+#endif //__AUDIO_FF_STREAM_H__INCLUDED__

@@ -12,26 +12,26 @@
 namespace Radar
 {
 
-std::unique_ptr<Display> Factory(Type::Value type)
-{
-    switch (type)
+    std::unique_ptr<Display> Factory(Type::Value type)
     {
-    case Type::NullDisplay:
-        return std::unique_ptr<Display>(new NullDisplay);
+        switch (type)
+        {
+        case Type::NullDisplay:
+            return std::unique_ptr<Display>(new NullDisplay);
 
-    case Type::SphereDisplay:
-        return std::unique_ptr<Display>(new SphereDisplay);
+        case Type::SphereDisplay:
+            return std::unique_ptr<Display>(new SphereDisplay);
 
-    case Type::BubbleDisplay:
-        return std::unique_ptr<Display>(new BubbleDisplay);
+        case Type::BubbleDisplay:
+            return std::unique_ptr<Display>(new BubbleDisplay);
 
-    case Type::PlaneDisplay:
-        return std::unique_ptr<Display>(new PlaneDisplay);
+        case Type::PlaneDisplay:
+            return std::unique_ptr<Display>(new PlaneDisplay);
 
-    default:
-        assert(false);
-        throw std::invalid_argument("Unknown radar type");
+        default:
+            assert(false);
+            throw std::invalid_argument("Unknown radar type");
+        }
     }
-}
 
 } // namespace Radar

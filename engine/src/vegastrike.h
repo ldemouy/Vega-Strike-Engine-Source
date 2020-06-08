@@ -34,7 +34,6 @@ extern float audio_atom_var;
 extern float SIMULATION_ATOM;
 extern float AUDIO_ATOM;
 
-
 #include "vs_math.h"
 
 #include <stdlib.h>
@@ -48,37 +47,34 @@ extern float AUDIO_ATOM;
 #include <stdarg.h>
 #include "debug_vs.h"
 
-
-
-
-#if defined (WIN32) || defined (__CYGWIN__)
+#if defined(WIN32) || defined(__CYGWIN__)
 /* Note that this will define WIN32 for us, if it isn't defined already
  */
- #ifndef NOMINMAX
-  #define NOMINMAX
- #endif //tells VCC not to generate min/max macros
- #include <windows.h>
- //#include <wingdi.h>
- #include <time.h>
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif //tells VCC not to generate min/max macros
+#include <windows.h>
+//#include <wingdi.h>
+#include <time.h>
 #else
- #include <sys/time.h>
- #include <sys/stat.h>
- #include <unistd.h>
- //#include "command.h"
+#include <sys/time.h>
+#include <sys/stat.h>
+#include <unistd.h>
+//#include "command.h"
 #endif /* defined( WIN32 ) || defined( __CYGWIN__ ) */
 
 #ifndef NO_GFX
- #if defined (__APPLE__) || defined (MACOSX)
-  #include <OpenGL/gl.h>
-  #include <OpenGL/glu.h>
-  #include <GLUT/glut.h>
- #else
-  #define __glext_h_
-  #include <GL/gl.h>
-  #include <GL/glu.h>
-  #include <GL/glut.h>
-  #undef __glext_h_
- #endif
+#if defined(__APPLE__) || defined(MACOSX)
+#include <OpenGL/gl.h>
+#include <OpenGL/glu.h>
+#include <GLUT/glut.h>
+#else
+#define __glext_h_
+#include <GL/gl.h>
+#include <GL/glu.h>
+#include <GL/glut.h>
+#undef __glext_h_
+#endif
 #endif
 
 #define PROG_NAME "vegastrike"
@@ -90,4 +86,3 @@ extern float AUDIO_ATOM;
 #ifdef __cplusplus
 
 #endif
-

@@ -12,7 +12,8 @@
 
 #include "vsfilesystem.h"
 
-namespace Audio {
+namespace Audio
+{
 
     // Forward definitions
     class Stream;
@@ -37,57 +38,55 @@ namespace Audio {
     private:
         SharedPtr<Stream> stream;
         VSFileSystem::VSFileType type;
-        
+
     protected:
         /** Internal constructor used by derived classes */
-        SimpleSound(const std::string& name, VSFileSystem::VSFileType type = VSFileSystem::UnknownFile, bool streaming = false);
-        
+        SimpleSound(const std::string &name, VSFileSystem::VSFileType type = VSFileSystem::UnknownFile, bool streaming = false);
+
     public:
         virtual ~SimpleSound();
-        
+
         /** VSFileSystem File type */
         VSFileSystem::VSFileType getType() const { return type; }
-        
+
         // The following section contains supporting methods for accessing the stream.
         // Subclasses need not bother with actual stream management, they need only worry
         // about sending the samples to where they're needed.
     protected:
-        
         /** Do we have an open stream? */
         bool isStreamLoaded() const { return stream.get() != 0; }
-        
+
         /** Initialize the stream.
          * @remarks Calling this when the stream has already been initialized will
          *      raise an ReasourceAlreadyLoadedException.
          */
         void loadStream();
-        
+
         /** Uninitialize the stream
          * @remarks Calling this when isStreamLoaded() returns false will raise an
          *      ResourceNotLoadedException.
          */
         void closeStream();
-        
+
         /** Get a pointer to the stream
          * @remarks Calling this when isStreamLoaded() returns false will raise an
          *      ResourceNotLoadedException.
          */
         SharedPtr<Stream> getStream() const;
-        
+
         /** Read from the stream into the buffer 
          * @remarks Will throw EndOfStreamException when the end of the stream
          *      is reached. Any other exception is probably fatal.
          */
         void readBuffer(SoundBuffer &buffer);
-        
-        // The following section contains basic Sound interface implementation 
+
+        // The following section contains basic Sound interface implementation
         // functions provided by SimpleSound.
     protected:
         /** @copydoc Sound::abortLoad */
         virtual void abortLoad();
-
     };
 
-};
+}; // namespace Audio
 
-#endif//__AUDIO_SIMPLESOUND_H__INCLUDED__
+#endif //__AUDIO_SIMPLESOUND_H__INCLUDED__

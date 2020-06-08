@@ -26,4 +26,3 @@
 std::string getdatadir();
 
 #endif
-

@@ -11,12 +11,11 @@
 #include "missile_generic.h"
 #include "nebula_generic.h"
 
-template class GameUnit< Enhancement >;
-template class GameUnit< Nebula >;
-template class GameUnit< Asteroid >;
-template class GameUnit< Unit >;
-template class GameUnit< Building >;
-template class GameUnit< Missile >;
-template class GameUnit< Planet >;
+template class GameUnit<Enhancement>;
+template class GameUnit<Nebula>;
+template class GameUnit<Asteroid>;
+template class GameUnit<Unit>;
+template class GameUnit<Building>;
+template class GameUnit<Missile>;
+template class GameUnit<Planet>;
 #endif
-

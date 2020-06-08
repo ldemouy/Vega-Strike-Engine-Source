@@ -2,83 +2,87 @@
 #include "gl_globals.h"
 static struct _GFXFogState
 {
-    bool     enabled;
-    FOGMODE  curmode;
-    float    density;
-    float    nnear;
-    float    ffar;
+    bool enabled;
+    FOGMODE curmode;
+    float density;
+    float nnear;
+    float ffar;
     GFXColor c;
     int index;
-    _GFXFogState() : c( 0, 0, 0, 0 )
+    _GFXFogState() : c(0, 0, 0, 0)
     {
-        index   = 0;
-        nnear   = 0;
-        ffar    = 1;
+        index = 0;
+        nnear = 0;
+        ffar = 1;
         density = 1;
         curmode = FOG_EXP;
     }
-}
-GFXFogState;
+} GFXFogState;
 
-void GFXFogMode( const FOGMODE fog )
+void GFXFogMode(const FOGMODE fog)
 {
-    if (GFXFogState.curmode != fog || !GFXFogState.enabled) {
+    if (GFXFogState.curmode != fog || !GFXFogState.enabled)
+    {
         switch (fog)
         {
         case FOG_OFF:
             if (!GFXFogState.enabled)
                 return;
-            glDisable( GL_FOG );
+            glDisable(GL_FOG);
             GFXFogState.enabled = false;
             return;
         case FOG_EXP:
-            glFogi( GL_FOG_MODE, GL_EXP );
+            glFogi(GL_FOG_MODE, GL_EXP);
             break;
         case FOG_EXP2:
-            glFogi( GL_FOG_MODE, GL_EXP2 );
+            glFogi(GL_FOG_MODE, GL_EXP2);
             break;
         case FOG_LINEAR:
-            glFogi( GL_FOG_MODE, GL_LINEAR );
+            glFogi(GL_FOG_MODE, GL_LINEAR);
             break;
         }
     }
-    if (!GFXFogState.enabled) glEnable( GL_FOG );
+    if (!GFXFogState.enabled)
+        glEnable(GL_FOG);
     GFXFogState.curmode = fog;
     GFXFogState.enabled = true;
     //glHint (GL_FOG_HINT,GL_NICEST );
 }
 
-void GFXFogDensity( const float fogdensity )
+void GFXFogDensity(const float fogdensity)
 {
-    if (fogdensity != GFXFogState.density) {
-        glFogf( GL_FOG_DENSITY, fogdensity );
+    if (fogdensity != GFXFogState.density)
+    {
+        glFogf(GL_FOG_DENSITY, fogdensity);
         GFXFogState.density = fogdensity;
     }
 }
 
-void GFXFogLimits( const float fognear, const float fogfar )
+void GFXFogLimits(const float fognear, const float fogfar)
 {
-    if (GFXFogState.nnear != fognear || GFXFogState.ffar != fogfar) {
+    if (GFXFogState.nnear != fognear || GFXFogState.ffar != fogfar)
+    {
         GFXFogState.nnear = fognear;
-        GFXFogState.ffar  = fogfar;
-        glFogf( GL_FOG_START, fognear );
-        glFogf( GL_FOG_END, fogfar );
+        GFXFogState.ffar = fogfar;
+        glFogf(GL_FOG_START, fognear);
+        glFogf(GL_FOG_END, fogfar);
     }
 }
 
-void GFXFogColor( GFXColor c )
+void GFXFogColor(GFXColor c)
 {
-    if (c.r != GFXFogState.c.r || c.g != GFXFogState.c.g || c.b != GFXFogState.c.b || c.a != GFXFogState.c.a) {
-        glFogfv( GL_FOG_COLOR, &c.r );
+    if (c.r != GFXFogState.c.r || c.g != GFXFogState.c.g || c.b != GFXFogState.c.b || c.a != GFXFogState.c.a)
+    {
+        glFogfv(GL_FOG_COLOR, &c.r);
         GFXFogState.c = c;
     }
 }
 
-void GFXFogIndex( const int index )
+void GFXFogIndex(const int index)
 {
-    if (GFXFogState.index != index) {
-        glFogi( GL_FOG_INDEX, index );
+    if (GFXFogState.index != index)
+    {
+        glFogi(GL_FOG_INDEX, index);
         GFXFogState.index = index;
     }
 }
-

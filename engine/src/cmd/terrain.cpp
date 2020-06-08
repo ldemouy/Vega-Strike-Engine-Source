@@ -10,57 +10,52 @@
 #include <vector>
 #include "collection.h"
 #include "building.h"
-static std::vector< Terrain* >allterrains;
+static std::vector<Terrain *> allterrains;
 
-Terrain::Terrain( const char *filename,
-                  const Vector &scales,
-                  const float mass,
-                  const float radius,
-                  updateparity *updatetransform ) : QuadTree( filename, scales, radius )
-    , TotalSizeX( 0 )
-    , TotalSizeZ( 0 )
-    , mass( mass )
-    , whichstage( 0 )
+Terrain::Terrain(const char *filename,
+                 const Vector &scales,
+                 const float mass,
+                 const float radius,
+                 updateparity *updatetransform) : QuadTree(filename, scales, radius), TotalSizeX(0), TotalSizeZ(0), mass(mass), whichstage(0)
 {
     this->updatetransform = updatetransform;
-    allterrains.push_back( this );
-    draw = TERRAINRENDER|TERRAINUPDATE;
+    allterrains.push_back(this);
+    draw = TERRAINRENDER | TERRAINUPDATE;
 }
 
 Terrain::~Terrain()
 {
     for (unsigned int i = 0; i < allterrains.size(); i++)
-        if (allterrains[i] == this) {
-            allterrains.erase( allterrains.begin()+i );
+        if (allterrains[i] == this)
+        {
+            allterrains.erase(allterrains.begin() + i);
             break;
         }
 }
 
-void Terrain::SetTransformation( const Matrix &Mat )
+void Terrain::SetTransformation(const Matrix &Mat)
 {
-    QuadTree::SetTransformation( Mat );
+    QuadTree::SetTransformation(Mat);
 }
 
-void Terrain::ApplyForce( Unit *un, const Vector &normal, float dist )
+void Terrain::ApplyForce(Unit *un, const Vector &normal, float dist)
 {
-    un->ApplyForce( normal*.4*un->GetMass()
-                   *fabs( normal.Dot( (un->GetVelocity()/SIMULATION_ATOM) )+fabs( dist )/(SIMULATION_ATOM) ) );
-    un->ApplyDamage( un->Position().Cast()-normal*un->rSize(), -normal, .5*fabs( normal.Dot(
-                                                                                    un->GetVelocity() ) )*mass*SIMULATION_ATOM,
-                     un, GFXColor( 1, 1, 1, 1 ), NULL );
+    un->ApplyForce(normal * .4 * un->GetMass() * fabs(normal.Dot((un->GetVelocity() / SIMULATION_ATOM)) + fabs(dist) / (SIMULATION_ATOM)));
+    un->ApplyDamage(un->Position().Cast() - normal * un->rSize(), -normal, .5 * fabs(normal.Dot(un->GetVelocity())) * mass * SIMULATION_ATOM,
+                    un, GFXColor(1, 1, 1, 1), NULL);
 }
-void Terrain::Collide( Unit *un, const Matrix &t )
+void Terrain::Collide(Unit *un, const Matrix &t)
 {
     Vector norm;
     if (un->isUnit() == BUILDINGPTR)
         return;
-    float  dist = GetHeight( un->Position().Cast(), norm, t, TotalSizeX, TotalSizeZ )-un->rSize();
+    float dist = GetHeight(un->Position().Cast(), norm, t, TotalSizeX, TotalSizeZ) - un->rSize();
     if (dist < 0)
-        ApplyForce( un, norm, -dist );
+        ApplyForce(un, norm, -dist);
 }
-void Terrain::Collide( Unit *un )
+void Terrain::Collide(Unit *un)
 {
-    Collide( un, transformation );
+    Collide(un, transformation);
 }
 void Terrain::DisableUpdate()
 {
@@ -82,46 +77,46 @@ void Terrain::EnableDraw()
 void Terrain::Collide()
 {
     Unit *unit;
-    for (un_iter iter = _Universe->activeStarSystem()->getUnitList().createIterator(); (unit=*iter)!=NULL; ++iter)
-        Collide( unit );
+    for (un_iter iter = _Universe->activeStarSystem()->getUnitList().createIterator(); (unit = *iter) != NULL; ++iter)
+        Collide(unit);
 }
 static GFXColor getTerrainColor()
 {
     float col[4] = {.1f, .1f, .1f, 1.0f};
-    return GFXColor( col[0], col[1], col[2], col[3] );
+    return GFXColor(col[0], col[1], col[2], col[3]);
 }
 void Terrain::CollideAll()
 {
     for (unsigned int i = 0; i < allterrains.size(); i++)
-        if (allterrains[i]->draw&TERRAINRENDER)
+        if (allterrains[i]->draw & TERRAINRENDER)
             allterrains[i]->Collide();
 }
 void Terrain::DeleteAll()
 {
-    while ( !allterrains.empty() )
+    while (!allterrains.empty())
         delete allterrains.front();
 }
 void Terrain::Render()
 {
-    static GFXColor terraincolor( getTerrainColor() );
-    GFXColor tmpcol( 0, 0, 0, 1 );
-    GFXGetLightContextAmbient( tmpcol );
-    GFXLightContextAmbient( terraincolor );
+    static GFXColor terraincolor(getTerrainColor());
+    GFXColor tmpcol(0, 0, 0, 1);
+    GFXGetLightContextAmbient(tmpcol);
+    GFXLightContextAmbient(terraincolor);
     QuadTree::Render();
-    GFXLightContextAmbient( tmpcol );
+    GFXLightContextAmbient(tmpcol);
 }
 void Terrain::RenderAll()
 {
-    static GFXColor terraincolor( getTerrainColor() );
-    GFXColor tmpcol( 0, 0, 0, 1 );
-    GFXGetLightContextAmbient( tmpcol );
-    GFXLightContextAmbient( terraincolor );
+    static GFXColor terraincolor(getTerrainColor());
+    GFXColor tmpcol(0, 0, 0, 1);
+    GFXGetLightContextAmbient(tmpcol);
+    GFXLightContextAmbient(terraincolor);
     for (unsigned int i = 0; i < allterrains.size(); i++)
-        if (allterrains[i]->draw&TERRAINRENDER)
+        if (allterrains[i]->draw & TERRAINRENDER)
             allterrains[i]->Render();
-    GFXLightContextAmbient( tmpcol );
+    GFXLightContextAmbient(tmpcol);
 }
-void Terrain::UpdateAll( int resolution )
+void Terrain::UpdateAll(int resolution)
 {
     int res = 4;
     if (resolution == 0)
@@ -130,13 +125,13 @@ void Terrain::UpdateAll( int resolution )
         while (resolution > res)
             res *= 4;
     for (unsigned int i = 0; i < allterrains.size(); i++)
-        if (allterrains[i]->draw&TERRAINUPDATE) {
-            allterrains[i]->Update( res, allterrains[i]->whichstage%res, allterrains[i]->updatetransform );
+        if (allterrains[i]->draw & TERRAINUPDATE)
+        {
+            allterrains[i]->Update(res, allterrains[i]->whichstage % res, allterrains[i]->updatetransform);
             allterrains[i]->whichstage++;
         }
 }
-Vector Terrain::GetUpVector( const Vector &pos )
+Vector Terrain::GetUpVector(const Vector &pos)
 {
-    return GetNormal( pos, Vector( 0, 1, 0 ) );
+    return GetNormal(pos, Vector(0, 1, 0));
 }
-

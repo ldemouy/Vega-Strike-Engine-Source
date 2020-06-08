@@ -31,7 +31,7 @@ const char *datadirs[] = {
     ".",
     "../data",
     "../../data",
-//Added for MacOS X
+    //Added for MacOS X
     "../Resources/data",
 #ifdef DATA_DIR
     DATA_DIR,
@@ -55,39 +55,44 @@ const char *datadirs[] = {
 string getdatadir()
 {
     string datadir;
-    char   tmppwd[65536];
-    if (NULL == getcwd( tmppwd, 32768 ))
+    char tmppwd[65536];
+    if (NULL == getcwd(tmppwd, 32768))
         tmppwd[0] = '\0';
     unsigned int i = 0;
-    for (; i < ( sizeof (datadirs)/sizeof (datadirs[0]) ); i++) {
-        if( chdir( datadirs[i] ) )
+    for (; i < (sizeof(datadirs) / sizeof(datadirs[0])); i++)
+    {
+        if (chdir(datadirs[i]))
             continue;
-        FILE *tfp = fopen( "vegastrike.config", "r" );
-        if (tfp) {
-            fclose( tfp );
+        FILE *tfp = fopen("vegastrike.config", "r");
+        if (tfp)
+        {
+            fclose(tfp);
             //We have found the data directory
             break;
         }
     }
-    if ( i >= sizeof (datadirs)/sizeof (datadirs[0]) ) {
-        printf( "Unable to find data directory\n" );
-        for (i = 0; i < ( sizeof (datadirs)/sizeof (datadirs[0]) ); i++)
-            printf( "Tried %s\n", datadirs[i] );
+    if (i >= sizeof(datadirs) / sizeof(datadirs[0]))
+    {
+        printf("Unable to find data directory\n");
+        for (i = 0; i < (sizeof(datadirs) / sizeof(datadirs[0])); i++)
+            printf("Tried %s\n", datadirs[i]);
         datadir = tmppwd;
-        if( chdir( tmppwd ) )
-            printf( "Unable to set current directory to data directory\n" );
+        if (chdir(tmppwd))
+            printf("Unable to set current directory to data directory\n");
     }
     //Set data dir
-    else if (datadirs[i][0] != '/') {
+    else if (datadirs[i][0] != '/')
+    {
         //Was a relative path
-        datadir  = tmppwd;
+        datadir = tmppwd;
         datadir += '/';
         datadir += datadirs[i];
-    } else {
+    }
+    else
+    {
         datadir = datadirs[i];
     }
     return datadir;
 }
 
 #endif //!_WIN32
-

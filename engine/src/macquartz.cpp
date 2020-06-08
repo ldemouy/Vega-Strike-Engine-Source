@@ -1,11 +1,12 @@
-extern "C" {
-/*  void CGLErrorString() {
+extern "C"
+{
+    /*  void CGLErrorString() {
  *
  *  }
  *  void CGLSetFullScreen() {
  *
  *  }*/
-void CGMainDusplayID() {}                                                 /*
+    void CGMainDusplayID() {} /*
                                                                            *    void glClear() {
                                                                            *
                                                                            *    }
@@ -34,4 +35,3 @@ void CGMainDusplayID() {}                                                 /*
                                                                            *    void _glUnmapBufferARB() {}
                                                                            */
 }
-

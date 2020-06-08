@@ -5,13 +5,13 @@
 //#include <boost/python/converter/arg_from_python.hpp>
 
 #include "init.h"
-BOOST_PYTHON_BEGIN_CONVERSION_NAMESPACE BOOST_PYTHON_TO_PYTHON_BY_VALUE( Unit*, ::boost::python::to_python_value< UnitWrapper > () (
-                                                                            UnitWrapper( x ) ) );
-template < >
-struct default_result_converter::apply< Unit* >
+BOOST_PYTHON_BEGIN_CONVERSION_NAMESPACE BOOST_PYTHON_TO_PYTHON_BY_VALUE(Unit *, ::boost::python::to_python_value<UnitWrapper>()(
+                                                                                    UnitWrapper(x)));
+template <>
+struct default_result_converter::apply<Unit *>
 {
-//typedef boost::python::to_python_value<Unit *> type;
-    typedef::boost::python::default_result_converter::apply< UnitWrapper >::type type;
+    //typedef boost::python::to_python_value<Unit *> type;
+    typedef ::boost::python::default_result_converter::apply<UnitWrapper>::type type;
 };
 
 /*namespace converter{
@@ -63,21 +63,20 @@ struct default_result_converter::apply< Unit* >
 
 BOOST_PYTHON_END_CONVERSION_NAMESPACE
 #else
-TO_PYTHON_SMART_POINTER( UnitWrapper );
-TO_PYTHON_SMART_POINTER( Cargo );
+TO_PYTHON_SMART_POINTER(UnitWrapper);
+TO_PYTHON_SMART_POINTER(Cargo);
 
-PYTHON_INIT_GLOBALS( Unit, UnitWrapper )
+PYTHON_INIT_GLOBALS(Unit, UnitWrapper)
 BOOST_PYTHON_BEGIN_CONVERSION_NAMESPACE
-inline PyObject*to_python( Unit*un )
+inline PyObject *to_python(Unit *un)
 {
-    return to_python( UnitWrapper( un ) );
+    return to_python(UnitWrapper(un));
 }
-inline Unit * from_python( PyObject *p, boost::python::type< Unit* >)
+inline Unit *from_python(PyObject *p, boost::python::type<Unit *>)
 {
-    UnitWrapper uw = ( from_python( p, boost::python::type< UnitWrapper& > () ) );
+    UnitWrapper uw = (from_python(p, boost::python::type<UnitWrapper &>()));
     return uw.GetUnit();
 }
 BOOST_PYTHON_END_CONVERSION_NAMESPACE
 #endif
 #endif
-

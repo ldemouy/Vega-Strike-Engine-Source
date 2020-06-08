@@ -35,76 +35,82 @@
 class AImissionScript : public FlyByWire
 {
 public:
-///saves scriptname in the filename var
-    AImissionScript( string modulename );
+    ///saves scriptname in the filename var
+    AImissionScript(string modulename);
     ~AImissionScript();
-///Loads the AI script from the hard drive, or executes if loaded
+    ///Loads the AI script from the hard drive, or executes if loaded
     void Execute();
 
     virtual string getOrderDescription()
     {
         char buffer[300];
-        sprintf( buffer, "%s:%d:%s", modulename.c_str(), classid, getActionString().c_str() );
+        sprintf(buffer, "%s:%d:%s", modulename.c_str(), classid, getActionString().c_str());
         return buffer;
     }
 
 protected:
-
     string modulename;
     unsigned int classid;
-    bool   first_run;
+    bool first_run;
 };
 
 class AIFlyToWaypoint : public AImissionScript
 {
-public: AIFlyToWaypoint( const QVector &waypoint, float vel, bool afburn, float range );
+public:
+    AIFlyToWaypoint(const QVector &waypoint, float vel, bool afburn, float range);
 
     QVector waypoint;
-    float   vel;
-    float   range;
-    bool    aburn;
+    float vel;
+    float range;
+    bool aburn;
 };
 class AIFlyToWaypointDefend : public AImissionScript
 {
-public: AIFlyToWaypointDefend( const QVector &waypoint, float vel, bool afburn, float range, float defend_range );
+public:
+    AIFlyToWaypointDefend(const QVector &waypoint, float vel, bool afburn, float range, float defend_range);
 
     QVector waypoint;
-    float   vel;
-    float   range;
-    bool    aburn;
+    float vel;
+    float range;
+    bool aburn;
 };
 
 class AIFlyToJumppoint : public AImissionScript
 {
-public: AIFlyToJumppoint( Unit *jumppoint, float fly_speed, bool aft );
+public:
+    AIFlyToJumppoint(Unit *jumppoint, float fly_speed, bool aft);
 };
 
 class AIPatrol : public AImissionScript
 {
-public: AIPatrol( int mode, const QVector &area, float range, Unit *around_unit, float patrol_speed );
+public:
+    AIPatrol(int mode, const QVector &area, float range, Unit *around_unit, float patrol_speed);
 };
 
 class AIPatrolDefend : public AImissionScript
 {
-public: AIPatrolDefend( int mode, const QVector &area, float range, Unit *around_unit, float patrol_speed );
+public:
+    AIPatrolDefend(int mode, const QVector &area, float range, Unit *around_unit, float patrol_speed);
 };
 
 class AISuperiority : public AImissionScript
 {
-public: AISuperiority();
+public:
+    AISuperiority();
 };
 
 class AIOrderList : public AImissionScript
 {
-public: AIOrderList( olist_t *orderlist );
+public:
+    AIOrderList(olist_t *orderlist);
 
-    virtual olist_t * getOrderList()
+    virtual olist_t *getOrderList()
     {
         return my_orderlist;
     }
+
 private:
     olist_t *my_orderlist;
 };
 
 #endif
-

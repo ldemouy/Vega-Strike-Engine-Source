@@ -13,35 +13,35 @@ class VSSprite;
 namespace Radar
 {
 
-class Sensor;
+    class Sensor;
 
-// Draws radar on display
-class Display
-{
-public:
-    virtual ~Display() {}
-
-    virtual void Draw(const Sensor& sensor, VSSprite*, VSSprite *) = 0;
-
-    virtual void OnDockEnd() {}
-    virtual void OnJumpBegin() {}
-    virtual void OnJumpEnd() {}
-    virtual void OnPauseBegin() {}
-    virtual void OnPauseEnd() {}
-};
-
-struct Type
-{
-    enum Value
+    // Draws radar on display
+    class Display
     {
-        NullDisplay,
-        SphereDisplay,
-        BubbleDisplay,
-        PlaneDisplay
-    };
-};
+    public:
+        virtual ~Display() {}
 
-std::unique_ptr<Display> Factory(Type::Value);
+        virtual void Draw(const Sensor &sensor, VSSprite *, VSSprite *) = 0;
+
+        virtual void OnDockEnd() {}
+        virtual void OnJumpBegin() {}
+        virtual void OnJumpEnd() {}
+        virtual void OnPauseBegin() {}
+        virtual void OnPauseEnd() {}
+    };
+
+    struct Type
+    {
+        enum Value
+        {
+            NullDisplay,
+            SphereDisplay,
+            BubbleDisplay,
+            PlaneDisplay
+        };
+    };
+
+    std::unique_ptr<Display> Factory(Type::Value);
 
 } // namespace Radar
 

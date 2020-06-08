@@ -1,88 +1,108 @@
 #ifndef _UNIT_FIND_H_
 #define _UNIT_FIND_H_
 #include "unit_util.h"
-template < class Locator >
-void findObjectsFromPosition( CollideMap *cm,
-                              CollideMap::iterator location,
-                              Locator *check,
-                              QVector thispos,
-                              float thisrad,
-                              bool acquire_on_location )
+template <class Locator>
+void findObjectsFromPosition(CollideMap *cm,
+                             CollideMap::iterator location,
+                             Locator *check,
+                             QVector thispos,
+                             float thisrad,
+                             bool acquire_on_location)
 {
-    CollideMap::iterator cmend   = cm->end();
+    CollideMap::iterator cmend = cm->end();
     CollideMap::iterator cmbegin = cm->begin();
-    if ( cmend != cmbegin && !is_null( location ) ) {
+    if (cmend != cmbegin && !is_null(location))
+    {
         CollideMap::iterator tless = location;
         CollideMap::iterator tmore = location;
         bool workA = true;
         bool workB = true;
-        if ( location != cmend && !cm->Iterable( location ) ) {
-            CollideArray::CollidableBackref *br = static_cast< CollideArray::CollidableBackref* > (location);
-            location = cmbegin+br->toflattenhints_offset;
+        if (location != cmend && !cm->Iterable(location))
+        {
+            CollideArray::CollidableBackref *br = static_cast<CollideArray::CollidableBackref *>(location);
+            location = cmbegin + br->toflattenhints_offset;
             if (location == cmend)
                 location--;
-            tmore    = location;
-            tless    = location;
-        } else if (location != cmend) {
+            tmore = location;
+            tless = location;
+        }
+        else if (location != cmend)
+        {
             ++tmore;
-        } else {
+        }
+        else
+        {
             //location == cmend
             --location;
             if (acquire_on_location)
-                --tless;                  //allowed because cmend!=cmbegin
+                --tless; //allowed because cmend!=cmbegin
             workB = false;
         }
-        check->init( cm, location );
-        if (!acquire_on_location) {
+        check->init(cm, location);
+        if (!acquire_on_location)
+        {
             if (tless != cmbegin)
                 --tless;
             else
                 workA = false;
         }
-        while (workA || workB) {
-            if ( workA
-                && !check->cullless( tless ) ) {
+        while (workA || workB)
+        {
+            if (workA && !check->cullless(tless))
+            {
                 float rad = (*tless)->radius;
-                if ( rad != 0.0f && ( check->BoltsOrUnits() || ( check->UnitsOnly() == (rad > 0) ) ) ) {
+                if (rad != 0.0f && (check->BoltsOrUnits() || (check->UnitsOnly() == (rad > 0))))
+                {
                     float trad =
-                        check->NeedDistance() ? ( (*tless)->GetPosition()-thispos ).Magnitude()-fabs( rad )-thisrad : 0;
-                    if ( !check->acquire( trad, tless ) )
+                        check->NeedDistance() ? ((*tless)->GetPosition() - thispos).Magnitude() - fabs(rad) - thisrad : 0;
+                    if (!check->acquire(trad, tless))
                         workA = false;
                 }
                 if (tless != cmbegin)
                     tless--;
                 else
                     workA = false;
-            } else {workA = false; } if ( workB
-                                         && tmore != cmend
-                                         && !check->cullmore( tmore ) ) {
+            }
+            else
+            {
+                workA = false;
+            }
+            if (workB && tmore != cmend && !check->cullmore(tmore))
+            {
                 float rad = (*tmore)->radius;
-                if (rad!=0.0f&&(check->BoltsOrUnits()||(check->UnitsOnly()==(rad>0)))) {
+                if (rad != 0.0f && (check->BoltsOrUnits() || (check->UnitsOnly() == (rad > 0))))
+                {
                     float trad =
-                        check->NeedDistance() ? ( (*tmore)->GetPosition()-thispos ).Magnitude()-fabs( rad )-thisrad : 0;
-                    if ( !check->acquire( trad, tmore ) )
+                        check->NeedDistance() ? ((*tmore)->GetPosition() - thispos).Magnitude() - fabs(rad) - thisrad : 0;
+                    if (!check->acquire(trad, tmore))
                         workB = false;
                 }
                 tmore++;
-            } else {workB = false; }}
+            }
+            else
+            {
+                workB = false;
+            }
+        }
     }
 }
 
-template < class Locator >
-void findObjects( CollideMap *cm, CollideMap::iterator location, Locator *check )
+template <class Locator>
+void findObjects(CollideMap *cm, CollideMap::iterator location, Locator *check)
 {
-    if ( is_null( location ) )
+    if (is_null(location))
         return;
     QVector thispos = (**location).GetPosition();
-    float   thisrad = fabs( (*location)->radius );
-    findObjectsFromPosition( cm, location, check, thispos, thisrad, false );
+    float thisrad = fabs((*location)->radius);
+    findObjectsFromPosition(cm, location, check, thispos, thisrad, false);
 }
 
 class NearestUnitLocator
 {
     CollideMap::iterator location;
     double startkey;
-    float  rad;
+    float rad;
+
 public:
     Collidable::CollideRef retval;
     bool BoltsOrUnits()
@@ -101,25 +121,26 @@ public:
     {
         retval.unit = NULL;
     }
-    void init( CollideMap *cm, CollideMap::iterator parent )
+    void init(CollideMap *cm, CollideMap::iterator parent)
     {
         this->location = parent;
         startkey = (*location)->getKey();
         rad = FLT_MAX;
-        retval.unit    = NULL;
+        retval.unit = NULL;
     }
-    bool cullless( CollideMap::iterator tless )
+    bool cullless(CollideMap::iterator tless)
     {
-        return rad != FLT_MAX && (startkey-rad) > (*tless)->getKey();
+        return rad != FLT_MAX && (startkey - rad) > (*tless)->getKey();
     }
-    bool cullmore( CollideMap::iterator tmore )
+    bool cullmore(CollideMap::iterator tmore)
     {
-        return rad != FLT_MAX && (startkey+rad) < (*tmore)->getKey();
+        return rad != FLT_MAX && (startkey + rad) < (*tmore)->getKey();
     }
-    bool acquire( float distance, CollideMap::iterator i )
+    bool acquire(float distance, CollideMap::iterator i)
     {
-        if (distance < rad) {
-            rad    = distance;
+        if (distance < rad)
+        {
+            rad = distance;
             retval = (*i)->ref;
         }
         return true;
@@ -145,11 +166,11 @@ public:
     {
         return true;
     }
-    bool acquire( float distance, CollideMap::iterator i )
+    bool acquire(float distance, CollideMap::iterator i)
     {
         Collidable::CollideRef lastret = retval;
-        bool retval = NearestUnitLocator::acquire( distance, i );
-        if ( memcmp( (void*) &retval, (void*) &lastret, sizeof (Collidable::CollideRef) ) )
+        bool retval = NearestUnitLocator::acquire(distance, i);
+        if (memcmp((void *)&retval, (void *)&lastret, sizeof(Collidable::CollideRef)))
             isUnit = (*i)->radius > 0;
         return retval;
     }
@@ -165,10 +186,10 @@ public:
     {
         return true;
     }
-    bool acquire( float distance, CollideMap::iterator i )
+    bool acquire(float distance, CollideMap::iterator i)
     {
-        if ( UnitUtil::isSignificant( (*i)->ref.unit ) )
-            return NearestUnitLocator::acquire( distance, i );
+        if (UnitUtil::isSignificant((*i)->ref.unit))
+            return NearestUnitLocator::acquire(distance, i);
         return true;
     }
 };
@@ -183,25 +204,22 @@ public:
     {
         return true;
     }
-    bool acquire( float distance, CollideMap::iterator i )
+    bool acquire(float distance, CollideMap::iterator i)
     {
-        if ( UnitUtil::isSignificant( (*i)->ref.unit ) || UnitUtil::isCapitalShip( (*i)->ref.unit ) )
-            return NearestUnitLocator::acquire( distance, i );
+        if (UnitUtil::isSignificant((*i)->ref.unit) || UnitUtil::isCapitalShip((*i)->ref.unit))
+            return NearestUnitLocator::acquire(distance, i);
         return true;
     }
 };
-template < class T >
+template <class T>
 class UnitWithinRangeLocator
 {
 public:
     T action;
     double startkey;
-    float  radius;
-    float  maxUnitRadius;
-    UnitWithinRangeLocator( float radius, float maxUnitRadius ) :
-        startkey( 0 )
-        , radius( radius )
-        , maxUnitRadius( maxUnitRadius ) {}
+    float radius;
+    float maxUnitRadius;
+    UnitWithinRangeLocator(float radius, float maxUnitRadius) : startkey(0), radius(radius), maxUnitRadius(maxUnitRadius) {}
 
     bool UnitsOnly()
     {
@@ -216,41 +234,42 @@ public:
         return true;
     }
 
-    void init( CollideMap *cm, CollideMap::iterator parent )
+    void init(CollideMap *cm, CollideMap::iterator parent)
     {
         startkey = (*parent)->getKey();
     }
-    bool cullless( CollideMap::iterator tless )
+    bool cullless(CollideMap::iterator tless)
     {
-        double tmp = startkey-radius-maxUnitRadius;
+        double tmp = startkey - radius - maxUnitRadius;
         return tmp > (*tless)->getKey();
     }
-    bool cullmore( CollideMap::iterator tmore )
+    bool cullmore(CollideMap::iterator tmore)
     {
-        return startkey+radius+maxUnitRadius < (*tmore)->getKey();
+        return startkey + radius + maxUnitRadius < (*tmore)->getKey();
     }
 
-    bool acquire( float dist, CollideMap::iterator i )
+    bool acquire(float dist, CollideMap::iterator i)
     {
         if (dist < radius)
             //Inside radius...
-            return action.acquire( (*i)->ref.unit, dist );
+            return action.acquire((*i)->ref.unit, dist);
         return true;
     }
 };
-template < class T >
-class UnitWithinRangeOfPosition : public UnitWithinRangeLocator< T >
+template <class T>
+class UnitWithinRangeOfPosition : public UnitWithinRangeLocator<T>
 {
-public: UnitWithinRangeOfPosition( float radius, float maxUnitRadius, const Collidable &key_iterator ) :
-        UnitWithinRangeLocator< T > ( radius, maxUnitRadius )
+public:
+    UnitWithinRangeOfPosition(float radius, float maxUnitRadius, const Collidable &key_iterator) : UnitWithinRangeLocator<T>(radius, maxUnitRadius)
     {
         this->startkey = key_iterator.getKey();
     }
-    void init( CollideMap *cm, CollideMap::iterator parent ) {}
+    void init(CollideMap *cm, CollideMap::iterator parent) {}
 };
 class UnitPtrLocator
 {
     const void *unit;
+
 public:
     bool retval;
     bool BoltsOrUnits()
@@ -265,25 +284,24 @@ public:
     {
         return false;
     }
-    UnitPtrLocator( const void *unit )
+    UnitPtrLocator(const void *unit)
     {
-        retval     = false;
+        retval = false;
         this->unit = unit;
     }
-    bool cullless( CollideMap::iterator tless )
+    bool cullless(CollideMap::iterator tless)
     {
         return retval;
     }
-    bool cullmore( CollideMap::iterator tmore )
+    bool cullmore(CollideMap::iterator tmore)
     {
         return retval;
     }
-    bool acquire( float distance, CollideMap::iterator i )
+    bool acquire(float distance, CollideMap::iterator i)
     {
-        return retval = ( ( (const void*) ( (*i)->ref.unit ) ) == unit );
+        return retval = (((const void *)((*i)->ref.unit)) == unit);
     }
-    void init( CollideMap *cm, CollideMap::iterator parent ) {}
+    void init(CollideMap *cm, CollideMap::iterator parent) {}
 };
 
 #endif
-

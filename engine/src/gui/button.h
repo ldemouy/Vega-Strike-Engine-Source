@@ -24,48 +24,49 @@
  * The only external functions it requires that aren't provided by system libs are in glut_support.h
  */
 
-#if defined (__APPLE__) || defined (MACOSX)
-    #include <OpenGL/gl.h>
-    #include <GLUT/glut.h>
+#if defined(__APPLE__) || defined(MACOSX)
+#include <OpenGL/gl.h>
+#include <GLUT/glut.h>
 #else
 #ifdef _WIN32
-    #ifndef NOMINMAX
-        #define NOMINMAX
-    #endif //tells VCC not to generate min/max macros
-    #include <windows.h>
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif //tells VCC not to generate min/max macros
+#include <windows.h>
 #else
-    #include <GL/gl.h>
+#include <GL/gl.h>
 #endif
-    #include <GL/glut.h>
+#include <GL/glut.h>
 #endif
 
 #include "glut_support.h"
 
 class Button
 {
-public: Button( float x, float y, float wid, float hei, const char *name );
-    ~Button( void );
+public:
+    Button(float x, float y, float wid, float hei, const char *name);
+    ~Button(void);
 
-    void Refresh( void );
+    void Refresh(void);
 
-    int MouseClick( int button, int state, float x, float );
-    int MouseMove( float x, float y );
-    int MouseMoveClick( float x, float y );
-    int DoMouse( int type, float x, float y, int button, int state );
-    void ModifyName( const char *newname );
+    int MouseClick(int button, int state, float x, float);
+    int MouseMove(float x, float y);
+    int MouseMoveClick(float x, float y);
+    int DoMouse(int type, float x, float y, int button, int state);
+    void ModifyName(const char *newname);
+
 private:
-//Stores the location and label of the button
+    //Stores the location and label of the button
     float xcoord;
     float ycoord;
     float width;
     float height;
     char *label;
 
-//Flag that says wether or not to highlight the button
-    int   highlight;
+    //Flag that says wether or not to highlight the button
+    int highlight;
 
-    int Inside( float x, float y );
+    int Inside(float x, float y);
 };
 
-#endif    //GUI_BUTTON_H
-
+#endif //GUI_BUTTON_H

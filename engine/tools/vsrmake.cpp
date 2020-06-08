@@ -47,38 +47,44 @@
 using std::string;
 using std::vector;
 
-class PackageFileCreator {
+class PackageFileCreator
+{
 public:
-  PackageFileCreator(const string &file);
-  ~PackageFileCreator(void) { finish(); }
-  void add(const string &anyname);
-private:
-  void finish(void);
-  void addDirectory(const string &dirname);
-  void addFile(const string &filename, uint32_t file_size);
+	PackageFileCreator(const string &file);
+	~PackageFileCreator(void) { finish(); }
+	void add(const string &anyname);
 
-  FILEHandle pkg;
-  uint32_t offsetInPackage;
-  vector<VSRMember> pkg_index;
+private:
+	void finish(void);
+	void addDirectory(const string &dirname);
+	void addFile(const string &filename, uint32_t file_size);
+
+	FILEHandle pkg;
+	uint32_t offsetInPackage;
+	vector<VSRMember> pkg_index;
 };
 
 static char usage[] =
-  "Syntax:\tpkgcreate <pkgfile> <path1> [... <pathN>]\n"
-  "\t<pkgfile> The package file to create or overwrite.\n"
-  "\t<path1> The first file/directory to add to the package file.\n";
+	"Syntax:\tpkgcreate <pkgfile> <path1> [... <pathN>]\n"
+	"\t<pkgfile> The package file to create or overwrite.\n"
+	"\t<path1> The first file/directory to add to the package file.\n";
 
-int main(int argc,char *argv[])
+int main(int argc, char *argv[])
 {
-	if (argc<2) {
+	if (argc < 2)
+	{
 		fprintf(stderr, "%s", usage);
 		exit(0);
 	}
 
-	try {
+	try
+	{
 		PackageFileCreator pkg(argv[1]);
-		for (int i=2;i<argc;++i)
+		for (int i = 2; i < argc; ++i)
 			pkg.add(argv[i]);
-	} catch (int en) {
+	}
+	catch (int en)
+	{
 	}
 	return 0;
 }
@@ -89,20 +95,20 @@ PackageFileCreator::PackageFileCreator(const string &file)
 	offsetInPackage = 12;
 }
 
-void
-PackageFileCreator::addFile(const string &fname, uint32_t file_size)
+void PackageFileCreator::addFile(const string &fname, uint32_t file_size)
 {
 	if (fseek(pkg, offsetInPackage, SEEK_SET))
 		throw errno;
 	FILEHandle incoming(fname, "rb");
 	char buf[1024];
-	uint32_t size=file_size;
+	uint32_t size = file_size;
 
-	while (size>0) {
-		int bi=fread(buf, 1, 1024, incoming);
-		if (bi<=0)
+	while (size > 0)
+	{
+		int bi = fread(buf, 1, 1024, incoming);
+		if (bi <= 0)
 			throw errno;
-		size-=bi;
+		size -= bi;
 		int bo = fwrite(buf, 1, bi, pkg);
 		if (bi != bo)
 			throw errno;
@@ -111,37 +117,42 @@ PackageFileCreator::addFile(const string &fname, uint32_t file_size)
 	offsetInPackage += file_size;
 }
 
-void
-PackageFileCreator::addDirectory(const string &dname)
+void PackageFileCreator::addDirectory(const string &dname)
 {
-	DIR *dd=opendir(dname.c_str());
+	DIR *dd = opendir(dname.c_str());
 
-	if (dd==0)
+	if (dd == 0)
 		throw errno;
 	for (struct dirent *dentry = readdir(dd); dentry != 0;
-		 dentry = readdir(dd)) {
-		try {
-		if (dentry->d_name[0]!='.')
-			add(dname+'/'+dentry->d_name);
-		} catch (int) {
+		 dentry = readdir(dd))
+	{
+		try
+		{
+			if (dentry->d_name[0] != '.')
+				add(dname + '/' + dentry->d_name);
+		}
+		catch (int)
+		{
 		}
 	}
 	closedir(dd);
 }
 
-void
-PackageFileCreator::add(const string &pname)
+void PackageFileCreator::add(const string &pname)
 {
 	struct stat stats;
 
 	stat(pname.c_str(), &stats);
 
-	try {
+	try
+	{
 		if (S_ISDIR(stats.st_mode))
 			addDirectory(pname);
 		else if (S_ISREG(stats.st_mode))
 			addFile(pname, stats.st_size);
-	} catch (int error) {
+	}
+	catch (int error)
+	{
 		fprintf(stderr, "Addition of %s failed:\n\t%s\n", pname.c_str(),
 				strerror(error));
 	}
@@ -150,7 +161,7 @@ PackageFileCreator::add(const string &pname)
 void PackageFileCreator::finish(void)
 {
 	//Sort the index
-	sort(pkg_index.begin(),pkg_index.end());
+	sort(pkg_index.begin(), pkg_index.end());
 	VSRHeader header;
 	memcpy(header.magic, "VSR", 4);
 	header.entryTableOffset = offsetInPackage;
@@ -159,8 +170,9 @@ void PackageFileCreator::finish(void)
 	fwrite(&header, sizeof(VSRHeader), 1, pkg);
 	//Now write entry table to file
 	fseek(pkg, offsetInPackage, SEEK_SET);
-	for (vector<VSRMember>::iterator ii=pkg_index.begin();
-		 ii != pkg_index.end(); ++ii) {
+	for (vector<VSRMember>::iterator ii = pkg_index.begin();
+		 ii != pkg_index.end(); ++ii)
+	{
 		VSRPEntry entry;
 		entry.fileLength = ii->fileLength;
 		entry.offset = ii->offset;

@@ -11,23 +11,25 @@
 #include "Exceptions.h"
 #include "Singleton.h"
 
-namespace XMLDOM {
+namespace XMLDOM
+{
     class XMLDocument;
 };
 
-
-namespace Audio {
+namespace Audio
+{
 
     // The manager needs not know what it's managing... right?
     // At least not its interface.
     class SourceTemplate;
-    
-    namespace __impl {
-        
+
+    namespace __impl
+    {
+
         // Forward declaration of internal template manager data
         struct TemplateManagerData;
-        
-    };
+
+    }; // namespace __impl
 
     /**
      * Template manager class.
@@ -50,43 +52,41 @@ namespace Audio {
     {
     private:
         AutoPtr<__impl::TemplateManagerData> data;
-    
+
     public:
         /** Construct a new manager 
          * @remarks End-users of the class shouldn't be using this. Singletons need it.
          */
         TemplateManager();
-        
+
         ~TemplateManager();
-        
-        
+
         /** Add a definition file, persistent or not */
         void addDefinitionFile(const std::string &path, bool persistent);
-        
+
         /** Add a definition document under a specified path, always persistent (as there is no way to reload) */
         void addDefinitionFile(const std::string &path, SharedPtr<XMLDOM::XMLDocument> definition);
-        
+
         /** Get an already loaded definition file, fail if not found or not loaded */
         SharedPtr<XMLDOM::XMLDocument> getDefinitionFile(const std::string &path) const;
-        
+
         /** Get an already loaded definition file, load if not loaded */
         SharedPtr<XMLDOM::XMLDocument> getDefinitionFile(const std::string &path);
-        
-        
+
         /** Set default definition file
          * @remarks when a template named without its source definition file is requested, it is assumed
          *      to come from this definition file.
          */
         void setDefaultDefinitionFile(const std::string &x);
-        
+
         /** Get the default definition file
          * @see setDefaultDefinitionFile
          */
-        const std::string& getDefaultDefinitionFile() const;
-        
+        const std::string &getDefaultDefinitionFile() const;
+
         /** Get a source template by its key */
         SharedPtr<SourceTemplate> getSourceTemplate(const std::string &name);
-        
+
         /** Add a manually-created template 
           * @param name the name portion of the template's key
           * @param tpl the template to be added
@@ -100,7 +100,7 @@ namespace Audio {
           * @throws ResourceAlreadyLoadedException, when the key already has an associated template.
           */
         void addSourceTemplate(const std::string &name, SharedPtr<SourceTemplate> tpl, bool perm = true);
-    
+
         /** Add a manually-created template 
           * @param path the path portion of the template's key
           * @param name the name portion of the template's key
@@ -116,15 +116,12 @@ namespace Audio {
           * @throws ResourceAlreadyLoadedException, when the key already has an associated template.
           */
         void addSourceTemplate(const std::string &path, const std::string &name, SharedPtr<SourceTemplate> tpl, bool perm = true);
-    
+
     protected:
-    
         /** Get a source template by its key */
         SharedPtr<SourceTemplate> loadSourceTemplate(const std::string &name);
-        
-        
     };
-    
-};
 
-#endif//__AUDIO_TEMPLATEMANAGER_H__INCLUDED__
+}; // namespace Audio
+
+#endif //__AUDIO_TEMPLATEMANAGER_H__INCLUDED__

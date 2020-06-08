@@ -36,43 +36,62 @@
 using namespace VSFileSystem;
 
 //Read a texture from a file and bind it.
-bool GuiTexture::read( const std::string &fileName )
+bool GuiTexture::read(const std::string &fileName)
 {
-    Texture*oldTexture( m_texture );
-    m_texture = new Texture( fileName.c_str(), 0, BILINEAR );
-    if (m_texture && !m_texture->LoadSuccess() && oldTexture) {
+    Texture *oldTexture(m_texture);
+    m_texture = new Texture(fileName.c_str(), 0, BILINEAR);
+    if (m_texture && !m_texture->LoadSuccess() && oldTexture)
+    {
         delete m_texture;
         m_texture = oldTexture;
-    } else {
+    }
+    else
+    {
         delete oldTexture;
     }
     return m_texture->LoadSuccess();
 }
 
 //Draw this texture, stretching to fit the rect.
-void GuiTexture::draw( const Rect &rect ) const
+void GuiTexture::draw(const Rect &rect) const
 {
     //Don't draw unless there is something usable.
-    if ( m_texture == NULL || !m_texture->LoadSuccess() )
+    if (m_texture == NULL || !m_texture->LoadSuccess())
         return;
     m_texture->MakeActive();
-    GFXColor4f( 1, 1, 1, 1 );
+    GFXColor4f(1, 1, 1, 1);
     const float verts[4 * (3 + 2)] = {
-        rect.left(),  rect.top(),    0,  0, 1,
-        rect.left(),  rect.bottom(), 0,  0, 0,
-        rect.right(), rect.bottom(), 0,  1, 0,
-        rect.right(), rect.top(),    0,  1, 1,
+        rect.left(),
+        rect.top(),
+        0,
+        0,
+        1,
+        rect.left(),
+        rect.bottom(),
+        0,
+        0,
+        0,
+        rect.right(),
+        rect.bottom(),
+        0,
+        1,
+        0,
+        rect.right(),
+        rect.top(),
+        0,
+        1,
+        1,
     };
-    GFXDraw( GFXQUAD, verts, 4, 3, 0, 2 );
+    GFXDraw(GFXQUAD, verts, 4, 3, 0, 2);
 }
 
 //CONSTRUCTION
-GuiTexture::GuiTexture( void ) :
-    m_texture( NULL )
-{}
-
-GuiTexture::~GuiTexture( void )
+GuiTexture::GuiTexture(void) : m_texture(NULL)
 {
-    if (m_texture) delete m_texture;
 }
 
+GuiTexture::~GuiTexture(void)
+{
+    if (m_texture)
+        delete m_texture;
+}

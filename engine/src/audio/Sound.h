@@ -8,7 +8,8 @@
 #include "Types.h"
 #include "Format.h"
 
-namespace Audio {
+namespace Audio
+{
 
     // Forward declaration of Streams
     class Stream;
@@ -25,51 +26,51 @@ namespace Audio {
     private:
         std::string name;
         Format format;
-    
+
     protected:
         /** @note Accessible to derived classes to support external unloading (ie: memory-short events) */
-        struct Flags {
+        struct Flags
+        {
             /** Loaded state of the resource.
             */
             int loaded : 1;
-            
+
             /** Background loading state of the resource.
             * @note Accessible to derived classes to support easier and safer threading
             */
-            int loading : 1; 
-            
+            int loading : 1;
+
             /** Sound is a streaming resource 
             * @note Accessible to derived classes to support easier and safer threading
              */
             int streaming : 1;
         } flags;
-        
+
     protected:
         /** Internal constructor used by derived classes */
-        Sound(const std::string& name, bool streaming);
-        
+        Sound(const std::string &name, bool streaming);
+
         /** Protected Write access to the sound's format, for implementations. */
-        Format& getFormat() { return format; };
-        
-        
+        Format &getFormat() { return format; };
+
     public:
         virtual ~Sound();
-        
+
         /** Return the path of the associated file. */
-        const std::string& getName() const { return name; };
-        
+        const std::string &getName() const { return name; };
+
         /** Return the format of the sound resource. */
-        const Format& getFormat() const { return format; };
-        
+        const Format &getFormat() const { return format; };
+
         /** Return whether the resource has been loaded or not */
         bool isLoaded() const { return flags.loaded; }
-        
+
         /** Return whether the resource is being loaded in the background */
         bool isLoading() const { return flags.loading; }
-        
+
         /** Return whether the resource is being loaded in the background */
         bool isStreaming() const { return flags.streaming; }
-        
+
         /** Load the resource if not loaded 
          * @param wait If true, the function will return only when the resource
          *      has been loaded (or failed to load). Exceptions will be risen on
@@ -84,15 +85,14 @@ namespace Audio {
          *      became loaded.
          */
         void load(bool wait = true);
-        
+
         /** Unload the resource if loaded */
         void unload();
-        
+
         // The following section contains all the virtual functions that need be implemented
         // by a concrete Sound class. All are protected, so the stream interface is independent
         // of implementations.
     protected:
-    
         /** loadImpl should call this upon process termination 
          * @remarks Either from the foreground thread or the background thread, 
          *      whichever is performing the actual load. 
@@ -100,34 +100,32 @@ namespace Audio {
          * @param success Whether or not the process succeeded in loading the resource
          */
         virtual void onLoaded(bool success);
-        
+
         /** Wait for background loading to finish
          * @remarks The base implementation checks for completion periodically.
          *      Implementations are likely to have better ways to do this, so they're
          *      welcome to override this method.
          */
         virtual void waitLoad();
-        
+
         /** Load the resource
          * @note Assume it is unloaded and not loading
          */
         virtual void loadImpl(bool wait) = 0;
-        
+
         /** Abort an in-progress background load procedure
          * @note Although no exceptions should be risen, the abort request may
          *      not be carried out for various reasons. The caller should check
          *      that on return by calling isLoaded() / isLoading().
          */
         virtual void abortLoad() = 0;
-        
-        
+
         /** Unload the resource.
          * @note Assume it is loaded
          */
         virtual void unloadImpl() = 0;
-        
     };
 
-};
+}; // namespace Audio
 
-#endif//__AUDIO_SOUND_H__INCLUDED__
+#endif //__AUDIO_SOUND_H__INCLUDED__

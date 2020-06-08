@@ -42,59 +42,61 @@
 #include "cmd/unit_generic.h"
 #include "mission.h"
 
-PYTHON_BEGIN_MODULE( Base )
+PYTHON_BEGIN_MODULE(Base)
 //Nothing here, but keeps those files that do a "import Base" happy.
-PYTHON_END_MODULE( Base )
+PYTHON_END_MODULE(Base)
 
-PYTHON_BEGIN_MODULE( Briefing )
+PYTHON_BEGIN_MODULE(Briefing)
 //Nothing here, but keeps those files that do a "import Briefing" happy.
-PYTHON_END_MODULE( Briefing )
-
+PYTHON_END_MODULE(Briefing)
 
 void InitBase()
 {
-    PyImport_AppendInittab("Base",PYTHON_MODULE_INIT_FUNCTION(Base));
+    PyImport_AppendInittab("Base", PYTHON_MODULE_INIT_FUNCTION(Base));
 }
 
 void InitBriefing()
 {
-    PyImport_AppendInittab("Briefing",PYTHON_MODULE_INIT_FUNCTION(Briefing));
+    PyImport_AppendInittab("Briefing", PYTHON_MODULE_INIT_FUNCTION(Briefing));
 }
 
 void InitBase2()
 {
     Python::reseterrors();
-    PYTHON_INIT_MODULE( Base );
+    PYTHON_INIT_MODULE(Base);
     Python::reseterrors();
 }
 void InitBriefing2()
 {
     Python::reseterrors();
-    PYTHON_INIT_MODULE( Briefing );
+    PYTHON_INIT_MODULE(Briefing);
     Python::reseterrors();
 }
 
 void Mission::DirectorLoop()
 {
-    gametime += SIMULATION_ATOM;     //elapsed;
+    gametime += SIMULATION_ATOM; //elapsed;
 
-    try {
+    try
+    {
         if (runtime.pymissions)
             runtime.pymissions->Execute();
     }
-    catch (...) {
-        if ( PyErr_Occurred() ) {
+    catch (...)
+    {
+        if (PyErr_Occurred())
+        {
             PyErr_Print();
             PyErr_Clear();
-            fflush( stderr );
-            fflush( stdout );
-        } throw;
+            fflush(stderr);
+            fflush(stdout);
+        }
+        throw;
     }
 }
 void Mission::BriefingUpdate() {}
 void Mission::DirectorBenchmark() {}
-varInst* Mission::call_briefing( missionNode *node, int mode )
+varInst *Mission::call_briefing(missionNode *node, int mode)
 {
     return NULL;
 }
-

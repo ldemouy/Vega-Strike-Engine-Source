@@ -37,59 +37,57 @@
 class EventManager
 {
 public:
-//Use this instead of deleting, because other events that happen at the
-//same time may delete the same object.
-    static void addToDeleteQueue( EventResponder *controlToDelete );
-//STATIC: Initialize the event manager.  This starts the event loop, etc.
-//This may be called more than once -- it does nothing after the
-//first call.
-    static void initializeEventManager( void );
+    //Use this instead of deleting, because other events that happen at the
+    //same time may delete the same object.
+    static void addToDeleteQueue(EventResponder *controlToDelete);
+    //STATIC: Initialize the event manager.  This starts the event loop, etc.
+    //This may be called more than once -- it does nothing after the
+    //first call.
+    static void initializeEventManager(void);
 
-//Add a new event responder to the top of the chain.
-//This responder will get events *first*.
-    void pushResponder( EventResponder *responder );
+    //Add a new event responder to the top of the chain.
+    //This responder will get events *first*.
+    void pushResponder(EventResponder *responder);
 
-//Remove an event responder from the chain.
-//"all" = True means get rid of all instances of the responder in the chain.
-//False means get rid of the topmost one only.
-    void removeResponder( EventResponder *responder, bool top = false );
+    //Remove an event responder from the chain.
+    //"all" = True means get rid of all instances of the responder in the chain.
+    //False means get rid of the topmost one only.
+    void removeResponder(EventResponder *responder, bool top = false);
 
-//Send a command through the responder chain.
-    void sendCommand( const EventCommandId &id, Control *control );
+    //Send a command through the responder chain.
+    void sendCommand(const EventCommandId &id, Control *control);
 
-//Get the current mouse position.
-    Point mouseLoc( void )
+    //Get the current mouse position.
+    Point mouseLoc(void)
     {
         return m_mouseLoc;
     }
 
 protected:
-//CONSTRUCTION
-//Constructor isn't public.  Use initializeEventManager.
-    EventManager( void );
-    virtual ~EventManager( void );
+    //CONSTRUCTION
+    //Constructor isn't public.  Use initializeEventManager.
+    EventManager(void);
+    virtual ~EventManager(void);
 
-//INTERNAL IMPLEMENTATION
-//Send an input event through the responder chain.
-    void sendInputEvent( const InputEvent &event );
+    //INTERNAL IMPLEMENTATION
+    //Send an input event through the responder chain.
+    void sendInputEvent(const InputEvent &event);
 
-//DATA
-    std::vector< EventResponder* >m_responders; //Stack of responders for events.
+    //DATA
+    std::vector<EventResponder *> m_responders; //Stack of responders for events.
     Point m_mouseLoc;                           //Current mouse point.
 
-//HACKS FOR WORKING WITH CURRENT EVENT SYSTEM
-    void checkForShutDownEventManager( void );   //Called to revert to old event management.
-    void takeOverEventManagement( void );        //Called to grab event management from old system.
+    //HACKS FOR WORKING WITH CURRENT EVENT SYSTEM
+    void checkForShutDownEventManager(void); //Called to revert to old event management.
+    void takeOverEventManagement(void);      //Called to grab event management from old system.
 public:
-
-    static void ProcessMouseClick( int button, int state, int x, int y );
-    static void ProcessMouseActive( int x, int y );
-    static void ProcessMousePassive( int x, int y );
+    static void ProcessMouseClick(int button, int state, int x, int y);
+    static void ProcessMouseActive(int x, int y);
+    static void ProcessMousePassive(int x, int y);
 };
 
 //Get the global instance of the event manager
-EventManager& globalEventManager( void );
-bool hasGlobalEventManager( void );
+EventManager &globalEventManager(void);
+bool hasGlobalEventManager(void);
 
-#endif   //__EVENTMANAGER_H__
-
+#endif //__EVENTMANAGER_H__

@@ -12,8 +12,9 @@
 
 #include "al.h"
 
-namespace Audio {
-    
+namespace Audio
+{
+
     class OpenALRenderableSource;
 
     /**
@@ -35,16 +36,16 @@ namespace Audio {
     {
         ALBufferHandle bufferHandles[2];
         Timestamp bufferStarts[2];
-        
+
         SoundBuffer buffer;
-        
+
         Format targetFormat;
-        
+
         size_t bufferSamples;
-        
+
         unsigned char readBufferIndex;
         unsigned char playBufferIndex;
-        
+
     public:
         /** Internal constructor used by derived classes 
          * @param name the resource's name
@@ -53,22 +54,22 @@ namespace Audio {
          *      remember double buffering is used, so this holds the number of
          *      samples below which a read would be triggered.
          */
-        OpenALStreamingSound(const std::string& name, VSFileSystem::VSFileType type = VSFileSystem::UnknownFile,
-            unsigned int bufferSamples = 0);
-        
+        OpenALStreamingSound(const std::string &name, VSFileSystem::VSFileType type = VSFileSystem::UnknownFile,
+                             unsigned int bufferSamples = 0);
+
     public:
         virtual ~OpenALStreamingSound();
-        
+
         // The following section contains supporting methods for accessing the stream.
         // Subclasses need not bother with actual stream management, they need only worry
         // about sending the samples to where they're needed.
     protected:
         /** @copydoc Sound::loadImpl */
         virtual void loadImpl(bool wait);
-        
+
         /** @copydoc Sound::unloadImpl */
         virtual void unloadImpl();
-        
+
         // The following section contains package-private methods.
         // Only OpenAL renderer classes should access them, NOT YOU
     public:
@@ -86,7 +87,7 @@ namespace Audio {
          *      Any other exception would be fatal.
          */
         ALBufferHandle readAndFlip();
-        
+
         /** Notify a dequeued buffer
          *
          * @remarks The function will not do anything, but it will mark the specified buffer
@@ -94,16 +95,16 @@ namespace Audio {
          *      expected to have detached the buffer from the source.
          */
         void unqueueBuffer(ALBufferHandle buffer);
-        
+
         /** Reset the buffer queue */
         void flushBuffers();
-        
+
         /** Get the time base of the stream
          *
          * @returns The timestamp of the first unreturned buffer's starting point.
          */
         Timestamp getTimeBase() const;
-        
+
         /** 
          * Set the stream's position, in seconds
          * @see Stream::seek(double)
@@ -111,6 +112,6 @@ namespace Audio {
         void seek(double position);
     };
 
-};
+}; // namespace Audio
 
-#endif//__AUDIO_OPENALSTREAMINGSOUND_H__INCLUDED__
+#endif //__AUDIO_OPENALSTREAMINGSOUND_H__INCLUDED__

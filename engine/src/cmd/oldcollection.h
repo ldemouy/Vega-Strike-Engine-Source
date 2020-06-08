@@ -11,44 +11,45 @@ class Unit;
 class UnitCollection
 {
 private:
-///units is the beginning of the list. It isn't a pointer to reduce indirection
+    ///units is the beginning of the list. It isn't a pointer to reduce indirection
     class UnitListNode
     {
 #ifdef _TEST_
-        friend void Iterate( UnitCollection &c );
+        friend void Iterate(UnitCollection &c);
 #endif
-public:
+    public:
         Unit *unit;
         UnitListNode *next;
 
-        UnitListNode( Unit *unit );
-///These are functions for iterator use only
-        void PostInsert( Unit *un );
-/// iterator use only
+        UnitListNode(Unit *unit);
+        ///These are functions for iterator use only
+        void PostInsert(Unit *un);
+        /// iterator use only
         void Remove();
-        UnitListNode( Unit *unit, UnitListNode *next );
+        UnitListNode(Unit *unit, UnitListNode *next);
         ~UnitListNode();
 
-private: UnitListNode();
-        UnitListNode( const UnitListNode& );
-        UnitListNode& operator=( const UnitListNode& );
-    }
-    *u;
-///Destroys the list until init is called. Functions will segfault.
+    private:
+        UnitListNode();
+        UnitListNode(const UnitListNode &);
+        UnitListNode &operator=(const UnitListNode &);
+    } * u;
+    ///Destroys the list until init is called. Functions will segfault.
     void destr();
-///Initializes the list so that there are 2 empty nodes (u and u->next)  NULL unit terminates this list.
+    ///Initializes the list so that there are 2 empty nodes (u and u->next)  NULL unit terminates this list.
     void init()
     {
-        u = new UnitListNode( NULL );
-        u->next = new UnitListNode( NULL, new UnitListNode( NULL ) );
+        u = new UnitListNode(NULL);
+        u->next = new UnitListNode(NULL, new UnitListNode(NULL));
     }
+
 public:
-///Initislizes the first unit and then calls init;
+    ///Initislizes the first unit and then calls init;
     UnitCollection()
     {
         init();
     }
-///destroys the list permanently
+    ///destroys the list permanently
     ~UnitCollection()
     {
         destr();
@@ -56,21 +57,23 @@ public:
     class UnitIterator
     {
 #ifdef _TEST_
-        friend void Iterate( UnitCollection &c );
+        friend void Iterate(UnitCollection &c);
 #endif
-private:
-///the position in the list
+    private:
+        ///the position in the list
         UnitListNode *pos;
-///Finds the next unit (or NULL) that isn't Killed()
+        ///Finds the next unit (or NULL) that isn't Killed()
         void GetNextValidUnit();
-public: UnitIterator() : pos( NULL ) {}
-///Creates this unit iterator
-        UnitIterator( UnitListNode *start ) : pos( start )
+
+    public:
+        UnitIterator() : pos(NULL) {}
+        ///Creates this unit iterator
+        UnitIterator(UnitListNode *start) : pos(start)
         {
             GetNextValidUnit();
         }
-        UnitIterator( const UnitIterator &orig ) : pos( orig.pos ) {}
-        UnitIterator&operator=( const UnitIterator &orig )
+        UnitIterator(const UnitIterator &orig) : pos(orig.pos) {}
+        UnitIterator &operator=(const UnitIterator &orig)
         {
             pos = orig.pos;
             return *this;
@@ -84,23 +87,23 @@ public: UnitIterator() : pos( NULL ) {}
         {
             return pos->next->unit == NULL;
         }
-///removes something after pos.  eg the first valid unit. or current()
+        ///removes something after pos.  eg the first valid unit. or current()
         void remove();
-        void moveBefore( UnitCollection &otherList );
-///inserts in front of current
-        void preinsert( Unit *unit )
+        void moveBefore(UnitCollection &otherList);
+        ///inserts in front of current
+        void preinsert(Unit *unit)
         {
-            pos->next = new UnitListNode( unit, pos->next );
+            pos->next = new UnitListNode(unit, pos->next);
         }
-/// inserts after current
-        void postinsert( Unit *unit );
-///returns the unit pos is pointing at or NULL if all dead or end of list.
-        Unit * current()
+        /// inserts after current
+        void postinsert(Unit *unit);
+        ///returns the unit pos is pointing at or NULL if all dead or end of list.
+        Unit *current()
         {
             return pos->next->unit;
         }
-///advances the counter
-        Unit * next()
+        ///advances the counter
+        Unit *next()
         {
             advance();
             return current();
@@ -110,34 +113,36 @@ public: UnitIterator() : pos( NULL ) {}
             pos = pos->next;
             GetNextValidUnit();
         }
-        inline Unit* operator++( int )
+        inline Unit *operator++(int)
         {
             Unit *un = current();
             advance();
             return un;
         }
-        inline Unit* operator++()
+        inline Unit *operator++()
         {
             advance();
             return current();
         }
-        inline Unit* operator*()
+        inline Unit *operator*()
         {
             return current();
         }
     };
     class ConstIterator
     {
-private:
+    private:
         const UnitListNode *pos;
         void GetNextValidUnit();
-public: ConstIterator() : pos( NULL ) {}
-        ConstIterator( const ConstIterator &orig ) : pos( orig.pos ) {}
-        ConstIterator( const UnitListNode *start ) : pos( start )
+
+    public:
+        ConstIterator() : pos(NULL) {}
+        ConstIterator(const ConstIterator &orig) : pos(orig.pos) {}
+        ConstIterator(const UnitListNode *start) : pos(start)
         {
             GetNextValidUnit();
         }
-        ConstIterator&operator=( const ConstIterator &orig )
+        ConstIterator &operator=(const ConstIterator &orig)
         {
             pos = orig.pos;
             return *this;
@@ -146,12 +151,12 @@ public: ConstIterator() : pos( NULL ) {}
         {
             pos = NULL;
         }
-        const Unit * next()
+        const Unit *next()
         {
             advance();
             return current();
         }
-        const Unit * current() const
+        const Unit *current() const
         {
             return pos->next->unit;
         }
@@ -164,18 +169,18 @@ public: ConstIterator() : pos( NULL ) {}
             pos = pos->next;
             GetNextValidUnit();
         }
-        inline const Unit* operator++()
+        inline const Unit *operator++()
         {
             advance();
             return current();
         }
-        inline const Unit* operator++( int )
+        inline const Unit *operator++(int)
         {
             const Unit *un = current();
             advance();
             return un;
         }
-        inline const Unit* operator*() const
+        inline const Unit *operator*() const
         {
             return current();
         }
@@ -183,16 +188,18 @@ public: ConstIterator() : pos( NULL ) {}
 
     class ConstFastIterator
     {
-private:
+    private:
         const UnitListNode *pos;
-public: ConstFastIterator() : pos( NULL ) {}
-        ConstFastIterator( const ConstFastIterator &orig ) : pos( orig.pos ) {}
-        ConstFastIterator( const UnitListNode *start ) : pos( start ) {}
+
+    public:
+        ConstFastIterator() : pos(NULL) {}
+        ConstFastIterator(const ConstFastIterator &orig) : pos(orig.pos) {}
+        ConstFastIterator(const UnitListNode *start) : pos(start) {}
         ~ConstFastIterator()
         {
             pos = NULL;
         }
-        const Unit * current() const
+        const Unit *current() const
         {
             return pos->next->unit;
         }
@@ -200,22 +207,22 @@ public: ConstFastIterator() : pos( NULL ) {}
         {
             pos = pos->next;
         }
-        inline const Unit* operator++()
+        inline const Unit *operator++()
         {
             advance();
             return current();
         }
-        inline const Unit* operator++( int )
+        inline const Unit *operator++(int)
         {
             const Unit *un = current();
             advance();
             return un;
         }
-        inline const Unit* operator*() const
+        inline const Unit *operator*() const
         {
             return current();
         }
-        const Unit * next()
+        const Unit *next()
         {
             advance();
             return current();
@@ -224,33 +231,34 @@ public: ConstFastIterator() : pos( NULL ) {}
         {
             return pos->next->unit == NULL;
         }
-private:
-        ConstFastIterator&operator=( const ConstFastIterator& );
+
+    private:
+        ConstFastIterator &operator=(const ConstFastIterator &);
     };
 
     class FastIterator
     {
-private:
+    private:
         UnitListNode *pos;
-public:
 
-///removes something after pos.  eg the first valid unit. or current()
+    public:
+        ///removes something after pos.  eg the first valid unit. or current()
         void remove();
-///inserts in front of current
-        void preinsert( Unit *unit )
+        ///inserts in front of current
+        void preinsert(Unit *unit)
         {
-            pos->next = new UnitListNode( unit, pos->next );
+            pos->next = new UnitListNode(unit, pos->next);
         }
-/// inserts after current
-        void postinsert( Unit *unit );
-        FastIterator() : pos( NULL ) {}
-        FastIterator( const FastIterator &orig ) : pos( orig.pos ) {}
-        FastIterator( UnitListNode *start ) : pos( start ) {}
+        /// inserts after current
+        void postinsert(Unit *unit);
+        FastIterator() : pos(NULL) {}
+        FastIterator(const FastIterator &orig) : pos(orig.pos) {}
+        FastIterator(UnitListNode *start) : pos(start) {}
         ~FastIterator()
         {
             pos = NULL;
         }
-        Unit * current()
+        Unit *current()
         {
             return pos->next->unit;
         }
@@ -258,22 +266,22 @@ public:
         {
             pos = pos->next;
         }
-        inline Unit* operator++( int )
+        inline Unit *operator++(int)
         {
             Unit *un = current();
             advance();
             return un;
         }
-        inline Unit* operator++()
+        inline Unit *operator++()
         {
             advance();
             return current();
         }
-        inline Unit* operator*()
+        inline Unit *operator*()
         {
             return current();
         }
-        Unit * next()
+        Unit *next()
         {
             advance();
             return current();
@@ -282,76 +290,77 @@ public:
         {
             return pos->next->unit == NULL;
         }
-private:
-        FastIterator&operator=( const FastIterator& );
+
+    private:
+        FastIterator &operator=(const FastIterator &);
     };
     static void FreeUnusedNodes(); //not allowed to happen if any lists are traversing
-    static void * PushUnusedNode( UnitListNode *node );
+    static void *PushUnusedNode(UnitListNode *node);
 #ifdef _TEST_
-    friend void Iterate( UnitCollection &c );
+    friend void Iterate(UnitCollection &c);
 #endif
-//could be empty and this returns false...but usually correct...never has units when it returns true
+    //could be empty and this returns false...but usually correct...never has units when it returns true
     bool empty() const
     {
         return u->next->unit == NULL;
     }
     UnitIterator createIterator()
     {
-        return UnitIterator( u );
+        return UnitIterator(u);
     }
     ConstIterator constIterator() const
     {
-        return ConstIterator( u );
+        return ConstIterator(u);
     }
     FastIterator fastIterator()
     {
-        return FastIterator( u );
+        return FastIterator(u);
     }
     ConstFastIterator constFastIterator() const
     {
-        return ConstFastIterator( u );
+        return ConstFastIterator(u);
     }
-    void insert_unique( Unit *un )
+    void insert_unique(Unit *un)
     {
         for (UnitListNode *i = u->next; i != NULL; i = i->next)
-            if (i->unit == un) return;
-        prepend( un );
+            if (i->unit == un)
+                return;
+        prepend(un);
     }
-    void prepend( Unit *unit )
+    void prepend(Unit *unit)
     {
-        u->next = new UnitListNode( unit, u->next );
+        u->next = new UnitListNode(unit, u->next);
     }
-    void prepend( UnitListNode *unitlistnode )
+    void prepend(UnitListNode *unitlistnode)
     {
         unitlistnode->next = u->next;
         u->next = unitlistnode;
     }
-    void prepend( UnitIterator *iter );
-    void append( Unit *unit );
-    void append( UnitIterator *iter );
+    void prepend(UnitIterator *iter);
+    void append(Unit *unit);
+    void append(UnitIterator *iter);
     void clear()
     {
         destr();
         init();
     }
-    bool contains( const Unit *unit ) const;
-    bool remove( const Unit *unit );
+    bool contains(const Unit *unit) const;
+    bool remove(const Unit *unit);
     void cleanup();
-    Unit * front()
+    Unit *front()
     {
         return *createIterator();
     }
-    const Unit * front() const
+    const Unit *front() const
     {
         return *constIterator();
     }
-    UnitCollection( const UnitCollection &c );
-    const UnitCollection& operator=( const UnitCollection &c );
+    UnitCollection(const UnitCollection &c);
+    const UnitCollection &operator=(const UnitCollection &c);
 };
-typedef UnitCollection::UnitIterator      un_iter;
-typedef UnitCollection::ConstIterator     un_kiter;
+typedef UnitCollection::UnitIterator un_iter;
+typedef UnitCollection::ConstIterator un_kiter;
 typedef UnitCollection::ConstFastIterator un_fkiter;
-typedef UnitCollection::FastIterator      un_fiter;
+typedef UnitCollection::FastIterator un_fiter;
 
 #endif
-

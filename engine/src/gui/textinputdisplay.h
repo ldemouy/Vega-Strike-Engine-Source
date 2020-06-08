@@ -31,18 +31,20 @@
 
 class TextInputDisplay : public StaticDisplay
 {
-    std::vector< unsigned int >  local_keyboard_queue;
-    std::vector< unsigned int > *keyboard_queue;
+    std::vector<unsigned int> local_keyboard_queue;
+    std::vector<unsigned int> *keyboard_queue;
     char *disallowed;
-    bool  isFocused;
-    char  passwordChar;
-public: TextInputDisplay( std::vector< unsigned int > *keyboard_input_queue, const char *disallowed );
-//OVERRIDES - used for focusing input.
-    virtual void processUnfocus( const InputEvent &event );
-    virtual bool processMouseDown( const InputEvent &event );
-    virtual bool processKeypress( unsigned int pressedKey );
+    bool isFocused;
+    char passwordChar;
 
-    void setPassword( char passchar )
+public:
+    TextInputDisplay(std::vector<unsigned int> *keyboard_input_queue, const char *disallowed);
+    //OVERRIDES - used for focusing input.
+    virtual void processUnfocus(const InputEvent &event);
+    virtual bool processMouseDown(const InputEvent &event);
+    virtual bool processKeypress(unsigned int pressedKey);
+
+    void setPassword(char passchar)
     {
         passwordChar = passchar;
     }
@@ -51,5 +53,4 @@ public: TextInputDisplay( std::vector< unsigned int > *keyboard_input_queue, con
     virtual void draw();
 };
 
-#endif   //__TEXTINPUTDISPLAY_H__
-
+#endif //__TEXTINPUTDISPLAY_H__

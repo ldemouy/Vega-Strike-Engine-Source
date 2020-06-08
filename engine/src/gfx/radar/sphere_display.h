@@ -14,29 +14,29 @@ struct GFXColor;
 namespace Radar
 {
 
-struct ViewArea;
+    struct ViewArea;
 
-class SphereDisplay : public DualDisplayBase
-{
-public:
-    SphereDisplay();
-    virtual ~SphereDisplay();
+    class SphereDisplay : public DualDisplayBase
+    {
+    public:
+        SphereDisplay();
+        virtual ~SphereDisplay();
 
-    void Draw(const Sensor& sensor, VSSprite *, VSSprite *);
+        void Draw(const Sensor &sensor, VSSprite *, VSSprite *);
 
-private:
-    struct Impl;
-    std::unique_ptr< Impl > impl;
-    
-protected:
-    void DrawBackground(const Sensor&, const ViewArea&);
-    void DrawTrack(const Sensor&, const ViewArea&, const Track&, bool negate_z=false);
-    void DrawTargetMarker(const Vector&, const GFXColor&, float);
+    private:
+        struct Impl;
+        std::unique_ptr<Impl> impl;
 
-protected:
-    const float innerSphere;
-    float radarTime;
-};
+    protected:
+        void DrawBackground(const Sensor &, const ViewArea &);
+        void DrawTrack(const Sensor &, const ViewArea &, const Track &, bool negate_z = false);
+        void DrawTargetMarker(const Vector &, const GFXColor &, float);
+
+    protected:
+        const float innerSphere;
+        float radarTime;
+    };
 
 } // namespace Radar
 

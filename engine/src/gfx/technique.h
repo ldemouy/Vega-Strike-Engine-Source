@@ -9,7 +9,7 @@
 class Texture;
 class Technique;
 
-typedef boost::shared_ptr< Technique >TechniquePtr;
+typedef boost::shared_ptr<Technique> TechniquePtr;
 
 class Technique
 {
@@ -17,28 +17,28 @@ class Technique
     std::string fallback;
     bool compiled;
     int programVersion;
-    
+
 public:
     class Pass
     {
         /** Compiled and linked program */
         int program;
-        
+
         /** Compiled program version stamp */
         int programVersion;
-        
+
         /** Vertex Program file before compilation */
         std::string vertexProgram;
-        
+
         /** Fragment Program file before compilation */
         std::string fragmentProgram;
-        
-public:
+
+    public:
         enum Tristate
         {
-            False=0,
-            True =1,
-            Auto =2
+            False = 0,
+            True = 1,
+            Auto = 2
         };
 
         enum Type
@@ -52,7 +52,7 @@ public:
              * It is rendered using the fixed function pipeline.
              */
             FixedPass,
-            
+
             /** A shader pass is a configurable pass that uses shaders to do everything.
              * Vertex and fragment programs must be specified.
              */
@@ -63,22 +63,22 @@ public:
         {
             /** Whatever the mesh specifies as blend mode */
             Default,
-            
+
             /** Blend function ONE ONE */
             Add,
-            
+
             /** Blend function SRCCOLOR ZERO */
             Multiply,
-            
+
             /** Blend function ALPHA INVSRCALPHA */
             AlphaBlend,
-            
+
             /** Blend function ONE ZERO */
             Decal,
-            
+
             /** Blend function ONE INVSRCALPHA */
             PremultAlphaBlend,
-            
+
             /** Blend function ALPHA INVSRCALPHA for the first pass, ALPHA ONE for subsequent passes */
             MultiAlphaBlend
         };
@@ -116,16 +116,16 @@ public:
             {
                 /** Nothing - blank */
                 None,
-                
+
                 /** The mesh's Decal with specified numeric index */
                 Decal,
-                
+
                 /** The texture specified with a path */
                 File,
-                
+
                 /** The current environment cubemap */
                 Environment,
-                
+
                 /** The mesh's detail texture (if there are more than one, it can be indexed) */
                 Detail
             };
@@ -134,31 +134,31 @@ public:
             {
                 /** Nothing - blank */
                 TexDefault,
-                
+
                 /** Normal, 2D texture */
                 Tex2D,
-                
+
                 /** 3D DDS texture */
                 Tex3D,
-                
+
                 /** Packed cube texture */
                 TexCube,
-                
+
                 /** Separated cube texture */
                 TexSepCube
             };
-            
+
             SourceType sourceType;
             SourceType defaultType;
 
             Kind texKind;
 
-            int  sourceIndex;
-            int  defaultIndex;
-            int  targetIndex;
-            
+            int sourceIndex;
+            int defaultIndex;
+            int targetIndex;
+
             // Backup of mutable fields for shader reloading
-            int  origTargetIndex;
+            int origTargetIndex;
 
             /** For shader passes, the associated sampler uniform */
             std::string targetParamName;
@@ -168,7 +168,7 @@ public:
             std::string defaultPath;
 
             /** Contains the source texture if the source type is File */
-            boost::shared_ptr< Texture >texture;
+            boost::shared_ptr<Texture> texture;
         };
 
         struct ShaderParam
@@ -214,7 +214,7 @@ public:
 
                 /** Not an auto-param, a manual param, with constant value */
                 Constant,
-                
+
                 /** LightApparentSizeArray
                  * An float4 array with apparent sizes of all lights
                  * (only active ones have valid data).
@@ -232,19 +232,19 @@ public:
 
             std::string name;
             int id;
-            Semantic    semantic;
+            Semantic semantic;
             bool optional;
             float value[4];
         };
 
-private:
-        typedef std::vector< TextureUnit >TextureUnitList;
-        typedef std::vector< ShaderParam >ShaderParamList;
+    private:
+        typedef std::vector<TextureUnit> TextureUnitList;
+        typedef std::vector<ShaderParam> ShaderParamList;
 
         TextureUnitList textureUnits;
         ShaderParamList shaderParams;
 
-public:
+    public:
         /** Type of pass - shader or fixed pipeline */
         Type type;
 
@@ -253,7 +253,7 @@ public:
          * with SRGB_FRAMEBUFFER set to 0 (not supported) or 1 (supported).
          */
         bool sRGBAware;
-        
+
         /** Whether to write the color buffer or not */
         bool colorWrite;
 
@@ -261,31 +261,31 @@ public:
         Tristate zWrite;
 
         /** The number of lights this pass can handle, 0 means infinite */
-        unsigned int  perLightIteration;
+        unsigned int perLightIteration;
 
         /** The maximum number of iterations, 0 means infinite - nonzero helps keep performance acceptable */
-        unsigned int  maxIterations;
+        unsigned int maxIterations;
 
         /** Blending mode - either default or an override */
-        BlendMode     blendMode;
+        BlendMode blendMode;
 
         /** Z-test function - far queue always overrides with Always */
         DepthFunction depthFunction;
 
         /** Polygon backface culling mode. @Note Front will CULL Front faces, so standard is Back */
-        Face          cullMode;
+        Face cullMode;
 
         /** Polygon rasterization mode */
-        PolyMode      polyMode;
+        PolyMode polyMode;
 
         /** Polygon offset slope factor */
-        float         offsetFactor;
+        float offsetFactor;
 
         /** Polygon offset units */
-        float         offsetUnits;
+        float offsetUnits;
 
         /** Line width - for line-mode polygons */
-        float         lineWidth;
+        float lineWidth;
 
         /** Sequence number, the order in which passes are rendered */
         int sequence;
@@ -295,7 +295,7 @@ public:
         ~Pass();
 
         /** Set the vertex and fragment programs - throw on error */
-        void setProgram( const std::string &vertex, const std::string &fragment );
+        void setProgram(const std::string &vertex, const std::string &fragment);
 
         /** Get the vertex and fragment programs, compiled. 0 for fixed-function */
         int getCompiledProgram() const
@@ -314,11 +314,11 @@ public:
          *      bound to this texture unit.
          * @remarks [type] may be either Decal or File, mapping to equally named SourceType s
          */
-        void addTextureUnit( const std::string &source,
-                             int target,
-                             const std::string &deflt,
-                             const std::string &paramName,
-                             Technique::Pass::TextureUnit::Kind texKind );
+        void addTextureUnit(const std::string &source,
+                            int target,
+                            const std::string &deflt,
+                            const std::string &paramName,
+                            Technique::Pass::TextureUnit::Kind texKind);
 
         /** Add a constant shader param
          * @param name A string defining the shader's parameter name.
@@ -327,14 +327,14 @@ public:
          * @remarks Parameters with less than 4 values will simply ignore the other values and
          *      should be fed with any dummy value (like 0).
          */
-        void addShaderParam( const std::string&name, float value[4], bool optional );
+        void addShaderParam(const std::string &name, float value[4], bool optional);
 
         /** Add an automatic shader param
          * @param name A string defining the shader's parameter name.
          * @param semantic The kind of value that will be automatically put in the variable.
          * @param optional Optional parameters are allowed to be left unresolved.
          */
-        void addShaderParam( const std::string &name, ShaderParam::Semantic semantic, bool optional );
+        void addShaderParam(const std::string &name, ShaderParam::Semantic semantic, bool optional);
 
         /** Get the number of texture units in this pass */
         size_t getNumTextureUnits() const
@@ -343,13 +343,13 @@ public:
         }
 
         /** Get the specified texture unit */
-        const TextureUnit& getTextureUnit( int index ) const
+        const TextureUnit &getTextureUnit(int index) const
         {
             return textureUnits[index];
         }
 
         /** Get the specified texture unit */
-        TextureUnit& getTextureUnit( int index )
+        TextureUnit &getTextureUnit(int index)
         {
             return textureUnits[index];
         }
@@ -361,13 +361,13 @@ public:
         }
 
         /** Get the specified shader param */
-        const ShaderParam& getShaderParam( int index ) const
+        const ShaderParam &getShaderParam(int index) const
         {
             return shaderParams[index];
         }
 
         /** Get the specified shader param */
-        ShaderParam& getShaderParam( int index )
+        ShaderParam &getShaderParam(int index)
         {
             return shaderParams[index];
         }
@@ -383,33 +383,33 @@ public:
     };
 
 protected:
-    typedef std::vector< Pass > PassList;
+    typedef std::vector<Pass> PassList;
     PassList passes;
 
 public:
     /** Create a technique by loading and parsing the definition in [name].technique */
-    explicit Technique( const std::string &name );
+    explicit Technique(const std::string &name);
 
     /** Create a technique by copying another technique */
-    explicit Technique( const Technique &src );
-    
+    explicit Technique(const Technique &src);
+
     ~Technique();
 
-    const std::string& getName() const
+    const std::string &getName() const
     {
         return name;
     }
-    const std::string& getFallback() const
+    const std::string &getFallback() const
     {
         return fallback;
     }
-    
+
     /** returns true if the technique has been compiled */
     bool isCompiled() const
     {
         return compiled;
     }
-    
+
     /** returns true if the technique has been compiled with a matching program version */
     bool isCompiled(int programVersion) const
     {
@@ -422,18 +422,17 @@ public:
     {
         return passes.size();
     }
-    const Pass& getPass( int idx ) const
+    const Pass &getPass(int idx) const
     {
         return passes[idx];
     }
-    Pass& getPass( int idx )
+    Pass &getPass(int idx)
     {
         return passes[idx];
     }
 
     /** Cached technique factory function */
-    static TechniquePtr getTechnique( const std::string &name );
+    static TechniquePtr getTechnique(const std::string &name);
 };
 
 #endif //__TECHNIQUE_H__INCLUDED__
-

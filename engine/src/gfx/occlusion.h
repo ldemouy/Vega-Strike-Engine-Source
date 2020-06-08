@@ -26,13 +26,14 @@
 #include "gfxlib.h"
 #include "vec.h"
 
-namespace Occlusion {
+namespace Occlusion
+{
 
     /// Initialize occlusion system for a new frame
-    void /*GFXDRVAPI*/ start( );
+    void /*GFXDRVAPI*/ start();
 
     /// Finalize occlusion system for a frame, and free up resources
-    void /*GFXDRVAPI*/ end( );
+    void /*GFXDRVAPI*/ end();
 
     /** 
      * Register an occluder
@@ -44,7 +45,7 @@ namespace Occlusion {
      *          If true, it will be forcibly considered when
      *          rendering all objects. Ie: for planets.
      */
-    void /*GFXDRVAPI*/ addOccluder( const QVector &pos, float rSize, bool significant );
+    void /*GFXDRVAPI*/ addOccluder(const QVector &pos, float rSize, bool significant);
 
     /** 
      * Test occlusion between a light and an object
@@ -57,8 +58,8 @@ namespace Occlusion {
      * @returns An occlusion factor, with 0 being fully occluded 
      *          and 1 being fully clear.
      */
-    float /*GFXDRVAPI*/ testOcclusion( const QVector &lightPos, float lightSize, const QVector &pos, float rSize );
-    
-}
+    float /*GFXDRVAPI*/ testOcclusion(const QVector &lightPos, float lightSize, const QVector &pos, float rSize);
 
-#endif//_VS_OCCLUSION_H_
+} // namespace Occlusion
+
+#endif //_VS_OCCLUSION_H_

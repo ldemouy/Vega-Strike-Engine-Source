@@ -11,35 +11,35 @@
 namespace Radar
 {
 
-class DualDisplayBase : public Display
-{
-    typedef boost::rand48 RandomEngine;
-    typedef boost::normal_distribution<float> RandomDistribution;
-    typedef boost::variate_generator<RandomEngine&, RandomDistribution> RandomGenerator;
-    
-public:
-    DualDisplayBase();
+    class DualDisplayBase : public Display
+    {
+        typedef boost::rand48 RandomEngine;
+        typedef boost::normal_distribution<float> RandomDistribution;
+        typedef boost::variate_generator<RandomEngine &, RandomDistribution> RandomGenerator;
 
-    void OnPauseBegin();
-    void OnPauseEnd();
+    public:
+        DualDisplayBase();
 
-protected:
-    float Jitter(float errorOffset, float errorRange);
-    void Jitter(float errorOffset, float errorRange, Vector& position);
+        void OnPauseBegin();
+        void OnPauseEnd();
 
-protected:
-    ViewArea leftRadar;
-    ViewArea rightRadar;
-    bool isPaused;
+    protected:
+        float Jitter(float errorOffset, float errorRange);
+        void Jitter(float errorOffset, float errorRange, Vector &position);
 
-    RandomEngine randomEngine;
-    RandomDistribution randomDistribution;
-    RandomGenerator randomGenerator;
+    protected:
+        ViewArea leftRadar;
+        ViewArea rightRadar;
+        bool isPaused;
 
-private:
-    float lastRandomNumber;
-    Vector lastRandomVector;
-};
+        RandomEngine randomEngine;
+        RandomDistribution randomDistribution;
+        RandomGenerator randomGenerator;
+
+    private:
+        float lastRandomNumber;
+        Vector lastRandomVector;
+    };
 
 } // namespace Radar
 

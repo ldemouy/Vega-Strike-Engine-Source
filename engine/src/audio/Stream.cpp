@@ -9,14 +9,15 @@
 
 //using namespace std;
 
-namespace Audio {
+namespace Audio
+{
 
     using std::min;
 
-    Stream::Stream(const std::string& path)
+    Stream::Stream(const std::string &path)
     {
     }
-    
+
     Stream::~Stream()
     {
     }
@@ -42,33 +43,38 @@ namespace Audio {
         void *rbufferEnd;
         unsigned int rbufferSize;
         unsigned int rode = 0;
-        
-        try {
+
+        try
+        {
             getBufferImpl(rbuffer, rbufferSize);
-        } catch (const NoBufferException&) {
+        }
+        catch (const NoBufferException &)
+        {
             nextBufferImpl();
             getBufferImpl(rbuffer, rbufferSize);
             curBufferPos = rbuffer;
         }
-        rbufferEnd = ((char*)rbuffer) + rbufferSize;
-        
-        while (bufferSize > 0) {
-            if (!((curBufferPos >= rbuffer) && (curBufferPos < rbufferEnd))) {
+        rbufferEnd = ((char *)rbuffer) + rbufferSize;
+
+        while (bufferSize > 0)
+        {
+            if (!((curBufferPos >= rbuffer) && (curBufferPos < rbufferEnd)))
+            {
                 nextBufferImpl();
                 getBufferImpl(rbuffer, rbufferSize);
                 curBufferPos = rbuffer;
-                rbufferEnd = ((char*)rbuffer) + rbufferSize;
+                rbufferEnd = ((char *)rbuffer) + rbufferSize;
             }
-            
-            size_t remaining = min( bufferSize, (unsigned int)((char*)rbufferEnd - (char*)curBufferPos) ); //is there no std::ptrdiff?
+
+            size_t remaining = min(bufferSize, (unsigned int)((char *)rbufferEnd - (char *)curBufferPos)); //is there no std::ptrdiff?
             memcpy(buffer, curBufferPos, remaining);
-            buffer = (void*)((char*)buffer + remaining);
-            curBufferPos = (void*)((char*)curBufferPos + remaining);
+            buffer = (void *)((char *)buffer + remaining);
+            curBufferPos = (void *)((char *)curBufferPos + remaining);
             bufferSize -= remaining;
             rode += remaining;
         }
-        
+
         return rode;
     }
 
-};
+}; // namespace Audio

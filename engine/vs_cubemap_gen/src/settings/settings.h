@@ -1,8 +1,6 @@
 #ifndef __SETTINGS_H__
 #define __SETTINGS_H__
 
-
-
 class settings
 {
 public:
@@ -10,7 +8,4 @@ public:
     void save_settings() const;
 };
 
-
 #endif
-
-

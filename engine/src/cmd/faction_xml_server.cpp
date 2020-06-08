@@ -15,4 +15,3 @@ void Faction::LoadXML( const char *filename, char *xmlbuffer, int buflength )
 #include "faction_xml.cpp"
 
 #endif
-

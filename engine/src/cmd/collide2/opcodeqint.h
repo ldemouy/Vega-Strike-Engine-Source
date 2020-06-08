@@ -19,7 +19,7 @@
 #ifndef __QINT_H__
 #define __QINT_H__
 
-#if defined (CS_IEEE_DOUBLE_FORMAT)
+#if defined(CS_IEEE_DOUBLE_FORMAT)
 
 /**
     Quick floating point to integer conversions.
@@ -104,12 +104,12 @@
 */
 
 #ifdef CS_BIG_ENDIAN
-#  define CS_LOWER_WORD_BYTE	4
+#define CS_LOWER_WORD_BYTE 4
 #else
-#  define CS_LOWER_WORD_BYTE	0
+#define CS_LOWER_WORD_BYTE 0
 #endif
 
-#define CS_LONG_AT_BYTE(x,b)	*(long *)(((char *)&x) + b)
+#define CS_LONG_AT_BYTE(x, b) *(long *)(((char *)&x) + b)
 
 /**
  * We'll add 2^36 to create a 32.16 fixed-point value and then will pick
@@ -117,7 +117,7 @@
  * with numbers up to 1 - 1/2^16 fractional part; numbers above will be
  * rounded up (because by default FPU is in rounding mode).
  */
-#define FIST_MAGIC_QINT   (65536.0 * 65536.0 * 16.0)
+#define FIST_MAGIC_QINT (65536.0 * 65536.0 * 16.0)
 
 /// Truncate the fractional part of a floating-point value and convert to integer
 /**
@@ -126,21 +126,24 @@
  * to differentiate between compilers here (Matze)
  */
 #ifdef CS_QINT_WORKAROUND
-static inline long QInt (double inval)
+static inline long QInt(double inval)
 {
-  union { double dtemp; long result; } x;
+  union {
+    double dtemp;
+    long result;
+  } x;
 
   x.dtemp = FIST_MAGIC_QINT + inval;
-  x.result = CS_LONG_AT_BYTE (x.dtemp, 2);
+  x.result = CS_LONG_AT_BYTE(x.dtemp, 2);
   return x.result < 0 ? (x.result >> 1) + 1 : x.result;
 }
 #else
-static inline long QInt (double inval)
+static inline long QInt(double inval)
 {
   double dtemp = FIST_MAGIC_QINT + inval;
   // Note that on both low-endian (x86) and big-endian (m68k) we have
   // to shift by two bytes. So no need for an #ifdef.
-  long result = CS_LONG_AT_BYTE (dtemp, 2);
+  long result = CS_LONG_AT_BYTE(dtemp, 2);
   return result < 0 ? (result >> 1) + 1 : result;
 }
 #endif
@@ -152,10 +155,10 @@ static inline long QInt (double inval)
 #define FIST_MAGIC_QROUND (((65536.0 * 65536.0 * 16.0) + (65536.0 * 0.5)) * 65536.0)
 
 /// Round a floating-point value and convert to integer
-static inline long QRound (double inval)
+static inline long QRound(double inval)
 {
   double dtemp = FIST_MAGIC_QROUND + inval;
-  return CS_LONG_AT_BYTE (dtemp, CS_LOWER_WORD_BYTE) - 0x80000000;
+  return CS_LONG_AT_BYTE(dtemp, CS_LOWER_WORD_BYTE) - 0x80000000;
 }
 
 /**
@@ -165,10 +168,10 @@ static inline long QRound (double inval)
 #define FIST_MAGIC_QINT8 (((65536.0 * 16.0) + 0.5) * 65536.0 * 256.0)
 
 /// Convert a floating-point number to 24.8 fixed-point value.
-inline long QInt8 (float inval)
+inline long QInt8(float inval)
 {
   double dtemp = FIST_MAGIC_QINT8 + inval;
-  return CS_LONG_AT_BYTE (dtemp, CS_LOWER_WORD_BYTE) - 0x80000000;
+  return CS_LONG_AT_BYTE(dtemp, CS_LOWER_WORD_BYTE) - 0x80000000;
 }
 
 /**
@@ -178,10 +181,10 @@ inline long QInt8 (float inval)
 #define FIST_MAGIC_QINT16 (((65536.0 * 16.0) + 0.5) * 65536.0)
 
 /// Convert a floating-point number to 16.16 fixed-point value.
-inline long QInt16 (float inval)
+inline long QInt16(float inval)
 {
   double dtemp = FIST_MAGIC_QINT16 + inval;
-  return CS_LONG_AT_BYTE (dtemp, CS_LOWER_WORD_BYTE) - 0x80000000;
+  return CS_LONG_AT_BYTE(dtemp, CS_LOWER_WORD_BYTE) - 0x80000000;
 }
 
 /**
@@ -190,19 +193,19 @@ inline long QInt16 (float inval)
  */
 #define FIST_MAGIC_QINT24 (((65536.0 * 16.0) + 0.5) * 256.0)
 
-inline long QInt24 (float inval)
+inline long QInt24(float inval)
 {
   double dtemp = FIST_MAGIC_QINT24 + inval;
-  return CS_LONG_AT_BYTE (dtemp, CS_LOWER_WORD_BYTE) - 0x80000000;
+  return CS_LONG_AT_BYTE(dtemp, CS_LOWER_WORD_BYTE) - 0x80000000;
 }
-    
+
 #else /* not CS_IEEE_DOUBLE_FORMAT */
 
-#define QRound(x) (int ((x) + ((x < 0) ? -0.5 : +0.5)))
-#define QInt(x)   (int (x))
-#define QInt8(x)  (int ((x)*256.))
-#define QInt16(x) (int ((x)*65536.))
-#define QInt24(x) (int ((x)*16777216.))
+#define QRound(x) (int((x) + ((x < 0) ? -0.5 : +0.5)))
+#define QInt(x) (int(x))
+#define QInt8(x) (int((x)*256.))
+#define QInt16(x) (int((x)*65536.))
+#define QInt24(x) (int((x)*16777216.))
 
 #endif /* CS_IEEE_DOUBLE_FORMAT */
 

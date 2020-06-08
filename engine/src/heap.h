@@ -25,89 +25,93 @@
 #include <algorithm>
 #include <functional>
 
-namespace VS {
+namespace VS
+{
 
-    template < typename T, typename Comp = std::less<T> > class priority_queue : protected std::vector<T> {
+    template <typename T, typename Comp = std::less<T>>
+    class priority_queue : protected std::vector<T>
+    {
         Comp comp;
-        
+
         typedef typename std::vector<T>::iterator iterator;
-        
-        iterator _begin() 
+
+        iterator _begin()
         {
             return std::vector<T>::begin();
         }
-        
-        iterator _end() 
+
+        iterator _end()
         {
             return std::vector<T>::end();
         }
-        
+
     public:
         typedef typename std::vector<T>::value_type value_type;
         typedef typename std::vector<T>::reference reference;
         typedef typename std::vector<T>::const_reference const_reference;
         typedef typename std::vector<T>::const_iterator const_iterator;
         typedef typename std::vector<T>::size_type size_type;
-        
+
         priority_queue()
         {
         }
-        
-        explicit priority_queue(const Comp& comp_) : comp(comp_)
+
+        explicit priority_queue(const Comp &comp_) : comp(comp_)
         {
         }
-        
-        template<typename RanIT> explicit priority_queue(RanIT start, RanIT end)
+
+        template <typename RanIT>
+        explicit priority_queue(RanIT start, RanIT end)
             : std::vector<T>(start, end)
         {
             std::make_heap(begin(), end(), comp);
         }
-        
-        template<typename RanIT> explicit priority_queue(RanIT start, RanIT end, const Comp& comp_) 
-            : std::vector<T>(start, end)
-            , comp(comp_)
+
+        template <typename RanIT>
+        explicit priority_queue(RanIT start, RanIT end, const Comp &comp_)
+            : std::vector<T>(start, end), comp(comp_)
         {
             std::make_heap(_begin(), _end(), comp);
         }
-        
+
         void clear()
         {
             std::vector<T>::clear();
         }
-        
+
         size_type size() const
         {
             return std::vector<T>::size();
         }
-        
+
         void push(const_reference value)
         {
             std::vector<T>::push_back(value);
             std::push_heap(_begin(), _end(), comp);
         }
-        
+
         const_reference top() const
         {
             return std::vector<T>::front();
         }
-        
+
         void pop()
         {
             std::pop_heap(_begin(), _end(), comp);
             std::vector<T>::pop_back();
         }
-        
+
         const_iterator begin() const
         {
             return std::vector<T>::begin();
         }
-        
+
         const_iterator end() const
         {
             return std::vector<T>::end();
         }
     };
 
-}
+} // namespace VS
 
-#endif//_VS_HEAP_H_
+#endif //_VS_HEAP_H_

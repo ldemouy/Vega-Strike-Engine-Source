@@ -33,59 +33,58 @@
 class GroupControl : public Control
 {
 public:
-//Whether this control has children.
-    virtual bool hasGroupChildren( void )
+    //Whether this control has children.
+    virtual bool hasGroupChildren(void)
     {
         return true;
     }
 
-//Add a new control to this collection.
-    void addChild( Control *child );
+    //Add a new control to this collection.
+    void addChild(Control *child);
 
-//Delete a control that is in this collection.
-//Returns true if successful.
-    bool deleteControl( Control *c );
+    //Delete a control that is in this collection.
+    //Returns true if successful.
+    bool deleteControl(Control *c);
 
-//Take a control away from this collection and save it elsewhere.
-    Control * removeControlFromGroup( Control *c );
+    //Take a control away from this collection and save it elsewhere.
+    Control *removeControlFromGroup(Control *c);
 
-//Find a control using its id.  NULL returned if none found.
-//Note that the control may be hidden.
-    Control * findControlById( const std::string &id );
+    //Find a control using its id.  NULL returned if none found.
+    //Note that the control may be hidden.
+    Control *findControlById(const std::string &id);
 
-//Number of child controls.
-    int childCount( void )
+    //Number of child controls.
+    int childCount(void)
     {
         return m_controls.size();
     }
 
-//A control in this group.
-    Control * childAt( int index )
+    //A control in this group.
+    Control *childAt(int index)
     {
         return m_controls[index];
     }
 
-//Draw the control.
-//This should not draw outside its rectangle!
-    virtual void draw( void );
+    //Draw the control.
+    //This should not draw outside its rectangle!
+    virtual void draw(void);
 
-//OVERRIDES
-    virtual bool processMouseDown( const InputEvent &event );
-    virtual bool processMouseUp( const InputEvent &event );
-    virtual bool processMouseMove( const InputEvent &event );
-    virtual bool processMouseDrag( const InputEvent &event );
+    //OVERRIDES
+    virtual bool processMouseDown(const InputEvent &event);
+    virtual bool processMouseUp(const InputEvent &event);
+    virtual bool processMouseMove(const InputEvent &event);
+    virtual bool processMouseDrag(const InputEvent &event);
 
-//CONSTRUCTION
-public: GroupControl( void ) {}
-    virtual ~GroupControl( void );
+    //CONSTRUCTION
+public:
+    GroupControl(void) {}
+    virtual ~GroupControl(void);
 
-//INTERNAL IMPLEMENTATION
+    //INTERNAL IMPLEMENTATION
 protected:
-
-//VARIABLES
+    //VARIABLES
 protected:
-    std::vector< Control* >m_controls;
+    std::vector<Control *> m_controls;
 };
 
-#endif   //__GROUPCONTROL_H__
-
+#endif //__GROUPCONTROL_H__

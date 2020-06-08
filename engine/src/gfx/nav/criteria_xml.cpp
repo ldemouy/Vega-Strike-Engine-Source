@@ -20,7 +20,7 @@
  */
 
 #include "vegastrike.h"
-#if defined (_WIN32) && !defined (__CYGWIN__) && !defined (__MINGW32__)
+#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
 //For WIN32 debugging.
 #include <crtdbg.h>
 #endif
@@ -39,36 +39,37 @@ using namespace VSFileSystem;
 using std::set;
 using std::string;
 
-void CriteriaContains::beginElement( void *userData, const XML_Char *name, const XML_Char **atts )
+void CriteriaContains::beginElement(void *userData, const XML_Char *name, const XML_Char **atts)
 {
-    AttributeList attributes( atts );
-    if (string( name ) == "Planet") {
+    AttributeList attributes(atts);
+    if (string(name) == "Planet")
+    {
         for (AttributeList::const_iterator iter = attributes.begin(); iter != attributes.end(); iter++)
-            if ( (*iter).name == "file" )
-                static_cast< set< string >* > (userData)->insert( string( (*iter).value ) );
+            if ((*iter).name == "file")
+                static_cast<set<string> *>(userData)->insert(string((*iter).value));
     }
 }
 
-void CriteriaContains::endElement( void *userData, const XML_Char *name ) {}
+void CriteriaContains::endElement(void *userData, const XML_Char *name) {}
 
-std::set< std::string >CriteriaContains::getPlanetTypesFromXML( const char *filename ) const
+std::set<std::string> CriteriaContains::getPlanetTypesFromXML(const char *filename) const
 {
-    set< string >textures;
+    set<string> textures;
 
-    VSFile  f;
+    VSFile f;
     VSError err;
-    err = f.OpenReadOnly( string( string( filename )+string( ".system" ) ).c_str(), SystemFile );
-    if (err > Ok) {
-        printf( "CriteriaContains: file not found %s\n", filename );
+    err = f.OpenReadOnly(string(string(filename) + string(".system")).c_str(), SystemFile);
+    if (err > Ok)
+    {
+        printf("CriteriaContains: file not found %s\n", filename);
         return textures;
     }
-    XML_Parser parser = XML_ParserCreate( NULL );
-    XML_SetUserData( parser, &textures );
-    XML_SetElementHandler( parser, &CriteriaContains::beginElement, &CriteriaContains::endElement );
-    XML_Parse( parser, ( f.ReadFull() ).c_str(), f.Size(), 1 );
+    XML_Parser parser = XML_ParserCreate(NULL);
+    XML_SetUserData(parser, &textures);
+    XML_SetElementHandler(parser, &CriteriaContains::beginElement, &CriteriaContains::endElement);
+    XML_Parse(parser, (f.ReadFull()).c_str(), f.Size(), 1);
     f.Close();
-    XML_ParserFree( parser );
+    XML_ParserFree(parser);
 
     return textures;
 }
-

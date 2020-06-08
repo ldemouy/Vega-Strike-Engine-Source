@@ -32,207 +32,205 @@
 
 std::string getMasterPartListUnitName()
 {
-    static std::string mpl = vs_config->getVariable( "data", "master_part_list", "master_part_list" );
+    static std::string mpl = vs_config->getVariable("data", "master_part_list", "master_part_list");
     return mpl;
 }
 
-Unit* UnitFactory::createUnit()
+Unit *UnitFactory::createUnit()
 {
-    return new GameUnit< Unit > ( 0 );
+    return new GameUnit<Unit>(0);
 }
 
-Unit* UnitFactory::createUnit( const char *filename,
-                               bool SubUnit,
-                               int faction,
-                               std::string customizedUnit,
-                               Flightgroup *flightgroup,
-                               int fg_subnumber,
-                               string *netxml )
+Unit *UnitFactory::createUnit(const char *filename,
+                              bool SubUnit,
+                              int faction,
+                              std::string customizedUnit,
+                              Flightgroup *flightgroup,
+                              int fg_subnumber,
+                              string *netxml)
 {
-    Unit *un = new GameUnit< Unit > ( filename,
-                                      SubUnit,
-                                      faction,
-                                      customizedUnit,
-                                      flightgroup,
-                                      fg_subnumber, netxml );
+    Unit *un = new GameUnit<Unit>(filename,
+                                  SubUnit,
+                                  faction,
+                                  customizedUnit,
+                                  flightgroup,
+                                  fg_subnumber, netxml);
 
     return un;
 }
-Unit* UnitFactory::createServerSideUnit( const char *filename,
-                                         bool SubUnit,
-                                         int faction,
-                                         std::string customizedUnit,
-                                         Flightgroup *flightgroup,
-                                         int fg_subnumber )
+Unit *UnitFactory::createServerSideUnit(const char *filename,
+                                        bool SubUnit,
+                                        int faction,
+                                        std::string customizedUnit,
+                                        Flightgroup *flightgroup,
+                                        int fg_subnumber)
 {
-    return new Unit( filename,
-                     SubUnit,
-                     faction,
-                     customizedUnit,
-                     flightgroup,
-                     fg_subnumber );
+    return new Unit(filename,
+                    SubUnit,
+                    faction,
+                    customizedUnit,
+                    flightgroup,
+                    fg_subnumber);
 }
 
-Unit* UnitFactory::createUnit( vector< Mesh* > &meshes, bool Subunit, int faction )
+Unit *UnitFactory::createUnit(vector<Mesh *> &meshes, bool Subunit, int faction)
 {
-    return new GameUnit< Unit > ( meshes,
-                                  Subunit,
-                                  faction );
+    return new GameUnit<Unit>(meshes,
+                              Subunit,
+                              faction);
 }
 
-Nebula* UnitFactory::createNebula( const char *unitfile,
-                                   bool SubU,
-                                   int faction,
-                                   Flightgroup *fg,
-                                   int fg_snumber )
+Nebula *UnitFactory::createNebula(const char *unitfile,
+                                  bool SubU,
+                                  int faction,
+                                  Flightgroup *fg,
+                                  int fg_snumber)
 {
-    Nebula *neb = new GameNebula( unitfile,
-                                  SubU,
-                                  faction,
-                                  fg,
-                                  fg_snumber );
+    Nebula *neb = new GameNebula(unitfile,
+                                 SubU,
+                                 faction,
+                                 fg,
+                                 fg_snumber);
 
     return neb;
 }
 
-Missile* UnitFactory::createMissile( const char *filename,
-                                     int faction,
-                                     const string &modifications,
-                                     const float damage,
-                                     float phasedamage,
-                                     float time,
-                                     float radialeffect,
-                                     float radmult,
-                                     float detonation_radius )
+Missile *UnitFactory::createMissile(const char *filename,
+                                    int faction,
+                                    const string &modifications,
+                                    const float damage,
+                                    float phasedamage,
+                                    float time,
+                                    float radialeffect,
+                                    float radmult,
+                                    float detonation_radius)
 {
-    Missile *un = new GameMissile( filename,
-                                   faction,
-                                   modifications,
-                                   damage,
-                                   phasedamage,
-                                   time,
-                                   radialeffect,
-                                   radmult,
-                                   detonation_radius );
+    Missile *un = new GameMissile(filename,
+                                  faction,
+                                  modifications,
+                                  damage,
+                                  phasedamage,
+                                  time,
+                                  radialeffect,
+                                  radmult,
+                                  detonation_radius);
 
     return un;
 }
 
-Planet* UnitFactory::createPlanet()
+Planet *UnitFactory::createPlanet()
 {
     return new GamePlanet;
 }
 
-Planet* UnitFactory::createPlanet( QVector x,
-                                   QVector y,
-                                   float vely,
-                                   const Vector &rotvel,
-                                   float pos,
-                                   float gravity,
-                                   float radius,
-                                   const string &filename,
-                                   const string &technique,
-                                   const string &unitname,
-                                   BLENDFUNC sr,
-                                   BLENDFUNC ds,
-                                   const vector< string > &dest,
-                                   const QVector &orbitcent,
-                                   Unit *parent,
-                                   const GFXMaterial &ourmat,
-                                   const std::vector< GFXLightLocal > &ligh,
-                                   int faction,
-                                   string fullname,
-                                   bool inside_out )
+Planet *UnitFactory::createPlanet(QVector x,
+                                  QVector y,
+                                  float vely,
+                                  const Vector &rotvel,
+                                  float pos,
+                                  float gravity,
+                                  float radius,
+                                  const string &filename,
+                                  const string &technique,
+                                  const string &unitname,
+                                  BLENDFUNC sr,
+                                  BLENDFUNC ds,
+                                  const vector<string> &dest,
+                                  const QVector &orbitcent,
+                                  Unit *parent,
+                                  const GFXMaterial &ourmat,
+                                  const std::vector<GFXLightLocal> &ligh,
+                                  int faction,
+                                  string fullname,
+                                  bool inside_out)
 {
-    Planet *p = new GamePlanet( x, y, vely, rotvel,
-                                pos,
-                                gravity, radius,
-                                filename, technique, unitname,
-                                sr, ds,
-                                dest,
-                                orbitcent, parent,
-                                ourmat, ligh,
-                                faction, fullname, inside_out );
+    Planet *p = new GamePlanet(x, y, vely, rotvel,
+                               pos,
+                               gravity, radius,
+                               filename, technique, unitname,
+                               sr, ds,
+                               dest,
+                               orbitcent, parent,
+                               ourmat, ligh,
+                               faction, fullname, inside_out);
 
     return p;
 }
 
-Enhancement* UnitFactory::createEnhancement( const char *filename,
-                                             int faction,
-                                             const string &modifications,
-                                             Flightgroup *flightgrp,
-                                             int fg_subnumber )
+Enhancement *UnitFactory::createEnhancement(const char *filename,
+                                            int faction,
+                                            const string &modifications,
+                                            Flightgroup *flightgrp,
+                                            int fg_subnumber)
 {
-    return new GameEnhancement( filename,
-                                faction,
-                                modifications,
-                                flightgrp,
-                                fg_subnumber );
+    return new GameEnhancement(filename,
+                               faction,
+                               modifications,
+                               flightgrp,
+                               fg_subnumber);
 }
 
-Building* UnitFactory::createBuilding( ContinuousTerrain *parent,
-                                       bool vehicle,
-                                       const char *filename,
-                                       bool SubUnit,
-                                       int faction,
-                                       const std::string &unitModifications,
-                                       Flightgroup *fg )
+Building *UnitFactory::createBuilding(ContinuousTerrain *parent,
+                                      bool vehicle,
+                                      const char *filename,
+                                      bool SubUnit,
+                                      int faction,
+                                      const std::string &unitModifications,
+                                      Flightgroup *fg)
 {
-    return new GameBuilding( parent,
-                             vehicle,
-                             filename,
-                             SubUnit,
-                             faction,
-                             unitModifications,
-                             fg );
+    return new GameBuilding(parent,
+                            vehicle,
+                            filename,
+                            SubUnit,
+                            faction,
+                            unitModifications,
+                            fg);
 }
 
-Building* UnitFactory::createBuilding( Terrain *parent,
-                                       bool vehicle,
-                                       const char *filename,
-                                       bool SubUnit,
-                                       int faction,
-                                       const std::string &unitModifications,
-                                       Flightgroup *fg )
+Building *UnitFactory::createBuilding(Terrain *parent,
+                                      bool vehicle,
+                                      const char *filename,
+                                      bool SubUnit,
+                                      int faction,
+                                      const std::string &unitModifications,
+                                      Flightgroup *fg)
 {
-    return new GameBuilding( parent,
-                             vehicle,
-                             filename,
-                             SubUnit,
-                             faction,
-                             unitModifications,
-                             fg );
+    return new GameBuilding(parent,
+                            vehicle,
+                            filename,
+                            SubUnit,
+                            faction,
+                            unitModifications,
+                            fg);
 }
 
-Asteroid* UnitFactory::createAsteroid( const char *filename,
-                                       int faction,
-                                       Flightgroup *fg,
-                                       int fg_snumber,
-                                       float difficulty )
+Asteroid *UnitFactory::createAsteroid(const char *filename,
+                                      int faction,
+                                      Flightgroup *fg,
+                                      int fg_snumber,
+                                      float difficulty)
 {
-    Asteroid *ast = new GameAsteroid( filename,
-                                      faction,
-                                      fg,
-                                      fg_snumber,
-                                      difficulty );
+    Asteroid *ast = new GameAsteroid(filename,
+                                     faction,
+                                     fg,
+                                     fg_snumber,
+                                     difficulty);
 
     return ast;
 }
 
-
-Terrain* UnitFactory::createTerrain( const char *file, Vector scale, float position, float radius, Matrix &t )
+Terrain *UnitFactory::createTerrain(const char *file, Vector scale, float position, float radius, Matrix &t)
 {
     Terrain *tt;
-    tt = new Terrain( file, scale, position, radius );
-    tt->SetTransformation( t );
+    tt = new Terrain(file, scale, position, radius);
+    tt->SetTransformation(t);
     return tt;
 }
 
-ContinuousTerrain* UnitFactory::createContinuousTerrain( const char *file, Vector scale, float position, Matrix &t )
+ContinuousTerrain *UnitFactory::createContinuousTerrain(const char *file, Vector scale, float position, Matrix &t)
 {
     ContinuousTerrain *ct;
-    ct = new ContinuousTerrain( file, scale, position );
-    ct->SetTransformation( t );
+    ct = new ContinuousTerrain(file, scale, position);
+    ct->SetTransformation(t);
     return ct;
 }
-

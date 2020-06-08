@@ -99,4 +99,3 @@
 #undef GL_APPLE_transform_hint
 #undef GL_WIN_swap_hint
 #undef GL_NVX_ycrcb
-

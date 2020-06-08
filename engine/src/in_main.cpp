@@ -20,8 +20,8 @@
  */
 #include <queue>
 #include <list>
-using std::queue;
 using std::list;
+using std::queue;
 
 #include "in_kb.h"
 #include "in_mouse.h"
@@ -30,35 +30,35 @@ using std::list;
 
 extern KBSTATE keyState[LAST_MODIFIER][KEYMAP_SIZE];
 
-queue< InputListener* >activationreqqueue;
-list< InputListener* > listeners;
+queue<InputListener *> activationreqqueue;
+list<InputListener *> listeners;
 InputListener *activelistener;
 
-void AddListener( InputListener *il )
+void AddListener(InputListener *il)
 {
     il->keystate = keyState;
-    il->mousex   = &mousex;
-    il->mousey   = &mousey;
-    listeners.push_back( il );
+    il->mousex = &mousex;
+    il->mousey = &mousey;
+    listeners.push_back(il);
 }
 
-void ActivateListener( InputListener *il )
+void ActivateListener(InputListener *il)
 {
-    activationreqqueue.push( il );
+    activationreqqueue.push(il);
 }
 
-void RemoveListener( InputListener *il )
+void RemoveListener(InputListener *il)
 {
-    listeners.remove( il );
+    listeners.remove(il);
 }
 
-void ProcessInput( size_t whichplayer )
+void ProcessInput(size_t whichplayer)
 {
-    ProcessKB( whichplayer );
+    ProcessKB(whichplayer);
     ProcessMouse();
     for (int i = 0; i < MAX_JOYSTICKS; i++)
         if (joystick[i]->player == whichplayer)
-            ProcessJoystick( i );
+            ProcessJoystick(i);
 }
 
 void InitInput()
@@ -71,4 +71,3 @@ void DeInitInput()
 {
     DeInitJoystick();
 }
-

@@ -22,39 +22,39 @@
 #include "textinputdisplay.h"
 #include "lin_time.h"
 #include "guidefs.h"
-using std::vector;
 using std::string;
+using std::vector;
 
-TextInputDisplay::TextInputDisplay( vector< unsigned int > *keyboard_input_queue, const char *disallowed )
+TextInputDisplay::TextInputDisplay(vector<unsigned int> *keyboard_input_queue, const char *disallowed)
 {
     isFocused = false;
     if (keyboard_input_queue)
         this->keyboard_queue = keyboard_input_queue;
     else
         this->keyboard_queue = &local_keyboard_queue;
-    passwordChar     = '\0';
+    passwordChar = '\0';
     keyboard_input_queue->clear();
-    this->disallowed = new char[strlen( disallowed )+1];
-    strcpy( this->disallowed, disallowed );
+    this->disallowed = new char[strlen(disallowed) + 1];
+    strcpy(this->disallowed, disallowed);
 }
 
-bool TextInputDisplay::processMouseDown( const InputEvent &event )
+bool TextInputDisplay::processMouseDown(const InputEvent &event)
 {
     if (event.code != WHEELUP_MOUSE_BUTTON && event.code != WHEELDOWN_MOUSE_BUTTON)
         //If click is on me, set me focused... otherwise, clear my focus.
-        this->isFocused = ( hitTest( event.loc ) );
-    return StaticDisplay::processMouseDown( event );
+        this->isFocused = (hitTest(event.loc));
+    return StaticDisplay::processMouseDown(event);
 }
 
-void TextInputDisplay::processUnfocus( const InputEvent &event )
+void TextInputDisplay::processUnfocus(const InputEvent &event)
 {
     if (event.code != WHEELUP_MOUSE_BUTTON && event.code != WHEELDOWN_MOUSE_BUTTON)
         //If click is on me, set me focused... otherwise, clear my focus.
         this->isFocused = false;
-    StaticDisplay::processUnfocus( event );
+    StaticDisplay::processUnfocus(event);
 }
 
-bool TextInputDisplay::processKeypress( unsigned int c )
+bool TextInputDisplay::processKeypress(unsigned int c)
 {
     return true;
 }
@@ -62,53 +62,61 @@ bool TextInputDisplay::processKeypress( unsigned int c )
 void TextInputDisplay::draw()
 {
     string text = this->text();
-    if (!this->isFocused) {
-        if (passwordChar) {
+    if (!this->isFocused)
+    {
+        if (passwordChar)
+        {
             string text1;
-            text1.insert( 0u, text.length(), passwordChar );
-            this->setText( text1 );
+            text1.insert(0u, text.length(), passwordChar);
+            this->setText(text1);
         }
         this->StaticDisplay::draw();
         if (passwordChar)
-            this->setText( text );
+            this->setText(text);
         return;
     }
     size_t LN = keyboard_queue->size();
-    for (size_t i = 0; i < LN; ++i) {
+    for (size_t i = 0; i < LN; ++i)
+    {
         unsigned int c = (*keyboard_queue)[i];
-        if ( !processKeypress( c ) ) continue;
-        if (c == 8 || c == 127) {
-            text = text.substr( 0, text.length()-1 );
-        } else if (c != '\0' && c < 256) {
+        if (!processKeypress(c))
+            continue;
+        if (c == 8 || c == 127)
+        {
+            text = text.substr(0, text.length() - 1);
+        }
+        else if (c != '\0' && c < 256)
+        {
             bool allowed = true;
             for (int j = 0; disallowed[j]; ++j)
-                if ( c == static_cast<unsigned int>(disallowed[j]) ) {
+                if (c == static_cast<unsigned int>(disallowed[j]))
+                {
                     allowed = false;
                     break;
                 }
-            if (allowed) {
+            if (allowed)
+            {
                 char tmp[2] = {0, 0};
-                tmp[0] = (char) c;
-                text  += tmp;
+                tmp[0] = (char)c;
+                text += tmp;
             }
         }
     }
     keyboard_queue->clear();
-    unsigned int x = (unsigned int) getNewTime();
+    unsigned int x = (unsigned int)getNewTime();
     string text1;
     if (passwordChar)
-        text1.insert( 0u, text.length(), passwordChar );
+        text1.insert(0u, text.length(), passwordChar);
     else
         text1 = text;
-    if (x%2)
+    if (x % 2)
         text1 += "|";
-    this->setText( text1 );
+    this->setText(text1);
     this->StaticDisplay::draw();
-    this->setText( text );
+    this->setText(text);
 }
 
 TextInputDisplay::~TextInputDisplay()
 {
     delete[] this->disallowed;
 }
-

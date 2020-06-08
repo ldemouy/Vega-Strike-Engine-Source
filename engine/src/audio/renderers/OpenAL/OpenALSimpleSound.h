@@ -12,7 +12,8 @@
 
 #include "al.h"
 
-namespace Audio {
+namespace Audio
+{
 
     /**
      * OpenAL Simple Sound implementation class
@@ -25,28 +26,28 @@ namespace Audio {
     class OpenALSimpleSound : public SimpleSound
     {
         ALBufferHandle bufferHandle;
-        
+
     public:
         /** Internal constructor used by derived classes */
-        OpenALSimpleSound(const std::string& name, VSFileSystem::VSFileType type = VSFileSystem::UnknownFile);
-        
+        OpenALSimpleSound(const std::string &name, VSFileSystem::VSFileType type = VSFileSystem::UnknownFile);
+
         /** Package-private: the OpenAL renderer package uses this, YOU DON'T */
         ALBufferHandle getAlBuffer() const { return bufferHandle; }
-        
+
     public:
         virtual ~OpenALSimpleSound();
-        
+
         // The following section contains supporting methods for accessing the stream.
         // Subclasses need not bother with actual stream management, they need only worry
         // about sending the samples to where they're needed.
     protected:
         /** @copydoc Sound::loadImpl */
         virtual void loadImpl(bool wait);
-        
+
         /** @copydoc Sound::unloadImpl */
         virtual void unloadImpl();
     };
 
-};
+}; // namespace Audio
 
-#endif//__AUDIO_SIMPLESOUND_H__INCLUDED__
+#endif //__AUDIO_SIMPLESOUND_H__INCLUDED__

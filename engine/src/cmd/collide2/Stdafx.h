@@ -20,4 +20,3 @@
 #include "opcodetypes.h"
 #include "opcodesysdef.h"
 #include "Opcode.h"
-

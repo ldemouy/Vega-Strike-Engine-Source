@@ -20,9 +20,7 @@
 #ifndef __CS_BOX_H__
 #define __CS_BOX_H__
 
-
 #include "opvector3.h"
-
 
 class csPlane3;
 
@@ -31,7 +29,6 @@ class csPlane3;
  * This is considered the 'infinity' value used for empty bounding boxes.
  */
 #define CS_BOUNDINGBOX_MAXVALUE 1000000000.
-
 
 /**
  * Indices of corner vertices for csBox3.
@@ -107,35 +104,40 @@ protected:
     uint8 v1, v2; // Indices of vertex in bounding box (BOX_CORNER_...)
     uint8 fl, fr; // Indices of left/right faces sharing edge (BOX_SIDE_...)
   };
-  typedef uint8 bFace[4];	// Indices of four clock-wise edges (0..23)
+  typedef uint8 bFace[4]; // Indices of four clock-wise edges (0..23)
   // Index by edge number. Edge e and e+1 with e even are opposite edges.
   // (BOX_EDGE_...)
   static bEdge edges[24];
   // Index by BOX_SIDE_? number.
   static bFace faces[6];
+
 public:
   /// Get the minimum X value of the box
-  float MinX () const { return minbox.x; }
+  float MinX() const { return minbox.x; }
   /// Get the minimum Y value of the box
-  float MinY () const { return minbox.y; }
+  float MinY() const { return minbox.y; }
   /// Get the minimum Z value of the box
-  float MinZ () const { return minbox.z; }
+  float MinZ() const { return minbox.z; }
   /// Get the maximum X value of the box
-  float MaxX () const { return maxbox.x; }
+  float MaxX() const { return maxbox.x; }
   /// Get the maximum Y value of the box
-  float MaxY () const { return maxbox.y; }
+  float MaxY() const { return maxbox.y; }
   /// Get the maximum Z value of the box
-  float MaxZ () const { return maxbox.z; }
+  float MaxZ() const { return maxbox.z; }
   /// Get Min component for 0 (x), 1 (y), or 2 (z).
-  float Min (int idx) const
-  { return idx == 1 ? minbox.y : idx == 0 ? minbox.x : minbox.z; }
+  float Min(int idx) const
+  {
+    return idx == 1 ? minbox.y : idx == 0 ? minbox.x : minbox.z;
+  }
   /// Get Max component for 0 (x), 1 (y), or 2 (z).
-  float Max (int idx) const
-  { return idx == 1 ? maxbox.y : idx == 0 ? maxbox.x : maxbox.z; }
+  float Max(int idx) const
+  {
+    return idx == 1 ? maxbox.y : idx == 0 ? maxbox.x : maxbox.z;
+  }
   /// Get the 3d vector of minimum (x, y, z) values
-  const csVector3& Min () const { return minbox; }
+  const csVector3 &Min() const { return minbox; }
   /// Get the 3d vector of maximum (x, y, z) values
-  const csVector3& Max () const { return maxbox; }
+  const csVector3 &Max() const { return maxbox; }
 
   /**
    * Return every corner of this bounding box from 0
@@ -145,13 +147,13 @@ public:
    *        4 = Xyz, 5 = XyZ, 6 = XYz, 7 = XYZ.
    * Use BOX_CORNER_??? defines.
    */
-  csVector3 GetCorner (int corner) const;
+  csVector3 GetCorner(int corner) const;
 
   /**
    * Given an edge index (BOX_EDGE_???) return the two vertices
    * (index BOX_CORNER_???) and left/right faces (BOX_SIDE_???).
    */
-  void GetEdgeInfo (int edge, int& v1, int& v2, int& fleft, int& fright) const
+  void GetEdgeInfo(int edge, int &v1, int &v2, int &fleft, int &fright) const
   {
     v1 = edges[edge].v1;
     v2 = edges[edge].v2;
@@ -163,26 +165,26 @@ public:
    * Given a face index (BOX_SIDE_???) return the four edges oriented
    * clockwise around this face (BOX_EDGE_???).
    */
-  uint8* GetFaceEdges (int face) const
+  uint8 *GetFaceEdges(int face) const
   {
     return faces[face];
   }
-  
+
   /**
    * Get the center of this box.
    */
-  csVector3 GetCenter () const { return csVector3((minbox.x+maxbox.x)/2, (minbox.y+maxbox.y)/2, (minbox.z+maxbox.z)/2); }
+  csVector3 GetCenter() const { return csVector3((minbox.x + maxbox.x) / 2, (minbox.y + maxbox.y) / 2, (minbox.z + maxbox.z) / 2); }
 
   /**
    * Set the center of this box. This will not change the size
    * of the box but just relocate the center.
    */
-  void SetCenter (const csVector3& c);
+  void SetCenter(const csVector3 &c);
 
   /**
    * Set the size of the box but keep the center intact.
    */
-  void SetSize (const csVector3& s);
+  void SetSize(const csVector3 &s);
 
   /**
    * Get a side of this box as a 2D box.
@@ -196,13 +198,13 @@ public:
    * from the given point.
    * Returns the number of visible sides.
    */
-  int GetVisibleSides (const csVector3& pos, int* visible_sides) const;
+  int GetVisibleSides(const csVector3 &pos, int *visible_sides) const;
 
   /**
    * Static function to get the 'other' side (i.e. BOX_SIDE_X
    * to BOX_SIDE_x, ...).
    */
-  static int OtherSide (int side)
+  static int OtherSide(int side)
   {
     return side ^ 1;
   }
@@ -229,31 +231,37 @@ public:
   }
   */
   /// Test if the given coordinate is in this box.
-  bool In (float x, float y, float z) const
+  bool In(float x, float y, float z) const
   {
-    if (x < minbox.x || x > maxbox.x) return false;
-    if (y < minbox.y || y > maxbox.y) return false;
-    if (z < minbox.z || z > maxbox.z) return false;
+    if (x < minbox.x || x > maxbox.x)
+      return false;
+    if (y < minbox.y || y > maxbox.y)
+      return false;
+    if (z < minbox.z || z > maxbox.z)
+      return false;
     return true;
   }
 
   /// Test if the given coordinate is in this box.
-  bool In (const csVector3& v) const
+  bool In(const csVector3 &v) const
   {
-    return In (v.x, v.y, v.z);
+    return In(v.x, v.y, v.z);
   }
 
   /// Test if this box overlaps with the given box.
-  bool Overlap (const csBox3& box) const
+  bool Overlap(const csBox3 &box) const
   {
-    if (maxbox.x < box.minbox.x || minbox.x > box.maxbox.x) return false;
-    if (maxbox.y < box.minbox.y || minbox.y > box.maxbox.y) return false;
-    if (maxbox.z < box.minbox.z || minbox.z > box.maxbox.z) return false;
+    if (maxbox.x < box.minbox.x || minbox.x > box.maxbox.x)
+      return false;
+    if (maxbox.y < box.minbox.y || minbox.y > box.maxbox.y)
+      return false;
+    if (maxbox.z < box.minbox.z || minbox.z > box.maxbox.z)
+      return false;
     return true;
   }
 
   /// Test if this box contains the other box.
-  bool Contains (const csBox3& box) const
+  bool Contains(const csBox3 &box) const
   {
     return (box.minbox.x >= minbox.x && box.maxbox.x <= maxbox.x) &&
            (box.minbox.y >= minbox.y && box.maxbox.y <= maxbox.y) &&
@@ -261,46 +269,56 @@ public:
   }
 
   /// Test if this box is empty.
-  bool Empty () const
+  bool Empty() const
   {
-    if (minbox.x > maxbox.x) return true;
-    if (minbox.y > maxbox.y) return true;
-    if (minbox.z > maxbox.z) return true;
+    if (minbox.x > maxbox.x)
+      return true;
+    if (minbox.y > maxbox.y)
+      return true;
+    if (minbox.z > maxbox.z)
+      return true;
     return false;
   }
 
   /// Initialize this box to empty.
-  void StartBoundingBox ()
+  void StartBoundingBox()
   {
-    minbox.x =  CS_BOUNDINGBOX_MAXVALUE;
-    minbox.y =  CS_BOUNDINGBOX_MAXVALUE;
-    minbox.z =  CS_BOUNDINGBOX_MAXVALUE;
+    minbox.x = CS_BOUNDINGBOX_MAXVALUE;
+    minbox.y = CS_BOUNDINGBOX_MAXVALUE;
+    minbox.z = CS_BOUNDINGBOX_MAXVALUE;
     maxbox.x = -CS_BOUNDINGBOX_MAXVALUE;
     maxbox.y = -CS_BOUNDINGBOX_MAXVALUE;
     maxbox.z = -CS_BOUNDINGBOX_MAXVALUE;
   }
 
   /// Initialize this box to one vertex.
-  void StartBoundingBox (const csVector3& v)
+  void StartBoundingBox(const csVector3 &v)
   {
-    minbox = v; maxbox = v;
+    minbox = v;
+    maxbox = v;
   }
 
   /// Add a new vertex and recalculate the bounding box.
-  void AddBoundingVertex (float x, float y, float z)
+  void AddBoundingVertex(float x, float y, float z)
   {
-    if (x < minbox.x) minbox.x = x;
-	else  if (x > maxbox.x) maxbox.x = x;
-    if (y < minbox.y) minbox.y = y;
-	  else if (y > maxbox.y) maxbox.y = y;
-    if (z < minbox.z) minbox.z = z;
-	  else if (z > maxbox.z) maxbox.z = z;
+    if (x < minbox.x)
+      minbox.x = x;
+    else if (x > maxbox.x)
+      maxbox.x = x;
+    if (y < minbox.y)
+      minbox.y = y;
+    else if (y > maxbox.y)
+      maxbox.y = y;
+    if (z < minbox.z)
+      minbox.z = z;
+    else if (z > maxbox.z)
+      maxbox.z = z;
   }
 
   /// Add a new vertex and recalculate the bounding box.
-  void AddBoundingVertex (const csVector3& v)
+  void AddBoundingVertex(const csVector3 &v)
   {
-    AddBoundingVertex (v.x, v.y, v.z);
+    AddBoundingVertex(v.x, v.y, v.z);
   }
 
   /**
@@ -308,11 +326,20 @@ public:
    * This version is a little more optimal. It assumes however
    * that at least one point has been added to the bounding box.
    */
-  void AddBoundingVertexSmart (float x, float y, float z)
+  void AddBoundingVertexSmart(float x, float y, float z)
   {
-    if (x < minbox.x) minbox.x = x; else if (x > maxbox.x) maxbox.x = x;
-    if (y < minbox.y) minbox.y = y; else if (y > maxbox.y) maxbox.y = y;
-    if (z < minbox.z) minbox.z = z; else if (z > maxbox.z) maxbox.z = z;
+    if (x < minbox.x)
+      minbox.x = x;
+    else if (x > maxbox.x)
+      maxbox.x = x;
+    if (y < minbox.y)
+      minbox.y = y;
+    else if (y > maxbox.y)
+      maxbox.y = y;
+    if (z < minbox.z)
+      minbox.z = z;
+    else if (z > maxbox.z)
+      maxbox.z = z;
   }
 
   /**
@@ -320,9 +347,9 @@ public:
    * This version is a little more optimal. It assumes however
    * that at least one point has been added to the bounding box.
    */
-  void AddBoundingVertexSmart (const csVector3& v)
+  void AddBoundingVertexSmart(const csVector3 &v)
   {
-    AddBoundingVertexSmart (v.x, v.y, v.z);
+    AddBoundingVertexSmart(v.x, v.y, v.z);
   }
 
   //-----
@@ -340,59 +367,67 @@ public:
   //-----
 
   /// Initialize this box to empty.
-  csBox3 () :
-    minbox ( CS_BOUNDINGBOX_MAXVALUE,
-             CS_BOUNDINGBOX_MAXVALUE,
-	     CS_BOUNDINGBOX_MAXVALUE),
-    maxbox (-CS_BOUNDINGBOX_MAXVALUE,
-            -CS_BOUNDINGBOX_MAXVALUE,
-	    -CS_BOUNDINGBOX_MAXVALUE) {}
+  csBox3() : minbox(CS_BOUNDINGBOX_MAXVALUE,
+                    CS_BOUNDINGBOX_MAXVALUE,
+                    CS_BOUNDINGBOX_MAXVALUE),
+             maxbox(-CS_BOUNDINGBOX_MAXVALUE,
+                    -CS_BOUNDINGBOX_MAXVALUE,
+                    -CS_BOUNDINGBOX_MAXVALUE) {}
 
   /// Initialize this box with one point.
-  csBox3 (const csVector3& v) : minbox (v), maxbox (v) { }
+  csBox3(const csVector3 &v) : minbox(v), maxbox(v) {}
 
   /// Initialize this box with two points.
-  csBox3 (const csVector3& v1, const csVector3& v2) :
-  	minbox (v1), maxbox (v2)
-  { if (Empty ()) StartBoundingBox (); }
+  csBox3(const csVector3 &v1, const csVector3 &v2) : minbox(v1), maxbox(v2)
+  {
+    if (Empty())
+      StartBoundingBox();
+  }
 
   /// Initialize this box with the given values.
-  csBox3 (float x1, float y1, float z1, float x2, float y2, float z2) :
-    minbox (x1, y1, z1), maxbox (x2, y2, z2)
-  { if (Empty ()) StartBoundingBox (); }
+  csBox3(float x1, float y1, float z1, float x2, float y2, float z2) : minbox(x1, y1, z1), maxbox(x2, y2, z2)
+  {
+    if (Empty())
+      StartBoundingBox();
+  }
 
   /// Sets the bounds of the box with the given values.
-  void Set (const csVector3& bmin, const csVector3& bmax)
+  void Set(const csVector3 &bmin, const csVector3 &bmax)
   {
     minbox = bmin;
     maxbox = bmax;
   }
 
   /// Sets the bounds of the box with the given values.
-  void Set (float x1, float y1, float z1, float x2, float y2, float z2)
+  void Set(float x1, float y1, float z1, float x2, float y2, float z2)
   {
-    if (x1>x2 || y1>y2 || z1>z2) StartBoundingBox();
+    if (x1 > x2 || y1 > y2 || z1 > z2)
+      StartBoundingBox();
     else
     {
-      minbox.x = x1; minbox.y = y1; minbox.z = z1;
-      maxbox.x = x2; maxbox.y = y2; maxbox.z = z2;
+      minbox.x = x1;
+      minbox.y = y1;
+      minbox.z = z1;
+      maxbox.x = x2;
+      maxbox.y = y2;
+      maxbox.z = z2;
     }
   }
 
   /**
    * Test if this box is adjacent to the other on the X side.
    */
-  bool AdjacentX (const csBox3& other) const;
+  bool AdjacentX(const csBox3 &other) const;
 
   /**
    * Test if this box is adjacent to the other on the Y side.
    */
-  bool AdjacentY (const csBox3& other) const;
+  bool AdjacentY(const csBox3 &other) const;
 
   /**
    * Test if this box is adjacent to the other on the Z side.
    */
-  bool AdjacentZ (const csBox3& other) const;
+  bool AdjacentZ(const csBox3 &other) const;
 
   /**
    * Test if this box is adjacent to the other one.
@@ -400,7 +435,7 @@ public:
    * flags to indicate the side of this box that the other
    * box is adjacent with.
    */
-  int Adjacent (const csBox3& other) const;
+  int Adjacent(const csBox3 &other) const;
 
   /**
    * Get a convex outline (not a polygon unless projected to 2D)
@@ -410,57 +445,57 @@ public:
    * If you set bVisible true, you will get all visible corners - this
    * could be up to 7.
    */
-  void GetConvexOutline (const csVector3& pos,
-  	csVector3* array, int& num_array, bool bVisible=false) const;
+  void GetConvexOutline(const csVector3 &pos,
+                        csVector3 *array, int &num_array, bool bVisible = false) const;
 
   /**
    * Test if this box is between two others.
    */
-  bool Between (const csBox3& box1, const csBox3& box2) const;
+  bool Between(const csBox3 &box1, const csBox3 &box2) const;
 
   /**
    * Calculate the minimum manhattan distance between this box
    * and another one.
    */
-  void ManhattanDistance (const csBox3& other, csVector3& dist) const;
+  void ManhattanDistance(const csBox3 &other, csVector3 &dist) const;
 
   /**
    * Calculate the squared distance between (0,0,0) and the box
    * This routine is extremely efficient.
    */
-  float SquaredOriginDist () const;
+  float SquaredOriginDist() const;
 
   /**
    * Calculate the squared distance between (0,0,0) and the point
    * on the box which is furthest away from (0,0,0).
    * This routine is extremely efficient.
    */
-  float SquaredOriginMaxDist () const;
+  float SquaredOriginMaxDist() const;
 
   /// Compute the union of two bounding boxes.
-  csBox3& operator+= (const csBox3& box);
+  csBox3 &operator+=(const csBox3 &box);
   /// Compute the union of a point with this bounding box.
-  csBox3& operator+= (const csVector3& point);
+  csBox3 &operator+=(const csVector3 &point);
   /// Compute the intersection of two bounding boxes.
-  csBox3& operator*= (const csBox3& box);
+  csBox3 &operator*=(const csBox3 &box);
 
   /// Compute the union of two bounding boxes.
-  friend csBox3 operator+ (const csBox3& box1, const csBox3& box2);
+  friend csBox3 operator+(const csBox3 &box1, const csBox3 &box2);
   /// Compute the union of a bounding box and a point.
-  friend csBox3 operator+ (const csBox3& box, const csVector3& point);
+  friend csBox3 operator+(const csBox3 &box, const csVector3 &point);
   /// Compute the intersection of two bounding boxes.
-  friend csBox3 operator* (const csBox3& box1, const csBox3& box2);
+  friend csBox3 operator*(const csBox3 &box1, const csBox3 &box2);
 
   /// Tests if two bounding boxes are equal.
-  friend bool operator== (const csBox3& box1, const csBox3& box2);
+  friend bool operator==(const csBox3 &box1, const csBox3 &box2);
   /// Tests if two bounding boxes are unequal.
-  friend bool operator!= (const csBox3& box1, const csBox3& box2);
+  friend bool operator!=(const csBox3 &box1, const csBox3 &box2);
   /// Tests if box1 is a subset of box2.
-  friend bool operator< (const csBox3& box1, const csBox3& box2);
+  friend bool operator<(const csBox3 &box1, const csBox3 &box2);
   /// Tests if box1 is a superset of box2.
-  friend bool operator> (const csBox3& box1, const csBox3& box2);
+  friend bool operator>(const csBox3 &box1, const csBox3 &box2);
   /// Tests if a point is contained in a box.
-  friend bool operator< (const csVector3& point, const csBox3& box);
+  friend bool operator<(const csVector3 &point, const csBox3 &box);
 };
 
 #endif // __CS_BOX_H__

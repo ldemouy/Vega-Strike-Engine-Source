@@ -25,34 +25,34 @@ class StarDate
 {
 private:
     double *initial_star_time;
-    double  initial_time;
+    double initial_time;
 
-//TREK Date stuff
-    string ConvertTrekDate( double date );
-    double ConvertTrekDate( string date );
-    float GetFloatFromTrekDate( int faction = 0 );
+    //TREK Date stuff
+    string ConvertTrekDate(double date);
+    double ConvertTrekDate(string date);
+    float GetFloatFromTrekDate(int faction = 0);
 
-public: StarDate();
-    StarDate( double time );
-    void Init( double time );
-    double GetCurrentStarTime( int faction = 0 );
+public:
+    StarDate();
+    StarDate(double time);
+    void Init(double time);
+    double GetCurrentStarTime(int faction = 0);
     double GetElapsedStarTime(int faction = 0);
 
-//TREK Date stuff
-    void InitTrek( string date );
-    string GetTrekDate( int faction = 0 );
-    string GetFullTrekDate( int faction = 0 );
-    string ConvertFullTrekDate( double date );
+    //TREK Date stuff
+    void InitTrek(string date);
+    string GetTrekDate(int faction = 0);
+    string GetFullTrekDate(int faction = 0);
+    string ConvertFullTrekDate(double date);
 
-//DAN.A StarDate
-    void InitSDate( string date );
-    string GetSDate( int faction = 0 );
-    string GetFullSDate( int faction = 0 );
+    //DAN.A StarDate
+    void InitSDate(string date);
+    string GetSDate(int faction = 0);
+    string GetFullSDate(int faction = 0);
 
-//Between date format conversion
-    string SDateFromTrekDate( string trekdate );
-    string TrekDateFromSDate( string sdate );
+    //Between date format conversion
+    string SDateFromTrekDate(string trekdate);
+    string TrekDateFromSDate(string sdate);
 };
 
 #endif
-

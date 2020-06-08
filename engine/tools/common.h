@@ -25,34 +25,43 @@
 #include <string>
 #include "vsrtools.h"
 
-class FILEHandle {
+class FILEHandle
+{
 public:
-  FILEHandle(const std::string &name, const char perms[]);
-  ~FILEHandle() { if (file) fclose(file); }
-  operator FILE * const (void) const { return file; }
+	FILEHandle(const std::string &name, const char perms[]);
+	~FILEHandle()
+	{
+		if (file)
+			fclose(file);
+	}
+	operator FILE *const(void) const { return file; }
+
 private:
-  FILE *file;
+	FILE *file;
 };
 
-struct VSRMember {
+struct VSRMember
+{
 	std::string filename;
 	uint32_t fileLength;
 	uint32_t offset;
-	friend bool operator<(const VSRMember &a,const VSRMember &b)
-		{ return a.filename < b.filename; }
+	friend bool operator<(const VSRMember &a, const VSRMember &b)
+	{
+		return a.filename < b.filename;
+	}
 	VSRMember() {}
 	VSRMember &operator=(const VSRPEntry &entry)
 	{
 		filename = entry.filename;
 		fileLength = entry.fileLength;
-	   	offset = entry.offset;
+		offset = entry.offset;
 		return *this;
 	}
 	VSRMember(const VSRPEntry &entry)
-	  : filename(entry.filename), fileLength(entry.fileLength),
-		offset(entry.offset) {}
+		: filename(entry.filename), fileLength(entry.fileLength),
+		  offset(entry.offset) {}
 	VSRMember(std::string nam, uint32_t len, uint32_t offs)
-	  : filename(nam), fileLength(len),offset(offs) {}
+		: filename(nam), fileLength(len), offset(offs) {}
 };
 
 #endif //COMMON_CODE_FOR_VSRP_TOOLS_

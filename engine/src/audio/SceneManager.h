@@ -12,8 +12,8 @@
 #include "Types.h"
 #include "VirtualIterator.h"
 
-
-namespace Audio {
+namespace Audio
+{
 
     // Some forwards, we don't need to know the details of those classes
     class Renderer;
@@ -22,13 +22,14 @@ namespace Audio {
     class Source;
     class Sound;
     class Listener;
-    
-    namespace __impl {
-        
+
+    namespace __impl
+    {
+
         // Forward declaration of internal scene manager data
         struct SceneManagerData;
-        
-    };
+
+    }; // namespace __impl
 
     /**
      * Audio Scene Manager.
@@ -60,16 +61,16 @@ namespace Audio {
     {
     private:
         AutoPtr<__impl::SceneManagerData> data;
-        
+
     public:
-        typedef VirtualIterator<SharedPtr<Scene> > SceneIterator;
-    
+        typedef VirtualIterator<SharedPtr<Scene>> SceneIterator;
+
     protected:
         /** Returns the renderer
          * @remarks Throws an exception if no renderer has been set
          */
-        const SharedPtr<Renderer>& internalRenderer() const;
-    
+        const SharedPtr<Renderer> &internalRenderer() const;
+
     public:
         /** Construct a new instance of the manager 
          * @remarks End-users of the class shouldn't be using this. Singletons need it.
@@ -77,21 +78,21 @@ namespace Audio {
          *      like.
          */
         SceneManager();
-        
+
         virtual ~SceneManager();
-        
+
         /** Create a new source based on the speicified sound
          * @remarks All the attributes will hold unspecified values, so you have to fill them in.}
          * @note The sound must be associated to the correct renderer, or bad things will happen.
          * @see Renderer, which creates sounds.
          */
         virtual SharedPtr<Source> createSource(SharedPtr<Sound> sound, bool looping = false);
-        
+
         /** Create a new source based on the specified template
          * @remarks All location information will hold unspecified values, so you have to fill them in.
          */
         SharedPtr<Source> createSource(SharedPtr<SourceTemplate> tpl);
-        
+
         /** Create a new source based on the specified template, but overriding its sound resource.
          * @remarks All location information will hold unspecified values, so you have to fill them in.
          *      @par It's useful to have "mode" templates that can be used to spawn many sources based
@@ -99,12 +100,10 @@ namespace Audio {
          *      template for spawning radio voiceovers, etc...
          */
         SharedPtr<Source> createSource(SharedPtr<SourceTemplate> tpl, const std::string &name);
-        
+
         /** Destroy a source created with this manager */
         virtual void destroySource(SharedPtr<Source> source);
-        
-        
-        
+
         /** Convenience API to play a source once and forget. 
          * @param tpl The source template from which a source should be instanced
          * @param sceneName The name of the scene to which the source should be attached
@@ -115,13 +114,13 @@ namespace Audio {
          * @remarks The source should not be looping, and an exception will be thrown if it is.
          */
         void playSource(
-            SharedPtr<SourceTemplate> tpl, 
+            SharedPtr<SourceTemplate> tpl,
             const std::string &sceneName,
             LVector3 position,
             Vector3 direction,
             Vector3 velocity,
             Scalar radius);
-        
+
         /** Convenience API to play a source once and forget. 
          * @param tpl The source template from which a source should be instanced
          * @param soundName The name of the sound stream from which the source will be created, overriding the template's
@@ -133,29 +132,29 @@ namespace Audio {
          * @remarks The source should not be looping, and an exception will be thrown if it is.
          */
         void playSource(
-            SharedPtr<SourceTemplate> tpl, 
+            SharedPtr<SourceTemplate> tpl,
             const std::string &soundName,
             const std::string &sceneName,
             LVector3 position,
             Vector3 direction,
             Vector3 velocity,
             Scalar radius);
-        
+
         /** Create a new named scene */
         virtual SharedPtr<Scene> createScene(const std::string &name);
-        
+
         /** Get an existing scene by its name */
         virtual SharedPtr<Scene> getScene(const std::string &name) const;
-        
+
         /** Destroy an existing scene by its name */
         virtual void destroyScene(const std::string &name);
-        
+
         /** Sets the active state of a scene */
         virtual void setSceneActive(const std::string &name, bool active);
-        
+
         /** Get the active state of a scene */
         virtual bool getSceneActive(const std::string &name);
-        
+
         /** Get the root listener
          * @remarks Renderers can only have one listener. Sources attached to scenes
          *      require translation into the reference listener. It is usually convenient
@@ -169,13 +168,13 @@ namespace Audio {
          *      were rotated, since they're "artificial" listeners).
          */
         virtual SharedPtr<Listener> getRootListener() const;
-        
+
         /** Get an iterator over all scenes */
         virtual SharedPtr<SceneIterator> getSceneIterator() const;
-        
+
         /** Get an iterator over all active scenes */
         virtual SharedPtr<SceneIterator> getActiveSceneIterator() const;
-        
+
         /** Set a new renderer
          * @param renderer A new renderer to be used.
          * @remarks Setting the renderer should be done at the very beginning. It is possible
@@ -186,13 +185,12 @@ namespace Audio {
          *      getRenderer is not overridable.
          */
         virtual void setRenderer(SharedPtr<Renderer> renderer);
-        
+
         /** Get the current renderer */
         SharedPtr<Renderer> getRenderer() const;
-        
-        
+
         /********* Scene cycle **********/
-        
+
         /** Commit changes done between frames
          * @remarks Depending on the underlying implementation, changes applied to sources
          *      may or may not be immediately available to the renderer. Calling commit()
@@ -203,7 +201,7 @@ namespace Audio {
          *      @par The process may be lengthy and throw various exceptions.
          */
         virtual void commit();
-        
+
         /** Return position update frequency 
          * @remarks Source position updates are a very important kind of update that needs to be
          *      performed regularly and quite often. They are costly (all active sources have
@@ -211,7 +209,7 @@ namespace Audio {
          *      actual interval may vary depending on the implementation (it's a mere guideline).
          */
         Duration getPositionUpdateFrequency() const;
-        
+
         /** Return listener update frequency 
          * @remarks Position updates are a very important kind of update that needs to be
          *      performed regularly and quite often - even more so for listeners. 
@@ -221,7 +219,7 @@ namespace Audio {
          *      actual interval may vary depending on the implementation (it's a mere guideline).
          */
         Duration getListenerUpdateFrequency() const;
-        
+
         /** Return attribute update frequency 
          * @remarks Source attribute updates are rare but necessary.
          *      They are very costly since all active sources must be updated (and each update
@@ -230,7 +228,7 @@ namespace Audio {
          *      actual interval may vary depending on the implementation (it's a mere guideline).
          */
         Duration getAttributeUpdateFrequency() const;
-        
+
         /** Return source activation frequency 
          * @remarks Sources may become active or inactive over time, and depending on the impementation
          *      the effects may not be immediate. More so, since there's a "maximum renderable sources"
@@ -241,23 +239,21 @@ namespace Audio {
          *      sources that didn't start off as active may never become so.
          */
         Duration getActivationFrequency() const;
-        
+
         /** @see getPositionUpdateFrequency */
         virtual void setPositionUpdateFrequency(Duration interval) const;
-        
+
         /** @see getListenerUpdateFrequency */
         virtual void setListenerUpdateFrequency(Duration interval) const;
-        
+
         /** @see getAttributeUpdateFrequency */
         virtual void setAttributeUpdateFrequency(Duration interval) const;
-        
+
         /** @see getActivationFrequency */
         virtual void setActivationFrequency(Duration interval) const;
-        
-        
+
         /********* Culling parameters **********/
-        
-        
+
         /** Get the maximum number of simultaneous sources that can be playing at a time
          * @remarks This value may be approximate, and it refers to the maximum number
          *      of Source class instances that can effectively be in playing state.
@@ -267,7 +263,7 @@ namespace Audio {
          *      this compensation may not be perfect.
          */
         virtual unsigned int getMaxSources() const;
-        
+
         /** Set the maximum number of simultaneous sources that can be playing at a time
          * @param n The maximum number of simultaneous playing sources desired.
          * @remarks This is not guaranteed to success. If failure arises, either no change
@@ -276,7 +272,7 @@ namespace Audio {
          * @see getMaxSources
          */
         virtual void setMaxSources(unsigned int n);
-        
+
         /** Get the minimum gain that would be culled off
          * @remarks This value specifies the minimum gain of active sources. If a source
          *      ends having a lesser gain, it is ignored and deactivated, to conserve resources.
@@ -289,13 +285,13 @@ namespace Audio {
          *      @see For more culling options: get/setMaxDistance
          */
         virtual float getMinGain() const;
-    
+
         /** Set the minimum gain that would be culled off
          * @param gain The new minimum gain.
          * @see getMinGain
          */
         virtual void setMinGain(float gain);
-        
+
         /** Get the maximum distance of active sources
          * @remarks This value specifies the maximum distance of active sources. If a source
          *      is at a greater distance from the listener, it is ignored and deactivated, 
@@ -303,29 +299,28 @@ namespace Audio {
          *      @see For more culling options: get/setMinGain
          */
         virtual double getMaxDistance() const;
-    
+
         /** Set the maximum distance of active sources
          * @param distance The new limit.
          * @see getMaxDistance
          */
         virtual void setMaxDistance(double distance);
-        
-        
+
         /*********** Notification events ************/
-        
+
         /** Notify the scene manager of a source that starts or stops playing. */
         virtual void notifySourcePlaying(SharedPtr<Source> source, SharedPtr<Scene> scene, bool playing);
-    
+
     protected:
         /** Add a new scene @see createScene */
         void addScene(SharedPtr<Scene> scene);
-        
+
         /** Synchronize activation state with the scenes */
         virtual void activationPhaseImpl();
-        
+
         /** Synchronize source positions/attributes with the renderer */
         virtual void updateSourcesImpl(bool withAttributes);
-        
+
         /** Synchronize listeners
          * @remarks Since renderer implementations require one listener, this only updates
          *      the root listener. Scene listeners fall under the category of position updates.
@@ -333,6 +328,6 @@ namespace Audio {
         virtual void updateListenerImpl(bool withAttributes);
     };
 
-};
+}; // namespace Audio
 
-#endif//__AUDIO_SCENEMANAGER_H__INCLUDED__
+#endif //__AUDIO_SCENEMANAGER_H__INCLUDED__

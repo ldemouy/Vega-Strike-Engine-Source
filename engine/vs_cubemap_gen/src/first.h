@@ -2,7 +2,6 @@
 #define __FIRST_H__
 /* Always include this file first */
 
-
 //When including windows.h, it must come before other headers;
 //but you should tell VCC not to generate min and max macros...
 #ifdef WIN32
@@ -14,13 +13,13 @@
 //After windows.h, we can include algorithm by default, as it
 //has things that are used almost universally, like std::min/max
 #include <algorithm>
-using std::min;
 using std::max;
+using std::min;
 #ifdef abs
 #undef abs
 #endif
-template < typename T >
-inline T operator abs( T const & t )
+template <typename T>
+inline T operator abs(T const &t)
 {
     return t < t(0) ? -t : t;
 }
@@ -30,13 +29,13 @@ inline T operator abs( T const & t )
 
 //These handy templates save us a lot of coding operators. Just define
 //assignment arithmetic operators, and these others are auto-generated
-template < typename T >
-inline T operator+( T const & a, T const & b )
+template <typename T>
+inline T operator+(T const &a, T const &b)
 {
     return T(a) += b;
 }
-template < typename T >
-inline T operator-( T const & a, T const & b )
+template <typename T>
+inline T operator-(T const &a, T const &b)
 {
     return T(a) -= b;
 }
@@ -50,7 +49,4 @@ inline T operator-( T const & a, T const & b )
 #include "units/steradians.h"
 #include "units/shininess.h"
 
-
 #endif
-
-

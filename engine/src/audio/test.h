@@ -4,11 +4,12 @@
 #ifndef __AUDIO_TEST_H__INCLUDED__
 #define __AUDIO_TEST_H__INCLUDED__
 
-namespace Audio {
-    namespace Test {
+namespace Audio
+{
+    namespace Test
+    {
         int main(int argc, char **argv);
     };
-};
+}; // namespace Audio
 
-
-#endif//__AUDIO_TEST_H__INCLUDED__
+#endif //__AUDIO_TEST_H__INCLUDED__

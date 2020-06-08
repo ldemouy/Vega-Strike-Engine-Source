@@ -61,26 +61,25 @@
 // Precompiled Header
 #include "Stdafx.h"
 
-
 using namespace Opcode;
 
-float Ray::SquareDistance(const Point& point, float* t)	const
+float Ray::SquareDistance(const Point &point, float *t) const
 {
 	Point Diff = point - mOrig;
 	float fT = Diff | mDir;
 
-	if(fT<=0.0f)
+	if (fT <= 0.0f)
 	{
 		fT = 0.0f;
 	}
 	else
 	{
 		fT /= mDir.SquareMagnitude();
-		Diff -= fT*mDir;
+		Diff -= fT * mDir;
 	}
 
-	if(t) *t = fT;
+	if (t)
+		*t = fT;
 
 	return Diff.SquareMagnitude();
 }
-

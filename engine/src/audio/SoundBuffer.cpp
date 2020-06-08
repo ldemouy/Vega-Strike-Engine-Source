@@ -8,23 +8,24 @@
 #include <memory.h>
 #include <utility>
 
-namespace Audio {
+namespace Audio
+{
 
-    SoundBuffer::SoundBuffer() 
+    SoundBuffer::SoundBuffer()
         : buffer(0),
           byteCapacity(0),
           bytesUsed(0)
     {
     }
-    
-    SoundBuffer::SoundBuffer(unsigned int capacity, const Format &format) 
+
+    SoundBuffer::SoundBuffer(unsigned int capacity, const Format &format)
         : buffer(0),
           byteCapacity(0),
           bytesUsed(0)
     {
         reserve(capacity, format);
     }
-    
+
     SoundBuffer::SoundBuffer(const SoundBuffer &other)
     {
         bytesUsed = byteCapacity = other.bytesUsed;
@@ -34,8 +35,8 @@ namespace Audio {
         memcpy(buffer, other.buffer, bytesUsed);
         format = other.format;
     }
-    
-    SoundBuffer& SoundBuffer::operator=(const SoundBuffer &other) 
+
+    SoundBuffer &SoundBuffer::operator=(const SoundBuffer &other)
     {
         bytesUsed = byteCapacity = other.bytesUsed;
         buffer = realloc(buffer, byteCapacity);
@@ -43,33 +44,33 @@ namespace Audio {
             throw OutOfMemoryException();
         memcpy(buffer, other.buffer, bytesUsed);
         format = other.format;
-        
+
         return *this;
     }
-    
+
     void SoundBuffer::reserve(unsigned int capacity)
     {
         byteCapacity = capacity;
         bytesUsed = 0;
-        
+
         buffer = realloc(buffer, byteCapacity);
         if (buffer == 0)
             throw OutOfMemoryException();
     }
-    
+
     void SoundBuffer::reserve(unsigned int capacity, const Format &_format)
     {
         format = _format;
         reserve(capacity * _format.frameSize());
     }
-    
-    void SoundBuffer::reformat(const Format &newFormat) 
+
+    void SoundBuffer::reformat(const Format &newFormat)
     {
         if (newFormat != format)
             throw(NotImplementedException("Format conversion"));
     }
-    
-    void SoundBuffer::swap(SoundBuffer &other) 
+
+    void SoundBuffer::swap(SoundBuffer &other)
     {
         std::swap(buffer, other.buffer);
         std::swap(byteCapacity, other.byteCapacity);
@@ -77,18 +78,22 @@ namespace Audio {
         std::swap(format, other.format);
     }
 
-    void SoundBuffer::optimize() 
+    void SoundBuffer::optimize()
     {
-        if (bytesUsed == 0) {
-            if (buffer) {
+        if (bytesUsed == 0)
+        {
+            if (buffer)
+            {
                 free(buffer);
                 buffer = 0;
             }
             bytesUsed = byteCapacity = 0;
-        } else {
+        }
+        else
+        {
             if (bytesUsed != byteCapacity)
                 buffer = realloc(buffer, byteCapacity = bytesUsed);
         }
     }
 
-};
+}; // namespace Audio

@@ -31,4 +31,3 @@ enum NAVITEMTYPES
 #define navambiguoussize 0.01
 
 #endif
-

@@ -27,9 +27,9 @@ extern "C"
 #ifndef _GL_INIT_H_
 #define _GL_INIT_H_
 
-//#include "vegastrike.h"
+    //#include "vegastrike.h"
 
-/* Hack to fix compiling problem with old gl.h's, reported by Steve
+    /* Hack to fix compiling problem with old gl.h's, reported by Steve
  *  Baker <sjbaker1@airmail.net>.  Some old gl.h's don't include glext.h, but
  *  do this:
  *
@@ -47,37 +47,36 @@ extern "C"
  *  recent gl.h's do.  However, versions of Mesa as recent as 3.2.1
  *  don't do this, so we have to work around it.
  */
-//#undef GL_EXT_compiled_vertex_array
+    //#undef GL_EXT_compiled_vertex_array
 
-/* Shouldn't need to include glext.h if gl.h is recent, but alas we can't
+    /* Shouldn't need to include glext.h if gl.h is recent, but alas we can't
  * count on that...  */
 
-#if defined (IRIX)
+#if defined(IRIX)
 #include <GL/gl.h>
 #include <GL/glut.h>
-typedef void (*PFNGLLOCKARRAYSEXTPROC)( GLint first, GLsizei count );
-typedef void (*PFNGLUNLOCKARRAYSEXTPROC)( void );
+    typedef void (*PFNGLLOCKARRAYSEXTPROC)(GLint first, GLsizei count);
+    typedef void (*PFNGLUNLOCKARRAYSEXTPROC)(void);
 
-#elif !defined (_WIN32)
-#if defined (__APPLE__) || defined (MACOSX)
-    #include <GLUT/glut.h>
-    #include <OpenGL/glext.h>
+#elif !defined(_WIN32)
+#if defined(__APPLE__) || defined(MACOSX)
+#include <GLUT/glut.h>
+#include <OpenGL/glext.h>
 #else
-    #include <GL/glut.h>
-    #include <GL/glext.h>
+#include <GL/glut.h>
+#include <GL/glext.h>
 #endif
 
-#if !defined (GL_GLEXT_VERSION) || GL_GLEXT_VERSION < 6
-#   error "*** You need a more recent copy of glext.h.  You can get one at http: //oss.sgi.com/projects/ogl-sample/ABI/glext.h ; it goes in /usr/include/GL. ***"
+#if !defined(GL_GLEXT_VERSION) || GL_GLEXT_VERSION < 6
+#error "*** You need a more recent copy of glext.h.  You can get one at http: //oss.sgi.com/projects/ogl-sample/ABI/glext.h ; it goes in /usr/include/GL. ***"
 #endif
 #endif
-#if defined (PFNGLLOCKARRAYSEXTPROC) && defined (PFNGLUNLOCKARRAYSEXTPROC)
-extern PFNGLLOCKARRAYSEXTPROC   glLockArraysEXT_p;
-extern PFNGLUNLOCKARRAYSEXTPROC glUnlockArraysEXT_p;
+#if defined(PFNGLLOCKARRAYSEXTPROC) && defined(PFNGLUNLOCKARRAYSEXTPROC)
+    extern PFNGLLOCKARRAYSEXTPROC glLockArraysEXT_p;
+    extern PFNGLUNLOCKARRAYSEXTPROC glUnlockArraysEXT_p;
 #endif
 
 #ifdef __cplusplus
 } /* extern "C" */
 #endif
 #endif
-

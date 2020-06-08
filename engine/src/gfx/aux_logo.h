@@ -34,33 +34,35 @@ class Texture;
 class Logo
 {
     int numlogos;
-//glVertex **LogoCorner;
+    //glVertex **LogoCorner;
     GFXVertexList *vlist;
     Texture *Decal;
-    static Hashtable< int, Logo, 257 >decalHash;
+    static Hashtable<int, Logo, 257> decalHash;
     Logo() {}
+
 protected:
     friend class Mesh;
-    int   refcount;   //number of references to draw_queue
-    Logo *owner_of_draw_queue;     //owner of the draw_queue
-    vector< DrawContext > *draw_queue;
-    bool  will_be_drawn;
+    int refcount;              //number of references to draw_queue
+    Logo *owner_of_draw_queue; //owner of the draw_queue
+    vector<DrawContext> *draw_queue;
+    bool will_be_drawn;
     void ProcessDrawQueue();
-public: Logo( int numberlogos,
-              Vector *center,
-              Vector *normal,
-              float *sizes,
-              float *rotations,
-              float offset,
-              Texture *Dec,
-              Vector *Ref );
-    Logo( const Logo &rval )
+
+public:
+    Logo(int numberlogos,
+         Vector *center,
+         Vector *normal,
+         float *sizes,
+         float *rotations,
+         float offset,
+         Texture *Dec,
+         Vector *Ref);
+    Logo(const Logo &rval)
     {
         *this = rval;
     }
     ~Logo();
-    void SetDecal( Texture *decal );
-    void Draw( const Matrix &m );
+    void SetDecal(Texture *decal);
+    void Draw(const Matrix &m);
 };
 #endif
-

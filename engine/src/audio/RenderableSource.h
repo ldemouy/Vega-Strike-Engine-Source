@@ -8,13 +8,13 @@
 #include "Types.h"
 #include "Format.h"
 
-namespace Audio {
+namespace Audio
+{
 
     // Forward declarations
-    
+
     class Source;
     class Listener;
-    
 
     /**
      * Renderable Source abstract class
@@ -35,45 +35,46 @@ namespace Audio {
     {
     private:
         Source *source;
-        
+
     protected:
         /** Internal constructor used by derived classes */
         RenderableSource(Source *source);
-        
+
     public:
         virtual ~RenderableSource();
-        
-        enum UpdateFlags {
-            UPDATE_ALL          = 0x0F,
-            UPDATE_LOCATION     = 0x01,
-            UPDATE_ATTRIBUTES   = 0x02,
-            UPDATE_EFFECTS      = 0x04,
-            UPDATE_GAIN         = 0x08
+
+        enum UpdateFlags
+        {
+            UPDATE_ALL = 0x0F,
+            UPDATE_LOCATION = 0x01,
+            UPDATE_ATTRIBUTES = 0x02,
+            UPDATE_EFFECTS = 0x04,
+            UPDATE_GAIN = 0x08
         };
-        
+
         /** Play the source from the specified timestamp 
          * @param start The starting position. Defaults to the beginning.
          * @remarks It just plays. Will not synchronize attributes with the underlying API.
          *      That must be done through a separate update() call.
          */
         void startPlaying(Timestamp start = 0);
-        
+
         /** Stop a playing source
          * @remarks If the source is playing, stop it. Otherwise, do nothing.
          */
         void stopPlaying();
-        
+
         /** Is the source still playing? */
         bool isPlaying() const;
-        
+
         /** Get the playing position of a playing source 
          * @remarks Will throw if it's not playing!
          */
         Timestamp getPlayingTime() const;
-        
+
         /** Get the attached source */
-        Source* getSource() const { return source; }
-        
+        Source *getSource() const { return source; }
+
         /** Seek to the specified position
          * @note It may not be supported by the renderer on all sources.
          *      Streaming sources are guaranteed to perform a rough seek on a best effort
@@ -83,7 +84,7 @@ namespace Audio {
          * @throws EndOfStreamException if you try to seek past the end
          */
         void seek(Timestamp time);
-        
+
         /** Update the underlying API with dirty attributes 
          * @param flags You may specify which attributes to update. Not all attributes are
          *      equally costly, so you'll want to ease up on some, pump up some others.
@@ -95,34 +96,33 @@ namespace Audio {
          *      ignore them (just log them or something like that). Updates are non-critical
          *      and may fail silently.
          */
-        void update(int flags, const Listener& sceneListener);
-        
+        void update(int flags, const Listener &sceneListener);
+
         // The following section contains all the virtual functions that need be implemented
         // by a concrete Sound class. All are protected, so the interface is independent
         // of implementations.
     protected:
-        
         /** @see startPlaying 
          * @param start The starting position.
          */
         virtual void startPlayingImpl(Timestamp start) = 0;
-        
+
         /** @see stopPlaying.*/
         virtual void stopPlayingImpl() = 0;
-        
+
         /** @see isPlaying.*/
         virtual bool isPlayingImpl() const = 0;
-        
+
         /** @see getPlayingTime.*/
         virtual Timestamp getPlayingTimeImpl() const = 0;
-        
+
         /** @see update. */
-        virtual void updateImpl(int flags, const Listener& sceneListener) = 0;
-        
+        virtual void updateImpl(int flags, const Listener &sceneListener) = 0;
+
         /** @see seek. */
         virtual void seekImpl(Timestamp time) = 0;
     };
 
-};
+}; // namespace Audio
 
-#endif//__AUDIO_RENDERABLESOURCE_H__INCLUDED__
+#endif //__AUDIO_RENDERABLESOURCE_H__INCLUDED__

@@ -31,7 +31,7 @@ using namespace Opcode;
  *	\return		Self-reference
  */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-Plane& Plane::Set(const Point& p0, const Point& p1, const Point& p2)
+Plane &Plane::Set(const Point &p0, const Point &p1, const Point &p2)
 {
 	Point Edge0 = p1 - p0;
 	Point Edge1 = p2 - p0;
@@ -41,6 +41,5 @@ Plane& Plane::Set(const Point& p0, const Point& p1, const Point& p2)
 
 	d = -(p0 | n);
 
-	return	*this;
+	return *this;
 }
-

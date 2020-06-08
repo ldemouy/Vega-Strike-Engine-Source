@@ -6,16 +6,16 @@
 
 #include "utils.h"
 
-namespace Audio {
+namespace Audio
+{
 
-    Sound::Sound(const std::string& _name, bool streaming) :
-        name(_name)
+    Sound::Sound(const std::string &_name, bool streaming) : name(_name)
     {
         flags.loaded = false;
         flags.loading = false;
         flags.streaming = streaming;
     }
-    
+
     Sound::~Sound()
     {
         unload();
@@ -23,42 +23,45 @@ namespace Audio {
 
     void Sound::load(bool wait)
     {
-        if (!isLoaded()) {
+        if (!isLoaded())
+        {
             if (!isLoading())
                 loadImpl(wait);
             if (wait && !isLoaded())
                 waitLoad();
         }
     }
-    
-    void Sound::waitLoad() 
+
+    void Sound::waitLoad()
     {
         while (isLoading())
             Audio::sleep(10);
     }
-    
-    void Sound::unload() 
+
+    void Sound::unload()
     {
-        if (isLoading()) {
+        if (isLoading())
+        {
             abortLoad();
             if (isLoading())
                 waitLoad();
         }
-        if (isLoaded()) {
+        if (isLoaded())
+        {
             unloadImpl();
             flags.loaded = false;
         }
     }
 
-    void Sound::onLoaded(bool success) 
+    void Sound::onLoaded(bool success)
     {
         flags.loaded = success;
         flags.loading = false;
     }
-    
-    void Sound::abortLoad() 
+
+    void Sound::abortLoad()
     {
         // Do nothing, there's no background load
     }
 
-};
+}; // namespace Audio

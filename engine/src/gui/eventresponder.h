@@ -40,56 +40,56 @@ class Control;
 class EventResponder
 {
 public:
-//PROCESS COMMAND
-//Process a command event.
-    virtual bool processCommand( const EventCommandId &command, Control *control );
+    //PROCESS COMMAND
+    //Process a command event.
+    virtual bool processCommand(const EventCommandId &command, Control *control);
 
-//PROCESS KEYBOARD
-//Process a key pressed down.
-    virtual bool processKeyDown( const InputEvent &event );
+    //PROCESS KEYBOARD
+    //Process a key pressed down.
+    virtual bool processKeyDown(const InputEvent &event);
 
-//Process a key released.
-    virtual bool processKeyUp( const InputEvent &event );
+    //Process a key released.
+    virtual bool processKeyUp(const InputEvent &event);
 
-//PROCESS MOUSE
-//Process a mouse button pressed down.
-    virtual bool processMouseDown( const InputEvent &event );
+    //PROCESS MOUSE
+    //Process a mouse button pressed down.
+    virtual bool processMouseDown(const InputEvent &event);
 
-//Called for every click except those landing on the control.
-    virtual void processUnfocus( const InputEvent &event );
+    //Called for every click except those landing on the control.
+    virtual void processUnfocus(const InputEvent &event);
 
-//Process a mouse button released.
-    virtual bool processMouseUp( const InputEvent &event );
+    //Process a mouse button released.
+    virtual bool processMouseUp(const InputEvent &event);
 
-//Process a mouse location change.
-    virtual bool processMouseMove( const InputEvent &event );
+    //Process a mouse location change.
+    virtual bool processMouseMove(const InputEvent &event);
 
-//Process a mouse location change when at least one mouse button is down.
-    virtual bool processMouseDrag( const InputEvent &event );
+    //Process a mouse location change when at least one mouse button is down.
+    virtual bool processMouseDrag(const InputEvent &event);
 
-//CODE-GENERATED EVENTS.
-//Send a command event into the event chain.
-    virtual void sendCommand( const EventCommandId &command, Control *control );
+    //CODE-GENERATED EVENTS.
+    //Send a command event into the event chain.
+    virtual void sendCommand(const EventCommandId &command, Control *control);
 
-//Set a specified target for commands.  Commands aren't forwarded into the
-//event chain, they are sent to this specific target.  This can be used, for
-//instance, to tie two controls tightly together.
-//Use NULL to clear the target and forward commands into the event chain.
-    virtual void setCommandTarget( EventResponder *responder );
+    //Set a specified target for commands.  Commands aren't forwarded into the
+    //event chain, they are sent to this specific target.  This can be used, for
+    //instance, to tie two controls tightly together.
+    //Use NULL to clear the target and forward commands into the event chain.
+    virtual void setCommandTarget(EventResponder *responder);
 
-//BEHAVIOR
-//Handle all input events.  Don't forward anything down the event chain.
-    virtual void setModal( bool modal );
+    //BEHAVIOR
+    //Handle all input events.  Don't forward anything down the event chain.
+    virtual void setModal(bool modal);
 
-//CONSTRUCTION
-public: EventResponder( void );
-    virtual ~EventResponder( void );
+    //CONSTRUCTION
+public:
+    EventResponder(void);
+    virtual ~EventResponder(void);
 
-//VARIABLES
+    //VARIABLES
 protected:
-    bool m_modal;                   //true = This window "traps" all events -- events don't go to other windows.
+    bool m_modal;                    //true = This window "traps" all events -- events don't go to other windows.
     EventResponder *m_commandTarget; //Forward events to this particular responder, not the event chain.
 };
 
-#endif   //__EVENTRESPONDER_H__
-
+#endif //__EVENTRESPONDER_H__

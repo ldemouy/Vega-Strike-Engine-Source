@@ -84,388 +84,400 @@
 // Precompiled Header
 #include "Stdafx.h"
 
-
 namespace Opcode
 {
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/**
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/**
  *	Constructor.
  */
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-HybridModel::HybridModel() :
-	mNbLeaves		(0),
-	mTriangles		(null),
-	mNbPrimitives	(0),
-	mIndices		(null)
-{
-}
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	HybridModel::HybridModel() : mNbLeaves(0),
+								 mTriangles(null),
+								 mNbPrimitives(0),
+								 mIndices(null)
+	{
+	}
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/**
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/**
  *	Destructor.
  */
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-HybridModel::~HybridModel()
-{
-	Release();
-}
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	HybridModel::~HybridModel()
+	{
+		Release();
+	}
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/**
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/**
  *	Releases everything.
  */
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void HybridModel::Release()
-{
-	ReleaseBase();
-	DELETEARRAY(mIndices);
-	DELETEARRAY(mTriangles);
-	mNbLeaves		= 0;
-	mNbPrimitives	= 0;
-}
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	void HybridModel::Release()
+	{
+		ReleaseBase();
+		DELETEARRAY(mIndices);
+		DELETEARRAY(mTriangles);
+		mNbLeaves = 0;
+		mNbPrimitives = 0;
+	}
 
 	struct Internal
 	{
 		Internal()
 		{
-			mNbLeaves	= 0;
-			mLeaves		= null;
-			mTriangles	= null;
-			mBase		= null;
+			mNbLeaves = 0;
+			mLeaves = null;
+			mTriangles = null;
+			mBase = null;
 		}
 		~Internal()
 		{
 			DELETEARRAY(mLeaves);
 		}
 
-		udword			mNbLeaves;
-		AABB*			mLeaves;
-		LeafTriangles*	mTriangles;
-		const udword*	mBase;
+		udword mNbLeaves;
+		AABB *mLeaves;
+		LeafTriangles *mTriangles;
+		const udword *mBase;
 	};
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/**
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/**
  *	Builds a collision model.
  *	\param		create		[in] model creation structure
  *	\return		true if success
  */
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool HybridModel::Build(const OPCODECREATE& create)
-{
-	// 1) Checkings
-	if(!create.mIMesh || !create.mIMesh->IsValid())	return false;
-
-	// Look for degenerate faces.
-	create.mIMesh->CheckTopology();
-	// We continue nonetheless.... 
-
-	Release();	// Make sure previous tree has been discarded
-
-	// 1-1) Setup mesh interface automatically
-	SetMeshInterface(create.mIMesh);
-
-	bool Status = false;
-	AABBTree* LeafTree = null;
-	Internal Data;
-
-	// 2) Build a generic AABB Tree.
-	mSource = new AABBTree;
-	CHECKALLOC(mSource);
-
-	// 2-1) Setup a builder. Our primitives here are triangles from input mesh,
-	// so we use an AABBTreeOfTrianglesBuilder.....
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	bool HybridModel::Build(const OPCODECREATE &create)
 	{
-		AABBTreeOfTrianglesBuilder TB;
-		TB.mIMesh			= create.mIMesh;
-		TB.mNbPrimitives	= create.mIMesh->GetNbTriangles();
-		TB.mSettings		= create.mSettings;
-		TB.mSettings.mLimit	= 16;	// ### Hardcoded, but maybe we could let the user choose 8 / 16 / 32 ...
-		if(!mSource->Build(&TB))	goto FreeAndExit;
-	}
+		// 1) Checkings
+		if (!create.mIMesh || !create.mIMesh->IsValid())
+			return false;
 
-	// 2-2) Here's the trick : create *another* AABB tree using the leaves of the first one (which are boxes, this time)
-	struct Local
-	{
-		// A callback to count leaf nodes
-		static bool CountLeaves(const AABBTreeNode* current, udword /*depth*/, void* user_data)
+		// Look for degenerate faces.
+		create.mIMesh->CheckTopology();
+		// We continue nonetheless....
+
+		Release(); // Make sure previous tree has been discarded
+
+		// 1-1) Setup mesh interface automatically
+		SetMeshInterface(create.mIMesh);
+
+		bool Status = false;
+		AABBTree *LeafTree = null;
+		Internal Data;
+
+		// 2) Build a generic AABB Tree.
+		mSource = new AABBTree;
+		CHECKALLOC(mSource);
+
+		// 2-1) Setup a builder. Our primitives here are triangles from input mesh,
+		// so we use an AABBTreeOfTrianglesBuilder.....
 		{
-			if(current->IsLeaf())
-			{
-				Internal* Data = (Internal*)user_data;
-				Data->mNbLeaves++;
-			}
-			return true;
+			AABBTreeOfTrianglesBuilder TB;
+			TB.mIMesh = create.mIMesh;
+			TB.mNbPrimitives = create.mIMesh->GetNbTriangles();
+			TB.mSettings = create.mSettings;
+			TB.mSettings.mLimit = 16; // ### Hardcoded, but maybe we could let the user choose 8 / 16 / 32 ...
+			if (!mSource->Build(&TB))
+				goto FreeAndExit;
 		}
 
-		// A callback to setup leaf nodes in our internal structures
-		static bool SetupLeafData(const AABBTreeNode* current, udword /*depth*/, void* user_data)
+		// 2-2) Here's the trick : create *another* AABB tree using the leaves of the first one (which are boxes, this time)
+		struct Local
 		{
-			if(current->IsLeaf())
+			// A callback to count leaf nodes
+			static bool CountLeaves(const AABBTreeNode *current, udword /*depth*/, void *user_data)
 			{
-				Internal* Data = (Internal*)user_data;
-
-				// Get current leaf's box
-				Data->mLeaves[Data->mNbLeaves] = *current->GetAABB();
-
-				// Setup leaf data
-				udword Index = (uintptr_t(current->GetPrimitives()) - uintptr_t(Data->mBase))/sizeof(udword);
-				Data->mTriangles[Data->mNbLeaves].SetData(current->GetNbPrimitives(), Index);
-
-				Data->mNbLeaves++;
+				if (current->IsLeaf())
+				{
+					Internal *Data = (Internal *)user_data;
+					Data->mNbLeaves++;
+				}
+				return true;
 			}
-			return true;
+
+			// A callback to setup leaf nodes in our internal structures
+			static bool SetupLeafData(const AABBTreeNode *current, udword /*depth*/, void *user_data)
+			{
+				if (current->IsLeaf())
+				{
+					Internal *Data = (Internal *)user_data;
+
+					// Get current leaf's box
+					Data->mLeaves[Data->mNbLeaves] = *current->GetAABB();
+
+					// Setup leaf data
+					udword Index = (uintptr_t(current->GetPrimitives()) - uintptr_t(Data->mBase)) / sizeof(udword);
+					Data->mTriangles[Data->mNbLeaves].SetData(current->GetNbPrimitives(), Index);
+
+					Data->mNbLeaves++;
+				}
+				return true;
+			}
+		};
+
+		// Walk the tree & count number of leaves
+		Data.mNbLeaves = 0;
+		mSource->Walk(Local::CountLeaves, &Data);
+		mNbLeaves = Data.mNbLeaves; // Keep track of it
+
+		// Special case for 1-leaf meshes
+		if (mNbLeaves == 1)
+		{
+			mModelCode |= OPC_SINGLE_NODE;
+			Status = true;
+			goto FreeAndExit;
 		}
-	};
 
-	// Walk the tree & count number of leaves
-	Data.mNbLeaves = 0;
-	mSource->Walk(Local::CountLeaves, &Data);
-	mNbLeaves = Data.mNbLeaves;	// Keep track of it
+		// Allocate our structures
+		Data.mLeaves = new AABB[Data.mNbLeaves];
+		CHECKALLOC(Data.mLeaves);
+		mTriangles = new LeafTriangles[Data.mNbLeaves];
+		CHECKALLOC(mTriangles);
 
-	// Special case for 1-leaf meshes
-	if(mNbLeaves==1)
-	{
-		mModelCode |= OPC_SINGLE_NODE;
+		// Walk the tree again & setup leaf data
+		Data.mTriangles = mTriangles;
+		Data.mBase = mSource->GetIndices();
+		Data.mNbLeaves = 0; // Reset for incoming walk
+		mSource->Walk(Local::SetupLeafData, &Data);
+
+		// Handle source indices
+		{
+			bool MustKeepIndices = true;
+			if (create.mCanRemap)
+			{
+				// We try to get rid of source indices (saving more ram!) by reorganizing triangle arrays...
+				// Remap can fail when we use callbacks => keep track of indices in that case (it still
+				// works, only using more memory)
+				if (create.mIMesh->RemapClient(mSource->GetNbPrimitives(), mSource->GetIndices()))
+				{
+					MustKeepIndices = false;
+				}
+			}
+
+			if (MustKeepIndices)
+			{
+				// Keep track of source indices (from vanilla tree)
+				mNbPrimitives = mSource->GetNbPrimitives();
+				mIndices = new udword[mNbPrimitives];
+				CopyMemory(mIndices, mSource->GetIndices(), mNbPrimitives * sizeof(udword));
+			}
+		}
+
+		// Now, create our optimized tree using previous leaf nodes
+		LeafTree = new AABBTree;
+		CHECKALLOC(LeafTree);
+		{
+			AABBTreeOfAABBsBuilder TB; // Now using boxes !
+			TB.mSettings = create.mSettings;
+			TB.mSettings.mLimit = 1; // We now want a complete tree so that we can "optimize" it
+			TB.mNbPrimitives = Data.mNbLeaves;
+			TB.mAABBArray = Data.mLeaves;
+			if (!LeafTree->Build(&TB))
+				goto FreeAndExit;
+		}
+
+		// 3) Create an optimized tree according to user-settings
+		if (!CreateTree(create.mNoLeaf, create.mQuantized))
+			goto FreeAndExit;
+
+		// 3-2) Create optimized tree
+		if (!mTree->Build(LeafTree))
+			goto FreeAndExit;
+
+		// Finally ok...
 		Status = true;
-		goto FreeAndExit;
+
+	FreeAndExit: // Allow me this one...
+		DELETESINGLE(LeafTree);
+
+		// 3-3) Delete generic tree if needed
+		if (!create.mKeepOriginal)
+			DELETESINGLE(mSource);
+
+		return Status;
 	}
 
-	// Allocate our structures
-	Data.mLeaves = new AABB[Data.mNbLeaves];		CHECKALLOC(Data.mLeaves);
-	mTriangles = new LeafTriangles[Data.mNbLeaves];	CHECKALLOC(mTriangles);
-
-	// Walk the tree again & setup leaf data
-	Data.mTriangles	= mTriangles;
-	Data.mBase		= mSource->GetIndices();
-	Data.mNbLeaves	= 0;	// Reset for incoming walk
-	mSource->Walk(Local::SetupLeafData, &Data);
-
-	// Handle source indices
-	{
-		bool MustKeepIndices = true;
-		if(create.mCanRemap)
-		{
-			// We try to get rid of source indices (saving more ram!) by reorganizing triangle arrays...
-			// Remap can fail when we use callbacks => keep track of indices in that case (it still
-			// works, only using more memory)
-			if(create.mIMesh->RemapClient(mSource->GetNbPrimitives(), mSource->GetIndices()))
-			{
-				MustKeepIndices = false;
-			}
-		}
-
-		if(MustKeepIndices)
-		{
-			// Keep track of source indices (from vanilla tree)
-			mNbPrimitives = mSource->GetNbPrimitives();
-			mIndices = new udword[mNbPrimitives];
-			CopyMemory(mIndices, mSource->GetIndices(), mNbPrimitives*sizeof(udword));
-		}
-	}
-
-	// Now, create our optimized tree using previous leaf nodes
-	LeafTree = new AABBTree;
-	CHECKALLOC(LeafTree);
-	{
-		AABBTreeOfAABBsBuilder TB;	// Now using boxes !
-		TB.mSettings		= create.mSettings;
-		TB.mSettings.mLimit	= 1;	// We now want a complete tree so that we can "optimize" it
-		TB.mNbPrimitives	= Data.mNbLeaves;
-		TB.mAABBArray		= Data.mLeaves;
-		if(!LeafTree->Build(&TB))	goto FreeAndExit;
-	}
-
-	// 3) Create an optimized tree according to user-settings
-	if(!CreateTree(create.mNoLeaf, create.mQuantized))	goto FreeAndExit;
-
-	// 3-2) Create optimized tree
-	if(!mTree->Build(LeafTree))	goto FreeAndExit;
-
-	// Finally ok...
-	Status = true;
-
-FreeAndExit:	// Allow me this one...
-	DELETESINGLE(LeafTree);
-
-	// 3-3) Delete generic tree if needed
-	if(!create.mKeepOriginal)	DELETESINGLE(mSource);
-
-	return Status;
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/**
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/**
  *	Gets the number of bytes used by the tree.
  *	\return		amount of bytes used
  */
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-udword HybridModel::GetUsedBytes() const
-{
-	udword UsedBytes = 0;
-	if(mTree)		UsedBytes += mTree->GetUsedBytes();
-	if(mIndices)	UsedBytes += mNbPrimitives * sizeof(udword);	// mIndices
-	if(mTriangles)	UsedBytes += mNbLeaves * sizeof(LeafTriangles);	// mTriangles
-	return UsedBytes;
-}
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	udword HybridModel::GetUsedBytes() const
+	{
+		udword UsedBytes = 0;
+		if (mTree)
+			UsedBytes += mTree->GetUsedBytes();
+		if (mIndices)
+			UsedBytes += mNbPrimitives * sizeof(udword); // mIndices
+		if (mTriangles)
+			UsedBytes += mNbLeaves * sizeof(LeafTriangles); // mTriangles
+		return UsedBytes;
+	}
 
-inline_ void OPComputeMinMax(Point& min, Point& max, const VertexPointers& vp)
-{
-	// Compute triangle's AABB = a leaf box
-#ifdef OPC_USE_FCOMI	// a 15% speedup on my machine, not much
-	min.x = FCMin3(vp.Vertex[0]->x, vp.Vertex[1]->x, vp.Vertex[2]->x);
-	max.x = FCMax3(vp.Vertex[0]->x, vp.Vertex[1]->x, vp.Vertex[2]->x);
+	inline_ void OPComputeMinMax(Point &min, Point &max, const VertexPointers &vp)
+	{
+		// Compute triangle's AABB = a leaf box
+#ifdef OPC_USE_FCOMI // a 15% speedup on my machine, not much
+		min.x = FCMin3(vp.Vertex[0]->x, vp.Vertex[1]->x, vp.Vertex[2]->x);
+		max.x = FCMax3(vp.Vertex[0]->x, vp.Vertex[1]->x, vp.Vertex[2]->x);
 
-	min.y = FCMin3(vp.Vertex[0]->y, vp.Vertex[1]->y, vp.Vertex[2]->y);
-	max.y = FCMax3(vp.Vertex[0]->y, vp.Vertex[1]->y, vp.Vertex[2]->y);
+		min.y = FCMin3(vp.Vertex[0]->y, vp.Vertex[1]->y, vp.Vertex[2]->y);
+		max.y = FCMax3(vp.Vertex[0]->y, vp.Vertex[1]->y, vp.Vertex[2]->y);
 
-	min.z = FCMin3(vp.Vertex[0]->z, vp.Vertex[1]->z, vp.Vertex[2]->z);
-	max.z = FCMax3(vp.Vertex[0]->z, vp.Vertex[1]->z, vp.Vertex[2]->z);
+		min.z = FCMin3(vp.Vertex[0]->z, vp.Vertex[1]->z, vp.Vertex[2]->z);
+		max.z = FCMax3(vp.Vertex[0]->z, vp.Vertex[1]->z, vp.Vertex[2]->z);
 #else
-	min = *vp.Vertex[0];
-	max = *vp.Vertex[0];
-	min.Min(*vp.Vertex[1]);
-	max.Max(*vp.Vertex[1]);
-	min.Min(*vp.Vertex[2]);
-	max.Max(*vp.Vertex[2]);
+		min = *vp.Vertex[0];
+		max = *vp.Vertex[0];
+		min.Min(*vp.Vertex[1]);
+		max.Max(*vp.Vertex[1]);
+		min.Min(*vp.Vertex[2]);
+		max.Max(*vp.Vertex[2]);
 #endif
-}
+	}
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/**
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/**
  *	Refits the collision model. This can be used to handle dynamic meshes. Usage is:
  *	1. modify your mesh vertices (keep the topology constant!)
  *	2. refit the tree (call this method)
  *	\return		true if success
  */
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool HybridModel::Refit()
-{
-	if(!mIMesh)	return false;
-	if(!mTree)	return false;
-
-	if(IsQuantized())	return false;
-	if(HasLeafNodes())	return false;
-
-	const LeafTriangles* LT = GetLeafTriangles();
-	const udword* Indices = GetIndices();
-
-	// Bottom-up update
-	VertexPointers VP;
-	Point Min,Max;
-	Point Min_,Max_;
-	udword Index = mTree->GetNbNodes();
-	AABBNoLeafNode* Nodes = (AABBNoLeafNode*)((AABBNoLeafTree*)mTree)->GetNodes();
-	while(Index--)
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	bool HybridModel::Refit()
 	{
-		AABBNoLeafNode& Current = Nodes[Index];
+		if (!mIMesh)
+			return false;
+		if (!mTree)
+			return false;
 
-		if(Current.HasPosLeaf())
+		if (IsQuantized())
+			return false;
+		if (HasLeafNodes())
+			return false;
+
+		const LeafTriangles *LT = GetLeafTriangles();
+		const udword *Indices = GetIndices();
+
+		// Bottom-up update
+		VertexPointers VP;
+		Point Min, Max;
+		Point Min_, Max_;
+		udword Index = mTree->GetNbNodes();
+		AABBNoLeafNode *Nodes = (AABBNoLeafNode *)((AABBNoLeafTree *)mTree)->GetNodes();
+		while (Index--)
 		{
-			const LeafTriangles& CurrentLeaf = LT[Current.GetPosPrimitive()];
+			AABBNoLeafNode &Current = Nodes[Index];
 
-			Min.SetPlusInfinity();
-			Max.SetMinusInfinity();
-
-			Point TmpMin, TmpMax;
-
-			// Each leaf box has a set of triangles
-			udword NbTris = CurrentLeaf.GetNbTriangles();
-			if(Indices)
+			if (Current.HasPosLeaf())
 			{
-				const udword* T = &Indices[CurrentLeaf.GetTriangleIndex()];
+				const LeafTriangles &CurrentLeaf = LT[Current.GetPosPrimitive()];
 
-				// Loop through triangles and test each of them
-				while(NbTris--)
+				Min.SetPlusInfinity();
+				Max.SetMinusInfinity();
+
+				Point TmpMin, TmpMax;
+
+				// Each leaf box has a set of triangles
+				udword NbTris = CurrentLeaf.GetNbTriangles();
+				if (Indices)
 				{
-					mIMesh->GetTriangle(VP, *T++);
-					OPComputeMinMax(TmpMin, TmpMax, VP);
-					Min.Min(TmpMin);
-					Max.Max(TmpMax);
+					const udword *T = &Indices[CurrentLeaf.GetTriangleIndex()];
+
+					// Loop through triangles and test each of them
+					while (NbTris--)
+					{
+						mIMesh->GetTriangle(VP, *T++);
+						OPComputeMinMax(TmpMin, TmpMax, VP);
+						Min.Min(TmpMin);
+						Max.Max(TmpMax);
+					}
+				}
+				else
+				{
+					udword BaseIndex = CurrentLeaf.GetTriangleIndex();
+
+					// Loop through triangles and test each of them
+					while (NbTris--)
+					{
+						mIMesh->GetTriangle(VP, BaseIndex++);
+						OPComputeMinMax(TmpMin, TmpMax, VP);
+						Min.Min(TmpMin);
+						Max.Max(TmpMax);
+					}
 				}
 			}
 			else
 			{
-				udword BaseIndex = CurrentLeaf.GetTriangleIndex();
-
-				// Loop through triangles and test each of them
-				while(NbTris--)
-				{
-					mIMesh->GetTriangle(VP, BaseIndex++);
-					OPComputeMinMax(TmpMin, TmpMax, VP);
-					Min.Min(TmpMin);
-					Max.Max(TmpMax);
-				}
+				const CollisionAABB &CurrentBox = Current.GetPos()->mAABB;
+				CurrentBox.GetMin(Min);
+				CurrentBox.GetMax(Max);
 			}
-		}
-		else
-		{
-			const CollisionAABB& CurrentBox = Current.GetPos()->mAABB;
-			CurrentBox.GetMin(Min);
-			CurrentBox.GetMax(Max);
-		}
 
-		if(Current.HasNegLeaf())
-		{
-			const LeafTriangles& CurrentLeaf = LT[Current.GetNegPrimitive()];
-
-			Min_.SetPlusInfinity();
-			Max_.SetMinusInfinity();
-
-			Point TmpMin, TmpMax;
-
-			// Each leaf box has a set of triangles
-			udword NbTris = CurrentLeaf.GetNbTriangles();
-			if(Indices)
+			if (Current.HasNegLeaf())
 			{
-				const udword* T = &Indices[CurrentLeaf.GetTriangleIndex()];
+				const LeafTriangles &CurrentLeaf = LT[Current.GetNegPrimitive()];
 
-				// Loop through triangles and test each of them
-				while(NbTris--)
+				Min_.SetPlusInfinity();
+				Max_.SetMinusInfinity();
+
+				Point TmpMin, TmpMax;
+
+				// Each leaf box has a set of triangles
+				udword NbTris = CurrentLeaf.GetNbTriangles();
+				if (Indices)
 				{
-					mIMesh->GetTriangle(VP, *T++);
-					OPComputeMinMax(TmpMin, TmpMax, VP);
-					Min_.Min(TmpMin);
-					Max_.Max(TmpMax);
+					const udword *T = &Indices[CurrentLeaf.GetTriangleIndex()];
+
+					// Loop through triangles and test each of them
+					while (NbTris--)
+					{
+						mIMesh->GetTriangle(VP, *T++);
+						OPComputeMinMax(TmpMin, TmpMax, VP);
+						Min_.Min(TmpMin);
+						Max_.Max(TmpMax);
+					}
+				}
+				else
+				{
+					udword BaseIndex = CurrentLeaf.GetTriangleIndex();
+
+					// Loop through triangles and test each of them
+					while (NbTris--)
+					{
+						mIMesh->GetTriangle(VP, BaseIndex++);
+						OPComputeMinMax(TmpMin, TmpMax, VP);
+						Min_.Min(TmpMin);
+						Max_.Max(TmpMax);
+					}
 				}
 			}
 			else
 			{
-				udword BaseIndex = CurrentLeaf.GetTriangleIndex();
-
-				// Loop through triangles and test each of them
-				while(NbTris--)
-				{
-					mIMesh->GetTriangle(VP, BaseIndex++);
-					OPComputeMinMax(TmpMin, TmpMax, VP);
-					Min_.Min(TmpMin);
-					Max_.Max(TmpMax);
-				}
+				const CollisionAABB &CurrentBox = Current.GetNeg()->mAABB;
+				CurrentBox.GetMin(Min_);
+				CurrentBox.GetMax(Max_);
 			}
-		}
-		else
-		{
-			const CollisionAABB& CurrentBox = Current.GetNeg()->mAABB;
-			CurrentBox.GetMin(Min_);
-			CurrentBox.GetMax(Max_);
-		}
 #ifdef OPC_USE_FCOMI
-		Min.x = FCMin2(Min.x, Min_.x);
-		Max.x = FCMax2(Max.x, Max_.x);
-		Min.y = FCMin2(Min.y, Min_.y);
-		Max.y = FCMax2(Max.y, Max_.y);
-		Min.z = FCMin2(Min.z, Min_.z);
-		Max.z = FCMax2(Max.z, Max_.z);
+			Min.x = FCMin2(Min.x, Min_.x);
+			Max.x = FCMax2(Max.x, Max_.x);
+			Min.y = FCMin2(Min.y, Min_.y);
+			Max.y = FCMax2(Max.y, Max_.y);
+			Min.z = FCMin2(Min.z, Min_.z);
+			Max.z = FCMax2(Max.z, Max_.z);
 #else
-		Min.Min(Min_);
-		Max.Max(Max_);
+			Min.Min(Min_);
+			Max.Max(Max_);
 #endif
-		Current.mAABB.SetMinMax(Min, Max);
+			Current.mAABB.SetMinMax(Min, Max);
+		}
+		return true;
 	}
-	return true;
-}
 
-}
+} // namespace Opcode
 // namespace Opcode
-

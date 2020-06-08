@@ -19,9 +19,11 @@
 #include <set>
 #include "heap.h"
 
-namespace Occlusion {
+namespace Occlusion
+{
 
-    class Occluder {
+    class Occluder
+    {
         // Camera and light position for rating computations
         QVector cam;
         QVector light;
@@ -39,13 +41,19 @@ namespace Occlusion {
         {
             double distanceSq = (pos - light).MagnitudeSquared();
             double maxSq = maxOcclusionDistance * maxOcclusionDistance;
-            if (distanceSq >= maxSq) {
+            if (distanceSq >= maxSq)
+            {
                 occlusionRating = 0.f;
-            } else {
+            }
+            else
+            {
                 double distance = sqrt(distanceSq) - rSize - lightSize;
-                if (distance <= 0.0) {
+                if (distance <= 0.0)
+                {
                     occlusionRating = 1.0;
-                } else {
+                }
+                else
+                {
                     double camDistance = (pos - cam).Magnitude();
                     occlusionRating = rSize / (rSize + distance + camDistance * 0.2);
                 }
@@ -64,17 +72,23 @@ namespace Occlusion {
             // Factor out the /distance thing, for performance and
             // precision sake, though.
 
-            if (inner >= 0) {
+            if (inner >= 0)
+            {
                 // Positive inner tagnent means infinite shadow cone
                 maxOcclusionDistance = std::numeric_limits<float>::infinity();
-            } else {
-                if (outer >= 0) {
+            }
+            else
+            {
+                if (outer >= 0)
+                {
                     // Positive outer cone means decreasing shadow intensity
                     // over distance, so max distance will be a multiple
                     // of maximum inner cone distance that will result in
                     // minimal shadowing (4x distance = 16x less shadow)
                     maxOcclusionDistance = -(distance / inner) * 4.0;
-                } else {
+                }
+                else
+                {
                     // All negative, quite impossible, but if it was possible,
                     // max distance would be the length of the outer cone
                     maxOcclusionDistance = -(distance / outer);
@@ -87,11 +101,7 @@ namespace Occlusion {
 
     public:
         Occluder(const QVector &pos_, float rSize_, const QVector &cam_, const QVector &light_, float lightSize_)
-            : cam(cam_)
-            , light(light_)
-            , lightSize(lightSize_)
-            , pos(pos_)
-            , rSize(rSize_)
+            : cam(cam_), light(light_), lightSize(lightSize_), pos(pos_), rSize(rSize_)
         {
             cam = _Universe->AccessCamera()->GetPosition();
             computeMaxOcclusionDistance();
@@ -104,7 +114,7 @@ namespace Occlusion {
          * important than b, to make max-heap-based N-most-important
          * data structures easily implementable.
          */
-        bool operator< (const Occluder &other) const
+        bool operator<(const Occluder &other) const
         {
             return occlusionRating > other.occlusionRating;
         }
@@ -112,9 +122,7 @@ namespace Occlusion {
         bool affects(const QVector &ctr, float rSize, float threshSize) const
         {
             return (
-                (this->rSize >= threshSize)
-                && (((pos - ctr).Magnitude() - rSize) <= maxOcclusionDistance)
-            );
+                (this->rSize >= threshSize) && (((pos - ctr).Magnitude() - rSize) <= maxOcclusionDistance));
         }
 
         float test(const QVector &lightPos, float lightSize, const QVector &pos, float rSize) const
@@ -129,11 +137,11 @@ namespace Occlusion {
             double D = relOccluder.Magnitude();
 
             // Short-circuit the emitter itself
-            if (D <= (lightSize+rSize))
+            if (D <= (lightSize + rSize))
                 return 1.f;
 
             // And no self-occluding
-            if ((pos - this->pos).MagnitudeSquared() <= (rSize*rSize))
+            if ((pos - this->pos).MagnitudeSquared() <= (rSize * rSize))
                 return 1.f;
 
             double Dinv = 1.0 / D;
@@ -185,9 +193,7 @@ namespace Occlusion {
 
         unsigned long hash() const
         {
-            return (  (unsigned long)(long)(pos.x * 17)
-                    ^ (unsigned long)(long)(pos.y * 19)
-                    ^ (unsigned long)(long)(pos.z * 5) );
+            return ((unsigned long)(long)(pos.x * 17) ^ (unsigned long)(long)(pos.y * 19) ^ (unsigned long)(long)(pos.z * 5));
         }
     };
 
@@ -199,84 +205,100 @@ namespace Occlusion {
     static QVector biggestLightPos;
     static float biggestLightSize;
 
-    void /*GFXDRVAPI*/ start( )
+    void /*GFXDRVAPI*/ start()
     {
         end();
 
-        std::vector< int > globalLights;
+        std::vector<int> globalLights;
         GFXGlobalLights(globalLights);
 
         float bigSize = 0.f;
         int bigLight = -1;
 
-        for (std::vector< int >::const_iterator it = globalLights.begin(); it != globalLights.end(); ++it) {
+        for (std::vector<int>::const_iterator it = globalLights.begin(); it != globalLights.end(); ++it)
+        {
             const GFXLight &light = GFXGetLight(*it);
-            if (bigLight < 0 || light.size > bigSize) {
+            if (bigLight < 0 || light.size > bigSize)
+            {
                 bigLight = *it;
                 bigSize = light.size;
             }
         }
 
-        if (bigLight >= 0) {
+        if (bigLight >= 0)
+        {
             biggestLightPos = GFXGetLight(bigLight).getPosition().Cast();
             biggestLightSize = bigSize;
-        } else {
-            biggestLightPos = QVector(0,0,0);
+        }
+        else
+        {
+            biggestLightPos = QVector(0, 0, 0);
             biggestLightSize = 1.f;
         }
     }
 
-    void /*GFXDRVAPI*/ end( )
+    void /*GFXDRVAPI*/ end()
     {
         BOOST_LOG_TRIVIAL(trace) << boost::format("Occluders: %1% forced and %2% dynamic") % forced_occluders.size() %
-             dynamic_occluders.size();
+                                        dynamic_occluders.size();
         // FIXME - I think these three lines are memory leaks -- stephengtuggy 2019-10-01
         forced_occluders.clear();
         forced_occluders_set.clear();
         dynamic_occluders.clear();
     }
 
-    void /*GFXDRVAPI*/ addOccluder( const QVector &pos, float rSize, bool significant )
+    void /*GFXDRVAPI*/ addOccluder(const QVector &pos, float rSize, bool significant)
     {
         Occluder occ(
             pos, rSize,
             _Universe->AccessCamera()->GetPosition(),
-            biggestLightPos, biggestLightSize
-        );
+            biggestLightPos, biggestLightSize);
 
-        if (significant) {
+        if (significant)
+        {
             unsigned long occHash = occ.hash();
 
-            if (!forced_occluders_set.count(occHash)) {
+            if (!forced_occluders_set.count(occHash))
+            {
                 forced_occluders.push_back(occ);
                 forced_occluders_set.insert(occHash);
             }
-        } else {
+        }
+        else
+        {
             dynamic_occluders.push(occ);
             while (dynamic_occluders.size() > 16)
                 dynamic_occluders.pop();
         }
     }
 
-    float /*GFXDRVAPI*/ testOcclusion( const QVector &lightPos, float lightSize, const QVector &pos, float rSize )
+    float /*GFXDRVAPI*/ testOcclusion(const QVector &lightPos, float lightSize, const QVector &pos, float rSize)
     {
         float rv = 1.0f;
 
-        { for (std::vector<Occluder>::const_iterator it = forced_occluders.begin(); it != forced_occluders.end(); ++it) {
-            if (it->affects(pos, rSize, rSize * 4.f)) {
-                rv *= it->test(lightPos, lightSize, pos, rSize);
-                if (rv <= 0.f)
-                    return rv;
+        {
+            for (std::vector<Occluder>::const_iterator it = forced_occluders.begin(); it != forced_occluders.end(); ++it)
+            {
+                if (it->affects(pos, rSize, rSize * 4.f))
+                {
+                    rv *= it->test(lightPos, lightSize, pos, rSize);
+                    if (rv <= 0.f)
+                        return rv;
+                }
             }
-        } }
+        }
 
-        { for (VS::priority_queue<Occluder>::const_iterator it = dynamic_occluders.begin(); it != dynamic_occluders.end(); ++it) {
-            if (it->affects(pos, rSize, rSize * 4.f)) {
-                rv *= it->test(lightPos, lightSize, pos, rSize);
-                if (rv <= 0.f)
-                    return rv;
+        {
+            for (VS::priority_queue<Occluder>::const_iterator it = dynamic_occluders.begin(); it != dynamic_occluders.end(); ++it)
+            {
+                if (it->affects(pos, rSize, rSize * 4.f))
+                {
+                    rv *= it->test(lightPos, lightSize, pos, rSize);
+                    if (rv <= 0.f)
+                        return rv;
+                }
             }
-        } }
+        }
 
         return rv;
     }

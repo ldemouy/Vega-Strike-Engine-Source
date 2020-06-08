@@ -43,44 +43,62 @@
 #include "mission.h"
 #include "easydom.h"
 
-void Mission::checkStatement( missionNode *node, int mode )
+void Mission::checkStatement(missionNode *node, int mode)
 {
     //no difference
-    if (node->tag == DTAG_IF) {
-        doIf( node, mode );
-    } else if (node->tag == DTAG_BLOCK) {
-        doBlock( node, mode );
-    } else if (node->tag == DTAG_SETVAR) {
-        doSetVar( node, mode );
-    } else if (node->tag == DTAG_DEFVAR) {
-        doDefVar( node, mode );
-    } else if (node->tag == DTAG_EXEC) {
-        doExec( node, mode );
-    } else if (node->tag == DTAG_RETURN) {
-        doReturn( node, mode );
-    } else if (node->tag == DTAG_CALL) {
-        varInst *vi = doCall( node, mode );
-        if (vi->type != VAR_VOID) {
-            fatalError( node, mode, "expected void as return from call, got different" );
-            assert( 0 );
+    if (node->tag == DTAG_IF)
+    {
+        doIf(node, mode);
+    }
+    else if (node->tag == DTAG_BLOCK)
+    {
+        doBlock(node, mode);
+    }
+    else if (node->tag == DTAG_SETVAR)
+    {
+        doSetVar(node, mode);
+    }
+    else if (node->tag == DTAG_DEFVAR)
+    {
+        doDefVar(node, mode);
+    }
+    else if (node->tag == DTAG_EXEC)
+    {
+        doExec(node, mode);
+    }
+    else if (node->tag == DTAG_RETURN)
+    {
+        doReturn(node, mode);
+    }
+    else if (node->tag == DTAG_CALL)
+    {
+        varInst *vi = doCall(node, mode);
+        if (vi->type != VAR_VOID)
+        {
+            fatalError(node, mode, "expected void as return from call, got different");
+            assert(0);
         }
-        deleteVarInst( vi );
-    } else if (node->tag == DTAG_WHILE) {
-        doWhile( node, mode );
+        deleteVarInst(vi);
+    }
+    else if (node->tag == DTAG_WHILE)
+    {
+        doWhile(node, mode);
     }
 }
 
-void Mission::doIf( missionNode *node, int mode )
+void Mission::doIf(missionNode *node, int mode)
 {
-    if (mode == SCRIPT_PARSE) {
-        vector< easyDomNode* >::const_iterator siter;
+    if (mode == SCRIPT_PARSE)
+    {
+        vector<easyDomNode *>::const_iterator siter;
 
         int nr_subnodes = node->subnodes.size();
-        if (nr_subnodes != 3) {
-            fatalError( node, mode, "an if-statement needs exact three subnodes, not "+nr_subnodes );
-            printf( "nr_of_subnodes: %d\n", nr_subnodes );
+        if (nr_subnodes != 3)
+        {
+            fatalError(node, mode, "an if-statement needs exact three subnodes, not " + nr_subnodes);
+            printf("nr_of_subnodes: %d\n", nr_subnodes);
 
-            assert( 0 );
+            assert(0);
         }
 #if 0
         int i = 0;
@@ -90,42 +108,47 @@ void Mission::doIf( missionNode *node, int mode )
         }
 #endif
 
-        node->script.if_block[0] = (missionNode*) node->subnodes[0];
-        debug( 8, node->script.if_block[0], mode, "if-node" );
+        node->script.if_block[0] = (missionNode *)node->subnodes[0];
+        debug(8, node->script.if_block[0], mode, "if-node");
 
-        node->script.if_block[1] = (missionNode*) node->subnodes[1];
-        debug( 8, node->script.if_block[1], mode, "if-node" );
+        node->script.if_block[1] = (missionNode *)node->subnodes[1];
+        debug(8, node->script.if_block[1], mode, "if-node");
 
-        node->script.if_block[2] = (missionNode*) node->subnodes[2];
-        debug( 8, node->script.if_block[2], mode, "if-node" );
+        node->script.if_block[2] = (missionNode *)node->subnodes[2];
+        debug(8, node->script.if_block[2], mode, "if-node");
     }
-    bool ok = checkBoolExpr( node->script.if_block[0], mode );
-    if (mode == SCRIPT_PARSE) {
-        checkStatement( node->script.if_block[1], mode );
-        checkStatement( node->script.if_block[2], mode );
-    } else {
+    bool ok = checkBoolExpr(node->script.if_block[0], mode);
+    if (mode == SCRIPT_PARSE)
+    {
+        checkStatement(node->script.if_block[1], mode);
+        checkStatement(node->script.if_block[2], mode);
+    }
+    else
+    {
         if (ok)
-            checkStatement( node->script.if_block[1], mode );
+            checkStatement(node->script.if_block[1], mode);
         else
-            checkStatement( node->script.if_block[2], mode );
+            checkStatement(node->script.if_block[2], mode);
     }
 }
 
-void Mission::doWhile( missionNode *node, int mode )
+void Mission::doWhile(missionNode *node, int mode)
 {
-    if (mode == SCRIPT_PARSE) {
+    if (mode == SCRIPT_PARSE)
+    {
         int len = node->subnodes.size();
-        if (len != 2) {
-            fatalError( node, mode, "a while-expr needs exact two subnodes" );
-            assert( 0 );
+        if (len != 2)
+        {
+            fatalError(node, mode, "a while-expr needs exact two subnodes");
+            assert(0);
         }
-        node->script.while_arg[0] = (missionNode*) node->subnodes[0];
-        node->script.while_arg[1] = (missionNode*) node->subnodes[1];
-
-    } else {
+        node->script.while_arg[0] = (missionNode *)node->subnodes[0];
+        node->script.while_arg[1] = (missionNode *)node->subnodes[1];
+    }
+    else
+    {
         //runtime
-        while ( checkBoolExpr( node->script.while_arg[0], mode ) )
-            checkStatement( node->script.while_arg[1], mode );
+        while (checkBoolExpr(node->script.while_arg[0], mode))
+            checkStatement(node->script.while_arg[1], mode);
     }
 }
-

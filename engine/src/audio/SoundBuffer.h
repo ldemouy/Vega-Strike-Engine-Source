@@ -8,7 +8,8 @@
 #include "Exceptions.h"
 #include "Format.h"
 
-namespace Audio {
+namespace Audio
+{
 
     /**
      * Sound Buffer class
@@ -29,63 +30,67 @@ namespace Audio {
         void *buffer;
         unsigned int byteCapacity;
         unsigned int bytesUsed;
-        
+
         Format format;
-        
+
     public:
         /** Create an empty buffer (zero capacity, default format) */
         SoundBuffer();
-        
+
         /** Create a buffer of specified sample capacity and format */
         SoundBuffer(unsigned int capacity, const Format &format);
-        
+
         /** Create a copy of the other buffer
          * @remarks Only used bytes will be copied. 
          */
         SoundBuffer(const SoundBuffer &other);
-        
+
         /** Set a buffer's capacity.
          * @param capacity The buffer's capacity in bytes
          * @remarks Destroys the current data in the buffer.
          */
         void reserve(unsigned int capacity);
-        
+
         /** Set a buffer's capacity and format.
          * @param capacity The buffer's capacity in samples (or frames) for 'format'
          * @param format The new format associated to the buffer
          * @remarks Destroys the current data in the buffer.
          */
         void reserve(unsigned int capacity, const Format &format);
-        
+
         /** Get a buffer's byte capacity */
         unsigned int getByteCapacity() const { return byteCapacity; }
-        
+
         /** Get a buffer's sample capacity 
          * @remarks Frame capacity actually, which is not the same for multichannel formats. 
          */
         unsigned int getSampleCapacity() const { return byteCapacity / format.frameSize(); }
-        
+
         /** Get the portion of the buffer actually used for holding useful data */
-        unsigned int getUsedBytes() const  { return bytesUsed; }
-        
+        unsigned int getUsedBytes() const { return bytesUsed; }
+
         /** Get write access to the buffer */
-        void* getBuffer() { return buffer; }
-        
+        void *getBuffer() { return buffer; }
+
         /** Get read access to the buffer */
-        const void* getBuffer() const { return buffer; }
-        
+        const void *getBuffer() const { return buffer; }
+
         /** Get the buffer's format */
-        const Format& getFormat() const { return format; }
-        
+        const Format &getFormat() const { return format; }
+
         /** Set the format of the stream mantaining the capacity yet destroying all current data */
-        void setFormat(const Format &newFormat) { format = newFormat; bytesUsed = 0; }
-        
+        void setFormat(const Format &newFormat)
+        {
+            format = newFormat;
+            bytesUsed = 0;
+        }
+
         /** Set the portion of the buffer actually used for holding useful data */
         void setUsedBytes(unsigned int used) { bytesUsed = used; }
-        
+
         /** Get a buffer's sample capacity for a certain format */
         unsigned int getSampleCount() const { return bytesUsed / format.frameSize(); }
-        
+
         /** Reformat the samples in the buffer without reallocating if possible (inplace) 
          * @remarks If the new format requires more bytes than the buffer's byte capacity,
          *      reallocation will be unavoidable. However, if the same buffer is used
@@ -95,20 +100,20 @@ namespace Audio {
          *      the same byte capacity.
          */
         void reformat(const Format &newFormat);
-        
+
         /** Copy the given buffer as if SoundBuffer(buffer) was called */
-        SoundBuffer& operator=(const SoundBuffer &other);
-        
+        SoundBuffer &operator=(const SoundBuffer &other);
+
         /** Swap buffer contents and format 
          * It's an inherently quick operation, since it only swaps pointers and descriptors.
          */
         void swap(SoundBuffer &other);
-        
+
         /** Free extra memory allocated */
         void optimize();
         void clear();
     };
 
-};
+}; // namespace Audio
 
-#endif//__AUDIO__SOUND_BUFFER__INCLUDED__
+#endif //__AUDIO__SOUND_BUFFER__INCLUDED__

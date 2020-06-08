@@ -24,35 +24,34 @@
 #include <string>
 #include "guidefs.h"
 
-#include "vegastrike.h"                 //For OpenGL/gl.h -> GLuint.
+#include "vegastrike.h" //For OpenGL/gl.h -> GLuint.
 
 //The GuiTexture class encapsulates an OpenGL 2D texture.
 //There is a cache so that a texture is only read and bound once.
 class GuiTexture
 {
 public:
-//Read a texture from a file and bind it.
-    bool read( const std::string &fileName );
+    //Read a texture from a file and bind it.
+    bool read(const std::string &fileName);
 
-//Draw this texture, stretching to fit the rect.
-    void draw( const Rect &rect ) const;
+    //Draw this texture, stretching to fit the rect.
+    void draw(const Rect &rect) const;
 
-//CONSTRUCTION
-    GuiTexture( void );
-    ~GuiTexture( void );
-
-protected:
-//INTERNAL IMPLEMENTATION
+    //CONSTRUCTION
+    GuiTexture(void);
+    ~GuiTexture(void);
 
 protected:
-//VARIABLES
-    class Texture*m_texture;
-/*
+    //INTERNAL IMPLEMENTATION
+
+protected:
+    //VARIABLES
+    class Texture *m_texture;
+    /*
  *  GLuint m_glName;		// Unique ID for this texture used in OpenGL.
  *  std::string m_fileName;	// Name of the file this came from.
  *  int m_width, m_height;	// Original size of image.
  */
 };
 
-#endif   //__GUITEXTURE_H__
-
+#endif //__GUITEXTURE_H__

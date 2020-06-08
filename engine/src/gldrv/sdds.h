@@ -13,7 +13,6 @@
  *       the texture format to rgba.
  */
 
-void ddsDecompress( unsigned char* &input, unsigned char* &output, TEXTUREFORMAT format, int height, int width );
+void ddsDecompress(unsigned char *&input, unsigned char *&output, TEXTUREFORMAT format, int height, int width);
 
 #endif
-

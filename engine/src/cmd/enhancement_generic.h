@@ -6,51 +6,52 @@
 class Enhancement : public Unit
 {
     friend class UnitFactory;
+
 protected:
     std::string filename;
     virtual enum clsptr isUnit() const
     {
         return ENHANCEMENTPTR;
     }
-/// constructor only to be called by UnitFactory
-    Enhancement( const char *filename,
-                 int faction,
-                 const string &modifications,
-                 Flightgroup *flightgrp = NULL,
-                 int fg_subnumber = 0 ) :
-        Unit( filename, false, faction, modifications, flightgrp, fg_subnumber )
-        , filename( filename ) {}
+    /// constructor only to be called by UnitFactory
+    Enhancement(const char *filename,
+                int faction,
+                const string &modifications,
+                Flightgroup *flightgrp = NULL,
+                int fg_subnumber = 0) : Unit(filename, false, faction, modifications, flightgrp, fg_subnumber), filename(filename) {}
+
 public:
-    virtual void reactToCollision( Unit *smaller,
-                                   const QVector &biglocation,
-                                   const Vector &bignormal,
-                                   const QVector &smalllocation,
-                                   const Vector &smallnormal,
-                                   float dist )
+    virtual void reactToCollision(Unit *smaller,
+                                  const QVector &biglocation,
+                                  const Vector &bignormal,
+                                  const QVector &smalllocation,
+                                  const Vector &smallnormal,
+                                  float dist)
     {
-        if (smaller->isUnit() != ASTEROIDPTR) {
+        if (smaller->isUnit() != ASTEROIDPTR)
+        {
             double percent;
-            char tempdata[sizeof (this->shield)];
-            memcpy( tempdata, &this->shield, sizeof (this->shield) );
-            shield.number = 0;     //don't want them getting our boosted shields!
+            char tempdata[sizeof(this->shield)];
+            memcpy(tempdata, &this->shield, sizeof(this->shield));
+            shield.number = 0; //don't want them getting our boosted shields!
             shield.shield2fb.front = shield.shield2fb.back = shield.shield2fb.frontmax = shield.shield2fb.backmax = 0;
-            smaller->Upgrade( this, 0, 0, true, true, percent );
-            memcpy( &this->shield, tempdata, sizeof (this->shield) );
-            string fn( filename );
-            string fac( FactionUtil::GetFaction( faction ) );
+            smaller->Upgrade(this, 0, 0, true, true, percent);
+            memcpy(&this->shield, tempdata, sizeof(this->shield));
+            string fn(filename);
+            string fac(FactionUtil::GetFaction(faction));
             Kill();
-            _Universe->AccessCockpit()->savegame->AddUnitToSave( fn.c_str(), ENHANCEMENTPTR, fac.c_str(), (long) this );
+            _Universe->AccessCockpit()->savegame->AddUnitToSave(fn.c_str(), ENHANCEMENTPTR, fac.c_str(), (long)this);
         }
     }
+
 protected:
-/// default constructor forbidden
+    /// default constructor forbidden
     Enhancement() {}
-    Enhancement( std::vector< Mesh* >m, bool b, int i ) : Unit( m, b, i ) {}
-/// copy constructor forbidden
-//Enhancement( const Enhancement& );
-/// assignment operator forbidden
-//Enhancement& operator=( const Enhancement& );
+    Enhancement(std::vector<Mesh *> m, bool b, int i) : Unit(m, b, i) {}
+    /// copy constructor forbidden
+    //Enhancement( const Enhancement& );
+    /// assignment operator forbidden
+    //Enhancement& operator=( const Enhancement& );
 };
 
 #endif
-

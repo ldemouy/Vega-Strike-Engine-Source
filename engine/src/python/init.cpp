@@ -1,11 +1,11 @@
 #ifdef HAVE_PYTHON
 #include <boost/version.hpp>
-#if defined (_MSC_VER) && _MSC_VER <= 1200
+#if defined(_MSC_VER) && _MSC_VER <= 1200
 #define Vector Vactor
 #endif
 #include <boost/python.hpp>
 #include <boost/python/converter/from_python.hpp>
-#if defined (_MSC_VER) && _MSC_VER <= 1200
+#if defined(_MSC_VER) && _MSC_VER <= 1200
 #undef Vector
 #endif
 #include "cs_python.h"
@@ -23,7 +23,7 @@
 #include "python_compile.h"
 #include "python_class.h"
 #include "cmd/unit_generic.h"
-#if defined (_WIN32) && !defined (__CYGWIN__)
+#if defined(_WIN32) && !defined(__CYGWIN__)
 #include <direct.h>
 #endif
 class Unit;
@@ -49,8 +49,8 @@ void Python::initpaths()
      *               pwd[i]=DELIM;
      *  }
      */
-    std::string moduledir( vs_config->getVariable( "data", "python_modules", "modules" ) );
-    std::string basesdir( vs_config->getVariable( "data", "python_bases", "bases" ) );
+    std::string moduledir(vs_config->getVariable("data", "python_modules", "modules"));
+    std::string basesdir(vs_config->getVariable("data", "python_bases", "bases"));
 
     /*
      *  std::string changepath ("import sys\nprint sys.path\nsys.path = ["
@@ -59,16 +59,17 @@ void Python::initpaths()
      *                       ",\""+std::string(pwd)+DELIMSTR+basesdir + string("\"")+
      *                       "]\n");
      */
-    std::string modpaths( "\"\"," );
+    std::string modpaths("\"\",");
     //Find all the mods dir (ignore homedir)
-    for (unsigned int i = 1; i < VSFileSystem::Rootdir.size(); i++) {
-        modpaths += "r\""+VSFileSystem::Rootdir[i]+PATHSEP+moduledir+PATHSEP "builtin\",";
-        modpaths += "r\""+VSFileSystem::Rootdir[i]+PATHSEP+moduledir+PATHSEP "quests\",";
-        modpaths += "r\""+VSFileSystem::Rootdir[i]+PATHSEP+moduledir+PATHSEP "missions\",";
-        modpaths += "r\""+VSFileSystem::Rootdir[i]+PATHSEP+moduledir+PATHSEP "ai\",";
-        modpaths += "r\""+VSFileSystem::Rootdir[i]+PATHSEP+moduledir+"\",";
-        modpaths += "r\""+VSFileSystem::Rootdir[i]+PATHSEP+basesdir+"\"";
-        if ( i+1 < VSFileSystem::Rootdir.size() )
+    for (unsigned int i = 1; i < VSFileSystem::Rootdir.size(); i++)
+    {
+        modpaths += "r\"" + VSFileSystem::Rootdir[i] + PATHSEP + moduledir + PATHSEP "builtin\",";
+        modpaths += "r\"" + VSFileSystem::Rootdir[i] + PATHSEP + moduledir + PATHSEP "quests\",";
+        modpaths += "r\"" + VSFileSystem::Rootdir[i] + PATHSEP + moduledir + PATHSEP "missions\",";
+        modpaths += "r\"" + VSFileSystem::Rootdir[i] + PATHSEP + moduledir + PATHSEP "ai\",";
+        modpaths += "r\"" + VSFileSystem::Rootdir[i] + PATHSEP + moduledir + "\",";
+        modpaths += "r\"" + VSFileSystem::Rootdir[i] + PATHSEP + basesdir + "\"";
+        if (i + 1 < VSFileSystem::Rootdir.size())
             modpaths += ",";
     }
     /*
@@ -76,7 +77,7 @@ void Python::initpaths()
      *  while ((backslash=modpaths.find("\\"))!=std::string::npos) {
      *  modpaths[backslash]='/';
      *  }*/
-    std::string changepath( "import sys\nprint(sys.path)\nsys.path = ["+modpaths+"] + sys.path\n" );
+    std::string changepath("import sys\nprint(sys.path)\nsys.path = [" + modpaths + "] + sys.path\n");
     /*
      *  std::string changepath ("import sys\nprint sys.path\nsys.path = ["
      *                       "\""+VSFileSystem::datadir+DELIMSTR"modules"DELIMSTR"builtin\""
@@ -84,54 +85,54 @@ void Python::initpaths()
      *                       ",\""+VSFileSystem::datadir+DELIMSTR+basesdir + string("\"")+
      *                       "]\n");
      */
-    VSFileSystem::vs_fprintf( stderr, "running %s", changepath.c_str() );
-    char *temppython = strdup( changepath.c_str() );
-    PyRun_SimpleString( temppython );
+    VSFileSystem::vs_fprintf(stderr, "running %s", changepath.c_str());
+    char *temppython = strdup(changepath.c_str());
+    PyRun_SimpleString(temppython);
     Python::reseterrors();
-    free( temppython );
+    free(temppython);
 }
 
 void Python::reseterrors()
 {
-    if ( PyErr_Occurred() ) {
+    if (PyErr_Occurred())
+    {
         PyErr_Print();
         PyErr_Clear();
-        fflush( stderr );
-        fflush( stdout );
+        fflush(stderr);
+        fflush(stdout);
     }
 #ifdef _DEBUG
-    fflush( stderr );
+    fflush(stderr);
 #endif
 }
 
 #if BOOST_VERSION != 102800
-static void * Vector_convertible( PyObject *p )
+static void *Vector_convertible(PyObject *p)
 {
-    return PyTuple_Check( p ) ? p : 0;
+    return PyTuple_Check(p) ? p : 0;
 }
 
-
-static void Vector_construct( PyObject *source, boost::python::converter::rvalue_from_python_stage1_data *data )
+static void Vector_construct(PyObject *source, boost::python::converter::rvalue_from_python_stage1_data *data)
 {
-    void*const storage = ( (boost::python::converter::rvalue_from_python_storage< Vector >*)data )->storage.bytes;
-    new (storage) Vector( 0, 0, 0 );
+    void *const storage = ((boost::python::converter::rvalue_from_python_storage<Vector> *)data)->storage.bytes;
+    new (storage) Vector(0, 0, 0);
     //Fill in QVector values from source tuple here
     //details left to reader.
-    Vector *vec = (Vector*) storage;
+    Vector *vec = (Vector *)storage;
     static char fff[4] = "fff"; //added by chuck_starchaser, to kill a warning
-    PyArg_ParseTuple( source, fff, &vec->i, &vec->j, &vec->k );
+    PyArg_ParseTuple(source, fff, &vec->i, &vec->j, &vec->k);
     data->convertible = storage;
 }
 
-static void QVector_construct( PyObject *source, boost::python::converter::rvalue_from_python_stage1_data *data )
+static void QVector_construct(PyObject *source, boost::python::converter::rvalue_from_python_stage1_data *data)
 {
-    void*const storage = ( (boost::python::converter::rvalue_from_python_storage< QVector >*)data )->storage.bytes;
-    new (storage) QVector( 0, 0, 0 );
+    void *const storage = ((boost::python::converter::rvalue_from_python_storage<QVector> *)data)->storage.bytes;
+    new (storage) QVector(0, 0, 0);
     //Fill in QVector values from source tuple here
     //details left to reader.
-    QVector *vec = (QVector*) storage;
+    QVector *vec = (QVector *)storage;
     static char ddd[4] = "ddd"; //added by chuck_starchaser, to kill a warning
-    PyArg_ParseTuple( source, ddd, &vec->i, &vec->j, &vec->k );
+    PyArg_ParseTuple(source, ddd, &vec->i, &vec->j, &vec->k);
     data->convertible = storage;
 }
 #endif
@@ -142,34 +143,34 @@ void Python::init()
     if (isinit)
         return;
     isinit = true;
-//initialize python library
+    //initialize python library
     Py_NoSiteFlag = 1;
 
-// These functions add these modules to the builtin package
+    // These functions add these modules to the builtin package
     InitVS();
     InitBriefing();
     InitBase();
     InitDirector();
 
-// Now we can do python things about them and initialize them
+    // Now we can do python things about them and initialize them
     Py_Initialize();
     initpaths();
 
 #if BOOST_VERSION != 102800
-    boost::python::converter::registry::insert( Vector_convertible, QVector_construct, boost::python::type_id< QVector > () );
-    boost::python::converter::registry::insert( Vector_convertible, Vector_construct, boost::python::type_id< Vector > () );
+    boost::python::converter::registry::insert(Vector_convertible, QVector_construct, boost::python::type_id<QVector>());
+    boost::python::converter::registry::insert(Vector_convertible, Vector_construct, boost::python::type_id<Vector>());
 #endif
 #if (PY_VERSION_HEX < 0x03000000)
     InitBriefing2();
     InitVS2();
 #endif
-    VSFileSystem::vs_fprintf( stderr, "testing VS random" );
-    std::string changepath( "import sys\nprint(sys.path)\n" );
-    VSFileSystem::vs_fprintf( stderr, "running %s", changepath.c_str() );
-    char *temppython = strdup( changepath.c_str() );
-    PyRun_SimpleString( temppython );
+    VSFileSystem::vs_fprintf(stderr, "testing VS random");
+    std::string changepath("import sys\nprint(sys.path)\n");
+    VSFileSystem::vs_fprintf(stderr, "running %s", changepath.c_str());
+    char *temppython = strdup(changepath.c_str());
+    PyRun_SimpleString(temppython);
     Python::reseterrors();
-    free( temppython );
+    free(temppython);
 #if (PY_VERSION_HEX < 0x03000000)
     InitDirector2();
     InitBase2();
@@ -224,14 +225,13 @@ void Python::test()
         VSFileSystem::Close( fp1 );
     }
 #endif
-//char buffer[128];
-//PythonIOString::buffer << endl << '\0';
-//vs_config->setVariable("data","test","NULL");
-//VSFileSystem::vs_fprintf(stdout, "%s", vs_config->getVariable("data","test", string()).c_str());
-//VSFileSystem::vs_fprintf(stdout, "output %s\n", PythonIOString::buffer.str());
-    fflush( stderr );
-    fflush( stdout );
+    //char buffer[128];
+    //PythonIOString::buffer << endl << '\0';
+    //vs_config->setVariable("data","test","NULL");
+    //VSFileSystem::vs_fprintf(stdout, "%s", vs_config->getVariable("data","test", string()).c_str());
+    //VSFileSystem::vs_fprintf(stdout, "output %s\n", PythonIOString::buffer.str());
+    fflush(stderr);
+    fflush(stdout);
 }
 
 #endif
-

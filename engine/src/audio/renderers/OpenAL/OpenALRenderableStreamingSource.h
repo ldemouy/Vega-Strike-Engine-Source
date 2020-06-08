@@ -11,7 +11,8 @@
 #include "../../Exceptions.h"
 #include "../../Types.h"
 
-namespace Audio {
+namespace Audio
+{
 
     /**
      * OpenAL Renderable Source class
@@ -27,12 +28,12 @@ namespace Audio {
         bool shouldPlay;
         bool startedPlaying;
         bool buffering;
-        
+
     public:
         OpenALRenderableStreamingSource(Source *source);
-        
+
         virtual ~OpenALRenderableStreamingSource();
-        
+
         /** 
          * Returns whether this stream should be playing
          * @remarks Streaming sources may halt due to buffer underruns.
@@ -40,29 +41,29 @@ namespace Audio {
          *      the underlying AL source, we can overcome this problem.
          */
         bool shouldBePlaying() const { return shouldPlay && !atEos; }
-        
+
     protected:
         /** @see RenderableSource::startPlayingImpl. */
         virtual void startPlayingImpl(Timestamp start);
-        
+
         /** @see RenderableSource::stopPlayingImpl. */
         virtual void stopPlayingImpl();
-        
+
         /** @see RenderableSource::isPlayingImpl. */
         virtual bool isPlayingImpl() const;
-        
+
         /** @see RenderableSource::getPlayingTimeImpl. */
         virtual Timestamp getPlayingTimeImpl() const;
-        
+
         /** @see RenderableSource::updateImpl. */
-        virtual void updateImpl(int flags, const Listener& sceneListener);
-        
+        virtual void updateImpl(int flags, const Listener &sceneListener);
+
         /** @see RenderableSource::seekImpl. */
         virtual void seekImpl(Timestamp time);
-        
+
         /** Derived classes may use the underlying AL source handle to set additional attributes */
         ALuint getALSource() const { return alSource; }
-        
+
         /** Queue AL buffers from the source's AL sound stream.
          * @note It will fail with an assertion if the attached sound isn't a streaming OpenAL sound
          * @note It will not throw an EndOfStream exception, even if the sound reaches the end 
@@ -71,6 +72,6 @@ namespace Audio {
         void queueALBuffers();
     };
 
-};
+}; // namespace Audio
 
-#endif//__AUDIO_OPENALRENDERABLESTREAMINGSOURCE_H__INCLUDED__
+#endif //__AUDIO_OPENALRENDERABLESTREAMINGSOURCE_H__INCLUDED__

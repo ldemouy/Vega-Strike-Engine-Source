@@ -24,23 +24,22 @@
 // Precompiled Header
 #include "Stdafx.h"
 
-
 using namespace Opcode;
 
-float Segment::SquareDistance(const Point& point, float* t)	const
+float Segment::SquareDistance(const Point &point, float *t) const
 {
 	Point Diff = point - mP0;
 	Point Dir = mP1 - mP0;
 	float fT = Diff | Dir;
 
-	if(fT<=0.0f)
+	if (fT <= 0.0f)
 	{
 		fT = 0.0f;
 	}
 	else
 	{
-		float SqrLen= Dir.SquareMagnitude();
-		if(fT>=SqrLen)
+		float SqrLen = Dir.SquareMagnitude();
+		if (fT >= SqrLen)
 		{
 			fT = 1.0f;
 			Diff -= Dir;
@@ -48,12 +47,12 @@ float Segment::SquareDistance(const Point& point, float* t)	const
 		else
 		{
 			fT /= SqrLen;
-			Diff -= fT*Dir;
+			Diff -= fT * Dir;
 		}
 	}
 
-	if(t)	*t = fT;
+	if (t)
+		*t = fT;
 
 	return Diff.SquareMagnitude();
 }
-

@@ -48,7 +48,6 @@
 // Precompiled Header
 #include "Stdafx.h"
 
-
 using namespace Opcode;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -57,7 +56,7 @@ using namespace Opcode;
  *	\return		Self-reference
  */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-Point& Point::PositiveUnitRandomVector()
+Point &Point::PositiveUnitRandomVector()
 {
 	x = UnitRandomFloat();
 	y = UnitRandomFloat();
@@ -72,7 +71,7 @@ Point& Point::PositiveUnitRandomVector()
  *	\return		Self-reference
  */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-Point& Point::UnitRandomVector()
+Point &Point::UnitRandomVector()
 {
 	x = UnitRandomFloat() - 0.5f;
 	y = UnitRandomFloat() - 0.5f;
@@ -83,9 +82,9 @@ Point& Point::UnitRandomVector()
 
 // Cast operator
 // WARNING: not inlined
-Point::operator HPoint() const	{ return HPoint(x, y, z, 0.0f); }
+Point::operator HPoint() const { return HPoint(x, y, z, 0.0f); }
 
-Point& Point::Refract(const Point& eye, const Point& n, float refractindex, Point& refracted)
+Point &Point::Refract(const Point &eye, const Point &n, float refractindex, Point &refracted)
 {
 	//	Point EyePt = eye position
 	//	Point p = current vertex
@@ -97,33 +96,35 @@ Point& Point::Refract(const Point& eye, const Point& n, float refractindex, Poin
 	Env.y = eye.y - y;
 	Env.z = eye.z - z;
 
-	float NDotE = n|Env;
-	float NDotN = n|n;
+	float NDotE = n | Env;
+	float NDotN = n | n;
 	NDotE /= refractindex;
 
 	// Refracted vector
-	refracted = n*NDotE - Env*NDotN;
+	refracted = n * NDotE - Env * NDotN;
 
 	return *this;
 }
 
-Point& Point::ProjectToPlane(const Plane& p)
+Point &Point::ProjectToPlane(const Plane &p)
 {
-	*this-= (p.d + (*this|p.n))*p.n;
+	*this -= (p.d + (*this | p.n)) * p.n;
 	return *this;
 }
 
-void Point::ProjectToScreen(float halfrenderwidth, float halfrenderheight, const Matrix4x4& mat, HPoint& projected) const
+void Point::ProjectToScreen(float halfrenderwidth, float halfrenderheight, const Matrix4x4 &mat, HPoint &projected) const
 {
 	projected = HPoint(x, y, z, 1.0f) * mat;
 	projected.w = 1.0f / projected.w;
 
-	projected.x*=projected.w;
-	projected.y*=projected.w;
-	projected.z*=projected.w;
+	projected.x *= projected.w;
+	projected.y *= projected.w;
+	projected.z *= projected.w;
 
-	projected.x *= halfrenderwidth;		projected.x += halfrenderwidth;
-	projected.y *= -halfrenderheight;	projected.y += halfrenderheight;
+	projected.x *= halfrenderwidth;
+	projected.x += halfrenderwidth;
+	projected.y *= -halfrenderheight;
+	projected.y += halfrenderheight;
 }
 
 void Point::SetNotUsed()
@@ -134,15 +135,18 @@ void Point::SetNotUsed()
 	IR(z) = 0xffffffff;
 }
 
-bool Point::IsNotUsed()	const
+bool Point::IsNotUsed() const
 {
-	if(IR(x)!=0xffffffff)	return FALSE;
-	if(IR(y)!=0xffffffff)	return FALSE;
-	if(IR(z)!=0xffffffff)	return FALSE;
+	if (IR(x) != 0xffffffff)
+		return FALSE;
+	if (IR(y) != 0xffffffff)
+		return FALSE;
+	if (IR(z) != 0xffffffff)
+		return FALSE;
 	return TRUE;
 }
 
-Point& Point::Mult(const Matrix3x3& mat, const Point& a)
+Point &Point::Mult(const Matrix3x3 &mat, const Point &a)
 {
 	x = a.x * mat.m[0][0] + a.y * mat.m[0][1] + a.z * mat.m[0][2];
 	y = a.x * mat.m[1][0] + a.y * mat.m[1][1] + a.z * mat.m[1][2];
@@ -150,7 +154,7 @@ Point& Point::Mult(const Matrix3x3& mat, const Point& a)
 	return *this;
 }
 
-Point& Point::Mult2(const Matrix3x3& mat1, const Point& a1, const Matrix3x3& mat2, const Point& a2)
+Point &Point::Mult2(const Matrix3x3 &mat1, const Point &a1, const Matrix3x3 &mat2, const Point &a2)
 {
 	x = a1.x * mat1.m[0][0] + a1.y * mat1.m[0][1] + a1.z * mat1.m[0][2] + a2.x * mat2.m[0][0] + a2.y * mat2.m[0][1] + a2.z * mat2.m[0][2];
 	y = a1.x * mat1.m[1][0] + a1.y * mat1.m[1][1] + a1.z * mat1.m[1][2] + a2.x * mat2.m[1][0] + a2.y * mat2.m[1][1] + a2.z * mat2.m[1][2];
@@ -158,7 +162,7 @@ Point& Point::Mult2(const Matrix3x3& mat1, const Point& a1, const Matrix3x3& mat
 	return *this;
 }
 
-Point& Point::Mac(const Matrix3x3& mat, const Point& a)
+Point &Point::Mac(const Matrix3x3 &mat, const Point &a)
 {
 	x += a.x * mat.m[0][0] + a.y * mat.m[0][1] + a.z * mat.m[0][2];
 	y += a.x * mat.m[1][0] + a.y * mat.m[1][1] + a.z * mat.m[1][2];
@@ -166,7 +170,7 @@ Point& Point::Mac(const Matrix3x3& mat, const Point& a)
 	return *this;
 }
 
-Point& Point::TransMult(const Matrix3x3& mat, const Point& a)
+Point &Point::TransMult(const Matrix3x3 &mat, const Point &a)
 {
 	x = a.x * mat.m[0][0] + a.y * mat.m[1][0] + a.z * mat.m[2][0];
 	y = a.x * mat.m[0][1] + a.y * mat.m[1][1] + a.z * mat.m[2][1];
@@ -174,7 +178,7 @@ Point& Point::TransMult(const Matrix3x3& mat, const Point& a)
 	return *this;
 }
 
-Point& Point::Transform(const Point& r, const Matrix3x3& rotpos, const Point& linpos)
+Point &Point::Transform(const Point &r, const Matrix3x3 &rotpos, const Point &linpos)
 {
 	x = r.x * rotpos.m[0][0] + r.y * rotpos.m[0][1] + r.z * rotpos.m[0][2] + linpos.x;
 	y = r.x * rotpos.m[1][0] + r.y * rotpos.m[1][1] + r.z * rotpos.m[1][2] + linpos.y;
@@ -182,7 +186,7 @@ Point& Point::Transform(const Point& r, const Matrix3x3& rotpos, const Point& li
 	return *this;
 }
 
-Point& Point::InvTransform(const Point& r, const Matrix3x3& rotpos, const Point& linpos)
+Point &Point::InvTransform(const Point &r, const Matrix3x3 &rotpos, const Point &linpos)
 {
 	float sx = r.x - linpos.x;
 	float sy = r.y - linpos.y;
@@ -192,4 +196,3 @@ Point& Point::InvTransform(const Point& r, const Matrix3x3& rotpos, const Point&
 	z = sx * rotpos.m[0][2] + sy * rotpos.m[1][2] + sz * rotpos.m[2][2];
 	return *this;
 }
-

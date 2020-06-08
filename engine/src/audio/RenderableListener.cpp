@@ -4,24 +4,28 @@
 
 #include "RenderableListener.h"
 
-namespace Audio {
+namespace Audio
+{
 
-    RenderableListener::RenderableListener(Listener *_listener) :
-        listener(_listener)
+    RenderableListener::RenderableListener(Listener *_listener) : listener(_listener)
     {
     }
-    
+
     RenderableListener::~RenderableListener()
     {
         // Just in case.
         listener = 0;
     }
-    
-    void RenderableListener::update(int flags) 
+
+    void RenderableListener::update(int flags)
     {
-        try {
+        try
+        {
             updateImpl(flags);
-        } catch(const Exception& e) {}
+        }
+        catch (const Exception &e)
+        {
+        }
     }
 
-};
+}; // namespace Audio

@@ -5,7 +5,8 @@
 #include "Exceptions.h"
 #include <map>
 
-namespace Audio {
+namespace Audio
+{
 
     // Forward declarations
     class Listener;
@@ -13,7 +14,7 @@ namespace Audio {
 
     /** Get the game time stamp - ie, the time as it elapses in the game's universe */
     Timestamp getGameTime();
-    
+
     /** Get the current real time stamp */
     Timestamp getRealTime();
 
@@ -25,7 +26,7 @@ namespace Audio {
      *      be used for culling purposes.
      */
     Scalar estimateGain(const Source &src, const Listener &listener);
-    
+
     /** Make the thread sleep for at least 'ms' milliseconds.
      * @remarks sleep(0) is a very common way to implement a waiting loop:
      *      @code while (condition) sleep(0);
@@ -33,36 +34,38 @@ namespace Audio {
      *      it lays close to 15ms.
      */
     void sleep(unsigned int ms);
-    
+
     /** Parse an enumerated string into its actual value 
      * @param s The string to be parsed
      * @param enumMap A map associating strings to values
      * @remarks Returns enumMap[s] raising an exception on error.
      */
-    template<typename T> T parseEnum(const std::string &s, const std::map<std::string, T> &enumMap)
+    template <typename T>
+    T parseEnum(const std::string &s, const std::map<std::string, T> &enumMap)
     {
         typename std::map<std::string, T>::const_iterator it = enumMap.find(s);
         if (it != enumMap.end())
-            return it->second; else
+            return it->second;
+        else
             throw InvalidParametersException("Enumerated value \"" + s + "\" not recognized");
     }
-    
+
     /** Parse an enumerated string into its actual value 
      * @param s The string to be parsed
      * @param enumMap A map associating strings to values
      * @param deflt A default value to return when s is found in the enumeration map.
      * @remarks Returns enumMap[s] or the default, no exceptions raised.
      */
-    template<typename T> T parseEnum(const std::string &s, const std::map<std::string, T> &enumMap, T deflt)
+    template <typename T>
+    T parseEnum(const std::string &s, const std::map<std::string, T> &enumMap, T deflt)
     {
         typename std::map<std::string, T>::const_iterator it = enumMap.find(s);
         if (it != enumMap.end())
-            return it->second; else
+            return it->second;
+        else
             return deflt;
     }
-    
 
-}
+} // namespace Audio
 
-#endif//__AUDIO_UTILS_H__INCLUDED__
-
+#endif //__AUDIO_UTILS_H__INCLUDED__
