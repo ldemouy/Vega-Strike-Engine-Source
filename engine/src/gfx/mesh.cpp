@@ -34,7 +34,7 @@
 #include <fstream>
 #include "vsfilesystem.h"
 #include "lin_time.h"
-#include "gfxlib.h"
+#include "gldrv/gfxlib.h"
 #include "vs_globals.h"
 #include "configxml.h"
 #include "hashtable.h"

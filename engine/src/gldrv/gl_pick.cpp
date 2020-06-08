@@ -3,7 +3,7 @@
 
 //#include <GL/gl.h>
 #include "gl_globals.h"
-#include "gfxlib.h"
+#include "gldrv/gfxlib.h"
 #include "gl_matrix.h"
 #include <GL/glu.h>
 #include <assert.h>

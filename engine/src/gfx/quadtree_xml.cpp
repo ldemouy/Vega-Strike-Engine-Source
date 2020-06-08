@@ -1,6 +1,6 @@
 #include "quadtree.h"
 #include "xml_support.h"
-#include "gfxlib.h"
+#include "gldrv/gfxlib.h"
 #include "ani_texture.h"
 #include <assert.h>
 #include "vsfilesystem.h"

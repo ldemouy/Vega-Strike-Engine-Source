@@ -21,7 +21,7 @@
 
 #include <stdio.h>
 #include <assert.h>
-#include "gfxlib.h"
+#include "gldrv/gfxlib.h"
 #include <string>
 #include "endianness.h"
 #include "hashtable.h"

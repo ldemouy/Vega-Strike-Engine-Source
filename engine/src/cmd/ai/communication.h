@@ -1,7 +1,7 @@
 #ifndef _COMMUNICATION_H_
 #define _COMMUNICATION_H_
 #include "cmd/unit_generic.h"
-#include "gfxlib_struct.h"
+#include "gldrv/gfxlib_struct.h"
 
 class FSM
 {

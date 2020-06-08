@@ -22,7 +22,7 @@
 #ifndef __GUIDEFS_H__
 #define __GUIDEFS_H__
 
-#include "gfxlib.h"
+#include "gldrv/gfxlib.h"
 #include "gldrv/winsys.h"
 //Location in 2d.
 struct Point

@@ -1,7 +1,7 @@
 // -*- mode: c++; c-basic-offset: 4; indent-tabs-mode: nil -*-
 
 #include <algorithm>
-#include "gfxlib.h"
+#include "gldrv/gfxlib.h"
 #include "cmd/unit_generic.h"
 #include "cmd/planet_generic.h"
 #include "cmd/unit_util.h"

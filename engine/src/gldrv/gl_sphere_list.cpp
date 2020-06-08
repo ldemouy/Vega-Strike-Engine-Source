@@ -1,5 +1,5 @@
-#include "gfxlib.h"
-#include "gfxlib_struct.h"
+#include "gldrv/gfxlib.h"
+#include "gldrv/gfxlib_struct.h"
 #include "gfx/matrix.h"
 #include "gl_globals.h"
 #include <assert.h>

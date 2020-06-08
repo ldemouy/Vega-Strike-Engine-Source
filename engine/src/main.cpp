@@ -29,7 +29,7 @@
 #include <direct.h>
 #include <process.h>
 #endif
-#include "gfxlib.h"
+#include "gldrv/gfxlib.h"
 #include "in_kb.h"
 #include "lin_time.h"
 #include "main_loop.h"

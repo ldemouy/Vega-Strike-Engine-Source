@@ -24,7 +24,7 @@
 #include "vs_globals.h"
 #include "vegastrike.h"
 #include "config_xml.h"
-#include "gfxlib.h"
+#include "gldrv/gfxlib.h"
 
 #include "options.h"
 

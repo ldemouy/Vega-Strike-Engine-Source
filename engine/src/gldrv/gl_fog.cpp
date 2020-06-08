@@ -1,4 +1,4 @@
-#include "gfxlib.h"
+#include "gldrv/gfxlib.h"
 #include "gl_globals.h"
 static struct _GFXFogState
 {

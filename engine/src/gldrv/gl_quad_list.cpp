@@ -20,7 +20,7 @@
  */
 #include "gl_globals.h"
 
-#include "gfxlib.h"
+#include "gldrv/gfxlib.h"
 #include "vegastrike.h"
 #include "vs_globals.h"
 #include <stdio.h>

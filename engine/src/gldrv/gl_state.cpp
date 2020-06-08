@@ -22,7 +22,7 @@
 #include "gl_globals.h"
 #undef GL_STATE_CPP
 
-#include "gfxlib.h"
+#include "gldrv/gfxlib.h"
 #include "vegastrike.h"
 #include "vs_globals.h"
 #include <stack>

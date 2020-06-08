@@ -1,6 +1,6 @@
 #include "cmd/unit_generic.h"
 #include "loc_select.h"
-#include "gfxlib.h"
+#include "gldrv/gfxlib.h"
 #include "in_kb.h"
 #include "vs_globals.h"
 #include <stdio.h>

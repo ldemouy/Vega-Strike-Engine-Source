@@ -22,7 +22,7 @@
 #define _FILE_MAIN_H_
 #include <stdio.h>
 #include <string.h>
-//#include "gfxlib.h"
+//#include "gldrv/gfxlib.h"
 #include "endianness.h"
 #include "vsfilesystem.h"
 using VSFileSystem::VSFile;

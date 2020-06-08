@@ -4,7 +4,7 @@
 #include "unit_generic.h"
 #include "ai/order.h"
 #include "configxml.h"
-#include "gfxlib_struct.h"
+#include "gldrv/gfxlib_struct.h"
 #include "images.h"
 
 class Atmosphere;

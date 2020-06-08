@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 #include "xml_support.h"
-#include "gfxlib_struct.h"
+#include "gldrv/gfxlib_struct.h"
 #include "gfx/vec.h"
 #include "cmd/collection.h"
 #include "cmd/container.h"

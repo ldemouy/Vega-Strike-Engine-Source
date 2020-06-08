@@ -1,8 +1,8 @@
 #ifndef _STAR_H_
 #define _STAR_H_
-#include "gfxlib.h"
+#include "gldrv/gfxlib.h"
 
-#include "gfxlib_struct.h"
+#include "gldrv/gfxlib_struct.h"
 const int STARnumvlist = 27;
 #include <string>
 

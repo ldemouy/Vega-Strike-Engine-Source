@@ -1,7 +1,7 @@
 // -*- mode: c++; c-basic-offset: 4; indent-tabs-mode: nil -*-
 
 #include <cmath>
-#include "gfxlib_struct.h"
+#include "gldrv/gfxlib_struct.h"
 #include "viewarea.h"
 
 namespace Radar

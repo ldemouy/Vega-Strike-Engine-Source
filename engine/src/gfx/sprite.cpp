@@ -26,7 +26,7 @@
 #include "ani_texture.h"
 #include "sprite.h"
 #include "matrix.h"
-#include "gfxlib.h"
+#include "gldrv/gfxlib.h"
 #include "vegastrike.h"
 #include "vs_globals.h"
 #include "../gldrv/gl_globals.h"

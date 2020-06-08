@@ -7,7 +7,7 @@
 #include "lin_time.h" // GetElapsedTime
 #include "cmd/unit_generic.h"
 #include "cmd/unit_util.h"
-#include "gfxlib.h"
+#include "gldrv/gfxlib.h"
 #include "viewarea.h"
 #include "bubble_display.h"
 

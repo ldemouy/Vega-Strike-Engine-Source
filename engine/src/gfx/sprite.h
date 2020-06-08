@@ -21,7 +21,7 @@
 #ifndef SPRITE_H
 #define SPRITE_H
 
-#include "gfxlib.h"
+#include "gldrv/gfxlib.h"
 
 #include "quaternion.h"
 

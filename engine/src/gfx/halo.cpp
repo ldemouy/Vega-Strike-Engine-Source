@@ -1,6 +1,6 @@
 #include "cmd/unit_generic.h"
 #include "halo.h"
-#include "gfxlib.h"
+#include "gldrv/gfxlib.h"
 #include "vegastrike.h"
 #include "vs_globals.h"
 #include "aux_texture.h"

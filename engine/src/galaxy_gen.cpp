@@ -10,7 +10,7 @@
 #include "configxml.h"
 #include "vs_globals.h"
 #include "xml_support.h"
-#include "gfxlib.h"
+#include "gldrv/gfxlib.h"
 #include "galaxy_xml.h"
 #include "galaxy_gen.h"
 #include "vs_random.h"

@@ -23,7 +23,7 @@
 #include "gl_globals.h"
 #undef GL_MISC_CPP
 #include "vegastrike.h"
-#include "gfxlib.h"
+#include "gldrv/gfxlib.h"
 #include "vs_globals.h"
 #include "gl_light.h"
 #include "config_xml.h"

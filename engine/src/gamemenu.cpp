@@ -14,7 +14,7 @@
 #include "gui/groupcontrol.h"
 #include "gui/scroller.h"
 #include "gamemenu.h"
-#include "gfxlib_struct.h"
+#include "gldrv/gfxlib_struct.h"
 #include "cmd/music.h"
 #include "options.h"
 #include "configxml.h"

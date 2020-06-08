@@ -20,7 +20,7 @@
  */
 //#include "gl_globals.h"
 
-#include "gfxlib_struct.h"
+#include "gldrv/gfxlib_struct.h"
 #include "vegastrike.h"
 #include "vs_globals.h"
 #include "vsfilesystem.h"

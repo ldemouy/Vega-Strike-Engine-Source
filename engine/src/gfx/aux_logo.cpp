@@ -24,7 +24,7 @@
 #include "aux_logo.h"
 #include "aux_texture.h"
 #include <assert.h>
-#include "gfxlib.h"
+#include "gldrv/gfxlib.h"
 #include "vs_globals.h"
 #include "config_xml.h"
 #include "xml_support.h"

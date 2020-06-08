@@ -1,7 +1,7 @@
 #ifndef __HALO_H
 #define __HALO_H
 
-#include "gfxlib.h"
+#include "gldrv/gfxlib.h"
 #include "vec.h"
 #include "quaternion.h"
 

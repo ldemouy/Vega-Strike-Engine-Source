@@ -21,7 +21,7 @@
 #ifndef BACKGROUND_H
 #define BACKGROUND_H
 
-#include "gfxlib_struct.h"
+#include "gldrv/gfxlib_struct.h"
 
 class SphereMesh;
 class Texture;

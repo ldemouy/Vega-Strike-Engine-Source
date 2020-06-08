@@ -14,7 +14,7 @@
 #include <math.h>
 #include <assert.h>
 #include "quadsquare.h"
-#include "gfxlib.h"
+#include "gldrv/gfxlib.h"
 #include "aux_texture.h"
 using std::vector;
 

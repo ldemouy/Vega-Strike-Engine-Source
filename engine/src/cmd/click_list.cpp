@@ -1,4 +1,4 @@
-#include "gfxlib.h"
+#include "gldrv/gfxlib.h"
 #include "click_list.h"
 #include "unit_generic.h"
 #include "vegastrike.h"

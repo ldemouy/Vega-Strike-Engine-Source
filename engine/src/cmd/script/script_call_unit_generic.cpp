@@ -58,7 +58,7 @@
 #include "flightgroup.h"
 #include "cmd/unit_factory.h"
 #include "cmd/asteroid_generic.h"
-#include "gfxlib.h"
+#include "gldrv/gfxlib.h"
 #include "cmd/pilot.h"
 #include "cmd/unit_util.h"
 

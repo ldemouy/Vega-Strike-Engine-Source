@@ -1,5 +1,5 @@
 #include "gfx/vec.h"
-#include "gfxlib_struct.h"
+#include "gldrv/gfxlib_struct.h"
 #include "gfx/matrix.h"
 #include "gfx/mesh.h"
 #include <vector>

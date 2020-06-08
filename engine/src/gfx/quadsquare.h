@@ -13,7 +13,7 @@
  */
 
 #include "vec.h"
-#include "gfxlib.h"
+#include "gldrv/gfxlib.h"
 #include <vector>
 #include "resizable.h"
 #include "nonlinear_transform.h"

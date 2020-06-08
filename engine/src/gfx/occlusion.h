@@ -23,7 +23,7 @@
 
 #include "vs_globals.h"
 
-#include "gfxlib.h"
+#include "gldrv/gfxlib.h"
 #include "vec.h"
 
 namespace Occlusion

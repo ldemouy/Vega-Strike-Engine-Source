@@ -22,7 +22,7 @@
 using std::stack;
 #include <assert.h>
 #include "vs_globals.h"
-#include "gfxlib.h"
+#include "gldrv/gfxlib.h"
 #include "gl_light.h"
 #include "config_xml.h"
 #include "options.h"

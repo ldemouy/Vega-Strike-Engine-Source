@@ -31,7 +31,7 @@
 #include "xml_support.h"
 #include "easydom.h"
 #include <map>
-#include "gfxlib_struct.h"
+#include "gldrv/gfxlib_struct.h"
 
 using std::map;
 using std::string;

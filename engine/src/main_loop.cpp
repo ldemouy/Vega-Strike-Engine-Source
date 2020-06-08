@@ -15,7 +15,7 @@
 #include "gfx/mesh.h"
 #include "gfx/sprite.h"
 #include "physics.h"
-#include "gfxlib.h"
+#include "gldrv/gfxlib.h"
 #include "cmd/bolt.h"
 #include "gfx/loc_select.h"
 #include <string>

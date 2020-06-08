@@ -30,7 +30,7 @@
 #include <string>
 #include "criteria.h"
 
-#include "gfxlib.h"
+#include "gldrv/gfxlib.h"
 
 enum TopoColor
 {

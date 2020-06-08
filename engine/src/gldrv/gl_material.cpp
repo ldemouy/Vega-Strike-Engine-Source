@@ -19,7 +19,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "gfxlib.h"
+#include "gldrv/gfxlib.h"
 #include "gl_globals.h"
 #include <cstring>
 //#include "gl_globals.h"

@@ -1,6 +1,6 @@
 #ifndef _GL_LIGHT_H_
 #define _GL_LIGHT_H_
-#include "gfxlib.h"
+#include "gldrv/gfxlib.h"
 #include "hashtable_3d.h"
 #include "gl_globals.h"
 extern GLint GFX_MAX_LIGHTS;

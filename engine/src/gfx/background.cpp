@@ -23,7 +23,7 @@
 #include "aux_texture.h"
 #include "star.h"
 #include "background.h"
-#include "gfxlib.h"
+#include "gldrv/gfxlib.h"
 #include "aux_texture.h"
 #include "sphere.h"
 #include "vs_globals.h"

@@ -1,8 +1,8 @@
 #include <algorithm>
 #include "bolt.h"
-#include "gfxlib.h"
+#include "gldrv/gfxlib.h"
 #include "gfx/mesh.h"
-#include "gfxlib_struct.h"
+#include "gldrv/gfxlib_struct.h"
 #include <vector>
 
 #include <string>

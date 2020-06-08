@@ -1,6 +1,6 @@
 #ifndef _SDDS_H_
 #define _SDDS_H_
-#include "gfxlib_struct.h"
+#include "gldrv/gfxlib_struct.h"
 
 /*
  *       input is the compressed dxt file, already read in by vsimage.

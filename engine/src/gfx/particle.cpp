@@ -1,5 +1,5 @@
 #include "particle.h"
-#include "gfxlib.h"
+#include "gldrv/gfxlib.h"
 #include "lin_time.h"
 #include "vs_globals.h"
 #include "cmd/unit_generic.h"

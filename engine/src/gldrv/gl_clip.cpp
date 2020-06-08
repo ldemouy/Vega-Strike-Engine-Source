@@ -1,4 +1,4 @@
-#include "gfxlib.h"
+#include "gldrv/gfxlib.h"
 #include "gfx/matrix.h"
 #include "gl_matrix.h"
 #include "lin_time.h"

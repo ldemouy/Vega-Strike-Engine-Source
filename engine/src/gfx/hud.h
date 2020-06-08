@@ -24,7 +24,7 @@
 
 #include <string>
 #include "vec.h"
-#include "gfxlib_struct.h"
+#include "gldrv/gfxlib_struct.h"
 class Texture;
 
 class TextPlane

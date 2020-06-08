@@ -11,7 +11,7 @@
 #include "XMLDocument.h"
 #include "VSFileXMLSerializer.h"
 #include "vsfilesystem.h"
-#include "gfxlib.h"
+#include "gldrv/gfxlib.h"
 #include "aux_texture.h"
 #include "options.h"
 #include "gldrv/gl_globals.h"

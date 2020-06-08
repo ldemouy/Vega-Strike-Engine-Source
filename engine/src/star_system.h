@@ -3,8 +3,8 @@
 
 #include <expat.h>
 #include "star_system_generic.h"
-#include "gfxlib.h"
-#include "gfxlib_struct.h"
+#include "gldrv/gfxlib.h"
+#include "gldrv/gfxlib_struct.h"
 class ClickList;
 class TextPlane;
 

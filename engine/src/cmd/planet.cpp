@@ -2,11 +2,11 @@
 #include "vegastrike.h"
 #include "unit_factory.h"
 #include "planet.h"
-#include "gfxlib.h"
+#include "gldrv/gfxlib.h"
 #include "gfx/sphere.h"
 #include "collection.h"
 #include "ai/order.h"
-#include "gfxlib_struct.h"
+#include "gldrv/gfxlib_struct.h"
 #include "vs_globals.h"
 #include "config_xml.h"
 #include <assert.h>

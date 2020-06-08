@@ -5,7 +5,7 @@
 #include <memory>
 #include "aligned.h"
 #include "vec.h"
-#include "gfxlib_struct.h"
+#include "gldrv/gfxlib_struct.h"
 
 class Texture;
 

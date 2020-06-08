@@ -29,7 +29,7 @@
 #include "xml_support.h"
 #include "config_xml.h"
 #include "winsys.h"
-#include "gfxlib.h"
+#include "gldrv/gfxlib.h"
 #include "options.h"
 
 #if !defined(_WIN32) && !defined(__CYGWIN__)

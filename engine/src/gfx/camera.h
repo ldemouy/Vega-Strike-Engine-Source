@@ -20,7 +20,7 @@
  */
 
 #include "matrix.h"
-#include "gfxlib.h"
+#include "gldrv/gfxlib.h"
 #include "physics.h"
 
 #ifndef _CAMERA_H_

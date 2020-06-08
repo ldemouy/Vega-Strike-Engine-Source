@@ -20,7 +20,7 @@
  */
 #include <stdio.h>
 #include <fcntl.h>
-#include "gfxlib.h"
+#include "gldrv/gfxlib.h"
 #include "universe.h"
 #include "lin_time.h"
 #include "in.h"

@@ -22,7 +22,7 @@
 #define LOGO_H_
 
 #include "matrix.h"
-#include "gfxlib.h"
+#include "gldrv/gfxlib.h"
 #include "hashtable.h"
 #include "vec.h"
 

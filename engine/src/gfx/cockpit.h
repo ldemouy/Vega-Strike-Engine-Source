@@ -3,8 +3,8 @@
 #ifndef _COCKPIT_H_
 #define _COCKPIT_H_
 #include "gfx/cockpit_generic.h"
-#include "gfxlib.h"
-#include "gfxlib_struct.h"
+#include "gldrv/gfxlib.h"
+#include "gldrv/gfxlib_struct.h"
 #include <vector>
 #include <list>
 

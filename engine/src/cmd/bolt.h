@@ -1,7 +1,7 @@
 #ifndef _CMD_BOLT_H_
 #define _CMD_BOLT_H_
-#include "gfxlib.h"
-#include "gfxlib_struct.h"
+#include "gldrv/gfxlib.h"
+#include "gldrv/gfxlib_struct.h"
 #include "weapon_xml.h"
 #include "gfx/matrix.h"
 #include "gfx/quaternion.h"

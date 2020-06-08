@@ -2,7 +2,7 @@
 #include "gfx/mesh.h"
 #include "gfx/matrix.h"
 #include "gfx/vec.h"
-#include "gfxlib_struct.h"
+#include "gldrv/gfxlib_struct.h"
 #include "gfx/sphere.h"
 #include "cmd/planet.h"
 #include "star_system.h"
