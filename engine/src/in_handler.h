@@ -25,12 +25,12 @@
 //#include "cmd_unit.h"
 class Unit;
 
-typedef void (*INDISPATCH)(int x, int y);
+typedef void (*INDISPATCH)(int32_t x, int32_t y);
 
 class InputListener
 {
 public:
-    int *mousex, *mousey;
+    int32_t *mousex, *mousey;
     KBSTATE (*keystate)
     [KEYMAP_SIZE];
 
@@ -44,22 +44,22 @@ public:
         //ZeroMemory(keystate, sizeof(keystate));
     }
 
-    virtual void MoveMouse(int x, int y)
+    virtual void MoveMouse(int32_t x, int32_t y)
     {
         //mousex = x;
         //mousey = y;
     }
-    virtual void MoveMouse(int *x, int *y, int num) {}
-    virtual void KeyDown(int key)
+    virtual void MoveMouse(int32_t *x, int32_t *y, int32_t num) {}
+    virtual void KeyDown(int32_t key)
     {
         //keystate[key] = 1;
     }
-    virtual void KeyDown(int *key, int num) {}
-    virtual void KeyUp(int key)
+    virtual void KeyDown(int32_t *key, int32_t num) {}
+    virtual void KeyUp(int32_t key)
     {
         //keystate[key] = 0;
     }
-    virtual void KeyUp(int *key, int num) {}
+    virtual void KeyUp(int32_t *key, int32_t num) {}
 
     virtual void Activate() {}
     virtual void Deactivate() {}

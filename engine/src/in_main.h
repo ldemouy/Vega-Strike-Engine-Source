@@ -26,10 +26,9 @@
 
 void InitInput();
 void DeInitInput();
-void ProcessInput( size_t whichplayer );
-int TermInput();
-void AddListener( InputListener *il );
-void ActivateListener( InputListener *il );
-void RemoveListener( InputListener *il );
+void ProcessInput(size_t whichplayer);
+int32_t TermInput();
+void AddListener(InputListener *il);
+void ActivateListener(InputListener *il);
+void RemoveListener(InputListener *il);
 #endif
-

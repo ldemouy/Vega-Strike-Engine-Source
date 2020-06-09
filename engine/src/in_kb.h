@@ -46,14 +46,14 @@ const int LAST_MODIFIER = 0;
 //#endif
 #include "in.h"
 
-unsigned int getActiveModifiers();
-unsigned int pullActiveModifiers();
-void setActiveModifiers(unsigned int mask);
+uint32_t getActiveModifiers();
+uint32_t pullActiveModifiers();
+void setActiveModifiers(uint32_t mask);
 
-unsigned int getModifier(const char *mod_name);
-void ProcessKB(unsigned int player);
-void BindKey(int key, unsigned int modifiers, unsigned int player, KBHandler handler, const KBData &data);
-void UnbindKey(int key, unsigned int modifiers);
+uint32_t getModifier(const char *mod_name);
+void ProcessKB(uint32_t player);
+void BindKey(int32_t key, uint32_t modifiers, uint32_t player, KBHandler handler, const KBData &data);
+void UnbindKey(int32_t key, uint32_t modifiers);
 void InitKB();
 void RestoreKB();
 #endif

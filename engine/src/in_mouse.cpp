@@ -30,28 +30,30 @@
 #include "options.h"
 
 using std::deque;
-#define NUM_BUTTONS 15
+const int32_t NUM_BUTTONS = 15;
 
 /** Gets the button number of the function used to draw the mouse*/
-int getMouseDrawFunc()
+int32_t getMouseDrawFunc()
 {
     return NUM_BUTTONS;
 }
 KBSTATE MouseState[NUM_BUTTONS + 1] = {RELEASE};
 static MouseHandler mouseBindings[NUM_BUTTONS + 1];
 
-int mousex = 0;
-int mousey = 0;
-void GetMouseXY(int &mx, int &my)
+int32_t mousex = 0;
+int32_t mousey = 0;
+void GetMouseXY(int32_t &mx, int32_t &my)
 {
     mx = mousex;
     my = mousey;
 }
-int getMouseButtonStatus()
+int32_t getMouseButtonStatus()
 {
-    int ret = 0;
-    for (int i = 0; i < NUM_BUTTONS; i++)
+    int32_t ret = 0;
+    for (int32_t i = 0; i < NUM_BUTTONS; i++)
+    {
         ret |= (MouseState[i] == PRESS || MouseState[i] == DOWN) ? (1 << i) : 0;
+    }
     return ret;
 }
 
@@ -63,29 +65,29 @@ struct MouseEvent
         DRAG,
         MOTION
     } type;
-    int button;
-    int state;
-    int mod;
-    int x;
-    int y;
-    MouseEvent(EventType type, int button, int state, int mod, int x, int y) : type(type), button(button), state(state), mod(mod), x(x), y(y) {}
+    int32_t button;
+    int32_t state;
+    int32_t mod;
+    int32_t x;
+    int32_t y;
+    MouseEvent(EventType type, int32_t button, int32_t state, int32_t mod, int32_t x, int32_t y) : type(type), button(button), state(state), mod(mod), x(x), y(y) {}
 };
 
 static deque<MouseEvent> eventQueue;
-void mouseClickQueue(int button, int state, int x, int y)
+void mouseClickQueue(int32_t button, int32_t state, int32_t x, int32_t y)
 {
-    int mod = 0;
+    int32_t mod = 0;
     eventQueue.push_back(MouseEvent(MouseEvent::CLICK, button, state, mod, x, y));
 }
-int delx = 0;
-int dely = 0;
-void AddDelta(int dx, int dy)
+int32_t delx = 0;
+int32_t dely = 0;
+void AddDelta(int32_t dx, int32_t dy)
 {
     delx += dx;
     dely += dy;
 }
-int warpallowage = 2;
-void DealWithWarp(int x, int y)
+int32_t warpallowage = 2;
+void DealWithWarp(int32_t x, int32_t y)
 {
     if (game_options.warp_mouse)
     {
@@ -93,13 +95,12 @@ void DealWithWarp(int x, int y)
         {
             if (x < game_options.warp_mouse_zone || y < game_options.warp_mouse_zone || x > g_game.x_resolution - game_options.warp_mouse_zone || y > g_game.y_resolution - game_options.warp_mouse_zone)
             {
-
-                int delx = -x + g_game.x_resolution / 2;
-                int dely = -y + g_game.y_resolution / 2;
+                int32_t delx = -x + g_game.x_resolution / 2;
+                int32_t dely = -y + g_game.y_resolution / 2;
                 mousex += delx;
                 mousey += dely;
-                deque<MouseEvent>::iterator i;
-                for (i = eventQueue.begin(); i != eventQueue.end(); i++)
+
+                for (deque<MouseEvent>::iterator i = eventQueue.begin(); i != eventQueue.end(); i++)
                 {
                     i->x += delx;
                     i->y += dely;
@@ -111,23 +112,25 @@ void DealWithWarp(int x, int y)
     }
 }
 
-void mouseDragQueue(int x, int y)
+void mouseDragQueue(int32_t x, int32_t y)
 {
     eventQueue.push_back(MouseEvent(MouseEvent::DRAG, -1, -1, -1, x, y));
     DealWithWarp(x, y);
 }
 
-void mouseMotionQueue(int x, int y)
+void mouseMotionQueue(int32_t x, int32_t y)
 {
     eventQueue.push_back(MouseEvent(MouseEvent::MOTION, -1, -1, -1, x, y));
     DealWithWarp(x, y);
 }
 
-int lookupMouseButton(int b)
+int32_t lookupMouseButton(int32_t b)
 {
-    static int adj = 0;
+    static int32_t adj = 0;
     if (b + adj < WS_LEFT_BUTTON)
+    {
         adj = WS_LEFT_BUTTON - b;
+    }
     b += adj;
     switch (b)
     {
@@ -151,54 +154,60 @@ int lookupMouseButton(int b)
     }
     return 0;
 }
-void mouseClick0(int button, int state, int mod, int x, int y)
+void mouseClick0(int32_t button, int32_t state, int32_t mod, int32_t x, int32_t y)
 {
     button = lookupMouseButton(button);
     if (button >= NUM_BUTTONS)
+    {
         return;
+    }
     AddDelta(x - mousex, y - mousey);
     mousex = x;
     mousey = y;
     mouseBindings[button](state == WS_MOUSE_DOWN ? PRESS : RELEASE, x, y, 0, 0, mod);
     MouseState[button] = (state == WS_MOUSE_DOWN) ? DOWN : UP;
 }
-void SetDelta(int dx, int dy)
+void SetDelta(int32_t dx, int32_t dy)
 {
     delx = dx;
     dely = dy;
 }
-void GetMouseDelta(int &dx, int &dy)
+void GetMouseDelta(int32_t &dx, int32_t &dy)
 {
     dx = delx;
     dy = dely;
     delx = dely = 0;
 }
 
-void mouseDrag(int x, int y)
+void mouseDrag(int32_t x, int32_t y)
 {
     for (int i = 0; i < NUM_BUTTONS + 1; i++)
+    {
         mouseBindings[i](MouseState[i], x, y, x - mousex, y - mousey, 0);
+    }
     AddDelta(x - mousex, y - mousey);
     mousex = x;
     mousey = y;
 }
 
-void mouseMotion(int x, int y)
+void mouseMotion(int32_t x, int32_t y)
 {
-    for (int i = 0; i < NUM_BUTTONS + 1; i++)
+    for (int32_t i = 0; i < NUM_BUTTONS + 1; i++)
+    {
         mouseBindings[i](MouseState[i], x, y, x - mousex, y - mousey, 0);
+    }
     AddDelta(x - mousex, y - mousey);
     mousex = x;
     mousey = y;
 }
 
-static void DefaultMouseHandler(KBSTATE, int x, int y, int delx, int dely, int mod) {}
+static void DefaultMouseHandler(KBSTATE, int32_t x, int32_t y, int32_t delx, int32_t dely, int32_t mod) {}
 
-void UnbindMouse(int key)
+void UnbindMouse(int32_t key)
 {
     mouseBindings[key] = DefaultMouseHandler;
 }
-void BindKey(int key, MouseHandler handler)
+void BindKey(int32_t key, MouseHandler handler)
 {
     mouseBindings[key] = handler;
     handler(RESET, mousex, mousey, 0, 0, 0);
@@ -212,8 +221,10 @@ void RestoreMouse()
 
 void InitMouse()
 {
-    for (int a = 0; a < NUM_BUTTONS + 1; a++)
+    for (int32_t a = 0; a < NUM_BUTTONS + 1; a++)
+    {
         UnbindMouse(a);
+    }
     RestoreMouse();
 }
 

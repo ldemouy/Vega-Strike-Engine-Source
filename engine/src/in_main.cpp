@@ -56,9 +56,13 @@ void ProcessInput(size_t whichplayer)
 {
     ProcessKB(whichplayer);
     ProcessMouse();
-    for (int i = 0; i < MAX_JOYSTICKS; i++)
+    for (int32_t i = 0; i < MAX_JOYSTICKS; i++)
+    {
         if (joystick[i]->player == whichplayer)
+        {
             ProcessJoystick(i);
+        }
+    }
 }
 
 void InitInput()
