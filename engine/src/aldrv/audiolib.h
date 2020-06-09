@@ -15,21 +15,21 @@ void AUDListenerOrientation(const Vector &i, const Vector &j, const Vector &k);
 void AUDListenerGain(const float &gain);
 float AUDGetListenerGain();
 ///creates a buffer if one doesn't already exists, and then creates a source
-int AUDCreateSoundWAV(const std::string &, const bool LOOP = false);
+int32_t AUDCreateSoundWAV(const std::string &, const bool LOOP = false);
 ///creates a buffer for an mp3 sound if one doesn't already exist, then creates a source
-int AUDCreateSoundMP3(const std::string &, const bool LOOP = false);
+int32_t AUDCreateSoundMP3(const std::string &, const bool LOOP = false);
 ///creates a buffer if one doesn't already exists, and then creates a source
-int AUDCreateMusicWAV(const std::string &, const bool LOOP = false);
+int32_t AUDCreateMusicWAV(const std::string &, const bool LOOP = false);
 ///creates a buffer for an mp3 sound if one doesn't already exist, then creates a source
-int AUDCreateMusicMP3(const std::string &, const bool LOOP = false);
+int32_t AUDCreateMusicMP3(const std::string &, const bool LOOP = false);
 ///copies other sound loaded through AUDCreateSound
-int AUDCreateSound(int32_t sound, const bool LOOP = false);
+int32_t AUDCreateSound(int32_t sound, const bool LOOP = false);
 ///guesses the type of sound by extension
-int AUDCreateSound(const std::string &, const bool LOOP = false);
+int32_t AUDCreateSound(const std::string &, const bool LOOP = false);
 ///guesses the type of sound by extension
-int AUDCreateMusic(const std::string &, const bool LOOP = false);
+int32_t AUDCreateMusic(const std::string &, const bool LOOP = false);
 void AUDStopAllSounds(int32_t except_this_one = -1);
-int AUDHighestSoundPlaying();
+int32_t AUDHighestSoundPlaying();
 ///deletes a given sound
 void AUDDeleteSound(int32_t sound, bool music = false);
 ///Changes the velocity and/or position of a given sound

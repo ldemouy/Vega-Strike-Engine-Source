@@ -31,12 +31,12 @@ const unsigned int hashsize = 47;
 
 struct ApproxSound
 {
-    int soundname;
+    int32_t soundname;
 };
 
 typedef std::vector<ApproxSound> ApproxSoundVec;
 static ApproxSoundVec playingbuffers[hashsize];
-unsigned int hash_sound(uint32_t buffer)
+uint32_t hash_sound(uint32_t buffer)
 {
     return buffer % hashsize;
 }
@@ -75,7 +75,9 @@ char AUDQueryAudability(const int32_t &sound, const Vector &pos, const Vector &v
 {
 #ifdef HAVE_AL
     if (sounds[sound].buffer == (ALuint)0)
+    {
         return 0;
+    }
     sounds[sound].pos = pos;
     sounds[sound].vel = vel;
     Vector t = pos - mylistener.pos;
@@ -87,20 +89,26 @@ char AUDQueryAudability(const int32_t &sound, const Vector &pos, const Vector &v
         return 1;
     }
     if (!(mag < game_options.audio_max_distance * game_options.audio_max_distance))
+    {
         return 0;
-    unsigned int hashed = hash_sound(sounds[sound].buffer);
+    }
+    uint32_t hashed = hash_sound(sounds[sound].buffer);
     if ((!unusedsrcs.empty()) && playingbuffers[hashed].size() < maxallowedsingle)
+    {
         return 1;
+    }
     ///could theoretically "steal" buffer from playing sound at this point
     if (playingbuffers[hashed].empty())
+    {
         return 1;
+    }
     //int target = rand()%playingbuffers[hashed].size();
     float est_gain = EstimateGain(pos, gain);
     float min_gain = est_gain;
-    int min_index = -1;
+    int32_t min_index = -1;
     for (size_t target = 0; target < playingbuffers[hashed].size(); ++target)
     {
-        int target1 = playingbuffers[hashed][target].soundname;
+        int32_t target1 = playingbuffers[hashed][target].soundname;
         t = sounds[target1].pos - mylistener.pos;
         if (sounds[target1].pos == Vector(0, 0, 0))
             t = Vector(0, 0, 0);
@@ -127,8 +135,8 @@ char AUDQueryAudability(const int32_t &sound, const Vector &pos, const Vector &v
     }
     if (min_index >= 0)
     {
-        int target = min_index;
-        int target1 = playingbuffers[hashed][target].soundname;
+        int32_t target = min_index;
+        int32_t target1 = playingbuffers[hashed][target].soundname;
 
         ALuint tmpsrc = sounds[target1].source;
 
@@ -170,20 +178,20 @@ void AUDAddWatchedPlayed(const int32_t &sound, const Vector &pos)
 #endif
 }
 
-typedef std::vector<int> vecint;
+typedef std::vector<int32_t> vecint;
 vecint soundstodelete;
 
 void AUDRefreshSounds()
 {
 #ifdef HAVE_AL
-    static unsigned int i = 0;
+    static uint32_t i = 0;
     if (i >= hashsize)
     {
         i = 0;
     }
     else
     {
-        for (unsigned int j = 0; j < playingbuffers[i].size(); j++)
+        for (uint32_t j = 0; j < playingbuffers[i].size(); j++)
             if (!AUDIsPlaying(playingbuffers[i][j].soundname))
             {
                 totalplaying--;
@@ -200,14 +208,14 @@ void AUDRefreshSounds()
             }
         ++i;
     }
-    static unsigned int j = 0;
+    static uint32_t j = 0;
     if (j >= soundstodelete.size())
     {
         j = 0;
     }
     else
     {
-        int tmp = soundstodelete[j];
+        int32_t tmp = soundstodelete[j];
         if (!AUDIsPlaying(tmp))
         {
             soundstodelete.erase(soundstodelete.begin() + j);
@@ -250,7 +258,9 @@ void AUDListenerOrientation(const Vector &p, const Vector &q, const Vector &r)
     ALfloat orient[] = {r.i, r.j, r.k, q.i, q.j, q.k};
     //printf ("R%f,%f,%f>Q<%f %f %f>",r.i,r.j,r.k,q.i,q.j,q.k);
     if (g_game.sound_enabled)
+    {
         alListenerfv(AL_ORIENTATION, orient);
+    }
 #endif
 }
 
@@ -262,7 +272,9 @@ void AUDSoundGain(int32_t sound, float gain, bool music)
         sounds[sound].music = music;
         float val = gain * (music ? 1.0f : mylistener.gain);
         if (sounds[sound].source)
+        {
             alSourcef(sounds[sound].source, AL_GAIN, val <= 1. / 16384 ? 0 : val);
+        }
         sounds[sound].gain = gain;
         //alSourcefv(sounds[sound].source,AL_VELOCITY,v);
     }
@@ -274,13 +286,21 @@ void AUDListenerGain(const float &ggain)
 #ifdef HAVE_AL
     float gain = ggain;
     if (gain <= 0)
+    {
         gain = 1. / 16384;
+    }
     mylistener.gain = gain;
     for (unsigned int i = 0, ie = sounds.size(); i < ie; ++i)
+    {
         if (!sounds[i].music)
+        {
             AUDSoundGain(i, sounds[i].gain, false);
+        }
+    }
     if (g_game.sound_enabled)
+    {
         alListenerf(AL_GAIN, 1.0);
+    }
 #endif
 }
 

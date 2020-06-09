@@ -153,8 +153,10 @@ bool AUDInit()
     g_game.max_sound_sources =
         maxallowedtotal = game_options.MaxTotalSounds;
     if (!game_options.Sound && !game_options.Music)
+    {
         return false;
-    int attrlist[] = {ALC_FREQUENCY, g_game.audio_frequency_mode, 0};
+    }
+    int32_t attrlist[] = {ALC_FREQUENCY, g_game.audio_frequency_mode, 0};
 #ifdef _WIN32
     dev = alcOpenDevice((ALCchar *)"DirectSound3D");
 #elif __APPLE__
@@ -205,21 +207,31 @@ void AUDDestroy()
 {
 #ifdef HAVE_AL
     //Go through and delete all loaded wavs
-    unsigned int i;
-    for (i = 0; i < sounds.size(); i++)
+
+    for (uint32_t i = 0; i < sounds.size(); i++)
     {
         if (sounds[i].buffer != 0)
+        {
             AUDStopPlaying(i);
+        }
         AUDDeleteSound(i);
     }
-    for (i = 0; i < unusedsrcs.size(); i++)
+    for (uint32_t i = 0; i < unusedsrcs.size(); i++)
+    {
         alDeleteSources(1, &unusedsrcs[i]);
-    for (i = 0; i < buffers.size(); i++)
+    }
+    for (uint32_t i = 0; i < buffers.size(); i++)
+    {
         alDeleteBuffers(1, &buffers[i]);
+    }
     buffers.clear();
     if (context_id)
+    {
         alcDestroyContext((ALCcontext *)context_id);
+    }
     if (dev)
+    {
         alcCloseDevice(dev);
+    }
 #endif
 }

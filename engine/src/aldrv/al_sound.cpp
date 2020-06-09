@@ -63,13 +63,13 @@ typedef struct /* WAV Chunk-header */
     ALuint Size;
 } WAVChunkHdr_Struct;
 
-void SwapWords(unsigned int *puint)
+void SwapWords(uint32_t *puint)
 {
     unsigned int tempint = POSH_LittleU32(*puint);
     *puint = tempint;
 }
 
-void SwapBytes(unsigned short *pshort)
+void SwapBytes(uint16_t *pshort)
 {
     unsigned short tempshort = POSH_LittleU16(*pshort);
     *pshort = tempshort;
@@ -131,17 +131,25 @@ void blutLoadWAVMemory(ALbyte *memory, ALenum *format, ALvoid **data, ALsizei *s
                     {
                         *size = ChunkHdr.Size;
                         if (*data == NULL)
+                        {
                             *data = malloc(ChunkHdr.Size + 31);
+                        }
                         else
+                        {
                             *data = realloc(*data, ChunkHdr.Size + 31);
+                        }
                         if (*data)
                         {
                             memcpy(*data, Stream, ChunkHdr.Size);
                             memset(((char *)*data) + ChunkHdr.Size, 0, 31);
                             Stream += ChunkHdr.Size;
                             if (FmtHdr.BitsPerSample == 16)
+                            {
                                 for (size_t i = 0; i < (ChunkHdr.Size / 2); ++i)
+                                {
                                     SwapBytes(&(*(unsigned short **)data)[i]);
+                                }
+                            }
                         }
                     }
                     else if (FmtHdr.Format == 0x0011)
@@ -194,16 +202,16 @@ void blutLoadWAVMemory(ALbyte *memory, ALenum *format, ALvoid **data, ALsizei *s
 
 #include <vorbis/vorbisfile.h>
 #endif
-std::vector<unsigned int> dirtysounds;
+std::vector<uint32_t> dirtysounds;
 std::vector<OurSound> sounds;
 std::vector<ALuint> buffers;
 
-static void convertToLittle(unsigned int tmp, char *data)
+static void convertToLittle(uint32_t tmp, char *data)
 {
-    data[0] = (char)(tmp % 256);
-    data[1] = (char)((tmp / 256) % 256);
-    data[2] = (char)((tmp / 65536) % 256);
-    data[3] = (char)((tmp / 65536) / 256);
+    data[0] = (int8_t)(tmp % 256);
+    data[1] = (int8_t)((tmp / 256) % 256);
+    data[2] = (int8_t)((tmp / 65536) % 256);
+    data[3] = (int8_t)((tmp / 65536) / 256);
 }
 
 #ifdef HAVE_OGG
@@ -221,7 +229,9 @@ size_t mem_read(void *ptr, size_t size, size_t nmemb, void *datasource)
     {
         size_t tmp = fp->size - fp->loc;
         if (tmp)
+        {
             memcpy(ptr, fp->data + fp->loc, tmp);
+        }
         fp->loc = fp->size;
         return tmp;
     }
@@ -233,23 +243,23 @@ size_t mem_read(void *ptr, size_t size, size_t nmemb, void *datasource)
     }
 }
 
-int mem_close(void *)
+int32_t mem_close(void *)
 {
     return 0;
 }
 
-long mem_tell(void *datasource)
+int64_t mem_tell(void *datasource)
 {
     fake_file *fp = (fake_file *)datasource;
-    return (long)fp->loc;
+    return (int64_t)fp->loc;
 }
 
-int cant_seek(void *datasource, ogg_int64_t offset, int whence)
+int32_t cant_seek(void *datasource, ogg_int64_t offset, int32_t whence)
 {
     return -1;
 }
 
-int mem_seek(void *datasource, ogg_int64_t offset, int whence)
+int32_t mem_seek(void *datasource, ogg_int64_t offset, int32_t whence)
 {
     fake_file *fp = (fake_file *)datasource;
     if (whence == SEEK_END)
@@ -304,8 +314,10 @@ int mem_seek(void *datasource, ogg_int64_t offset, int whence)
     }
     else if (whence == SEEK_SET)
     {
-        if (offset > static_cast<int>(fp->size))
+        if (offset > static_cast<int32_t>(fp->size))
+        {
             return -1;
+        }
         fp->loc = offset;
         return 0;
     }
@@ -341,8 +353,8 @@ static void ConvertFormat(vector<char> &ogg)
             {
                 long bytesread = 0;
                 vorbis_info *info = ov_info(&vf, -1);
-                const int segmentsize = 65536 * 32;
-                const int samples = 16;
+                const int32_t segmentsize = 65536 * 32;
+                const int32_t samples = 16;
                 converted.push_back('R');
                 converted.push_back('I');
                 converted.push_back('F');
@@ -412,7 +424,9 @@ static void ConvertFormat(vector<char> &ogg)
                 {
                     int numtoerase = 0;
                     if (bytesread < segmentsize)
+                    {
                         numtoerase = segmentsize - bytesread;
+                    }
 
                     converted.resize(converted.size() + segmentsize - numtoerase);
                 }
@@ -430,9 +444,9 @@ static void ConvertFormat(vector<char> &ogg)
     }
 }
 
-static int LoadSound(ALuint buffer, bool looping, bool music)
+static int32_t LoadSound(ALuint buffer, bool looping, bool music)
 {
-    unsigned int i;
+    uint32_t i;
     if (!dirtysounds.empty())
     {
         i = dirtysounds.back();
@@ -493,7 +507,9 @@ bool AUDLoadSoundFile(const char *s, struct AUDSoundProperties *info, bool use_f
             fseek(f, 0, SEEK_SET);
             dat.resize(siz);
             if (fread(&dat[0], 1, siz, f) != siz)
+            {
                 return false;
+            }
             info->hashname = s;
             info->shared = false;
             fclose(f);
@@ -508,14 +524,22 @@ bool AUDLoadSoundFile(const char *s, struct AUDSoundProperties *info, bool use_f
         VSFile f;
         VSError error = f.OpenReadOnly(s, SoundFile);
         if (error > Ok)
+        {
             error = f.OpenReadOnly(s, UnknownFile);
+        }
         info->shared = (error == Shared);
         if (info->shared)
+        {
             info->hashname = VSFileSystem::GetSharedSoundHashName(s);
+        }
         else
+        {
             info->hashname = VSFileSystem::GetHashName(s);
+        }
         if (error > Ok)
+        {
             return false;
+        }
 #ifdef SOUND_DEBUG
         printf("Sound %s created with and alBuffer %d\n", s.c_str(), *wavbuf);
 #endif
@@ -525,17 +549,13 @@ bool AUDLoadSoundFile(const char *s, struct AUDSoundProperties *info, bool use_f
     }
     ConvertFormat(dat);
     if (dat.size() == 0) //conversion messed up
+    {
         return false;
         //blutLoadWAVMemory((ALbyte *)&dat[0], &format, &wave, &size, &freq, &looping);
+    }
 
-#if 0
-    ALint format;
-    //MAC OS X
-    if (error <= Ok)
-        MacFixedLoadWAVFile( &dat[0], &format, &wave, &size, &freq );
-#else
     blutLoadWAVMemory((ALbyte *)&dat[0], &info->format, &info->wave, &info->size, &info->freq, &info->looping);
-#endif
+
     if (!info->wave)
         return false; //failure.
 
@@ -546,7 +566,7 @@ bool AUDLoadSoundFile(const char *s, struct AUDSoundProperties *info, bool use_f
 #endif
 }
 
-int AUDBufferSound(const struct AUDSoundProperties *info, bool music)
+int32_t AUDBufferSound(const struct AUDSoundProperties *info, bool music)
 {
 #ifdef HAVE_AL
     ALuint wavbuf = 0;
@@ -563,11 +583,11 @@ int AUDBufferSound(const struct AUDSoundProperties *info, bool music)
 #ifdef HAVE_AL
 ALuint
 #else
-unsigned int
+uint32_t
 #endif
     nil_wavebuf = 0;
 
-int AUDCreateSoundWAV(const std::string &s, const bool music, const bool LOOP)
+int32_t AUDCreateSoundWAV(const std::string &s, const bool music, const bool LOOP)
 {
 #ifdef HAVE_AL
 #ifdef SOUND_DEBUG
@@ -619,18 +639,19 @@ int AUDCreateSoundWAV(const std::string &s, const bool music, const bool LOOP)
     return -1;
 }
 
-int AUDCreateSoundWAV(const std::string &s, const bool LOOP)
+int32_t AUDCreateSoundWAV(const std::string &s, const bool LOOP)
 {
     return AUDCreateSoundWAV(s, false, LOOP);
 }
 
-int AUDCreateMusicWAV(const std::string &s, const bool LOOP)
+int32_t AUDCreateMusicWAV(const std::string &s, const bool LOOP)
 {
     return AUDCreateSoundWAV(s, true, LOOP);
 }
 
-int AUDCreateSoundMP3(const std::string &s, const bool music, const bool LOOP)
+int32_t AUDCreateSoundMP3(const std::string &s, const bool music, const bool LOOP)
 {
+    //TODO: investigate if this function is actually meant to do anything
 #ifdef HAVE_AL
     assert(0);
     if ((game_options.Music && !music) || (game_options.Music && music))
@@ -647,7 +668,9 @@ int AUDCreateSoundMP3(const std::string &s, const bool music, const bool LOOP)
             mp3buf = soundHash.Get(hashname);
         }
         if (error > Ok)
+        {
             return -1;
+        }
 #ifdef _WIN32
         return -1;
 #endif
@@ -679,17 +702,17 @@ int AUDCreateSoundMP3(const std::string &s, const bool music, const bool LOOP)
     return -1;
 }
 
-int AUDCreateSoundMP3(const std::string &s, const bool LOOP)
+int32_t AUDCreateSoundMP3(const std::string &s, const bool LOOP)
 {
     return AUDCreateSoundMP3(s, false, LOOP);
 }
 
-int AUDCreateMusicMP3(const std::string &s, const bool LOOP)
+int32_t AUDCreateMusicMP3(const std::string &s, const bool LOOP)
 {
     return AUDCreateSoundMP3(s, true, LOOP);
 }
 
-int AUDCreateSound(const std::string &s, const bool LOOP)
+int32_t AUDCreateSound(const std::string &s, const bool LOOP)
 {
     if (s.end() - 1 >= s.begin())
     {
@@ -701,7 +724,7 @@ int AUDCreateSound(const std::string &s, const bool LOOP)
     return -1;
 }
 
-int AUDCreateMusic(const std::string &s, const bool LOOP)
+int32_t AUDCreateMusic(const std::string &s, const bool LOOP)
 {
     if (s.end() - 1 >= s.begin())
     {
@@ -714,7 +737,7 @@ int AUDCreateMusic(const std::string &s, const bool LOOP)
 }
 
 ///copies other sound loaded through AUDCreateSound
-int AUDCreateSound(int32_t sound, const bool LOOP /*=false*/)
+int32_t AUDCreateSound(int32_t sound, const bool LOOP /*=false*/)
 {
 #ifdef HAVE_AL
     if (AUDIsPlaying(sound))
@@ -814,7 +837,7 @@ void AUDAdjustSound(const int32_t &sound, const QVector &pos, const Vector &vel)
 void AUDStreamingSound(const int32_t &sound)
 {
 #ifdef HAVE_AL
-    if (sound >= 0 && sound < (int)sounds.size() && sounds[sound].source)
+    if (sound >= 0 && sound < (int32_t)sounds.size() && sounds[sound].source)
     {
         alSource3f(sounds[sound].source, AL_POSITION, 0.0, 0.0, 0.0);
         alSource3f(sounds[sound].source, AL_VELOCITY, 0.0, 0.0, 0.0);
@@ -828,22 +851,30 @@ void AUDStreamingSound(const int32_t &sound)
 bool starSystemOK()
 {
     if (!_Universe || !_Universe->AccessCockpit(0))
+    {
         return true; //No Universe yet, so game is loading.
+    }
 
-    Unit *playa = _Universe->AccessCockpit(0)->GetParent();
-    if (!playa)
+    Unit *player = _Universe->AccessCockpit(0)->GetParent();
+    if (!player)
+    {
         return false;
-    return playa->getStarSystem() == _Universe->activeStarSystem();
+    }
+    return player->getStarSystem() == _Universe->activeStarSystem();
 }
 
-int AUDHighestSoundPlaying()
+int32_t AUDHighestSoundPlaying()
 {
-    int retval = -1;
+    int32_t retval = -1;
 #ifdef HAVE_AL
-    unsigned int s = ::sounds.size();
-    for (unsigned int i = 0; i < s; ++i)
+    uint32_t s = ::sounds.size();
+    for (uint32_t i = 0; i < s; ++i)
+    {
         if (false == ::sounds[i].music && AUDIsPlaying(i) && false == ::sounds[i].looping)
+        {
             retval = i;
+        }
+    }
 #endif
     return retval;
 }
@@ -851,10 +882,14 @@ int AUDHighestSoundPlaying()
 void AUDStopAllSounds(int32_t except_this_one)
 {
 #ifdef HAVE_AL
-    unsigned int s = ::sounds.size();
-    for (unsigned int i = 0; i < s; ++i)
-        if ((int)i != except_this_one && false == ::sounds[i].music && AUDIsPlaying(i))
+    uint s = ::sounds.size();
+    for (uint32_t i = 0; i < s; ++i)
+    {
+        if ((int32_t)i != except_this_one && false == ::sounds[i].music && AUDIsPlaying(i))
+        {
             AUDStopPlaying(i);
+        }
+    }
 #endif
 }
 
@@ -864,7 +899,9 @@ bool AUDIsPlaying(const int32_t &sound)
     if (sound >= 0 && sound < (int)sounds.size())
     {
         if (!sounds[sound].source)
+        {
             return false;
+        }
         ALint state;
 #if defined(_WIN32) || defined(__APPLE__)
         alGetSourcei(sounds[sound].source, AL_SOURCE_STATE, &state); //Obtiene el estado de la fuente para windows
@@ -881,7 +918,7 @@ bool AUDIsPlaying(const int32_t &sound)
 void AUDStopPlaying(const int32_t &sound)
 {
 #ifdef HAVE_AL
-    if (sound >= 0 && sound < (int)sounds.size())
+    if (sound >= 0 && sound < (int32_t)sounds.size())
     {
 #ifdef SOUND_DEBUG
         printf("AUDStopPlaying sound %d source(releasing): %d buffer:%d\n", sound, sounds[sound].source, sounds[sound].buffer);
@@ -903,13 +940,15 @@ static bool AUDReclaimSource(const int32_t &sound, bool high_priority = false)
     if (sounds[sound].source == (ALuint)0)
     {
         if (!sounds[sound].buffer)
+        {
             return false;
+        }
         if (unusedsrcs.empty())
         {
             if (high_priority)
             {
-                unsigned int i;
-                unsigned int candidate = 0;
+                uint32_t i;
+                uint32_t candidate = 0;
                 bool found = false;
                 for (i = 0; i < sounds.size(); ++i)
                     if (sounds[i].source != 0)
@@ -918,7 +957,9 @@ static bool AUDReclaimSource(const int32_t &sound, bool high_priority = false)
                             if (found)
                             {
                                 if (AUDDistanceSquared(candidate) < AUDDistanceSquared(i))
+                                {
                                     candidate = i;
+                                }
                             }
                             else
                             {
@@ -963,7 +1004,7 @@ void AUDStartPlaying(const int32_t &sound)
 #endif
 
 #ifdef HAVE_AL
-    if (sound >= 0 && sound < (int)sounds.size())
+    if (sound >= 0 && sound < (int32_t)sounds.size())
     {
         if (sounds[sound].music || starSystemOK())
             if (AUDReclaimSource(sound, sounds[sound].pos == QVector(0, 0, 0)))

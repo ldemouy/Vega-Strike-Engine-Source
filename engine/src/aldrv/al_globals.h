@@ -82,8 +82,8 @@ extern std::vector<OurSound> sounds;
 extern Hashtable<std::string, ALuint, 127> soundHash;
 typedef ALboolean(mp3Loader)(ALuint, ALvoid *, ALint);
 extern mp3Loader *alutLoadMP3p;
-extern unsigned int maxallowedsingle;
-extern unsigned int maxallowedtotal;
+extern uint32_t maxallowedsingle;
+extern uint32_t maxallowedtotal;
 extern bool usedoppler;
 extern bool usepositional;
 
