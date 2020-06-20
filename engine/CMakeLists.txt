@@ -38,8 +38,6 @@ UNSET(PNG_FOUND)
 UNSET(ZLIB_FOUND)
 UNSET(EXPAT_FOUND)
 UNSET(MATH_FOUND)
-UNSET(FFMPEG_FOUND)
-UNSET(OGRE_FOUND)
 UNSET(Boost_DIR)
 
 INCLUDE_DIRECTORIES(
@@ -302,8 +300,7 @@ SET(LIBGFXCLIENT_SOURCES
     src/gfx/technique.cpp
     src/gfx/tex_transform.cpp
     src/gfx/vdu.cpp
-    src/gfx/vid_file.cpp
-    src/ffmpeg_init.cpp
+    src/gfx/vid_file.cpp    
     src/gfx/vsbox.cpp
     src/gfx/vsimage.cpp
     src/gfx/warptrail.cpp
@@ -399,9 +396,7 @@ SET(LIBAUDIO_SOURCES
     src/audio/TemplateManager.cpp
     src/audio/test.cpp
     src/audio/utils.cpp
-    src/audio/codecs/Codec.cpp
-    src/audio/codecs/FFCodec.cpp
-    src/audio/codecs/FFStream.cpp
+    src/audio/codecs/Codec.cpp    
     src/audio/codecs/OggCodec.cpp
     src/audio/codecs/OggData.cpp
     src/audio/codecs/OggStream.cpp
@@ -783,6 +778,7 @@ IF (Vorbis_FOUND)
     SET(TST_INCLUDES ${TST_INCLUDES} ${Vorbis_INCLUDE_DIRS})
     SET(TST_LIBS ${TST_LIBS} ${Vorbis_LIBRARIES})
     SET(HAVE_OGG 1)
+    Message("++ Vorbis Found")
 ELSE (Vorbis_FOUND)
     MESSAGE("!! Can't find Vorbis libs")
 ENDIF (Vorbis_FOUND)
@@ -792,6 +788,7 @@ FIND_PACKAGE(JPEG REQUIRED)
 IF (JPEG_FOUND)
     SET(TST_INCLUDES ${TST_INCLUDES} ${JPEG_INCLUDE_DIR})
     SET(TST_LIBS ${TST_LIBS} ${JPEG_LIBRARIES})
+    Message("++ JPEG Found")
 ELSE (JPEG_FOUND)
     MESSAGE("!! How are we gonna open jpegs?")
 ENDIF (JPEG_FOUND)
@@ -801,6 +798,7 @@ FIND_PACKAGE(PNG REQUIRED)
 IF (PNG_FOUND)
     SET(TEST_INCLUDES ${TST_INCLUDES} ${PNG_INCLUDE_DIRS})
     SET(TST_LIBS ${TST_LIBS} ${PNG_LIBRARIES})
+    Message("++ PNG Found")
 ELSE (PNG_FOUND)
     MESSAGE("!! Can't find PNG lib")
 ENDIF (PNG_FOUND)
@@ -812,6 +810,7 @@ FIND_PACKAGE(ZLIB REQUIRED)
 IF (ZLIB_FOUND)
     SET(TST_INCLUDES ${TST_INCLUDES} ${ZLIB_INCLUDE_DIR})
     SET(TST_LIBS ${TST_LIBS} ${ZLIB_LIBRARIES})
+    Message("++ Zlib Found")
 ELSE (ZLIB_FOUND)
     MESSAGE("!! For the love of god, no zlib here")
 ENDIF (ZLIB_FOUND)
@@ -821,6 +820,7 @@ FIND_PACKAGE(EXPAT REQUIRED)
 IF (EXPAT_FOUND)
     SET(TST_INCLUDES ${TST_INCLUDES} ${EXPAT_INCLUDE_DIRS})
     SET(TST_LIBS ${TST_LIBS} ${EXPAT_LIBRARIES})
+    Message("++ Expat Found")
 ELSE (EXPAT_FOUND)
     MESSAGE("!! We can't find expat for XML crap")
 ENDIF (EXPAT_FOUND)
@@ -830,32 +830,10 @@ FIND_PACKAGE(MATH REQUIRED)
 IF (MATH_FOUND)
     SET(TST_INCLUDES ${TST_INCLUDES} ${MATH_INCLUDE_DIRS})
     SET(TST_LIBS ${TST_LIBS} ${MATH_LIBRARIES})
+    Message("++ Math Found")
 ELSE (MATH_FOUND)
     MESSAGE("!! Without math we have nothing")
 ENDIF (MATH_FOUND)
-
-
-#Find FFMpeg
-OPTION(DISABLE_FFMPEG "Disable ffmpeg codecs" ON)
-IF (NOT DISABLE_FFMPEG)
-    FIND_PACKAGE(FFMPEG)
-    IF (FFMPEG_FOUND)
-        SET(TST_INCLUDES ${TST_INCLUDES} ${FFMPEG_INCLUDE_DIRS})
-        SET(TST_LIBS ${TST_LIBS} ${FFMPEG_LIBRARIES})
-        ADD_DEFINITIONS(${FFMPEG_DEFINITIONS})
-        SET(HAVE_FFMPEG 1 )
-        MESSAGE("++ FFmpeg found.")
-        IF (swscale1_FOUND)
-            MESSAGE("++ FFmpeg's libswscale found.")
-        ELSE (swscale1_FOUND)
-            MESSAGE("-- FFMpeg's libswscale not found... depending on your ffmpeg version, VS might not build.")
-        ENDIF (swscale1_FOUND)
-    ELSE (FFMPEG_FOUND)
-        MESSAGE("-- FFMPEG Not Found")
-    ENDIF (FFMPEG_FOUND)
-ELSE (NOT DISABLE_FFMPEG)
-    MESSAGE("-- FFMPEG disabled")
-ENDIF (NOT DISABLE_FFMPEG)
 
 #network?
 FIND_LIBRARY(UTIL_LIB util)
@@ -959,13 +937,8 @@ MARK_AS_ADVANCED(FORCE
     AVFORMAT_INCLUDE_DIR
     HAVE_AVFORMAT_H
     HAVE_AVCODEC_H
-    HAVE_AVIO_H
-    HAVE_FFMPEG_SWSCALE_H
-    CMAKE_BACKWARDS_COMPATIBILITY
-    FFMPEG_INCLUDE_DIR
-    FFMPEG_FOUND
-    FFMPEG_LIBRARIES
-    FFMPEG_DEFINITIONS
+    HAVE_AVIO_H    
+    CMAKE_BACKWARDS_COMPATIBILITY    
     GTK2_ATK_INCLUDE_DIR
     GTK2_ATK_LIBRARY
     GTK2_CAIRO_INCLUDE_DIR
