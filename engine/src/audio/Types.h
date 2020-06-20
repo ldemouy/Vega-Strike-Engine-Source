@@ -4,10 +4,7 @@
 #ifndef __AUDIO_TYPES_H__INCLUDED__
 #define __AUDIO_TYPES_H__INCLUDED__
 
-#include <boost/enable_shared_from_this.hpp>
-
 // Some compilers don't like template typedefs
-#define SharedFromThis boost::enable_shared_from_this
 
 #include "Vector.h"
 #include "Matrix.h"
@@ -64,20 +61,32 @@ namespace Audio
             if (min < max)
             {
                 if (x <= min)
+                {
                     return 0.f;
+                }
                 else if (x >= max)
+                {
                     return 1.f;
+                }
                 else
+                {
                     return float(x - min) / float(max - min);
+                }
             }
             else
             {
                 if (x <= max)
+                {
                     return 1.f;
+                }
                 else if (x >= min)
+                {
                     return 0.f;
+                }
                 else
+                {
                     return float(x - min) / float(max - min);
+                }
             }
         }
     };

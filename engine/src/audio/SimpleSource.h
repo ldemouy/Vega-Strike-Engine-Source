@@ -25,7 +25,7 @@ namespace Audio
      *      responsible for detaching itself when destroyed.
      *
      */
-    class SimpleSource : public Source, public SharedFromThis<SimpleSource>
+    class SimpleSource : public Source
     {
     private:
         bool playing;

@@ -25,7 +25,7 @@ namespace Audio
      * @remarks This class implements the scene interface for a basic Scene manager.
      *
      */
-    class SimpleScene : public Scene, public SharedFromThis<SimpleScene>
+    class SimpleScene : public Scene
     {
         typedef std::set<std::shared_ptr<Source>> SourceSet;
 
