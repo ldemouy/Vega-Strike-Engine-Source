@@ -4,12 +4,12 @@
 #include <string>
 #include <vector>
 
-#include <boost/smart_ptr.hpp>
+#include <memory>
 
 class Texture;
 class Technique;
 
-typedef boost::shared_ptr<Technique> TechniquePtr;
+typedef std::shared_ptr<Technique> TechniquePtr;
 
 class Technique
 {
@@ -168,7 +168,7 @@ public:
             std::string defaultPath;
 
             /** Contains the source texture if the source type is File */
-            boost::shared_ptr<Texture> texture;
+            std::shared_ptr<Texture> texture;
         };
 
         struct ShaderParam
