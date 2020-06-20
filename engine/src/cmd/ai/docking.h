@@ -14,7 +14,7 @@ namespace Orders
         } state;
         Order *oldstate;
         float timer;
-        int port;
+        int32_t port;
         bool physicallyDock;
         bool facedtarget;
         bool keeptrying;

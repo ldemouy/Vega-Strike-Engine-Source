@@ -123,15 +123,15 @@ namespace Orders
             oldstate = nullptr;
         }
     }
-    int SelectDockPort(Unit *utdw, Unit *parent)
+    int SelectDockPort(Unit *unit_to_dock_with, Unit *parent)
     {
-        const vector<DockingPorts> &dp = utdw->DockingPortLocations();
+        const vector<DockingPorts> &dp = unit_to_dock_with->DockingPortLocations();
         float dist = FLT_MAX;
-        int num = -1;
-        for (unsigned int i = 0; i < dp.size(); ++i)
+        int32_t num = -1;
+        for (size_t i = 0; i < dp.size(); ++i)
             if (!dp[i].IsOccupied())
             {
-                Vector rez = Transform(utdw->GetTransformation(), dp[i].GetPosition());
+                Vector rez = Transform(unit_to_dock_with->GetTransformation(), dp[i].GetPosition());
                 float wdist = (rez - parent->Position()).MagnitudeSquared();
                 if (wdist < dist)
                 {
@@ -141,18 +141,22 @@ namespace Orders
             }
         return num;
     }
-    bool DockingOps::RequestClearence(Unit *utdw)
+    bool DockingOps::RequestClearence(Unit *unit_to_dock_with)
     {
-        if (physicallyDock && !utdw->RequestClearance(parent))
+        if (physicallyDock && !unit_to_dock_with->RequestClearance(parent))
+        {
             return false;
-        port = SelectDockPort(utdw, parent);
+        }
+        port = SelectDockPort(unit_to_dock_with, parent);
         if (port == -1)
+        {
             return false;
+        }
         return true;
     }
-    QVector DockingOps::Movement(Unit *utdw)
+    QVector DockingOps::Movement(Unit *unit_to_dock_with)
     {
-        const QVector loc(Transform(utdw->GetTransformation(), utdw->DockingPortLocations()[port].GetPosition().Cast()));
+        const QVector loc(Transform(unit_to_dock_with->GetTransformation(), unit_to_dock_with->DockingPortLocations()[port].GetPosition().Cast()));
         SetDest(loc);
 
         SetAfterburn(DistanceWarrantsTravelTo(parent, (loc - parent->Position()).Magnitude(), true));
@@ -163,12 +167,14 @@ namespace Orders
         }
         MoveTo::Execute();
         if (rand() % 256 == 0)
-            WarpToP(parent, utdw, true);
+        {
+            WarpToP(parent, unit_to_dock_with, true);
+        }
         return loc;
     }
-    bool DockingOps::DockToTarget(Unit *utdw)
+    bool DockingOps::DockToTarget(Unit *unit_to_dock_with)
     {
-        if (utdw->DockingPortLocations()[port].IsOccupied())
+        if (unit_to_dock_with->DockingPortLocations()[port].IsOccupied())
         {
             if (keeptrying)
             {
@@ -182,24 +188,26 @@ namespace Orders
                 return false;
             }
         }
-        QVector loc = Movement(utdw);
-        float rad = utdw->DockingPortLocations()[port].GetRadius() + parent->rSize();
+        QVector loc = Movement(unit_to_dock_with);
+        float rad = unit_to_dock_with->DockingPortLocations()[port].GetRadius() + parent->rSize();
         float diss = (parent->Position() - loc).MagnitudeSquared() - .1;
-        bool isplanet = utdw->isUnit() == PLANETPTR;
+        bool isplanet = unit_to_dock_with->isUnit() == PLANETPTR;
         static float MinimumCapacityToRefuelOnLand =
             XMLSupport::parse_float(vs_config->getVariable("physics", "MinimumWarpCapToRefuelDockeesAutomatically", "0"));
         if (diss <= (isplanet ? rad * rad : parent->rSize() * parent->rSize()))
         {
-            DockedScript(parent, utdw);
+            DockedScript(parent, unit_to_dock_with);
             if (physicallyDock)
             {
-                return parent->Dock(utdw);
+                return parent->Dock(unit_to_dock_with);
             }
             else
             {
-                float maxWillingToRefill = utdw->WarpCapData();
+                float maxWillingToRefill = unit_to_dock_with->WarpCapData();
                 if (maxWillingToRefill >= MinimumCapacityToRefuelOnLand)
+                {
                     parent->RefillWarpEnergy(); //BUCO! This needs its own units.csv column to see how much we refill!
+                }
                 return true;
             }
         }
@@ -211,59 +219,67 @@ namespace Orders
             {
                 if (physicallyDock)
                 {
-                    return parent->Dock(utdw);
+                    return parent->Dock(unit_to_dock_with);
                 }
                 else
                 {
-                    float maxWillingToRefill = utdw->WarpCapData();
+                    float maxWillingToRefill = unit_to_dock_with->WarpCapData();
                     if (maxWillingToRefill >= MinimumCapacityToRefuelOnLand)
+                    {
                         parent->RefillWarpEnergy(); //BUCO! This needs its own units.csv column to see how much we refill!
+                    }
                     return true;
                 }
             }
         }
         return false;
     }
-    bool DockingOps::PerformDockingOperations(Unit *utdw)
+    bool DockingOps::PerformDockingOperations(Unit *unit_to_dock_with)
     {
         timer -= SIMULATION_ATOM;
-        bool isplanet = utdw->isUnit() == PLANETPTR;
+        bool isplanet = unit_to_dock_with->isUnit() == PLANETPTR;
         if (timer < 0)
         {
             static float tmp = XMLSupport::parse_float(vs_config->getVariable("physics", "un_docking_time", "180"));
             timer = tmp;
-            EnqueueOrder(new ChangeHeading(parent->Position() * 2 - utdw->Position(), 4, 1, true));
+            EnqueueOrder(new ChangeHeading(parent->Position() * 2 - unit_to_dock_with->Position(), 4, 1, true));
             if (physicallyDock)
-                return parent->UnDock(utdw);
+            {
+                return parent->UnDock(unit_to_dock_with);
+            }
             else
+            {
                 return true;
+            }
         }
         else if (!physicallyDock)
         {
             if (isplanet)
             {
                 //orbit;
-                QVector cur = utdw->Position() - parent->Position();
+                QVector cur = unit_to_dock_with->Position() - parent->Position();
                 QVector up = QVector(0, 1, 0);
                 if (up.i == cur.i && up.j == cur.j && up.k == cur.k)
+                {
                     up = QVector(0, 0, 1);
+                }
                 SetDest(cur.Cross(up) * 10000);
                 MoveTo::Execute();
             }
             else
             {
-                Movement(utdw);
+                Movement(unit_to_dock_with);
             }
         }
         return false;
     }
-    bool DockingOps::Undock(Unit *utdw)
+    bool DockingOps::Undock(Unit *unit_to_dock_with)
     {
         //this is a good heuristic... find the location where you are.compare with center...then fly the fuck away
-        QVector awaydir = parent->Position() - utdw->Position();
-        float len = ((utdw->rSize() + parent->rSize() * 2) / awaydir.Magnitude());
+        QVector awaydir = parent->Position() - unit_to_dock_with->Position();
+        float len = ((unit_to_dock_with->rSize() + parent->rSize() * 2) / awaydir.Magnitude());
         awaydir *= len;
-        SetDest(awaydir + utdw->Position());
+        SetDest(awaydir + unit_to_dock_with->Position());
         MoveTo::Execute();
         timer -= SIMULATION_ATOM;
         return (len < 1) || done || timer < 0;
