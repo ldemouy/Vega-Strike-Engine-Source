@@ -34,70 +34,92 @@ Unit *getAtmospheric(Unit *target)
         for (auto i = _Universe->activeStarSystem()->getUnitList().createIterator();
              (unit = *i) != nullptr;
              ++i)
+        {
             if (unit->isUnit() == PLANETPTR)
             {
                 if ((target->Position() - unit->Position()).Magnitude() < target->rSize() * .5)
+                {
                     if (!(((Planet *)unit)->isAtmospheric()))
+                    {
                         return unit;
+                    }
+                }
             }
+        }
     }
     return nullptr;
 }
 
-bool RequestClearence(Unit *parent, Unit *targ, unsigned char sex)
+bool RequestClearence(Unit *parent, Unit *targ, uint8_t sex)
 {
     if (!targ->DockingPortLocations().size())
+    {
         return false;
+    }
     if (targ->isUnit() == PLANETPTR)
     {
         if (((Planet *)targ)->isAtmospheric() && NoDockWithClear())
         {
             targ = getAtmospheric(targ);
             if (!targ)
+            {
                 return false;
+            }
             parent->Target(targ);
         }
     }
-    CommunicationMessage c(parent, targ, nullptr, sex);
-    c.SetCurrentState(c.fsm->GetRequestLandNode(), nullptr, sex);
-    Order *o = targ->getAIState();
-    if (o)
-        o->Communicate(c);
+    CommunicationMessage message(parent, targ, nullptr, sex);
+    message.SetCurrentState(message.fsm->GetRequestLandNode(), nullptr, sex);
+    Order *order = targ->getAIState();
+    if (order)
+    {
+        order->Communicate(message);
+    }
     return true;
 }
 
 using Orders::FireAt;
-bool FireAt::PursueTarget(Unit *un, bool leader)
+bool FireAt::PursueTarget(Unit *unit, bool leader)
 {
     if (leader)
+    {
         return true;
-    if (un == parent->Target())
+    }
+    if (unit == parent->Target())
+    {
         return rand() < .9 * RAND_MAX;
-    if (parent->getRelation(un) < 0)
+    }
+    if (parent->getRelation(unit) < 0)
+    {
         return rand() < .2 * RAND_MAX;
+    }
     return false;
 }
 
-bool CanFaceTarget(Unit *su, Unit *targ, const Matrix &matrix)
+bool CanFaceTarget(Unit *su, Unit *target, const Matrix &matrix)
 {
     return true;
 
     float limitmin = su->Limits().limitmin;
     if (limitmin > -.99)
     {
-        QVector pos = (targ->Position() - su->Position()).Normalize();
-        QVector pnorm = pos.Cast();
+        QVector position = (target->Position() - su->Position()).Normalize();
+        QVector position_normal = position.Cast();
         Vector structurelimits = su->Limits().structurelimits;
         Vector worldlimit = TransformNormal(matrix, structurelimits);
-        if (pnorm.Dot(worldlimit) < limitmin)
+        if (position_normal.Dot(worldlimit) < limitmin)
+        {
             return false;
+        }
     }
     Unit *ssu;
-    for (auto i = su->getSubUnits();
-         (ssu = *i) != nullptr;
-         ++i)
-        if (!CanFaceTarget(ssu, targ, su->cumulative_transformation_matrix))
+    for (auto i = su->getSubUnits(); (ssu = *i) != nullptr; ++i)
+    {
+        if (!CanFaceTarget(ssu, target, su->cumulative_transformation_matrix))
+        {
             return false;
+        }
+    }
     return true;
 }
 
@@ -131,25 +153,25 @@ void FireAt::SignalChosenTarget() {}
 //temporary way of choosing
 struct TargetAndRange
 {
-    Unit *t;
+    Unit *target;
     float range;
     float relation;
-    TargetAndRange(Unit *tt, float r, float rel)
+    TargetAndRange(Unit *target, float range, float relation)
     {
-        t = tt;
-        range = r;
-        this->relation = rel;
+        this->target = target;
+        this->range = range;
+        this->relation = relation;
     }
 };
 
 struct RangeSortedTurrets
 {
-    Unit *tur;
+    Unit *turret;
     float gunrange;
-    RangeSortedTurrets(Unit *t, float r)
+    RangeSortedTurrets(Unit *turret, float range)
     {
-        tur = t;
-        gunrange = r;
+        this->turret = turret;
+        gunrange = range;
     }
     bool operator<(const RangeSortedTurrets &o) const
     {
@@ -173,38 +195,38 @@ struct TurretBin
     void AssignTargets(const TargetAndRange &finalChoice, const Matrix &pos)
     {
         //go through modularly assigning as you go;
-        int count = 0;
-        const unsigned long lotsize[2] = {listOfTargets[0].size(), listOfTargets[1].size()};
-        for (vector<RangeSortedTurrets>::iterator uniter = turret.begin(); uniter != turret.end(); ++uniter)
+        int32_t count = 0;
+        const size_t lotsize[2] = {listOfTargets[0].size(), listOfTargets[1].size()};
+        for (auto turret_iter = turret.begin(); turret_iter != turret.end(); ++turret_iter)
         {
             bool foundfinal = false;
-            uniter->tur->Target(nullptr);
-            uniter->tur->TargetTurret(nullptr);
-            if (finalChoice.t)
+            turret_iter->turret->Target(nullptr);
+            turret_iter->turret->TargetTurret(nullptr);
+            if (finalChoice.target)
             {
-                if (finalChoice.range < uniter->gunrange && ROLES::getPriority(uniter->tur->attackPreference())[finalChoice.t->unitRole()] < 31)
+                if (finalChoice.range < turret_iter->gunrange && ROLES::getPriority(turret_iter->turret->attackPreference())[finalChoice.target->unitRole()] < 31)
                 {
-                    if (CanFaceTarget(uniter->tur, finalChoice.t, pos))
+                    if (CanFaceTarget(turret_iter->turret, finalChoice.target, pos))
                     {
-                        uniter->tur->Target(finalChoice.t);
-                        uniter->tur->TargetTurret(finalChoice.t);
+                        turret_iter->turret->Target(finalChoice.target);
+                        turret_iter->turret->TargetTurret(finalChoice.target);
                         foundfinal = true;
                     }
                 }
             }
             if (!foundfinal)
             {
-                for (unsigned int f = 0; f < 2 && !foundfinal; f++)
+                for (uint32_t f = 0; f < 2 && !foundfinal; f++)
                 {
-                    for (unsigned int i = 0; i < lotsize[f]; i++)
+                    for (uint32_t i = 0; i < lotsize[f]; i++)
                     {
-                        const int index = (count + i) % lotsize[f];
-                        if (listOfTargets[f][index].range < uniter->gunrange)
+                        const int32_t index = (count + i) % lotsize[f];
+                        if (listOfTargets[f][index].range < turret_iter->gunrange)
                         {
-                            if (CanFaceTarget(uniter->tur, finalChoice.t, pos))
+                            if (CanFaceTarget(turret_iter->turret, finalChoice.target, pos))
                             {
-                                uniter->tur->Target(listOfTargets[f][index].t);
-                                uniter->tur->TargetTurret(listOfTargets[f][index].t);
+                                turret_iter->turret->Target(listOfTargets[f][index].target);
+                                turret_iter->turret->TargetTurret(listOfTargets[f][index].target);
                                 count++;
                                 foundfinal = true;
                                 break;
@@ -219,12 +241,18 @@ struct TurretBin
 
 void AssignTBin(Unit *su, vector<TurretBin> &tbin)
 {
-    unsigned int bnum = 0;
+    uint32_t bnum = 0;
     for (; bnum < tbin.size(); bnum++)
-        if (su->attackPreference() == tbin[bnum].turret[0].tur->attackPreference())
+    {
+        if (su->attackPreference() == tbin[bnum].turret[0].turret->attackPreference())
+        {
             break;
+        }
+    }
     if (bnum >= tbin.size())
+    {
         tbin.push_back(TurretBin());
+    }
     float gspeed, grange, mrange;
     grange = FLT_MAX;
     su->getAverageGunSpeed(gspeed, grange, mrange);
@@ -235,11 +263,17 @@ void AssignTBin(Unit *su, vector<TurretBin> &tbin)
         {
             ssu->getAverageGunSpeed(ggspeed, ggrange, mmrange);
             if (ggspeed > gspeed)
+            {
                 gspeed = ggspeed;
+            }
             if (ggrange > grange)
+            {
                 grange = ggrange;
+            }
             if (mmrange > mrange)
+            {
                 mrange = mmrange;
+            }
         }
     }
     if (tbin[bnum].maxrange < grange)
@@ -250,19 +284,31 @@ void AssignTBin(Unit *su, vector<TurretBin> &tbin)
 float Priority(Unit *me, Unit *targ, float gunrange, float rangetotarget, float relationship, char *rolepriority)
 {
     if (relationship >= 0)
+    {
         return -1;
+    }
     if (targ->GetHull() < 0)
+    {
         return -1;
+    }
     *rolepriority = ROLES::getPriority(me->attackPreference())[targ->unitRole()]; //number btw 0 and 31 higher better
     char invrolepriority = 31 - *rolepriority;
     if (invrolepriority <= 0)
+    {
         return -1;
+    }
     if (rangetotarget < 1 && rangetotarget > -1000)
+    {
         rangetotarget = 1;
+    }
     else
+    {
         rangetotarget = fabs(rangetotarget);
+    }
     if (rangetotarget < .5 * gunrange)
+    {
         rangetotarget = .5 * gunrange;
+    }
     if (gunrange <= 0)
     {
         static float mountless_gunrange =
@@ -333,8 +379,8 @@ class ChooseTargetClass
     bool reachedLess;
     FireAt *fireat;
     float gunrange;
-    int numtargets;
-    int maxtargets;
+    int32_t numtargets;
+    int32_t maxtargets;
 
 public:
     Unit *mytarg;
@@ -354,7 +400,9 @@ public:
         mytarg = nullptr;
         double currad = 0;
         if (!is_null(un->location[Unit::UNIT_ONLY]))
+        {
             currad = un->location[Unit::UNIT_ONLY]->getKey();
+        }
         for (size_t i = 0; i < numTuple; ++i)
         {
             double tmpless = currad - innermaxrange[i];
@@ -381,9 +429,13 @@ public:
             if (lesscheck || morecheck)
             {
                 if (lesscheck)
+                {
                     reachedLess = true;
+                }
                 if (morecheck)
+                {
                     reachedMore = true;
+                }
                 if (mytarg && rolepriority < maxrolepriority)
                 {
                     return false;
@@ -391,6 +443,7 @@ public:
                 else if (reachedLess == true && reachedMore == true)
                 {
                     for (size_t i = 1; i < numTuple; ++i)
+                    {
                         if (unkey > maxinnerrangeless[i] && unkey < maxinnerrangemore[i])
                         {
                             maxinnerrangeless[0] = maxinnerrangeless[i];
@@ -398,49 +451,56 @@ public:
                             reachedLess = false;
                             reachedMore = false;
                         }
+                    }
                 }
             }
         }
         return ShouldTargetUnit(un, distance);
     }
-    bool ShouldTargetUnit(Unit *un, float distance)
+    bool ShouldTargetUnit(Unit *unit, float distance)
     {
-        if (un->CloakVisible() > .8)
+        if (unit->CloakVisible() > .8)
         {
             float rangetotarget = distance;
-            float rel0 = parent->getRelation(un);
+            float rel0 = parent->getRelation(unit);
             float rel[] = {
                 rel0 //not initialized until after array
                 ,
-                (parentparent ? parentparent->getRelation(un) : rel0) //not initialized till after array
+                (parentparent ? parentparent->getRelation(unit) : rel0) //not initialized till after array
             };
             float relationship = rel0;
-            for (unsigned int i = 1; i < sizeof(rel) / sizeof(*rel); i++)
+            for (uint32_t i = 1; i < sizeof(rel) / sizeof(*rel); i++)
+            {
                 if (rel[i] < relationship)
+                {
                     relationship = rel[i];
+                }
+            }
             char rp = 31;
-            float tmp = Priority(parent, un, gunrange, rangetotarget, relationship, &rp);
+            float tmp = Priority(parent, unit, gunrange, rangetotarget, relationship, &rp);
             if (tmp > priority)
             {
-                mytarg = un;
+                mytarg = unit;
                 priority = tmp;
                 rolepriority = rp;
             }
             for (vector<TurretBin>::iterator k = tbin->begin(); k != tbin->end(); ++k)
             {
                 if (rangetotarget > k->maxrange)
+                {
                     break;
-                const char tprior = ROLES::getPriority(k->turret[0].tur->attackPreference())[un->unitRole()];
+                }
+                const char tprior = ROLES::getPriority(k->turret[0].turret->attackPreference())[unit->unitRole()];
                 if (relationship < 0)
                 {
                     if (tprior < 16)
                     {
-                        k->listOfTargets[0].push_back(TargetAndRange(un, rangetotarget, relationship));
+                        k->listOfTargets[0].push_back(TargetAndRange(unit, rangetotarget, relationship));
                         numtargets++;
                     }
                     else if (tprior < 31)
                     {
-                        k->listOfTargets[1].push_back(TargetAndRange(un, rangetotarget, relationship));
+                        k->listOfTargets[1].push_back(TargetAndRange(unit, rangetotarget, relationship));
                         numtargets++;
                     }
                 }
@@ -450,11 +510,11 @@ public:
     }
 };
 
-int numpolled[2] = {0, 0}; //number of units that searched for a target
+int32_t numpolled[2] = {0, 0}; //number of units that searched for a target
 
-int prevpollindex[2] = {10000, 10000}; //previous number of units touched (doesn't need to be precise)
+int32_t prevpollindex[2] = {10000, 10000}; //previous number of units touched (doesn't need to be precise)
 
-int pollindex[2] = {1, 1}; //current count of number of units touched (doesn't need to be precise)  -- used for "fairness" heuristic
+int32_t pollindex[2] = {1, 1}; //current count of number of units touched (doesn't need to be precise)  -- used for "fairness" heuristic
 
 void FireAt::ChooseTargets(int numtargs, bool force)
 {
@@ -465,18 +525,18 @@ void FireAt::ChooseTargets(int numtargs, bool force)
         XMLSupport::parse_float(vs_config->getVariable("AI", "Targetting", "MinTimeToSwitchTargets", "3"));
     static float minnulltimetoswitch =
         XMLSupport::parse_float(vs_config->getVariable("AI", "Targetting", "MinNullTimeToSwitchTargets", "5"));
-    static int minnumpollers =
+    static int32_t minnumpollers =
         float_to_int(XMLSupport::parse_float(vs_config->getVariable("AI", "Targetting", "MinNumberofpollersperframe", "5"))); //maximum number of vessels allowed to search for a target in a given physics frame
-    static int maxnumpollers =
+    static int32_t maxnumpollers =
         float_to_int(XMLSupport::parse_float(vs_config->getVariable("AI", "Targetting", "MaxNumberofpollersperframe", "49"))); //maximum number of vessels allowed to search for a target in a given physics frame
-    static int numpollers[2] = {maxnumpollers, maxnumpollers};
+    static int32_t numpollers[2] = {maxnumpollers, maxnumpollers};
 
     static int nextframenumpollers[2] = {maxnumpollers, maxnumpollers};
     if (lastchangedtarg + mintimetoswitch > 0)
         return; //don't switch if switching too soon
 
     Unit *curtarg = parent->Target();
-    int hastarg = (curtarg == nullptr) ? 0 : 1;
+    int32_t hastarg = (curtarg == nullptr) ? 0 : 1;
     //Following code exists to limit the number of craft polling for a target in a given frame - this is an expensive operation, and needs to be spread out, or there will be pauses.
     static float simatom = XMLSupport::parse_float(vs_config->getVariable("general", "simulation_atom", "0.1"));
     if ((UniverseUtil::GetGameTime()) - targettimer >= simatom * .99)
@@ -492,22 +552,36 @@ void FireAt::ChooseTargets(int numtargs, bool force)
     }
     pollindex[hastarg]++;                         //count number of craft touched - will use in the next physics frame to spread out the vessels actually chosen to be processed among all of the vessels being touched
     if (numpolled[hastarg] > numpollers[hastarg]) //over quota, wait until next physics frame
-        return;
-    if (!(pollindex[hastarg] % ((prevpollindex[hastarg] / numpollers[hastarg]) + 1))) //spread out, in modulo fashion, the possibility of changing one's target. Use previous physics frame count of craft to estimate current number of craft
-        numpolled[hastarg]++;                                                         //if a more likely candidate, we're going to search for a target.
-    else
-        return; //skipped to achieve better fairness - see comment on modulo distribution above
-    if (curtarg)
-        if (isJumpablePlanet(curtarg))
-            return;
-    bool wasnull = (curtarg == nullptr);
-    Flightgroup *fg = parent->getFlightgroup();
-    lastchangedtarg = 0 + targrand.uniformInc(0, 1) * mintimetoswitch; //spread out next valid time to switch targets - helps to ease per-frame loads.
-    if (fg)
     {
-        if (!fg->directive.empty())
-            if (curtarg != nullptr && (*fg->directive.begin()) == toupper(*fg->directive.begin()))
+        return;
+    }
+    if (!(pollindex[hastarg] % ((prevpollindex[hastarg] / numpollers[hastarg]) + 1))) //spread out, in modulo fashion, the possibility of changing one's target. Use previous physics frame count of craft to estimate current number of craft
+    {
+        numpolled[hastarg]++; //if a more likely candidate, we're going to search for a target.
+    }
+    else
+    {
+        return; //skipped to achieve better fairness - see comment on modulo distribution above
+    }
+    if (curtarg)
+    {
+        if (isJumpablePlanet(curtarg))
+        {
+            return;
+        }
+    }
+    bool wasnull = (curtarg == nullptr);
+    Flightgroup *flight_group = parent->getFlightgroup();
+    lastchangedtarg = 0 + targrand.uniformInc(0, 1) * mintimetoswitch; //spread out next valid time to switch targets - helps to ease per-frame loads.
+    if (flight_group)
+    {
+        if (!flight_group->directive.empty())
+        {
+            if (curtarg != nullptr && (*flight_group->directive.begin()) == toupper(*flight_group->directive.begin()))
+            {
                 return;
+            }
+        }
     }
     //not   allowed to switch targets
     numprocessed++;
@@ -516,8 +590,8 @@ void FireAt::ChooseTargets(int numtargs, bool force)
     auto subun = parent->getSubUnits();
     for (; (su = *subun) != nullptr; ++subun)
     {
-        static unsigned int inert = ROLES::getRole("INERT");
-        static unsigned int pointdef = ROLES::getRole("POINTDEF");
+        static uint32_t inert = ROLES::getRole("INERT");
+        static uint32_t pointdef = ROLES::getRole("POINTDEF");
         static bool assignpointdef =
             XMLSupport::parse_bool(vs_config->getVariable("AI", "Targetting", "AssignPointDef", "true"));
         if ((su->attackPreference() != pointdef) || assignpointdef)
@@ -530,7 +604,9 @@ void FireAt::ChooseTargets(int numtargs, bool force)
             {
                 Unit *ssu = nullptr;
                 for (auto subturret = su->getSubUnits(); (ssu = (*subturret)); ++subturret)
+                {
                     AssignTBin(ssu, tbin);
+                }
             }
         }
     }
@@ -541,26 +617,28 @@ void FireAt::ChooseTargets(int numtargs, bool force)
         XMLSupport::parse_float(vs_config->getVariable("AI", "Targetting", "search_extra_radius", "1000")); //Maximum target radius that is guaranteed to be detected
     static char maxrolepriority =
         XMLSupport::parse_int(vs_config->getVariable("AI", "Targetting", "search_max_role_priority", "16"));
-    static int maxtargets = XMLSupport::parse_int(vs_config->getVariable("AI", "Targetting", "search_max_candidates", "64")); //Cutoff candidate count (if that many hostiles found, stop search - performance/quality tradeoff, 0=no cutoff)
+    static int32_t maxtargets = XMLSupport::parse_int(vs_config->getVariable("AI", "Targetting", "search_max_candidates", "64")); //Cutoff candidate count (if that many hostiles found, stop search - performance/quality tradeoff, 0=no cutoff)
     UnitWithinRangeLocator<ChooseTargetClass<2>> unitLocator(parent->GetComputerData().radar.maxrange, unitRad);
     StaticTuple<float, 2> maxranges;
 
     maxranges[0] = gunrange;
     maxranges[1] = missilerange;
     if (tbin.size())
+    {
         maxranges[0] = (tbin[0].maxrange > gunrange ? tbin[0].maxrange : gunrange);
+    }
     double pretable = queryTime();
     unitLocator.action.init(this, parent, gunrange, &tbin, maxranges, maxrolepriority, maxtargets);
-    static int gcounter = 0;
-    static int min_rechoose_interval = XMLSupport::parse_int(vs_config->getVariable("AI", "min_rechoose_interval", "128"));
+    static int32_t gcounter = 0;
+    static int32_t min_rechoose_interval = XMLSupport::parse_int(vs_config->getVariable("AI", "min_rechoose_interval", "128"));
     if (curtarg)
     {
         if (gcounter++ < min_rechoose_interval || rand() / 8 < RAND_MAX / 9)
         {
             //in this case only look at potentially *interesting* units rather than huge swaths of nearby units...including target, threat, players, and leader's target
             unitLocator.action.ShouldTargetUnit(curtarg, UnitUtil::getDistance(parent, curtarg));
-            unsigned int np = _Universe->numPlayers();
-            for (unsigned int i = 0; i < np; ++i)
+            uint32_t np = _Universe->numPlayers();
+            for (uint32_t i = 0; i < np; ++i)
             {
                 Unit *playa = _Universe->AccessCockpit(i)->GetParent();
                 if (playa)
@@ -568,10 +646,14 @@ void FireAt::ChooseTargets(int numtargs, bool force)
             }
             Unit *lead = UnitUtil::getFlightgroupLeader(parent);
             if (lead != nullptr && lead != parent && (lead = lead->Target()) != nullptr)
+            {
                 unitLocator.action.ShouldTargetUnit(lead, UnitUtil::getDistance(parent, lead));
+            }
             Unit *threat = parent->Threat();
             if (threat)
+            {
                 unitLocator.action.ShouldTargetUnit(threat, UnitUtil::getDistance(parent, threat));
+            }
         }
         else
         {
@@ -579,8 +661,10 @@ void FireAt::ChooseTargets(int numtargs, bool force)
         }
     }
     if (unitLocator.action.mytarg == nullptr) //decided to rechoose or did not have initial target
+    {
         findObjects(
             _Universe->activeStarSystem()->collidemap[Unit::UNIT_ONLY], parent->location[Unit::UNIT_ONLY], &unitLocator);
+    }
     Unit *mytarg = unitLocator.action.mytarg;
     targetpick += queryTime() - pretable;
     if (mytarg)
@@ -590,7 +674,9 @@ void FireAt::ChooseTargets(int numtargs, bool force)
     }
     TargetAndRange my_target(mytarg, mytargrange, efrel);
     for (vector<TurretBin>::iterator k = tbin.begin(); k != tbin.end(); ++k)
+    {
         k->AssignTargets(my_target, parent->cumulative_transformation_matrix);
+    }
     parent->LockTarget(false);
     if (wasnull)
     {
@@ -598,14 +684,18 @@ void FireAt::ChooseTargets(int numtargs, bool force)
         {
             nextframenumpollers[hastarg] += 2;
             if (nextframenumpollers[hastarg] > maxnumpollers)
+            {
                 nextframenumpollers[hastarg] = maxnumpollers;
+            }
         }
         else
         {
             lastchangedtarg += targrand.uniformInc(0, 1) * minnulltimetoswitch;
             nextframenumpollers[hastarg] -= .05;
             if (nextframenumpollers[hastarg] < minnumpollers)
+            {
                 nextframenumpollers[hastarg] = minnumpollers;
+            }
         }
     }
     else
@@ -614,13 +704,17 @@ void FireAt::ChooseTargets(int numtargs, bool force)
         {
             nextframenumpollers[hastarg] += 2;
             if (nextframenumpollers[hastarg] > maxnumpollers)
+            {
                 nextframenumpollers[hastarg] = maxnumpollers;
+            }
         }
         else
         {
             nextframenumpollers[hastarg] -= .01;
             if (nextframenumpollers[hastarg] < minnumpollers)
+            {
                 nextframenumpollers[hastarg] = minnumpollers;
+            }
         }
     }
     parent->Target(mytarg);
@@ -637,7 +731,9 @@ bool FireAt::ShouldFire(Unit *targ, bool &missilelock)
 
         static int test = 0;
         if (test++ % 1000 == 1)
+        {
             VSFileSystem::vs_fprintf(stderr, "lost target");
+        }
     }
     float gunspeed, gunrange, missilerange;
     parent->getAverageGunSpeed(gunspeed, gunrange, missilerange);
@@ -645,7 +741,9 @@ bool FireAt::ShouldFire(Unit *targ, bool &missilelock)
     missilelock = false;
     targ->Threaten(parent, angle / (dist < .8 ? .8 : dist));
     if (targ == parent->Target())
+    {
         distance = dist;
+    }
     static float firewhen = XMLSupport::parse_float(vs_config->getVariable("AI", "Firing", "InWeaponRange", "1.2"));
     static float fireangle_minagg =
         (float)cos(M_PI * XMLSupport::parse_float(vs_config->getVariable("AI", "Firing", "MaximumFiringAngle.minagg",
@@ -667,14 +765,14 @@ bool FireAt::ShouldFire(Unit *targ, bool &missilelock)
             Cockpit *player = _Universe->isPlayerStarship(targ);
             if (player)
             {
-                static int max_attackers = XMLSupport::parse_int(vs_config->getVariable("AI", "max_player_attackers", "0"));
-                int attackers = player->number_of_attackers;
+                static int32_t max_attackers = XMLSupport::parse_int(vs_config->getVariable("AI", "max_player_attackers", "0"));
+                int32_t attackers = player->number_of_attackers;
                 if (attackers > max_attackers && max_attackers > 0)
                 {
                     static float attacker_switch_time =
                         XMLSupport::parse_float(vs_config->getVariable("AI", "attacker_switch_time", "15"));
-                    int curtime = (int)fmod(floor(UniverseUtil::GetGameTime() / attacker_switch_time), (float)(1 << 24));
-                    int seed = ((((size_t)parent) & 0xffffffff) ^ curtime);
+                    int32_t curtime = (int)fmod(floor(UniverseUtil::GetGameTime() / attacker_switch_time), (float)(1 << 24));
+                    int32_t seed = ((((size_t)parent) & 0xffffffff) ^ curtime);
                     static VSRandom decide(seed);
                     decide.init_genrand(seed);
                     if (decide.genrand_int31() % attackers >= max_attackers)
@@ -696,9 +794,9 @@ FireAt::~FireAt()
 #endif
 }
 
-unsigned int FireBitmask(Unit *parent, bool shouldfire, bool firemissile)
+uint32_t FireBitmask(Unit *parent, bool shouldfire, bool firemissile)
 {
-    unsigned int firebitm = ROLES::EVERYTHING_ELSE;
+    uint32_t firebitm = ROLES::EVERYTHING_ELSE;
     Unit *un = parent->Target();
     if (un)
     {
@@ -707,14 +805,18 @@ unsigned int FireBitmask(Unit *parent, bool shouldfire, bool firemissile)
         static bool AlwaysFireAutotrackers =
             XMLSupport::parse_bool(vs_config->getVariable("AI", "AlwaysFireAutotrackers", "true"));
         if (shouldfire)
+        {
             firebitm |= ROLES::FIRE_GUNS;
+        }
         if (AlwaysFireAutotrackers && !shouldfire)
         {
             firebitm |= ROLES::FIRE_GUNS;
             firebitm |= ROLES::FIRE_ONLY_AUTOTRACKERS;
         }
         if (firemissile)
+        {
             firebitm = ROLES::FIRE_MISSILES; //stops guns
+        }
     }
     return firebitm;
 }
@@ -725,13 +827,21 @@ void FireAt::FireWeapons(bool shouldfire, bool lockmissile)
     bool fire_missile = lockmissile && rand() < RAND_MAX * missileprobability * SIMULATION_ATOM;
     delay += SIMULATION_ATOM;
     if (shouldfire && delay < parent->pilot->getReactionTime())
+    {
         return;
+    }
     else if (!shouldfire)
+    {
         delay = 0;
+    }
     if (fire_missile)
+    {
         lastmissiletime = UniverseUtil::GetGameTime();
+    }
     else if (UniverseUtil::GetGameTime() - lastmissiletime < missiledelay && !fire_missile)
+    {
         return;
+    }
     parent->Fire(FireBitmask(parent, shouldfire, fire_missile), true);
 }
 
@@ -751,13 +861,19 @@ void FireAt::PossiblySwitchTarget(bool unused)
     static float targettime = XMLSupport::parse_float(vs_config->getVariable("AI", "Targetting", "TimeUntilSwitch", "20"));
     if ((targettime <= 0) || (vsrandom.uniformInc(0, 1) < SIMULATION_ATOM / targettime))
     {
-        bool ct = true;
-        Flightgroup *fg;
-        if ((fg = parent->getFlightgroup()))
-            if (fg->directive.find(".") != string::npos)
-                ct = (parent->Target() == nullptr);
-        if (ct)
+        bool choose_target = true;
+        Flightgroup *flight_group;
+        if ((flight_group = parent->getFlightgroup()))
+        {
+            if (flight_group->directive.find(".") != string::npos)
+            {
+                choose_target = (parent->Target() == nullptr);
+            }
+        }
+        if (choose_target)
+        {
             ChooseTarget();
+        }
     }
 }
 
@@ -773,7 +889,9 @@ void FireAt::Execute()
     {
         static float cont_update_time = XMLSupport::parse_float(vs_config->getVariable("AI", "ContrabandUpdateTime", "1"));
         if (rand() < RAND_MAX * SIMULATION_ATOM / cont_update_time)
+        {
             UpdateContrabandSearch();
+        }
         static float cont_initiate_time = XMLSupport::parse_float(vs_config->getVariable("AI", "CommInitiateTime", "300"));
         if ((float)rand() < ((float)RAND_MAX * (SIMULATION_ATOM / cont_initiate_time)))
         {
@@ -786,13 +904,19 @@ void FireAt::Execute()
             static float contraband_to_target =
                 XMLSupport::parse_float(vs_config->getVariable("AI", "ContrabandToTargetPercent", "0.001"));
 
-            unsigned int modulo = ((unsigned int)(contraband_initiate_time / cont_initiate_time));
+            uint32_t modulo = ((uint32_t)(contraband_initiate_time / cont_initiate_time));
             if (modulo < 1)
+            {
                 modulo = 1;
+            }
             if (rand() % modulo)
+            {
                 RandomInitiateCommunication(comm_to_player, comm_to_target);
+            }
             else
+            {
                 InitiateContrabandSearch(contraband_to_player, contraband_to_target);
+            }
         }
     }
     bool shouldfire = false;
@@ -804,8 +928,12 @@ void FireAt::Execute()
         {
             had_target = true;
             if (parent->GetNumMounts() > 0)
+            {
                 if (!istargetjumpableplanet)
+                {
                     shouldfire |= ShouldFire(targ, missilelock);
+                }
+            }
         }
         else
         {
@@ -824,5 +952,7 @@ void FireAt::Execute()
     }
     PossiblySwitchTarget(istargetjumpableplanet);
     if ((!istargetjumpableplanet) && parent->GetNumMounts() > 0)
+    {
         FireWeapons(shouldfire, missilelock);
+    }
 }

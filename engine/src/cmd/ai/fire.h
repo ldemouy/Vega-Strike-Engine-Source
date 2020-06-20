@@ -3,7 +3,7 @@
 #include "comm_ai.h"
 #include "event_xml.h"
 //all unified AI's should inherit from FireAt, so they can choose targets together.
-bool RequestClearence(class Unit *parent, class Unit *targ, unsigned char sex);
+bool RequestClearence(class Unit *parent, class Unit *targ, uint8_t sex);
 Unit *getAtmospheric(Unit *targ);
 namespace Orders
 {
@@ -19,7 +19,7 @@ namespace Orders
         float lastchangedtarg;
         bool had_target;
         void FireWeapons(bool shouldfire, bool lockmissile);
-        virtual void ChooseTargets(int num, bool force = false); //chooses n targets and puts the best to attack in unit's target container
+        virtual void ChooseTargets(int32_t num, bool force = false); //chooses n targets and puts the best to attack in unit's target container
         bool isJumpablePlanet(Unit *);
         void ReInit(float agglevel);
         virtual void SignalChosenTarget();
