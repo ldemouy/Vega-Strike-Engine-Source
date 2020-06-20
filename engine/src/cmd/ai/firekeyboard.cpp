@@ -30,7 +30,7 @@
 
 extern bool toggle_pause();
 
-FireKeyboard::FireKeyboard(unsigned int whichplayer, unsigned int whichjoystick) : Order(WEAPON, 0)
+FireKeyboard::FireKeyboard(uint32_t whichplayer, uint32_t whichjoystick) : Order(WEAPON, 0)
 {
     memset(savedTargets, 0, sizeof(void *) * NUMSAVEDTARGETS);
     this->autotrackingtoggle = 1;
@@ -41,7 +41,7 @@ FireKeyboard::FireKeyboard(unsigned int whichplayer, unsigned int whichjoystick)
     refresh_target = true;
 }
 
-const unsigned int NUMCOMMKEYS = 10;
+const uint32_t NUMCOMMKEYS = 10;
 
 struct FIREKEYBOARDTYPE
 {
@@ -131,7 +131,9 @@ static std::vector<FIREKEYBOARDTYPE> vectorOfKeyboardInput;
 static FIREKEYBOARDTYPE &g()
 {
     while (vectorOfKeyboardInput.size() <= (unsigned int)_Universe->CurrentCockpit() || vectorOfKeyboardInput.size() <= (unsigned int)MAX_JOYSTICKS)
+    {
         vectorOfKeyboardInput.push_back(FIREKEYBOARDTYPE());
+    }
     return vectorOfKeyboardInput[_Universe->CurrentCockpit()];
 }
 
@@ -158,9 +160,13 @@ void FireKeyboard::SetShieldsOneThird(const KBData &, KBSTATE k)
         }
         sc.playsound();
         if (g().shieldpowerstate != pow)
+        {
             g().shieldpowerstate = pow;
+        }
         else
+        {
             g().shieldpowerstate = 1;
+        }
     }
 }
 
@@ -177,9 +183,13 @@ void FireKeyboard::SetShieldsOff(const KBData &, KBSTATE k)
         }
         sc.playsound();
         if (g().shieldpowerstate != pow)
+        {
             g().shieldpowerstate = pow;
+        }
         else
+        {
             g().shieldpowerstate = 1;
+        }
     }
 }
 
@@ -196,136 +206,182 @@ void FireKeyboard::SetShieldsTwoThird(const KBData &, KBSTATE k)
         }
         sc.playsound();
         if (g().shieldpowerstate != pow)
+        {
             g().shieldpowerstate = pow;
+        }
         else
+        {
             g().shieldpowerstate = 1;
+        }
     }
 }
 
 void FireKeyboard::ToggleGlow(const KBData &, KBSTATE k)
 {
     if (k == PRESS)
+    {
         g().toggleglow = PRESS;
+    }
 }
 
 void FireKeyboard::ToggleAutotracking(const KBData &, KBSTATE k)
 {
     if (k == PRESS)
+    {
         g().toggleautotracking = PRESS;
+    }
 }
 
 void FireKeyboard::ToggleWarpDrive(const KBData &, KBSTATE k)
 {
     if (k == PRESS)
+    {
         g().togglewarpdrive = PRESS;
+    }
 }
 
 void FireKeyboard::ToggleAnimation(const KBData &, KBSTATE k)
 {
     if (k == PRESS)
+    {
         g().toggleanimation = PRESS;
+    }
 }
 
 void FireKeyboard::PressComm1Key(const KBData &, KBSTATE k)
 {
     if (k == PRESS)
+    {
         g().commKeys[0] = PRESS;
+    }
 }
 
 void FireKeyboard::PressComm2Key(const KBData &, KBSTATE k)
 {
     if (k == PRESS)
+    {
         g().commKeys[1] = PRESS;
+    }
 }
 
 void FireKeyboard::PressComm3Key(const KBData &, KBSTATE k)
 {
     if (k == PRESS)
+    {
         g().commKeys[2] = PRESS;
+    }
 }
 
 void FireKeyboard::PressComm4Key(const KBData &, KBSTATE k)
 {
     if (k == PRESS)
+    {
         g().commKeys[3] = PRESS;
+    }
 }
 
 void FireKeyboard::PressComm5Key(const KBData &, KBSTATE k)
 {
     if (k == PRESS)
+    {
         g().commKeys[4] = PRESS;
+    }
 }
 
 void FireKeyboard::PressComm6Key(const KBData &, KBSTATE k)
 {
     if (k == PRESS)
+    {
         g().commKeys[5] = PRESS;
+    }
 }
 
 void FireKeyboard::PressComm7Key(const KBData &, KBSTATE k)
 {
     if (k == PRESS)
+    {
         g().commKeys[6] = PRESS;
+    }
 }
 
 void FireKeyboard::PressComm8Key(const KBData &, KBSTATE k)
 {
     if (k == PRESS)
+    {
         g().commKeys[7] = PRESS;
+    }
 }
 
 void FireKeyboard::PressComm9Key(const KBData &, KBSTATE k)
 {
     if (k == PRESS)
+    {
         g().commKeys[8] = PRESS;
+    }
 }
 
 void FireKeyboard::PressComm10Key(const KBData &, KBSTATE k)
 {
     if (k == PRESS)
+    {
         g().commKeys[9] = PRESS;
+    }
 }
 
 void FireKeyboard::SaveTarget1Key(const KBData &, KBSTATE k)
 {
     if (k == PRESS)
+    {
         g().saveTargetKeys[0] = PRESS;
+    }
 }
 
 void FireKeyboard::SaveTarget2Key(const KBData &, KBSTATE k)
 {
     if (k == PRESS)
+    {
         g().saveTargetKeys[1] = PRESS;
+    }
 }
 
 void FireKeyboard::SaveTarget3Key(const KBData &, KBSTATE k)
 {
     if (k == PRESS)
+    {
         g().saveTargetKeys[2] = PRESS;
+    }
 }
 
 void FireKeyboard::SaveTarget4Key(const KBData &, KBSTATE k)
 {
     if (k == PRESS)
+    {
         g().saveTargetKeys[3] = PRESS;
+    }
 }
 
 void FireKeyboard::SaveTarget5Key(const KBData &, KBSTATE k)
 {
     if (k == PRESS)
+    {
         g().saveTargetKeys[4] = PRESS;
+    }
 }
 
 void FireKeyboard::SaveTarget6Key(const KBData &, KBSTATE k)
 {
     if (k == PRESS)
+    {
         g().saveTargetKeys[5] = PRESS;
+    }
 }
 
 void FireKeyboard::SaveTarget7Key(const KBData &, KBSTATE k)
 {
     if (k == PRESS)
+    {
         g().saveTargetKeys[6] = PRESS;
+    }
 }
 
 void FireKeyboard::SaveTarget8Key(const KBData &, KBSTATE k)
@@ -337,73 +393,97 @@ void FireKeyboard::SaveTarget8Key(const KBData &, KBSTATE k)
 void FireKeyboard::SaveTarget9Key(const KBData &, KBSTATE k)
 {
     if (k == PRESS)
+    {
         g().saveTargetKeys[8] = PRESS;
+    }
 }
 
 void FireKeyboard::SaveTarget10Key(const KBData &, KBSTATE k)
 {
     if (k == PRESS)
+    {
         g().saveTargetKeys[9] = PRESS;
+    }
 }
 
 void FireKeyboard::RestoreTarget1Key(const KBData &, KBSTATE k)
 {
     if (k == PRESS)
+    {
         g().restoreTargetKeys[0] = PRESS;
+    }
 }
 
 void FireKeyboard::RestoreTarget2Key(const KBData &, KBSTATE k)
 {
     if (k == PRESS)
+    {
         g().restoreTargetKeys[1] = PRESS;
+    }
 }
 
 void FireKeyboard::RestoreTarget3Key(const KBData &, KBSTATE k)
 {
     if (k == PRESS)
+    {
         g().restoreTargetKeys[2] = PRESS;
+    }
 }
 
 void FireKeyboard::RestoreTarget4Key(const KBData &, KBSTATE k)
 {
     if (k == PRESS)
+    {
         g().restoreTargetKeys[3] = PRESS;
+    }
 }
 
 void FireKeyboard::RestoreTarget5Key(const KBData &, KBSTATE k)
 {
     if (k == PRESS)
+    {
         g().restoreTargetKeys[4] = PRESS;
+    }
 }
 
 void FireKeyboard::RestoreTarget6Key(const KBData &, KBSTATE k)
 {
     if (k == PRESS)
+    {
         g().restoreTargetKeys[5] = PRESS;
+    }
 }
 
 void FireKeyboard::RestoreTarget7Key(const KBData &, KBSTATE k)
 {
     if (k == PRESS)
+    {
         g().restoreTargetKeys[6] = PRESS;
+    }
 }
 
 void FireKeyboard::RestoreTarget8Key(const KBData &, KBSTATE k)
 {
     if (k == PRESS)
+    {
         g().restoreTargetKeys[7] = PRESS;
+    }
 }
 
 void FireKeyboard::RestoreTarget9Key(const KBData &, KBSTATE k)
 {
     if (k == PRESS)
+    {
         g().restoreTargetKeys[8] = PRESS;
+    }
 }
 
 void FireKeyboard::RestoreTarget10Key(const KBData &, KBSTATE k)
 {
     if (k == PRESS)
+    {
         g().restoreTargetKeys[9] = PRESS;
+    }
 }
 
 extern void LeadMe(Unit *un, string directive, string speech, bool changetarget);
@@ -412,33 +492,47 @@ static void LeadMe(string directive, string speech, bool changetarget)
 {
     Unit *un = _Universe->AccessCockpit()->GetParent();
     if (un)
+    {
         LeadMe(un, directive, speech, changetarget);
+    }
 }
 
 void FireKeyboard::RequestClearenceKey(const KBData &, KBSTATE k)
 {
     if (k == PRESS)
+    {
         g().req = true;
+    }
     if (k == RELEASE)
+    {
         g().req = false;
+    }
 }
 
 void FireKeyboard::DockKey(const KBData &, KBSTATE k)
 {
     Unit *u = _Universe->AccessCockpit()->GetParent();
     if (k == PRESS && u && (u->isSubUnit() == false))
+    {
         g().doc = true;
+    }
     if (k == RELEASE && u && (u->isSubUnit() == false))
+    {
         g().doc = false;
+    }
 }
 
 void FireKeyboard::UnDockKey(const KBData &, KBSTATE k)
 {
     Unit *u = _Universe->AccessCockpit()->GetParent();
     if (k == PRESS && u && (u->isSubUnit() == false))
+    {
         g().und = true;
+    }
     if (k == RELEASE && u && (u->isSubUnit() == false))
+    {
         g().und = false;
+    }
 }
 
 void FireKeyboard::EjectKey(const KBData &, KBSTATE k)
@@ -459,85 +553,113 @@ void FireKeyboard::EjectDockKey(const KBData &, KBSTATE k)
         g().doc = true;
     }
     if (k == RELEASE)
+    {
         g().doc = false;
+    }
 }
 
 void FireKeyboard::TurretAIOn(const KBData &, KBSTATE k)
 {
     if (k == PRESS)
+    {
         g().turretaikey = k;
+    }
 }
 
 void FireKeyboard::TurretAIOff(const KBData &, KBSTATE k)
 {
     if (k == PRESS)
+    {
         g().turretoffkey = k;
+    }
 }
 
 void FireKeyboard::TurretFireAtWill(const KBData &, KBSTATE k)
 {
     if (k == PRESS)
+    {
         g().turretfaw = k;
+    }
 }
 
 void FireKeyboard::MissionTargetKey(const KBData &, KBSTATE k)
 {
     if (k == PRESS)
+    {
         g().missiontargetkey = PRESS;
+    }
 }
 
 void FireKeyboard::ReverseMissionTargetKey(const KBData &, KBSTATE k)
 {
     if (k == PRESS)
+    {
         g().rmissiontargetkey = PRESS;
+    }
 }
 
 void FireKeyboard::EjectCargoKey(const KBData &, KBSTATE k)
 {
     if (k == PRESS)
+    {
         g().ejectcargo = k;
+    }
 }
 
 void FireKeyboard::EnslaveKey(const KBData &, KBSTATE k)
 {
     if (k == PRESS)
+    {
         g().enslave = k;
+    }
 }
 
 void FireKeyboard::FreeSlaveKey(const KBData &, KBSTATE k)
 {
     if (k == PRESS)
+    {
         g().freeslave = k;
+    }
 }
 
 void FireKeyboard::EjectNonMissionCargoKey(const KBData &, KBSTATE k)
 {
     if (k == PRESS)
+    {
         g().ejectnonmissioncargo = k;
+    }
 }
 
 void FireKeyboard::CloakKey(const KBData &, KBSTATE k)
 {
     if (k == PRESS)
+    {
         g().cloakkey = k;
+    }
 }
 
 void FireKeyboard::LockKey(const KBData &, KBSTATE k)
 {
     if (k == PRESS)
+    {
         g().lockkey = k;
+    }
 }
 
 void FireKeyboard::ECMKey(const KBData &, KBSTATE k)
 {
     if (k == PRESS)
+    {
         g().ECMkey = k;
+    }
 }
 
 void FireKeyboard::FireKey(const KBData &, KBSTATE k)
 {
     if (g().firekey == DOWN && k == UP)
+    {
         return;
+    }
     if (k == UP && g().firekey == RELEASE)
     {
     }
@@ -552,53 +674,81 @@ void ExamineWhenTargetKey();
 void FireKeyboard::TargetKey(const KBData &, KBSTATE k)
 {
     if (g().targetkey != PRESS)
+    {
         g().targetkey = k;
+    }
     if (k == RESET)
+    {
         g().targetkey = PRESS;
+    }
     if (k == PRESS)
+    {
         ExamineWhenTargetKey();
+    }
 }
 
 void FireKeyboard::PickTargetKey(const KBData &, KBSTATE k)
 {
     if (g().picktargetkey != PRESS)
+    {
         g().picktargetkey = k;
+    }
     if (k == RESET)
+    {
         g().picktargetkey = PRESS;
+    }
     if (k == PRESS)
+    {
         ExamineWhenTargetKey();
+    }
 }
 
 void FireKeyboard::MissileTargetKey(const KBData &, KBSTATE k)
 {
     if (g().missiletargetkey != PRESS)
+    {
         g().missiletargetkey = k;
+    }
     if (k == PRESS)
+    {
         ExamineWhenTargetKey();
+    }
 }
 
 void FireKeyboard::IncomingMissileTargetKey(const KBData &, KBSTATE k)
 {
     if (g().incomingmissiletargetkey != PRESS)
+    {
         g().incomingmissiletargetkey = k;
+    }
     if (k == PRESS)
+    {
         ExamineWhenTargetKey();
+    }
 }
 
 void FireKeyboard::ReverseMissileTargetKey(const KBData &, KBSTATE k)
 {
     if (g().rmissiletargetkey != PRESS)
+    {
         g().rmissiletargetkey = k;
+    }
     if (k == PRESS)
+    {
         ExamineWhenTargetKey();
+    }
 }
 
 void FireKeyboard::ReverseIncomingMissileTargetKey(const KBData &, KBSTATE k)
 {
     if (g().rincomingmissiletargetkey != PRESS)
+    {
         g().rincomingmissiletargetkey = k;
+    }
     if (k == PRESS)
+    {
         ExamineWhenTargetKey();
+    }
 }
 
 void FireKeyboard::NearestTargetKey(const KBData &, KBSTATE k)

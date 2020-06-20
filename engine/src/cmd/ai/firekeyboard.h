@@ -130,13 +130,6 @@ public:
 protected:
     void *savedTargets[NUMSAVEDTARGETS];
     float distance;
-#if 0
-    void ChooseTargets( bool targetturrets ); //chooses n targets and puts the best to attack in unit's target container
-    void ChooseRTargets( bool targetturrets ); //chooses n targets and puts the best to attack in unit's target container
-    void ChooseNearTargets( bool targetturrets ); //chooses n targets and puts the best to attack in unit's target container
-    void ChooseThreatTargets( bool targetturrets ); //chooses n targets and puts the best to attack in unit's target container
-    void PickTargets( bool targetturrets ); //chooses the target which is nearest to the center of the screen
-#endif
     unsigned int whichplayer;
     unsigned int whichjoystick;
     struct FIREKEYBOARDTYPE &f();
