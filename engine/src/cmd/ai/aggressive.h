@@ -64,7 +64,7 @@ namespace Orders
             TARGET_IN_FRONT_OF_YOU,
             TARGET_GOING_YOUR_DIRECTION
         };
-        AggressiveAI(const char *file, Unit *target = NULL);
+        AggressiveAI(const char *file, Unit *target = nullptr);
         void ExecuteNoEnemies();
         void Execute();
         virtual std::string getOrderDescription()
