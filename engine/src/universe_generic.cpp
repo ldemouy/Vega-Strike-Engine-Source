@@ -61,7 +61,7 @@ Unit *DockToSavedBases(int playernum, QVector &safevec)
     float dist = 0;
     Unit *un;
     QVector dock_position(plr->curr_physical_state.position);
-    for (un_iter iter = plr->getStarSystem()->getUnitList().createIterator(); (un = *iter); ++iter)
+    for (auto iter = plr->getStarSystem()->getUnitList().createIterator(); (un = *iter); ++iter)
         if (un->name == str || un->getFullname() == str)
         {
             dist = UnitUtil::getSignificantDistance(plr, un);

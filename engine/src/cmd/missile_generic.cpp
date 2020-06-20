@@ -29,7 +29,7 @@ void StarSystem::UpdateMissiles()
         if (dischargedMissiles.back()->GetRadius() > 0)
         { //we can avoid this iterated check for kinetic projectiles even if they "discharge" on hit
             Unit *un;
-            for (un_iter ui = getUnitList().createIterator();
+            for (auto ui = getUnitList().createIterator();
                  nullptr != (un = (*ui));
                  ++ui)
             {
@@ -56,7 +56,7 @@ void MissileEffect::DoApplyDamage(Unit *parent, Unit *un, float distance, float 
          */
         double total_area = 0.0f;
         {
-            un_kiter ki = un->viewSubUnits();
+            auto ki = un->viewSubUnits();
             for (const Unit *subun; (subun = *ki); ++ki)
             {
                 if (subun->Killed())
@@ -75,7 +75,7 @@ void MissileEffect::DoApplyDamage(Unit *parent, Unit *un, float distance, float 
         if (total_area < 4.0 * M_PI)
             total_area = 4.0 * M_PI;
 
-        un_iter i = un->getSubUnits();
+        auto i = un->getSubUnits();
         for (Unit *subun; (subun = *i); ++i)
         {
             if (subun->Killed())
@@ -200,7 +200,7 @@ Unit *getNearestTarget(Unit *me)
     Unit *un = nullptr;
     Unit *targ = nullptr;
     double minrange = FLT_MAX;
-    for (un_iter i = _Universe->activeStarSystem()->getUnitList().createIterator();
+    for (auto i = _Universe->activeStarSystem()->getUnitList().createIterator();
          (un = (*i));
          ++i)
     {
@@ -225,7 +225,7 @@ Unit *getNearestTarget(Unit *me)
     }
     if (targ == nullptr)
     {
-        for (un_iter i = _Universe->activeStarSystem()->getUnitList().createIterator();
+        for (auto i = _Universe->activeStarSystem()->getUnitList().createIterator();
              (un = (*i));
              ++i)
             if (UnitUtil::isSun(un))
@@ -265,7 +265,7 @@ void Missile::UpdatePhysics2(const Transformation &trans,
             {
                 static unsigned int pointdef = ROLES::getRole("POINTDEF");
                 targ->graphicOptions.missilelock = true;
-                un_iter i = targ->getSubUnits();
+                auto i = targ->getSubUnits();
 
                 Unit *su;
                 for (; (su = *i) != nullptr; ++i)

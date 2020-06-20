@@ -110,7 +110,7 @@ void Unit::SetNebula(Nebula *neb)
     nebula = neb;
     if (!SubUnits.empty())
     {
-        un_fiter iter = SubUnits.fastIterator();
+        auto iter = SubUnits.fastIterator();
         Unit *un;
         while ((un = *iter))
         {
@@ -1407,7 +1407,7 @@ void Unit::calculate_extent(bool update_collide_queue)
         corner_max = corner_max.Max(meshdata[a]->corner_max());
     } /* have subunits now in table*/
     const Unit *un;
-    for (un_kiter iter = SubUnits.constIterator(); (un = *iter); ++iter)
+    for (auto iter = SubUnits.constIterator(); (un = *iter); ++iter)
     {
         corner_min = corner_min.Min(un->LocalPosition().Cast() + un->corner_min);
         corner_max = corner_max.Max(un->LocalPosition().Cast() + un->corner_max);
@@ -1612,7 +1612,7 @@ const string Unit::getFgID()
 void Unit::SetFaction(int faction)
 {
     this->faction = faction;
-    for (un_iter ui = getSubUnits(); (*ui) != nullptr; ++ui)
+    for (auto ui = getSubUnits(); (*ui) != nullptr; ++ui)
         (*ui)->SetFaction(faction);
 }
 
@@ -1868,18 +1868,18 @@ void Unit::Deselect()
 void disableSubUnits(Unit *uhn)
 {
     Unit *un;
-    for (un_iter i = uhn->getSubUnits(); (un = *i) != nullptr; ++i)
+    for (auto i = uhn->getSubUnits(); (un = *i) != nullptr; ++i)
         disableSubUnits(un);
     for (unsigned int j = 0; j < uhn->mounts.size(); ++j)
         DestroyMount(&uhn->mounts[j]);
 }
 
-un_iter Unit::getSubUnits()
+UnitCollection::UnitIterator Unit::getSubUnits()
 {
     return SubUnits.createIterator();
 }
 
-un_kiter Unit::viewSubUnits() const
+UnitCollection::ConstIterator Unit::viewSubUnits() const
 {
     return SubUnits.constIterator();
 }
@@ -2071,7 +2071,7 @@ void Unit::ExecuteAI()
         aistate->Execute();
     if (!SubUnits.empty())
     {
-        un_iter iter = getSubUnits();
+        auto iter = getSubUnits();
         Unit *un;
         while ((un = *iter))
         {
@@ -2115,7 +2115,7 @@ void Unit::ReTargetFg(int which_target)
 #if 0
     StarSystem     *ssystem  = _Universe->activeStarSystem();
     UnitCollection *unitlist = ssystem->getUnitList();
-    un_iter   uiter = unitlist->createIterator();
+    auto   uiter = unitlist->createIterator();
 
     GameUnit *found_target   = nullptr;
     int found_attackers = 1000;
@@ -2151,7 +2151,7 @@ void Unit::SetTurretAI()
     if (talkinturrets)
     {
         Unit *un;
-        for (un_iter iter = getSubUnits(); (un = *iter); ++iter)
+        for (auto iter = getSubUnits(); (un = *iter); ++iter)
         {
             if (!CheckAccessory(un))
             {
@@ -2164,7 +2164,7 @@ void Unit::SetTurretAI()
     else
     {
         Unit *un;
-        for (un_iter iter = getSubUnits(); (un = *iter); ++iter)
+        for (auto iter = getSubUnits(); (un = *iter); ++iter)
         {
             if (!CheckAccessory(un))
             {
@@ -2182,7 +2182,7 @@ void Unit::DisableTurretAI()
 {
     turretstatus = 1;
     Unit *un;
-    for (un_iter iter = getSubUnits(); (un = *iter); ++iter)
+    for (auto iter = getSubUnits(); (un = *iter); ++iter)
     {
         if (un->aistate)
             un->aistate->Destroy();
@@ -2655,7 +2655,7 @@ void Unit::UpdateSubunitPhysics(const Transformation &trans,
         float backup = SIMULATION_ATOM;
         float basesimatom = (this->sim_atom_multiplier ? backup / (float)this->sim_atom_multiplier : backup);
         unsigned int cur_sim_frame = _Universe->activeStarSystem()->getCurrentSimFrame();
-        for (un_iter iter = getSubUnits(); (su = *iter); ++iter)
+        for (auto iter = getSubUnits(); (su = *iter); ++iter)
             if (this->sim_atom_multiplier && su->sim_atom_multiplier)
             {
                 //This ugly thing detects skipped frames.
@@ -2749,7 +2749,7 @@ float CalculateNearestWarpUnit(const Unit *thus, float minmultiplier, Unit **nea
         findObjects(_Universe->activeStarSystem()->collidemap[Unit::UNIT_ONLY], thus->location[Unit::UNIT_ONLY], &locatespec);
         testthis = locatespec.retval.unit;
     }
-    for (un_fiter iter = _Universe->activeStarSystem()->gravitationalUnits().fastIterator();
+    for (auto iter = _Universe->activeStarSystem()->gravitationalUnits().fastIterator();
          (planet = *iter) || testthis;
          ++iter)
     {
@@ -3087,7 +3087,7 @@ bool Unit::AutoPilotToErrorMessage(const Unit *target,
         if (Guaranteed == Mission::AUTO_NORMAL && CloakVisible() > .5)
         {
             bool ignore_friendlies = true;
-            for (un_iter i = ss->getUnitList().createIterator(); (un = *i) != nullptr; ++i)
+            for (auto i = ss->getUnitList().createIterator(); (un = *i) != nullptr; ++i)
             {
                 static bool canflythruplanets =
                     XMLSupport::parse_bool(vs_config->getVariable("physics", "can_auto_through_planets", "true"));
@@ -3127,7 +3127,7 @@ bool Unit::AutoPilotToErrorMessage(const Unit *target,
     {
         //just make sure we aren't in an asteroid field
         Unit *un;
-        for (un_iter i = ss->getUnitList().createIterator(); (un = *i) != nullptr; ++i)
+        for (auto i = ss->getUnitList().createIterator(); (un = *i) != nullptr; ++i)
             if (UnitUtil::isAsteroid(un))
             {
                 static float minasteroiddistance =
@@ -3226,7 +3226,7 @@ bool Unit::AutoPilotToErrorMessage(const Unit *target,
                 Unit *other = nullptr;
                 if (recursive_level > 0)
                 {
-                    for (un_iter ui = ss->getUnitList().createIterator(); nullptr != (other = *ui); ++ui)
+                    for (auto ui = ss->getUnitList().createIterator(); nullptr != (other = *ui); ++ui)
                     {
                         Flightgroup *ff = other->getFlightgroup();
                         bool leadah = (ff == getFlightgroup());
@@ -3551,7 +3551,7 @@ void Unit::ClearMounts()
     }
     mounts.clear();
     Unit *su;
-    for (un_iter i = getSubUnits(); (su = *i) != nullptr; ++i)
+    for (auto i = getSubUnits(); (su = *i) != nullptr; ++i)
         su->ClearMounts();
 }
 
@@ -4393,7 +4393,7 @@ void Unit::ApplyNetDamage(Vector &pnt, Vector &normal, float amt, float ppercent
 Unit *findUnitInStarsystem(const void *unitDoNotDereference)
 {
     Unit *un;
-    for (un_iter i = _Universe->activeStarSystem()->getUnitList().createIterator(); (un = *i) != nullptr; ++i)
+    for (auto i = _Universe->activeStarSystem()->getUnitList().createIterator(); (un = *i) != nullptr; ++i)
         if (un == reinterpret_cast<const Unit *>(unitDoNotDereference))
             return un;
     return nullptr;
@@ -4901,7 +4901,7 @@ void Unit::Kill(bool erasefromsave, bool quitting)
     // The following we don't want to do twice
     killed = true;
     Unit *un;
-    for (un_iter iter = getSubUnits(); (un = *iter); ++iter)
+    for (auto iter = getSubUnits(); (un = *iter); ++iter)
         un->Kill();
 
     //if (isUnit() != MISSILEPTR) {
@@ -5559,7 +5559,7 @@ void Unit::TargetTurret(Unit *targ)
         bool inrange = (targ != nullptr) ? InRange(targ) : true;
         if (inrange)
         {
-            for (un_iter iter = getSubUnits(); (su = *iter); ++iter)
+            for (auto iter = getSubUnits(); (su = *iter); ++iter)
             {
                 su->Target(targ);
                 su->TargetTurret(targ);
@@ -5643,7 +5643,7 @@ void Unit::Target(Unit *targ)
             {
                 bool found = false;
                 Unit *u;
-                for (un_iter i = _Universe->activeStarSystem()->getUnitList().createIterator(); (u = *i) != nullptr; ++i)
+                for (auto i = _Universe->activeStarSystem()->getUnitList().createIterator(); (u = *i) != nullptr; ++i)
                     if (!u->GetDestinations().empty())
                     {
                         if (std::find(u->GetDestinations().begin(), u->GetDestinations().end(),
@@ -5738,7 +5738,7 @@ void Unit::UnFire()
     if (this->GetNumMounts() == 0)
     {
         Unit *tur = nullptr;
-        for (un_iter i = this->getSubUnits(); (tur = *i) != nullptr; ++i)
+        for (auto i = this->getSubUnits(); (tur = *i) != nullptr; ++i)
             tur->UnFire();
     }
     else
@@ -5824,7 +5824,7 @@ public:
         if (un->mounts.size() == 0)
         {
             Unit *tur = nullptr;
-            for (un_iter i = un->getSubUnits(); (tur = *i) != nullptr; ++i)
+            for (auto i = un->getSubUnits(); (tur = *i) != nullptr; ++i)
                 ToggleWeaponSet(tur, missile);
             return;
         }
@@ -5914,7 +5914,7 @@ void Unit::SetRecursiveOwner(Unit *target)
 {
     owner = target;
     Unit *su;
-    for (un_iter iter = getSubUnits(); (su = *iter); ++iter)
+    for (auto iter = getSubUnits(); (su = *iter); ++iter)
         su->SetRecursiveOwner(target);
 }
 
@@ -5997,7 +5997,7 @@ double Unit::getMinDis(const QVector &pnt) const
         if (tmpvar < minsofar)
             minsofar = tmpvar;
     }
-    for (un_kiter ui = viewSubUnits(); !ui.isDone(); ++ui)
+    for (auto ui = viewSubUnits(); !ui.isDone(); ++ui)
     {
         tmpvar = (*ui)->getMinDis(pnt);
         if (tmpvar < minsofar)
@@ -6066,7 +6066,7 @@ float Unit::querySphereClickList(const QVector &st, const QVector &dir, float er
             }
         }
     }
-    for (un_kiter ui = viewSubUnits(); !ui.isDone(); ++ui)
+    for (auto ui = viewSubUnits(); !ui.isDone(); ++ui)
     {
         float tmp = (*ui)->querySphereClickList(st, dir, err);
         if (tmp == 0)
@@ -6996,12 +6996,12 @@ bool Unit::UpgradeSubUnitsWithFactory(const Unit *up, int subunitoffset, bool to
     bool cancompletefully = true;
     int j;
     std::string turSize;
-    un_iter ui;
+    UnitCollection::UnitIterator ui;
     bool found = false;
     for (j = 0, ui = getSubUnits(); !ui.isDone() && j < subunitoffset; ++ui, ++j)
     {
     } ///set the turrets to the offset
-    un_kiter upturrets;
+    UnitCollection::ConstIterator upturrets;
     Unit *giveAway;
 
     giveAway = *ui;
@@ -7534,7 +7534,7 @@ bool Unit::UpAndDownGrade(const Unit *up,
                 if (ss)
                 {
                     Unit *un;
-                    for (un_iter i = ss->gravitationalUnits().createIterator(); (un = *i); ++i)
+                    for (auto i = ss->gravitationalUnits().createIterator(); (un = *i); ++i)
                         if (un == this)
                         {
                             i.remove();
@@ -8385,7 +8385,7 @@ vector<CargoColor> &Unit::FilterDowngradeList(vector<CargoColor> &mylist, bool d
                 for (int m = 0; m < maxmountcheck; ++m)
                 {
                     int s = 0;
-                    for (un_iter ui = getSubUnits(); s == 0 || ((*ui) != nullptr); ++ui, ++s)
+                    for (auto ui = getSubUnits(); s == 0 || ((*ui) != nullptr); ++ui, ++s)
                     {
                         double percent = 1;
                         if (downgrade)
@@ -8469,7 +8469,7 @@ void Unit::TurretFAW()
 {
     turretstatus = 3;
     Unit *un;
-    for (un_iter iter = getSubUnits(); (un = *iter); ++iter)
+    for (auto iter = getSubUnits(); (un = *iter); ++iter)
     {
         if (!CheckAccessory(un))
         {
@@ -8852,7 +8852,7 @@ bool Unit::CanAddCargo(const Cargo &carg) const
     if (total_volume <= (upgradep ? getEmptyUpgradeVolume() : getEmptyCargoVolume()))
         return true;
     //Hm... not in main unit... perhaps a subunit can take it
-    for (un_kiter i = viewSubUnits(); !i.isDone(); ++i)
+    for (auto i = viewSubUnits(); !i.isDone(); ++i)
         if ((*i)->CanAddCargo(carg))
             return true;
     //Bad luck
@@ -9236,7 +9236,7 @@ std::string Unit::subunitSerializer(const XMLType &input, void *mythis)
     int index = input.w.hardint;
     Unit *su;
     int i = 0;
-    for (un_iter ui = un->getSubUnits(); (su = *ui); ++ui, ++i)
+    for (auto ui = un->getSubUnits(); (su = *ui); ++ui, ++i)
     {
         if (i == index)
         {

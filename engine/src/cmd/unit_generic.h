@@ -334,8 +334,8 @@ public:
  * Warning: type has a string inside... cannot be memcpy'd
  */
     bool hasSubUnits() const { return !SubUnits.empty(); };
-    un_iter getSubUnits();
-    un_kiter viewSubUnits() const;
+    UnitCollection::UnitIterator getSubUnits();
+    UnitCollection::ConstIterator viewSubUnits() const;
 #define NO_MOUNT_STAR
     std::vector<Mount> mounts;
     float gunspeed;

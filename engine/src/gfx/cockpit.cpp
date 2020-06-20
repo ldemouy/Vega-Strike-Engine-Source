@@ -457,7 +457,7 @@ void GameCockpit::DrawTargetBoxes(const Radar::Sensor &sensor)
     const Unit *target;
     Unit *player = sensor.GetPlayer();
     assert(player);
-    for (un_kiter uiter = unitlist->constIterator(); (target = *uiter) != nullptr; ++uiter)
+    for (auto uiter = unitlist->constIterator(); (target = *uiter) != nullptr; ++uiter)
     {
         if (target != player)
         {
@@ -719,7 +719,7 @@ void GameCockpit::DrawTurretTargetBoxes(const Radar::Sensor &sensor)
     //This avoids rendering the same target box more than once
     Unit *subunit;
     std::set<Unit *> drawn_targets;
-    for (un_iter iter = sensor.GetPlayer()->getSubUnits(); (subunit = *iter) != nullptr; ++iter)
+    for (auto iter = sensor.GetPlayer()->getSubUnits(); (subunit = *iter) != nullptr; ++iter)
     {
         if (!subunit)
             return;
@@ -2648,8 +2648,8 @@ void GameCockpit::Draw()
                                 min(1.0f,
                                     self_kps / self_setkps)),
                             ((GetParent() != nullptr) ? LookupUnitStat(UnitImages<void>::WARPFIELDSTRENGTH,
-                                                                    GetParent())
-                                                   : 0.0f) /
+                                                                       GetParent())
+                                                      : 0.0f) /
                                 warp_shake_ref));
                 if (shakin > shake_limit)
                     shakin = shake_limit;

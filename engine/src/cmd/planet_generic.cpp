@@ -283,7 +283,7 @@ Planet *Planet::GetTopPlanet(int level)
 {
     if (level > 2)
     {
-        un_iter satiterator = satellites.createIterator();
+        auto satiterator = satellites.createIterator();
         assert(*satiterator);
         if ((*satiterator)->isUnit() == PLANETPTR)
         {
@@ -335,7 +335,7 @@ Unit *Planet::beginElement(QVector x,
     Unit *un = nullptr;
     if (level > 2)
     {
-        un_iter satiterator = satellites.createIterator();
+        auto satiterator = satellites.createIterator();
         assert(*satiterator);
         if ((*satiterator)->isUnit() == PLANETPTR)
         {
@@ -355,7 +355,7 @@ Unit *Planet::beginElement(QVector x,
             satellites.prepend(sat_unit = UnitFactory::createUnit(filename.c_str(), false, faction, "", fg, fg->nr_ships - 1));
             sat_unit->setFullname(fullname);
             un = sat_unit;
-            un_iter satiterator(satellites.createIterator());
+            auto satiterator(satellites.createIterator());
             (*satiterator)->SetAI(new PlanetaryOrbit(*satiterator, vely, pos, x, y, QVector(0, 0, 0), this));
             (*satiterator)->SetOwner(this);
         }
@@ -539,7 +539,9 @@ Planet::Planet(QVector x,
     memset(&(this->shield), 0, sizeof(Unit::shield));
     this->shield.number = 2;
     if (meshdata.empty())
+    {
         meshdata.push_back(nullptr);
+    }
 }
 
 string Planet::getHumanReadablePlanetType() const
@@ -561,12 +563,14 @@ Planet::~Planet()
 
 void Planet::Kill(bool erasefromsave)
 {
-    un_iter iter;
+
     Unit *tmp;
-    for (iter = satellites.createIterator();
+    for (auto iter = satellites.createIterator();
          (tmp = *iter);
          ++iter)
+    {
         tmp->SetAI(new Order);
+    }
     /* probably not FIXME...right now doesn't work on paged out systems... not a big deal */
     satellites.clear();
     insiders.clear();

@@ -67,7 +67,7 @@ extern bool CheckAccessory(Unit *tur);
 
 static void TurretFAW(Unit *parent)
 {
-    un_iter iter = parent->getSubUnits();
+    auto iter = parent->getSubUnits();
     Unit *un;
     while (nullptr != (un = *iter))
     {
@@ -597,7 +597,7 @@ Unit *GetThreat(Unit *parent, Unit *leader)
     Unit *un = nullptr;
     bool targetted = false;
     float mindist = FLT_MAX;
-    for (un_iter ui = _Universe->activeStarSystem()->getUnitList().createIterator();
+    for (auto ui = _Universe->activeStarSystem()->getUnitList().createIterator();
          (un = *ui);
          ++ui)
         if (parent->getRelation(un) < 0)
@@ -1608,7 +1608,7 @@ static Unit *ChooseNearNavPoint(Unit *parent, Unit *suggestion, QVector location
                 &nnl);
     return nnl.retval.unit;
     //DEAD CODE
-    for (un_iter i = _Universe->activeStarSystem()->getUnitList().createIterator();
+    for (auto i = _Universe->activeStarSystem()->getUnitList().createIterator();
          (un = *i) != nullptr;
          ++i)
     {

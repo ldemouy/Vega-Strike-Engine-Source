@@ -933,7 +933,7 @@ void createObjects(std::vector<std::string> &fighter0name,
                         {
                             std::string srcsys = (*dat)[0];
                             Unit *grav;
-                            for (un_iter ui = cp->activeStarSystem->gravitationalUnits().createIterator();
+                            for (auto ui = cp->activeStarSystem->gravitationalUnits().createIterator();
                                  (grav = *ui) != nullptr;
                                  ++ui)
                             {

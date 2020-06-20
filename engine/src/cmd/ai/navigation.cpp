@@ -788,7 +788,7 @@ void FormUpToOwner::SetParent(Unit *un)
 {
     Unit *ownerDoNotDereference = nullptr;
     Unit *temp;
-    for (un_iter i = _Universe->activeStarSystem()->getUnitList().createIterator();
+    for (auto i = _Universe->activeStarSystem()->getUnitList().createIterator();
          (temp = *i) != nullptr;
          ++i)
         if (temp == un->owner)

@@ -304,7 +304,7 @@ void GameStarSystem::Draw(bool DrawCockpit)
     Unit *unit;
     if ((drawer.action.parent = _Universe->AccessCockpit()->GetParent()) != nullptr)
         drawer.action.parenttarget = drawer.action.parent->Target();
-    for (un_iter iter = this->GravitationalUnits.createIterator(); (unit = *iter); ++iter)
+    for (auto iter = this->GravitationalUnits.createIterator(); (unit = *iter); ++iter)
     {
         float distance = (drawstartpos - unit->Position()).Magnitude() - unit->rSize();
         if (distance < game_options.precull_dist)

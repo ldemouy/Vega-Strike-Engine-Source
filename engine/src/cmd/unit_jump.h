@@ -42,7 +42,7 @@ bool GameUnit<UnitType>::TransferUnitToSystem(unsigned int kk, StarSystem *&save
             ret = true;
 
             Unit *unit;
-            for (un_iter iter = pendingjump[kk]->orig->getUnitList().createIterator(); (unit = *iter); ++iter)
+            for (auto iter = pendingjump[kk]->orig->getUnitList().createIterator(); (unit = *iter); ++iter)
             {
                 if (unit->Threat() == this)
                     unit->Threaten(nullptr, 0);
@@ -84,7 +84,7 @@ bool GameUnit<UnitType>::TransferUnitToSystem(unsigned int kk, StarSystem *&save
             vector<Unit *> possibilities;
             Unit *primary;
             if (pendingjump[kk]->final_location.i == 0 && pendingjump[kk]->final_location.j == 0 && pendingjump[kk]->final_location.k == 0)
-                for (un_iter iter = pendingjump[kk]->dest->getUnitList().createIterator(); (primary = *iter); ++iter)
+                for (auto iter = pendingjump[kk]->dest->getUnitList().createIterator(); (primary = *iter); ++iter)
                 {
                     vector<Unit *> tmp;
                     tmp = ComparePrimaries(primary, pendingjump[kk]->orig);
@@ -115,7 +115,7 @@ bool GameUnit<UnitType>::TransferUnitToSystem(unsigned int kk, StarSystem *&save
             }
             Unit *tester;
             for (unsigned int jjj = 0; jjj < 2; ++jjj)
-                for (un_iter i = _Universe->activeStarSystem()->getUnitList().createIterator();
+                for (auto i = _Universe->activeStarSystem()->getUnitList().createIterator();
                      (tester = *i) != nullptr; ++i)
                     if (tester->isUnit() == UNITPTR && tester != this)
                         if ((this->LocalPosition() - tester->LocalPosition()).Magnitude() < this->rSize() + tester->rSize())
@@ -148,7 +148,7 @@ bool GameUnit<UnitType>::TransferUnitToSystem(unsigned int kk, StarSystem *&save
             else
             {
                 Unit *targ = nullptr;
-                for (un_iter i = pendingjump[kk]->dest->getUnitList().createIterator();
+                for (auto i = pendingjump[kk]->dest->getUnitList().createIterator();
                      (targ = (*i));
                      ++i)
                     if (targ == un)

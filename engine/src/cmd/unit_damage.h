@@ -38,7 +38,7 @@ template <class UnitType>
 void GameUnit<UnitType>::Split(int level)
 {
     if (game_options.split_dead_subunits)
-        for (un_iter su = this->getSubUnits(); *su; ++su)
+        for (auto su = this->getSubUnits(); *su; ++su)
             (*su)->Split(level);
     Vector PlaneNorm;
     for (unsigned int i = 0; i < nummesh();)
@@ -363,7 +363,7 @@ bool GameUnit<UnitType>::Explode(bool drawit, float timeit)
     if (!this->SubUnits.empty())
     {
         Unit *su;
-        for (un_iter ui = this->getSubUnits(); (su = *ui); ++ui)
+        for (auto ui = this->getSubUnits(); (su = *ui); ++ui)
         {
             bool temp = su->Explode(drawit, timeit);
             if (su->GetImageInformation().pExplosion)

@@ -5,14 +5,6 @@
 #ifndef _UNITCOLLECTION_H_
 #define _UNITCOLLECTION_H_
 
-//Collection type:
-//#define USE_OLD_COLLECTION
-#define USE_STL_COLLECTION
-
-#if defined(USE_OLD_COLLECTION)
-#include "oldcollection.h"
-#elif defined(USE_STL_COLLECTION)
-
 #include <cstddef>
 #include <list>
 #include <vector>
@@ -46,8 +38,10 @@ public:
 
         inline bool isDone()
         {
-            if (col && it != col->u.end())
+            if (col && it != col->units.end())
+            {
                 return false;
+            }
             return true;
         }
 
@@ -87,8 +81,10 @@ public:
         }
         inline Unit *operator*()
         {
-            if (col && it != col->u.end())
+            if (col && it != col->units.end())
+            {
                 return *it;
+            }
             return nullptr;
         }
 
@@ -122,8 +118,10 @@ public:
 
         inline bool isDone()
         {
-            if (col && it != col->u.end())
+            if (col && it != col->units.end())
+            {
                 return false;
+            }
             return true;
         }
         void advance();
@@ -131,8 +129,10 @@ public:
         const ConstIterator operator++(int);
         inline Unit *operator*() const
         {
-            if (it != col->u.end() && !col->empty())
+            if (it != col->units.end() && !col->empty())
+            {
                 return *it;
+            }
             return nullptr;
         }
 
@@ -176,12 +176,18 @@ public:
     void insert_unique(Unit *);
     inline bool empty() const
     {
-        if (u.empty())
+        if (units.empty())
+        {
             return true;
-        else if (removedIters.empty() || u.size() > removedIters.size())
+        }
+        else if (removedIters.empty() || units.size() > removedIters.size())
+        {
             return false;
+        }
         else
+        {
             return true;
+        }
     }
 
     // Add a unit or iterator to the front of the list. */
@@ -219,24 +225,32 @@ public:
     /* Returns number of non-null units in list */
     inline const int size() const
     {
-        return u.size() - removedIters.size();
+        return units.size() - removedIters.size();
     }
 
     /* Returns last non-null unit in list. May be Killed() */
     inline Unit *back()
     {
-        for (std::list<Unit *>::reverse_iterator it = u.rbegin(); it != u.rend(); ++it)
+        for (auto it = units.rbegin(); it != units.rend(); ++it)
+        {
             if (*it)
+            {
                 return *it;
+            }
+        }
         return nullptr;
     }
 
     /* Returns first non-null unit in list. May be Killed() */
     inline Unit *front()
     {
-        for (std::list<Unit *>::iterator it = u.begin(); it != u.end(); ++it)
+        for (auto it = units.begin(); it != units.end(); ++it)
+        {
             if (*it)
+            {
                 return *it;
+            }
+        }
         return nullptr;
     }
 
@@ -272,17 +286,6 @@ private:
     std::vector<std::list<class Unit *>::iterator> removedIters;
 
     /* Main collection */
-    std::list<class Unit *> u;
+    std::list<class Unit *> units;
 };
-
-/* Typedefs.   We really should not use them but we're lazy */
-typedef UnitCollection::UnitIterator un_iter;
-typedef UnitCollection::ConstIterator un_kiter;
-typedef UnitCollection::UnitIterator un_fiter;
-typedef UnitCollection::ConstIterator un_fkiter;
-
-#else
-#error "No collection type chosen in collection.h:10"
-#endif //USE_STL_COLLECTION
-
 #endif

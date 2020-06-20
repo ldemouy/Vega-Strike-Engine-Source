@@ -67,7 +67,7 @@ UnitCollection *ClickList::requestIterator(int minX, int minY, int maxX, int max
     double frustum[6][4];
     GFXCalculateFrustum(frustum, view, frustmat);
     Unit *un;
-    for (un_iter myParent = parentIter->createIterator(); (un = *myParent) != nullptr; ++myParent)
+    for (auto myParent = parentIter->createIterator(); (un = *myParent) != nullptr; ++myParent)
         if ((un)->queryFrustum(frustum))
             uc->prepend(un);
     return uc;
@@ -78,7 +78,7 @@ UnitCollection *ClickList::requestIterator(int mouseX, int mouseY)
     perplines = vector<Vector>();
     UnitCollection *uc = new UnitCollection();
     Unit *un;
-    for (un_iter myParent = parentIter->createIterator(), UAye = uc->createIterator(); (un = *myParent) != nullptr; ++myParent)
+    for (auto myParent = parentIter->createIterator(), UAye = uc->createIterator(); (un = *myParent) != nullptr; ++myParent)
         if (queryShip(mouseX, mouseY, un))
             UAye.preinsert(un);
     return uc;
@@ -93,7 +93,7 @@ Unit *ClickList::requestShip(int mouseX, int mouseY)
         equalCheck = true;
         Unit *lastun;
         Unit *un;
-        for (un_iter lastiter = lastCollection->createIterator(), UAye = uc->createIterator();
+        for (auto lastiter = lastCollection->createIterator(), UAye = uc->createIterator();
              (lastun = *lastiter) && (un = *UAye) && equalCheck;
              ++lastiter, ++UAye)
             if (un != lastun)
@@ -108,7 +108,7 @@ Unit *ClickList::requestShip(int mouseX, int mouseY)
         //the person clicked the same place and wishes to cycle through units from front to back
         float morethan = lastSelected->getMinDis(_Universe->AccessCamera()->GetPosition()); //parent system for access cam
         Unit *un;
-        for (un_iter UAye = uc->createIterator(); (un = *UAye) != nullptr; ++UAye)
+        for (auto UAye = uc->createIterator(); (un = *UAye) != nullptr; ++UAye)
         {
             tmpdis = un->getMinDis(_Universe->AccessCamera()->GetPosition()); //parent_system? FIXME (for access cam
             if (tmpdis > morethan && tmpdis < minDistance)
@@ -123,7 +123,7 @@ Unit *ClickList::requestShip(int mouseX, int mouseY)
         //ok the click location is either different, or
         //he clicked on the back of the list and wishes to start over
         Unit *un;
-        for (un_iter UAye = uc->createIterator(); (un = *UAye) != nullptr; ++UAye)
+        for (auto UAye = uc->createIterator(); (un = *UAye) != nullptr; ++UAye)
         {
             tmpdis = un->getMinDis(_Universe->AccessCamera()->GetPosition()); //parent_system FIXME
             if (tmpdis < minDistance)

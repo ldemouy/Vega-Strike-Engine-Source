@@ -1,18 +1,10 @@
 #include "collection.h"
 
-#if defined(USE_OLD_COLLECTION)
-#include "oldcollection.cpp"
-#elif defined(USE_STL_COLLECTION)
-
 #include <list>
 #include <vector>
 #ifndef LIST_TESTING
 #include "unit_util.h"
 #include "unit_generic.h"
-
-#else
-#include "testcollection/unit.h"
-#endif
 
 using std::list;
 using std::vector;
@@ -43,9 +35,9 @@ UnitCollection::UnitIterator::UnitIterator(const UnitIterator &orig)
 UnitCollection::UnitIterator::UnitIterator(UnitCollection *orig)
 {
     col = orig;
-    it = col->u.begin();
+    it = col->units.begin();
     col->reg(this);
-    while (it != col->u.end())
+    while (it != col->units.end())
     {
         if ((*it) == nullptr)
             ++it;
@@ -67,13 +59,13 @@ UnitCollection::UnitIterator::~UnitIterator()
 
 void UnitCollection::UnitIterator::remove()
 {
-    if (col && it != col->u.end())
+    if (col && it != col->units.end())
         col->erase(it);
 }
 
 void UnitCollection::UnitIterator::moveBefore(UnitCollection &otherlist)
 {
-    if (col && it != col->u.end())
+    if (col && it != col->units.end())
     {
         otherlist.prepend(*it);
         col->erase(it);
@@ -89,7 +81,7 @@ void UnitCollection::UnitIterator::preinsert(Unit *unit)
 void UnitCollection::UnitIterator::postinsert(Unit *unit)
 {
     list<Unit *>::iterator tmp = it;
-    if (col && unit && it != col->u.end())
+    if (col && unit && it != col->units.end())
     {
         ++tmp;
         col->insert(tmp, unit);
@@ -98,10 +90,10 @@ void UnitCollection::UnitIterator::postinsert(Unit *unit)
 
 void UnitCollection::UnitIterator::advance()
 {
-    if (!col || it == col->u.end())
+    if (!col || it == col->units.end())
         return;
     ++it;
-    while (it != col->u.end())
+    while (it != col->units.end())
     {
         if ((*it) == nullptr)
             ++it;
@@ -141,7 +133,7 @@ UnitCollection::ConstIterator::ConstIterator(const ConstIterator &orig)
 UnitCollection::ConstIterator::ConstIterator(const UnitCollection *orig)
 {
     col = orig;
-    for (it = orig->u.begin(); it != col->u.end(); ++it)
+    for (it = orig->units.begin(); it != col->units.end(); ++it)
         if ((*it) && !(*it)->Killed())
             break;
 }
@@ -153,17 +145,17 @@ UnitCollection::ConstIterator::~ConstIterator()
 Unit *UnitCollection::ConstIterator::next()
 {
     advance();
-    if (col && it != col->u.end())
+    if (col && it != col->units.end())
         return *it;
     return nullptr;
 }
 
 inline void UnitCollection::ConstIterator::advance()
 {
-    if (!col || it == col->u.end())
+    if (!col || it == col->units.end())
         return;
     ++it;
-    while (it != col->u.end())
+    while (it != col->units.end())
     {
         if ((*it) == nullptr)
             ++it;
@@ -199,10 +191,10 @@ UnitCollection::UnitCollection()
     activeIters.reserve(20);
 }
 
-UnitCollection::UnitCollection(const UnitCollection &uc)
+UnitCollection::UnitCollection(const UnitCollection &unit_collection)
 {
-    list<Unit *>::const_iterator in = uc.u.begin();
-    while (in != uc.u.end())
+    list<Unit *>::const_iterator in = unit_collection.units.begin();
+    while (in != unit_collection.units.end())
     {
         append(*in);
         ++in;
@@ -213,11 +205,15 @@ void UnitCollection::insert_unique(Unit *unit)
 {
     if (unit)
     {
-        for (list<Unit *>::iterator it = u.begin(); it != u.end(); ++it)
+        for (list<Unit *>::iterator it = units.begin(); it != units.end(); ++it)
+        {
             if (*it == unit)
+            {
                 return;
+            }
+        }
         unit->Ref();
-        u.push_front(unit);
+        units.push_front(unit);
     }
 }
 
@@ -226,7 +222,7 @@ void UnitCollection::prepend(Unit *unit)
     if (unit)
     {
         unit->Ref();
-        u.push_front(unit);
+        units.push_front(unit);
     }
 }
 
@@ -235,11 +231,11 @@ void UnitCollection::prepend(UnitIterator *it)
     Unit *tmp = nullptr;
     if (!it)
         return;
-    list<Unit *>::iterator tmpI = u.begin();
+    list<Unit *>::iterator tmpI = units.begin();
     while ((tmp = **it))
     {
         tmp->Ref();
-        u.insert(tmpI, tmp);
+        units.insert(tmpI, tmp);
         ++tmpI;
         it->advance();
     }
@@ -250,7 +246,7 @@ void UnitCollection::append(Unit *un)
     if (un)
     {
         un->Ref();
-        u.push_back(un);
+        units.push_back(un);
     }
 }
 
@@ -262,7 +258,7 @@ void UnitCollection::append(UnitIterator *it)
     while ((tmp = **it))
     {
         tmp->Ref();
-        u.push_back(tmp);
+        units.push_back(tmp);
         it->advance();
     }
 }
@@ -272,9 +268,9 @@ void UnitCollection::insert(list<Unit *>::iterator &temp, Unit *unit)
     if (unit)
     {
         unit->Ref();
-        temp = u.insert(temp, unit);
+        temp = units.insert(temp, unit);
     }
-    temp = u.end();
+    temp = units.end();
 }
 
 void UnitCollection::clear()
@@ -285,31 +281,33 @@ void UnitCollection::clear()
         return;
     }
 
-    for (list<Unit *>::iterator it = u.begin(); it != u.end(); ++it)
+    for (list<Unit *>::iterator it = units.begin(); it != units.end(); ++it)
     {
         (*it)->UnRef();
         (*it) = nullptr;
     }
-    u.clear();
+    units.clear();
 }
 
 void UnitCollection::destr()
 {
-    for (list<Unit *>::iterator it = u.begin(); it != u.end(); ++it)
+    for (list<Unit *>::iterator it = units.begin(); it != units.end(); ++it)
         if (*it)
         {
             (*it)->UnRef();
             (*it) = nullptr;
         }
-    for (vector<un_iter *>::iterator t = activeIters.begin(); t != activeIters.end(); ++t)
+    for (auto t = activeIters.begin(); t != activeIters.end(); ++t)
+    {
         (*t)->col = nullptr;
+    }
 }
 
 bool UnitCollection::contains(const Unit *unit) const
 {
-    if (u.empty() || !unit)
+    if (units.empty() || !unit)
         return false;
-    for (list<Unit *>::const_iterator it = u.begin(); it != u.end(); ++it)
+    for (list<Unit *>::const_iterator it = units.begin(); it != units.end(); ++it)
         if ((*it) == unit && !(*it)->Killed())
             return true;
     return false;
@@ -349,14 +347,14 @@ inline void UnitCollection::erase(list<Unit *>::iterator &it2)
     //requested node to be removed, then remove it right away.
     (*it2)->UnRef();
     (*it2) = nullptr;
-    it2 = u.erase(it2);
+    it2 = units.erase(it2);
 }
 
 bool UnitCollection::remove(const Unit *unit)
 {
-    if (u.empty() || !unit)
+    if (units.empty() || !unit)
         return false;
-    for (list<Unit *>::iterator it = u.begin(); it != u.end(); ++it)
+    for (list<Unit *>::iterator it = units.begin(); it != units.end(); ++it)
     {
         if ((*it) == unit)
         {
@@ -370,8 +368,8 @@ bool UnitCollection::remove(const Unit *unit)
 const UnitCollection &UnitCollection::operator=(const UnitCollection &uc)
 {
     destr();
-    list<Unit *>::const_iterator in = uc.u.begin();
-    while (in != uc.u.end())
+    list<Unit *>::const_iterator in = uc.units.begin();
+    while (in != uc.units.end())
     {
         append(*in);
         ++in;
@@ -379,25 +377,29 @@ const UnitCollection &UnitCollection::operator=(const UnitCollection &uc)
     return *this;
 }
 
-inline void UnitCollection::reg(un_iter *iter)
+inline void UnitCollection::reg(UnitCollection::UnitIterator *iter)
 {
     activeIters.push_back(iter);
 }
 
-inline void UnitCollection::unreg(un_iter *iter)
+inline void UnitCollection::unreg(UnitCollection::UnitIterator *iter)
 {
-    for (vector<un_iter *>::iterator t = activeIters.begin(); t != activeIters.end(); ++t)
+    for (auto t = activeIters.begin(); t != activeIters.end(); ++t)
+    {
         if ((*t) == iter)
         {
             activeIters.erase(t);
             break;
         }
-    if (activeIters.empty() || (activeIters.size() == 1 && (activeIters[0]->it == u.end() || (*(activeIters[0]->it)))))
+    }
+    if (activeIters.empty() || (activeIters.size() == 1 && (activeIters[0]->it == units.end() || (*(activeIters[0]->it)))))
+    {
         while (!removedIters.empty())
         {
-            u.erase(removedIters.back());
+            units.erase(removedIters.back());
             removedIters.pop_back();
         }
+    }
 }
 
 //UnitCollection END:

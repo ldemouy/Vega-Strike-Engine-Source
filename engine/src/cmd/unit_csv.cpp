@@ -1583,7 +1583,7 @@ void Unit::WriteUnit(const char *modifications)
     {
         if (pImage->unitwriter)
             pImage->unitwriter->Write(modifications);
-        for (un_iter ui = getSubUnits(); (*ui) != nullptr; ++ui)
+        for (auto ui = getSubUnits(); (*ui) != nullptr; ++ui)
             (*ui)->WriteUnit(modifications);
     }
 }
@@ -1681,7 +1681,7 @@ string Unit::WriteUnitString()
                         for (; k < subunits.size(); ++k)
                             subunits[k].filename = "destroyed_blank";
                         k = 0;
-                        for (un_iter su = this->getSubUnits(); (subun = (*su)) != nullptr; ++su, ++k)
+                        for (auto su = this->getSubUnits(); (subun = (*su)) != nullptr; ++su, ++k)
                         {
                             unsigned int j = k;
                             for (; j < subunits.size(); ++j)
@@ -1865,7 +1865,7 @@ string Unit::WriteUnitString()
     {
         if (pImage->unitwriter)
             ret = pImage->unitwriter->WriteString();
-        for (un_iter ui = getSubUnits(); (*ui) != nullptr; ++ui)
+        for (auto ui = getSubUnits(); (*ui) != nullptr; ++ui)
             ret = ret + ((*ui)->WriteUnitString());
     }
     return ret;

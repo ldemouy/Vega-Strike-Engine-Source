@@ -26,19 +26,19 @@ static bool NoDockWithClear()
 
 VSRandom targrand(time(nullptr));
 
-Unit *getAtmospheric(Unit *targ)
+Unit *getAtmospheric(Unit *target)
 {
-    if (targ)
+    if (target)
     {
-        Unit *un;
-        for (un_iter i = _Universe->activeStarSystem()->getUnitList().createIterator();
-             (un = *i) != nullptr;
+        Unit *unit;
+        for (auto i = _Universe->activeStarSystem()->getUnitList().createIterator();
+             (unit = *i) != nullptr;
              ++i)
-            if (un->isUnit() == PLANETPTR)
+            if (unit->isUnit() == PLANETPTR)
             {
-                if ((targ->Position() - un->Position()).Magnitude() < targ->rSize() * .5)
-                    if (!(((Planet *)un)->isAtmospheric()))
-                        return un;
+                if ((target->Position() - unit->Position()).Magnitude() < target->rSize() * .5)
+                    if (!(((Planet *)unit)->isAtmospheric()))
+                        return unit;
             }
     }
     return nullptr;
@@ -93,7 +93,7 @@ bool CanFaceTarget(Unit *su, Unit *targ, const Matrix &matrix)
             return false;
     }
     Unit *ssu;
-    for (un_iter i = su->getSubUnits();
+    for (auto i = su->getSubUnits();
          (ssu = *i) != nullptr;
          ++i)
         if (!CanFaceTarget(ssu, targ, su->cumulative_transformation_matrix))
@@ -231,7 +231,7 @@ void AssignTBin(Unit *su, vector<TurretBin> &tbin)
     {
         float ggspeed, ggrange, mmrange;
         Unit *ssu;
-        for (un_iter i = su->getSubUnits(); (ssu = *i) != nullptr; ++i)
+        for (auto i = su->getSubUnits(); (ssu = *i) != nullptr; ++i)
         {
             ssu->getAverageGunSpeed(ggspeed, ggrange, mmrange);
             if (ggspeed > gspeed)
@@ -513,7 +513,7 @@ void FireAt::ChooseTargets(int numtargs, bool force)
     numprocessed++;
     vector<TurretBin> tbin;
     Unit *su = nullptr;
-    un_iter subun = parent->getSubUnits();
+    auto subun = parent->getSubUnits();
     for (; (su = *subun) != nullptr; ++subun)
     {
         static unsigned int inert = ROLES::getRole("INERT");
@@ -529,7 +529,7 @@ void FireAt::ChooseTargets(int numtargs, bool force)
             else
             {
                 Unit *ssu = nullptr;
-                for (un_iter subturret = su->getSubUnits(); (ssu = (*subturret)); ++subturret)
+                for (auto subturret = su->getSubUnits(); (ssu = (*subturret)); ++subturret)
                     AssignTBin(ssu, tbin);
             }
         }

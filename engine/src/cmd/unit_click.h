@@ -53,7 +53,7 @@ bool GameUnit<UnitType>::querySphereClickList(int mouseX, int mouseY, float err,
             return true;
     }
     const Unit *su;
-    for (un_kiter ui = this->viewSubUnits(); (su = *ui); ++ui)
+    for (auto ui = this->viewSubUnits(); (su = *ui); ++ui)
     {
         if (su->querySphereClickList(mouseX, mouseY, err, activeCam))
             return true;

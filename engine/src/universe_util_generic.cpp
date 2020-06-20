@@ -286,7 +286,7 @@ namespace UniverseUtil
         Unit *un;
         Unit *en = nullptr;
         Unit *al = nullptr;
-        for (un_iter i = _Universe->activeStarSystem()->getUnitList().createIterator(); (un = *i) && ((!en) || (!al)); ++i)
+        for (auto i = _Universe->activeStarSystem()->getUnitList().createIterator(); (un = *i) && ((!en) || (!al)); ++i)
         {
             if (un->faction == enfac && UnitUtil::getFlightgroupName(un) == enfgname)
                 if ((nullptr == en) || (rand() % 3 == 0))
@@ -314,7 +314,7 @@ namespace UniverseUtil
         int enfac = FactionUtil::GetFactionIndex(enfaction);
         Unit *un;
         int clear = 0;
-        for (un_iter i = _Universe->activeStarSystem()->getUnitList().createIterator(); (un = *i) && clear != 3; ++i)
+        for (auto i = _Universe->activeStarSystem()->getUnitList().createIterator(); (un = *i) && clear != 3; ++i)
         {
             if ((un->faction == enfac && UnitUtil::getFlightgroupName(un) == enfgname))
             {
@@ -435,7 +435,7 @@ namespace UniverseUtil
     }
     Unit *getUnit(int index)
     {
-        un_iter iter = activeSys->getUnitList().createIterator();
+        auto iter = activeSys->getUnitList().createIterator();
         Unit *un = nullptr;
         for (int i = -1; (un = *iter) && i < index; ++iter)
         {
@@ -464,27 +464,14 @@ namespace UniverseUtil
     }
     Unit *getUnitByName(std::string name)
     {
-        un_iter iter = activeSys->getUnitList().createIterator();
+        auto iter = activeSys->getUnitList().createIterator();
         while (!iter.isDone() && UnitUtil::getName(*iter) != name)
             ++iter;
         return ((!iter.isDone()) ? (*iter) : nullptr);
     }
     int getNumUnits()
     {
-#ifdef USE_STL_COLLECTION
         return activeSys->getUnitList().size();
-
-#else
-        //Implentation-safe getNumUnits().
-        int count = 0;
-        un_iter iter = activeSys->getUnitList().createIterator();
-        while (iter.current())
-        {
-            iter.advance();
-            count++;
-        }
-        return count;
-#endif
     }
     //NOTEXPORTEDYET
     /*
@@ -681,7 +668,7 @@ namespace UniverseUtil
             bool collision = false;
             {
                 //fixme, make me faster, use collide map
-                for (un_iter i = sts->getUnitList().createIterator(); (un = *i) != nullptr; ++i)
+                for (auto i = sts->getUnitList().createIterator(); (un = *i) != nullptr; ++i)
                 {
                     if (UnitUtil::isAsteroid(un) || un->isUnit() == NEBULAPTR)
                         continue;

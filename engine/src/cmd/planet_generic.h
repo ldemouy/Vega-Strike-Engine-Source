@@ -225,7 +225,7 @@ public:
             {
                 Unit *cur = *pos;
                 if (cur->isUnit() == PLANETPTR)
-                    for (un_iter tmp(((Planet *)cur)->satellites.createIterator()); !tmp.isDone(); ++tmp)
+                    for (auto tmp(((Planet *)cur)->satellites.createIterator()); !tmp.isDone(); ++tmp)
                         localCollection.append((*tmp));
                 ++pos;
             }
@@ -241,12 +241,12 @@ public:
         }
 
     private:
-        inline un_iter operator++(int)
+        inline UnitCollection::UnitIterator operator++(int)
         {
             abort();
         }
         UnitCollection localCollection;
-        un_iter pos;
+        UnitCollection::UnitIterator pos;
     };
     PlanetIterator createIterator()
     {

@@ -160,7 +160,7 @@ namespace Radar
                 if (target->isPlanet() == PLANETPTR && target->radial_size > 0)
                 {
                     const Unit *sub = nullptr;
-                    for (un_kiter i = target->viewSubUnits(); (sub = *i) != nullptr; ++i)
+                    for (auto i = target->viewSubUnits(); (sub = *i) != nullptr; ++i)
                     {
                         if (target->rSize() > minblipsize)
                         {
@@ -204,7 +204,7 @@ namespace Radar
             Unit *target = player->Target();
             const Unit *gravUnit;
             bool foundtarget = false;
-            for (un_kiter i = _Universe->activeStarSystem()->gravitationalUnits().constIterator();
+            for (auto i = _Universe->activeStarSystem()->gravitationalUnits().constIterator();
                  (gravUnit = *i) != nullptr;
                  ++i)
             {

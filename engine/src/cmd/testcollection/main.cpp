@@ -20,7 +20,7 @@ void Iteration(UnitCollection *c, int *levels2)
 {
     Unit *unit = nullptr;
     ++(*levels2);
-    for (un_iter iter = c->createIterator(); unit = *iter;)
+    for (auto iter = c->createIterator(); unit = *iter;)
     {
         int temp = rand();
         if (temp < RAND_MAX / 400)
@@ -58,7 +58,7 @@ int main()
     int ii = SIZE / 2;
     seconds = time(nullptr);
     while (ii < SIZE)
-        for (un_iter iter = c->createIterator(); !iter.isDone() && ii < SIZE; ++iter)
+        for (auto iter = c->createIterator(); !iter.isDone() && ii < SIZE; ++iter)
         {
             int rnd = rand();
             if (rnd < RAND_MAX / 200)
@@ -107,7 +107,7 @@ int main()
             delete u[i];
     }
     int size = 0;
-    for (un_iter counter = c->createIterator(); !counter.isDone(); ++counter)
+    for (auto counter = c->createIterator(); !counter.isDone(); ++counter)
         ++size;
     printf("size of list is verified at %d  : %d killed \n", size, SIZE - size);
     delete c;

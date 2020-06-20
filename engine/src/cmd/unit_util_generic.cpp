@@ -810,7 +810,7 @@ namespace UnitUtil
     static bool ishere(const Unit *par, const Unit *look)
     {
         const Unit *un;
-        for (un_kiter uniter = par->viewSubUnits(); (un = *uniter); ++uniter)
+        for (auto uniter = par->viewSubUnits(); (un = *uniter); ++uniter)
         {
             if (un == look || (un != par && ishere(un, look)))
                 return true;

@@ -210,7 +210,7 @@ void NavigationSystem::DrawSystem()
 
     //Enlist the items and attributes
     //**********************************
-    un_iter blah = UniverseUtil::getUnitList();
+    auto blah = UniverseUtil::getUnitList();
     while (*blah)
     {
         //this draws the points

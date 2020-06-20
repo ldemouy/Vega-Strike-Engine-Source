@@ -14,7 +14,7 @@ static void RecursiveSetSchedule(Unit *un)
 		{
 			un->schedule_priority = Unit::scheduleAField;
 			un->do_subunit_scheduling = true;
-			for (un_iter it = un->getSubUnits(); !it.isDone(); ++it)
+			for (auto it = un->getSubUnits(); !it.isDone(); ++it)
 				RecursiveSetSchedule(*it);
 		}
 	}
@@ -23,7 +23,7 @@ static void RecursiveSetSchedule(Unit *un)
 void Asteroid::Init(float difficulty)
 {
 	asteroid_physics_offset = 0;
-	un_iter iter = getSubUnits();
+	auto iter = getSubUnits();
 	while (*iter)
 	{
 		float x = 2 * difficulty * ((float)rand()) / RAND_MAX - difficulty;

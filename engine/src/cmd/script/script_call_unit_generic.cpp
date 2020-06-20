@@ -78,7 +78,7 @@ Best:
 _Universe->AccessCockpit()->GetParent();
 #endif
 
-static Unit *getIthUnit(un_iter uiter, int i);
+static Unit *getIthUnit(auto uiter, int i);
 
 varInst *Mission::call_unit(missionNode *node, int mode)
 {
@@ -102,7 +102,7 @@ varInst *Mission::call_unit(missionNode *node, int mode)
         if (mode == SCRIPT_RUN)
         {
             StarSystem *ssystem = _Universe->scriptStarSystem();
-            un_iter uiter = ssystem->getUnitList().createIterator();
+            auto uiter = ssystem->getUnitList().createIterator();
             my_unit = getIthUnit(uiter, unit_nr);
         }
         viret = newVarInst(VI_TEMP);
@@ -873,7 +873,7 @@ varInst *Mission::call_unit(missionNode *node, int mode)
             Unit *turret_unit = nullptr;
             if (mode == SCRIPT_RUN)
             {
-                un_iter uiter = my_unit->getSubUnits();
+                auto uiter = my_unit->getSubUnits();
                 turret_unit = getIthUnit(uiter, unit_nr);
             }
             viret = newVarInst(VI_TEMP);
@@ -1232,7 +1232,7 @@ Unit *Mission::call_unit_launch(CreateFlightgroup *fg, int type, const string &d
 void Mission::findNextEnemyTarget(Unit *my_unit)
 {
     StarSystem *ssystem = _Universe->scriptStarSystem();
-    un_iter uiter(ssystem->getUnitList().createIterator());
+    auto uiter(ssystem->getUnitList().createIterator());
     Unit *unit;
     Unit *target_unit = nullptr;
     for (; (unit = *uiter); ++uiter)
@@ -1245,7 +1245,7 @@ void Mission::findNextEnemyTarget(Unit *my_unit)
         my_unit->Target(target_unit);
 }
 
-static Unit *getIthUnit(un_iter uiter, int unit_nr)
+static Unit *getIthUnit(auto uiter, int unit_nr)
 {
     Unit *unit = nullptr;
     for (int i = 0; (unit = *uiter); ++uiter, ++i)

@@ -757,7 +757,7 @@ void HelpOut(bool crit, std::string conv)
     {
         Unit *par = nullptr;
         DoSpeech(un, nullptr, FSM::Node::MakeNode(conv, .1));
-        for (un_iter ui = _Universe->activeStarSystem()->getUnitList().createIterator();
+        for (auto ui = _Universe->activeStarSystem()->getUnitList().createIterator();
              (par = (*ui));
              ++ui)
             if ((crit && UnitUtil::getFactionRelation(par, un) > 0) || par->faction == un->faction)
@@ -1049,7 +1049,7 @@ bool getNearestTargetUnit(Unit *me, int iType)
     Unit *un = nullptr;
     Unit *targ = nullptr;
     double minrange = FLT_MAX;
-    for (un_iter i = _Universe->activeStarSystem()->getUnitList().createIterator(); (un = (*i)); ++i)
+    for (auto i = _Universe->activeStarSystem()->getUnitList().createIterator(); (un = (*i)); ++i)
     {
         if (un == me)
             continue;
@@ -1093,7 +1093,7 @@ bool ChooseTargets(Unit *me, bool (*typeofunit)(Unit *, Unit *), bool reverse)
     UnitCollection &drawlist = _Universe->activeStarSystem()->getUnitList();
     vector<Unit *> vec;
     Unit *target;
-    for (un_iter iter = drawlist.createIterator(); (target = *iter) != nullptr; ++iter)
+    for (auto iter = drawlist.createIterator(); (target = *iter) != nullptr; ++iter)
         vec.push_back(target);
     if (vec.size() == 0)
         return false;
@@ -1151,7 +1151,7 @@ void ChooseSubTargets(Unit *me)
     Unit *parent = UnitUtil::owner(me->Target());
     if (!parent)
         return;
-    un_iter uniter = parent->getSubUnits();
+    auto uniter = parent->getSubUnits();
     if (parent == me->Target())
     {
         if (!(*uniter))
@@ -1198,7 +1198,7 @@ static bool UnDockNow(Unit *me, Unit *targ)
 {
     bool ret = false;
     Unit *un;
-    for (un_iter i = _Universe->activeStarSystem()->getUnitList().createIterator();
+    for (auto i = _Universe->activeStarSystem()->getUnitList().createIterator();
          (un = *i) != nullptr;
          ++i)
         if (un->isDocked(me))
@@ -1400,7 +1400,7 @@ static void DoDockingOps(Unit *parent, Unit *targ, unsigned char playa, unsigned
         if (!isDone)
         {
             for (int severity = 0; severity < maxseverity && !isDone; ++severity)
-                for (un_iter u = _Universe->activeStarSystem()->getUnitList().createIterator();
+                for (auto u = _Universe->activeStarSystem()->getUnitList().createIterator();
                      (targ = *u) != nullptr && !isDone;
                      ++u)
                     //Let's make sure potentials are actually in range, and have
@@ -1566,7 +1566,7 @@ void Arrested(Unit *parent)
     if (!attack)
     {
         Unit *un;
-        for (un_iter i = _Universe->activeStarSystem()->getUnitList().createIterator();
+        for (auto i = _Universe->activeStarSystem()->getUnitList().createIterator();
              (un = *i) != nullptr;
              ++i)
             if (un->faction == own || un->faction == police || un->faction == police2)
@@ -1599,7 +1599,7 @@ void Arrested(Unit *parent)
             Unit *un;
             Unit *owner = nullptr;
             Unit *base = nullptr;
-            for (un_iter i = _Universe->activeStarSystem()->getUnitList().createIterator(); (un = *i) != nullptr; ++i)
+            for (auto i = _Universe->activeStarSystem()->getUnitList().createIterator(); (un = *i) != nullptr; ++i)
             {
                 if (owner == nullptr && un->getFlightgroup() && un->faction == own)
                     if (UnitUtil::isSignificant(un) && (!un->isJumppoint()))
@@ -2079,7 +2079,7 @@ void FireKeyboard::Execute()
         {
             f().restoreTargetKeys[i] = RELEASE;
             Unit *un;
-            for (un_iter u = _Universe->activeStarSystem()->getUnitList().createIterator();
+            for (auto u = _Universe->activeStarSystem()->getUnitList().createIterator();
                  (un = *u) != nullptr;
                  ++u)
                 if (un == savedTargets[i])

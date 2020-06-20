@@ -415,7 +415,7 @@ extern BLENDFUNC parse_alpha(const char *);
 static void SetSubunitRotation(Unit *un, float difficulty)
 {
     Unit *unit;
-    for (un_iter iter = un->getSubUnits(); (unit = *iter); ++iter)
+    for (auto iter = un->getSubUnits(); (unit = *iter); ++iter)
     {
         float x = 2 * difficulty * ((float)rand()) / RAND_MAX - difficulty;
         float y = 2 * difficulty * ((float)rand()) / RAND_MAX - difficulty;

@@ -1168,7 +1168,7 @@ double compute_light_dot(Unit *base, Unit *un)
     if (ss)
     {
         _Universe->pushActiveStarSystem(ss);
-        un_iter ui = ss->getUnitList().createIterator();
+        auto ui = ss->getUnitList().createIterator();
         for (; (st = *ui); ++ui)
             if (st->isPlanet())
             {
@@ -1188,7 +1188,7 @@ double compute_light_dot(Unit *base, Unit *un)
                 }
                 else
                 {
-                    un_iter ui = ((Planet *)st)->satellites.createIterator();
+                    auto ui = ((Planet *)st)->satellites.createIterator();
                     Unit *ownz = nullptr;
                     for (; (ownz = *ui); ++ui)
                         if (ownz == base)

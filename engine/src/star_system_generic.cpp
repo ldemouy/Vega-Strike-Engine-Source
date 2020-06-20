@@ -115,7 +115,7 @@ StarSystem::~StarSystem()
     _Universe->pushActiveStarSystem(this);
     ClientServerSetLightContext(lightcontext);
     delete[] name;
-    for (un_iter iter = drawList.createIterator(); !iter.isDone(); ++iter)
+    for (auto iter = drawList.createIterator(); !iter.isDone(); ++iter)
         (*iter)->Kill(false);
     //if the next line goes ANYWHERE else Vega Strike will CRASH!!!!!
     //DO NOT MOVE THIS LINE! IT MUST STAY
@@ -274,7 +274,7 @@ void StarSystem::ExecuteUnitAI()
     try
     {
         Unit *unit = nullptr;
-        for (un_iter iter = getUnitList().createIterator(); (unit = *iter); ++iter)
+        for (auto iter = getUnitList().createIterator(); (unit = *iter); ++iter)
         {
             unit->ExecuteAI();
             unit->ResetThreatLevel();
@@ -330,7 +330,7 @@ void StarSystem::Statistics::CheckVitals(StarSystem *ss)
     {
         *this = Statistics(); //invoke copy constructor to clear it
         this->system_faction = faction;
-        for (un_iter ui = ss->getUnitList().createIterator(); !ui.isDone(); ++ui)
+        for (auto ui = ss->getUnitList().createIterator(); !ui.isDone(); ++ui)
         {
             this->AddUnit(*ui); //siege will take some time
         }
@@ -489,7 +489,7 @@ double targetpick = 0;
 void StarSystem::RequestPhysics(Unit *un, unsigned int queue)
 {
     Unit *unit = nullptr;
-    un_iter iter = this->physics_buffer[queue].createIterator();
+    auto iter = this->physics_buffer[queue].createIterator();
     while ((unit = *iter) && *iter != un)
         ++iter;
     if (unit == un)
@@ -529,7 +529,7 @@ void StarSystem::UpdateUnitPhysics(bool firstframe)
             try
             {
                 Unit *unit = nullptr;
-                for (un_iter iter = physics_buffer[current_sim_location].createIterator(); (unit = *iter); ++iter)
+                for (auto iter = physics_buffer[current_sim_location].createIterator(); (unit = *iter); ++iter)
                 {
                     int priority = UnitUtil::getPhysicsPriority(unit);
                     //Doing spreading here and only on priority changes, so as to make AI easier
@@ -581,7 +581,7 @@ void StarSystem::UpdateUnitPhysics(bool firstframe)
             if (Unit::NUM_COLLIDE_MAPS > 1)
                 collidemap[Unit::UNIT_ONLY]->flatten(*collidemap[Unit::UNIT_BOLT]);
             Unit *unit;
-            for (un_iter iter = physics_buffer[current_sim_location].createIterator(); (unit = *iter);)
+            for (auto iter = physics_buffer[current_sim_location].createIterator(); (unit = *iter);)
             {
                 int priority = unit->sim_atom_multiplier;
                 float backup = SIMULATION_ATOM;
@@ -606,7 +606,7 @@ void StarSystem::UpdateUnitPhysics(bool firstframe)
     else
     {
         Unit *unit = nullptr;
-        for (un_iter iter = getUnitList().createIterator(); (unit = *iter); ++iter)
+        for (auto iter = getUnitList().createIterator(); (unit = *iter); ++iter)
         {
             unit->ExecuteAI();
             last_collisions.clear();
@@ -695,7 +695,7 @@ void StarSystem::Update(float priority)
             Unit::ProcessDeleteQueue();
             current_stage = MISSION_SIMULATION;
             collidetable->Update();
-            for (un_iter iter = drawList.createIterator(); (unit = *iter); ++iter)
+            for (auto iter = drawList.createIterator(); (unit = *iter); ++iter)
                 unit->SetNebula(nullptr);
             UpdateMissiles(); //do explosions
             UpdateUnitPhysics(firstframe);
@@ -914,7 +914,7 @@ double calc_blend_factor(double frac, int priority, unsigned int when_it_will_be
 void ActivateAnimation(Unit *jumppoint)
 {
     jumppoint->graphicOptions.Animating = 1;
-    for (un_iter i = jumppoint->getSubUnits(); !i.isDone(); ++i)
+    for (auto i = jumppoint->getSubUnits(); !i.isDone(); ++i)
         ActivateAnimation(*i);
 }
 

@@ -35,7 +35,7 @@ void TurretAI::Execute()
             range = 1;
             mrange = 1; //not much
         }
-        for (un_iter i = parent->getSubUnits(); (gun = *i) != nullptr; ++i)
+        for (auto i = parent->getSubUnits(); (gun = *i) != nullptr; ++i)
         {
             (*i)->getAverageGunSpeed(tspeed, trange, tmrange);
             if (trange > range)

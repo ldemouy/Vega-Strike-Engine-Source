@@ -185,9 +185,13 @@ bool GameUnit<UnitType>::queryFrustum(double frustum[6][4]) const
             return true;
     }
     const Unit *un;
-    for (un_fkiter iter = this->SubUnits.constFastIterator(); (un = *iter); ++iter)
+    for (auto iter = this->SubUnits.constFastIterator(); (un = *iter); ++iter)
+    {
         if (((GameUnit<UnitType> *)un)->queryFrustum(frustum))
+        {
             return true;
+        }
+    }
     return false;
 }
 
@@ -255,7 +259,7 @@ void GameUnit<UnitType>::DrawNow(const Matrix &mato, float lod)
             this->meshdata[i]->Draw(lod, mat, d, cloak);
     }
     Unit *un;
-    /*for (un_iter iter = this->getSubUnits(); (un = *iter); ++iter) {
+    /*for (auto iter = this->getSubUnits(); (un = *iter); ++iter) {
         Matrix temp;
         un->curr_physical_state.to_matrix( temp );
         Matrix submat;
@@ -263,7 +267,7 @@ void GameUnit<UnitType>::DrawNow(const Matrix &mato, float lod)
         (un)->DrawNow( submat, lod );*/
     if (this->hasSubUnits())
     {
-        for (un_iter iter = this->getSubUnits(); (un = *iter); ++iter)
+        for (auto iter = this->getSubUnits(); (un = *iter); ++iter)
         {
             Matrix temp;
             un->curr_physical_state.to_matrix(temp);
@@ -494,7 +498,7 @@ void GameUnit<UnitType>::Draw(const Transformation &parent, const Matrix &parent
             Unit *un;
             double backup = interpolation_blend_factor;
             int cur_sim_frame = _Universe->activeStarSystem()->getCurrentSimFrame();
-            for (un_iter iter = this->getSubUnits(); (un = *iter); ++iter)
+            for (auto iter = this->getSubUnits(); (un = *iter); ++iter)
             {
                 float backup = SIMULATION_ATOM;
                 if (this->sim_atom_multiplier && un->sim_atom_multiplier)

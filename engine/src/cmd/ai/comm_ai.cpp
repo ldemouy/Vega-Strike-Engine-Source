@@ -127,7 +127,7 @@ void AllUnitsCloseAndEngage(Unit *unit, int32_t faction)
         }
         UniverseUtil::adjustRelationModifierInt(cp, faction, delta);
     }
-    for (un_iter i = _Universe->activeStarSystem()->getUnitList().createIterator();
+    for (auto i = _Universe->activeStarSystem()->getUnitList().createIterator();
          (ally = *i) != nullptr;
          ++i)
     //Vector loc;

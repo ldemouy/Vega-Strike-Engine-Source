@@ -374,7 +374,7 @@ Unit *GetFinalTurret(Unit *baseTurret)
 {
     Unit *un = baseTurret;
     Unit *tur;
-    for (un_iter uj = un->getSubUnits(); (tur = *uj); ++uj)
+    for (auto uj = un->getSubUnits(); (tur = *uj); ++uj)
     {
         SwitchUnits(nullptr, tur);
         un = GetFinalTurret(tur);
@@ -430,7 +430,7 @@ void Cockpit::updateAttackers()
     static int max_attackers = XMLSupport::parse_int(vs_config->getVariable("AI", "max_player_attackers", "0"));
     if (max_attackers == 0)
         return;
-    static un_iter attack_iterator = _Universe->activeStarSystem()->getUnitList().createIterator();
+    static auto attack_iterator = _Universe->activeStarSystem()->getUnitList().createIterator();
     static StarSystem *ss = _Universe->activeStarSystem();
     if (ss != _Universe->activeStarSystem())
     {
@@ -587,7 +587,7 @@ bool Cockpit::Update()
                 {
                     tmpgot = true;
                     Unit *un;
-                    for (un_iter ui = par->getSubUnits(); (un = *ui);)
+                    for (auto ui = par->getSubUnits(); (un = *ui);)
                     {
                         if (_Universe->isPlayerStarship(un))
                         {
@@ -674,7 +674,7 @@ bool Cockpit::Update()
             Unit *un;
             bool found = false;
             int i = 0;
-            for (un_iter ui = _Universe->activeStarSystem()->getUnitList().createIterator(); (un = *ui); ++ui)
+            for (auto ui = _Universe->activeStarSystem()->getUnitList().createIterator(); (un = *ui); ++ui)
                 if (un->faction == this->unitfaction)
                 {
                     //this switches units UNLESS we're an ejected pilot. Instead, if we are an ejected

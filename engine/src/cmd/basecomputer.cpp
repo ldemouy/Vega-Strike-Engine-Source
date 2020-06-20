@@ -3476,7 +3476,7 @@ void BaseComputer::UpgradeOperation::showTurretPicker(void)
         return;
     }
     vector<string> mounts;
-    for (un_iter unitIter = playerUnit->getSubUnits(); *unitIter != nullptr; unitIter++)
+    for (auto unitIter = playerUnit->getSubUnits(); *unitIter != nullptr; unitIter++)
         mounts.push_back((*unitIter)->name);
     showListQuestion("Select turret mount for your turret:", mounts, this, GOT_TURRET_ID);
 }
@@ -6109,7 +6109,7 @@ void showUnitStats(Unit *playerUnit, string &text, int subunitlevel, int mode, C
         //handle SubUnits
         Unit *sub;
         int i = 1;
-        for (un_iter ki = playerUnit->getSubUnits(); (sub = *ki) != nullptr; ++ki, ++i)
+        for (auto ki = playerUnit->getSubUnits(); (sub = *ki) != nullptr; ++ki, ++i)
         {
             if (i == 1)
                 text += "#n##n##c0:1:.5#" + prefix + "[SUB UNITS]#-c";

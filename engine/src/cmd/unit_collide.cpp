@@ -212,13 +212,12 @@ bool Unit::InsideCollideTree(Unit *smaller,
             return true;
         }
     }
-    un_iter i;
     static float rsizelim = XMLSupport::parse_float(vs_config->getVariable("physics", "smallest_subunit_to_collide", ".2"));
     clsptr bigtype = bigasteroid ? ASTEROIDPTR : bigger->isUnit();
     clsptr smalltype = smallasteroid ? ASTEROIDPTR : smaller->isUnit();
     if (bigger->SubUnits.empty() == false && (bigger->graphicOptions.RecurseIntoSubUnitsOnCollision == true || bigtype == ASTEROIDPTR))
     {
-        i = bigger->getSubUnits();
+        auto i = bigger->getSubUnits();
         float rad = smaller->rSize();
         for (Unit *un; (un = *i); ++i)
         {
@@ -237,7 +236,7 @@ bool Unit::InsideCollideTree(Unit *smaller,
     }
     if (smaller->SubUnits.empty() == false && (smaller->graphicOptions.RecurseIntoSubUnitsOnCollision == true || smalltype == ASTEROIDPTR))
     {
-        i = smaller->getSubUnits();
+        auto i = smaller->getSubUnits();
         float rad = bigger->rSize();
         for (Unit *un; (un = *i); ++i)
         {
@@ -376,18 +375,28 @@ Unit *Unit::rayCollide(const QVector &start, const QVector &end, Vector &norm, f
     Unit *tmp;
     float rad = this->rSize();
     if ((!SubUnits.empty()) && graphicOptions.RecurseIntoSubUnitsOnCollision)
+    {
         if ((tmp = *SubUnits.fastIterator()))
+        {
             rad += tmp->rSize();
+        }
+    }
     if (!globQuerySphere(start, end, cumulative_transformation_matrix.p, rad))
+    {
         return nullptr;
+    }
     if (graphicOptions.RecurseIntoSubUnitsOnCollision)
     {
         if (!SubUnits.empty())
         {
-            un_fiter i(SubUnits.fastIterator());
+            auto i(SubUnits.fastIterator());
             for (Unit *un; (un = *i); ++i)
+            {
                 if ((tmp = un->rayCollide(start, end, norm, distance)) != 0)
+                {
                     return tmp;
+                }
+            }
         }
     }
     QVector st(InvTransform(cumulative_transformation_matrix, start));
@@ -486,7 +495,7 @@ bool Unit::querySphere(const QVector &pnt, float err) const
     {
         if (!SubUnits.empty())
         {
-            un_fkiter i = SubUnits.constFastIterator();
+            auto i = SubUnits.constFastIterator();
             for (const Unit *un; (un = *i); ++i)
                 if ((un)->querySphere(pnt, err))
                     return true;
@@ -499,7 +508,7 @@ float Unit::querySphere(const QVector &start, const QVector &end, float min_radi
 {
     if (!SubUnits.empty())
     {
-        un_fkiter i = SubUnits.constFastIterator();
+        auto i = SubUnits.constFastIterator();
         for (const Unit *un; (un = *i); ++i)
         {
             float tmp;

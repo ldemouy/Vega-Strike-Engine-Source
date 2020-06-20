@@ -15,7 +15,7 @@ class Cargo;
 
 namespace UniverseUtil
 {
-    class PythonUnitIter : public un_iter
+    class PythonUnitIter : public UnitCollection::UnitIterator
     {
     public:
         PythonUnitIter() : UnitIterator() {}

@@ -129,7 +129,7 @@ protected:
     ///system name
     char *name;
     std::string filename;
-    un_iter sigIter;
+    UnitCollection::UnitIterator sigIter;
     ///to track the next given physics frame
     double time;
     ///The background associated with this system
