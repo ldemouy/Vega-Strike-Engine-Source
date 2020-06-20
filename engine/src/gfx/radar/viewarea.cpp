@@ -1,6 +1,7 @@
 // -*- mode: c++; c-basic-offset: 4; indent-tabs-mode: nil -*-
 
 #include <cmath>
+#include <assert.h>
 #include "gldrv/gfxlib_struct.h"
 #include "viewarea.h"
 
