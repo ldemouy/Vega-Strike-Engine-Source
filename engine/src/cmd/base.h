@@ -10,6 +10,7 @@
 
 #include "audio/Types.h"
 #include "audio/Source.h"
+#include <memory>
 
 //#define BASE_MAKER
 //#define BASE_XML //in case you want to write out XML instead...
@@ -20,8 +21,8 @@ void RunPython(const char *filnam);
 
 class BaseInterface
 {
-    int curlinkindex;
-    int lastmouseindex; //Last link index to be under the mouse
+    int32_t curlinkindex;
+    int32_t lastmouseindex; //Last link index to be under the mouse
     MousePointerStyle mousePointerStyle;
     bool enabledj;
     bool terminate_scheduled;
@@ -49,15 +50,15 @@ public:
             float x, y, wid, hei, alpha;
             std::string text;
             const std::string index;
-            unsigned int eventMask;
-            int clickbtn;
+            uint32_t eventMask;
+            int32_t clickbtn;
 
-            virtual void Click(::BaseInterface *base, float x, float y, int button, int state);
-            virtual void MouseMove(::BaseInterface *base, float x, float y, int buttonmask);
-            virtual void MouseEnter(::BaseInterface *base, float x, float y, int buttonmask);
-            virtual void MouseLeave(::BaseInterface *base, float x, float y, int buttonmask);
+            virtual void Click(::BaseInterface *base, float x, float y, int button, int32_t state);
+            virtual void MouseMove(::BaseInterface *base, float x, float y, int32_t buttonmask);
+            virtual void MouseEnter(::BaseInterface *base, float x, float y, int32_t buttonmask);
+            virtual void MouseLeave(::BaseInterface *base, float x, float y, int32_t buttonmask);
 
-            void setEventMask(unsigned int mask)
+            void setEventMask(uint32_t mask)
             {
                 eventMask = mask;
             }
@@ -72,8 +73,8 @@ public:
         class Goto : public Link
         {
         public:
-            int index;
-            virtual void Click(::BaseInterface *base, float x, float y, int button, int state);
+            int32_t index;
+            virtual void Click(::BaseInterface *base, float x, float y, int32_t button, int32_t state);
             virtual ~Goto() {}
             explicit Goto(const std::string &ind, const std::string &pythonfile) : Link(ind, pythonfile) {}
 #ifdef BASE_MAKER
@@ -84,7 +85,7 @@ public:
         {
         public:
             vector<BaseComputer::DisplayMode> modes;
-            virtual void Click(::BaseInterface *base, float x, float y, int button, int state);
+            virtual void Click(::BaseInterface *base, float x, float y, int32_t button, int32_t state);
             virtual ~Comp() {}
             explicit Comp(const std::string &ind, const std::string &pythonfile) : Link(ind, pythonfile) {}
 #ifdef BASE_MAKER
@@ -94,7 +95,7 @@ public:
         class Launch : public Link
         {
         public:
-            virtual void Click(::BaseInterface *base, float x, float y, int button, int state);
+            virtual void Click(::BaseInterface *base, float x, float y, int32_t button, int32_t state);
             virtual ~Launch() {}
             explicit Launch(const std::string &ind, const std::string &pythonfile) : Link(ind, pythonfile) {}
 #ifdef BASE_MAKER
@@ -104,7 +105,7 @@ public:
         class Eject : public Link
         {
         public:
-            virtual void Click(::BaseInterface *base, float x, float y, int button, int state);
+            virtual void Click(::BaseInterface *base, float x, float y, int32_t button, int32_t state);
             virtual ~Eject() {}
             explicit Eject(const std::string &ind, const std::string &pythonfile) : Link(ind, pythonfile) {}
 #ifdef BASE_MAKER
@@ -117,9 +118,9 @@ public:
             //At the moment, the BaseInterface::Room::Talk class is unused... but I may find a use for it later...
             std::vector<std::string> say;
             std::vector<std::string> soundfiles;
-            int index;
-            int curroom;
-            virtual void Click(::BaseInterface *base, float x, float y, int button, int state);
+            int32_t index;
+            int32_t curroom;
+            virtual void Click(::BaseInterface *base, float x, float y, int32_t button, int32_t state);
             explicit Talk(const std::string &ind, const std::string &pythonfile);
             virtual ~Talk() {}
 #ifdef BASE_MAKER
@@ -236,7 +237,7 @@ public:
         public:
             virtual void Draw(::BaseInterface *base);
             VSSprite spr;
-            SharedPtr<Audio::Source> soundsource;
+            std::shared_ptr<Audio::Source> soundsource;
             std::string soundscene;
 
 #ifdef BASE_MAKER
@@ -294,7 +295,7 @@ public:
             static bool hastalked;
             virtual void Draw(::BaseInterface *base);
             //Talk * caller;
-            unsigned int curchar;
+            uint32_t curchar;
             float curtime;
             virtual ~BaseTalk() {}
             std::string message;
@@ -314,13 +315,13 @@ public:
 #endif
         void Draw(::BaseInterface *base);
         void Click(::BaseInterface *base, float x, float y, int button, int state);
-        int MouseOver(::BaseInterface *base, float x, float y);
+        int32_t MouseOver(::BaseInterface *base, float x, float y);
         Room();
         ~Room();
     };
     friend class Room;
     friend class Room::BaseTalk;
-    int curroom;
+    int32_t curroom;
     std::vector<Room *> rooms;
     TextPlane othtext;
     static BaseInterface *CurrentBase;
@@ -338,13 +339,13 @@ public:
     void InitCallbacks();
     void CallCommonLinks(const std::string &name, const std::string &value);
     void Load(const char *filename, const char *time_of_day, const char *faction);
-    static void ClickWin(int x, int y, int button, int state);
-    void Click(int x, int y, int button, int state);
-    void Key(unsigned int ch, unsigned int mod, bool release, int x, int y);
-    static void PassiveMouseOverWin(int x, int y);
-    static void ActiveMouseOverWin(int x, int y);
+    static void ClickWin(int32_t x, int32_t y, int32_t button, int32_t state);
+    void Click(int32_t x, int32_t y, int32_t button, int32_t state);
+    void Key(uint32_t ch, uint32_t mod, bool release, int32_t x, int32_t y);
+    static void PassiveMouseOverWin(int32_t x, int32_t y);
+    static void ActiveMouseOverWin(int32_t x, int32_t y);
     static void ProcessKeyboardBuffer();
-    void MouseOver(int x, int y);
+    void MouseOver(int32_t x, int32_t y);
     BaseInterface(const char *basefile, Unit *base, Unit *un);
     ~BaseInterface();
     void Draw();

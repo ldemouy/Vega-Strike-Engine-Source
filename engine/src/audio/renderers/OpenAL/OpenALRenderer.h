@@ -9,6 +9,8 @@
 #include "../../Renderer.h"
 #include "../../Format.h"
 
+#include <memory>
+
 namespace Audio
 {
 
@@ -32,7 +34,7 @@ namespace Audio
     class OpenALRenderer : public Renderer
     {
     protected:
-        AutoPtr<__impl::OpenAL::RendererData> data;
+        std::shared_ptr<__impl::OpenAL::RendererData> data;
 
     public:
         /** Initialize the renderer with default or config-driven settings. */
@@ -41,25 +43,25 @@ namespace Audio
         virtual ~OpenALRenderer();
 
         /** @copydoc Renderer::getSound */
-        virtual SharedPtr<Sound> getSound(
+        virtual std::shared_ptr<Sound> getSound(
             const std::string &name,
             VSFileSystem::VSFileType type = VSFileSystem::UnknownFile,
             bool streaming = false);
 
         /** @copydoc Renderer::owns */
-        virtual bool owns(SharedPtr<Sound> sound);
+        virtual bool owns(std::shared_ptr<Sound> sound);
 
-        /** @copydoc Renderer::attach(SharedPtr<Source>) */
-        virtual void attach(SharedPtr<Source> source);
+        /** @copydoc Renderer::attach(std::shared_ptr<Source>) */
+        virtual void attach(std::shared_ptr<Source> source);
 
-        /** @copydoc Renderer::attach(SharedPtr<Listener>) */
-        virtual void attach(SharedPtr<Listener> listener);
+        /** @copydoc Renderer::attach(std::shared_ptr<Listener>) */
+        virtual void attach(std::shared_ptr<Listener> listener);
 
-        /** @copydoc Renderer::detach(SharedPtr<Source>) */
-        virtual void detach(SharedPtr<Source> source);
+        /** @copydoc Renderer::detach(std::shared_ptr<Source>) */
+        virtual void detach(std::shared_ptr<Source> source);
 
-        /** @copydoc Renderer::detach(SharedPtr<Listener>) */
-        virtual void detach(SharedPtr<Listener> listener);
+        /** @copydoc Renderer::detach(std::shared_ptr<Listener>) */
+        virtual void detach(std::shared_ptr<Listener> listener);
 
         /** @copydoc Renderer::setMeterDistance */
         virtual void setMeterDistance(Scalar distance);

@@ -6,6 +6,7 @@
 
 #include <string>
 #include <map>
+#include <memory>
 #include <set>
 #include "Exceptions.h"
 #include "Singleton.h"
@@ -61,13 +62,13 @@ namespace Audio
          *      form.
          * @see CodecRegistry
          */
-        virtual SharedPtr<Sound> getSound(
+        virtual std::shared_ptr<Sound> getSound(
             const std::string &name,
             VSFileSystem::VSFileType type = VSFileSystem::UnknownFile,
             bool streaming = false) = 0;
 
         /** Return whether the specified sound has been created using this renderer or not */
-        virtual bool owns(SharedPtr<Sound> sound) = 0;
+        virtual bool owns(std::shared_ptr<Sound> sound) = 0;
 
         /** Attach a source to this renderer
          * @remarks A source may only be attached to one renderer. If the source was attached already,
@@ -75,7 +76,7 @@ namespace Audio
          *      @par Attachment may mean resource allocation. Either immediate or deferred. So it may
          *      fail if resources are scarce.
          */
-        virtual void attach(SharedPtr<Source> source) = 0;
+        virtual void attach(std::shared_ptr<Source> source) = 0;
 
         /** Attach a listener to this renderer
          * @remarks A listener may only be attached to one renderer. If the listener was attached already,
@@ -83,17 +84,17 @@ namespace Audio
          *      @par Attachment may mean resource allocation. Either immediate or deferred. So it may
          *      fail if resources are scarce.
          */
-        virtual void attach(SharedPtr<Listener> listener) = 0;
+        virtual void attach(std::shared_ptr<Listener> listener) = 0;
 
         /** Detach a source from this renderer.
          * @remarks Immediately frees any allocated resources.
          */
-        virtual void detach(SharedPtr<Source> source) = 0;
+        virtual void detach(std::shared_ptr<Source> source) = 0;
 
         /** Detach a listener from this renderer.
          * @remarks Immediately frees any allocated resources.
          */
-        virtual void detach(SharedPtr<Listener> listener) = 0;
+        virtual void detach(std::shared_ptr<Listener> listener) = 0;
 
         /** Sets the distance in world units that represents one meter.
          * @remarks This reference distance is required by environmental effect processing

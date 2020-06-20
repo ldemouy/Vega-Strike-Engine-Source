@@ -10,6 +10,7 @@
 #include "Sound.h"
 #include "SoundBuffer.h"
 
+#include <memory>
 #include "vsfilesystem.h"
 
 namespace Audio
@@ -36,7 +37,7 @@ namespace Audio
     class SimpleSound : public Sound
     {
     private:
-        SharedPtr<Stream> stream;
+        std::shared_ptr<Stream> stream;
         VSFileSystem::VSFileType type;
 
     protected:
@@ -72,7 +73,7 @@ namespace Audio
          * @remarks Calling this when isStreamLoaded() returns false will raise an
          *      ResourceNotLoadedException.
          */
-        SharedPtr<Stream> getStream() const;
+        std::shared_ptr<Stream> getStream() const;
 
         /** Read from the stream into the buffer 
          * @remarks Will throw EndOfStreamException when the end of the stream

@@ -23,7 +23,9 @@ namespace Audio
     void SimpleSound::loadStream()
     {
         if (isStreamLoaded())
+        {
             throw(ResourceAlreadyLoadedException());
+        }
 
         // Open stream and initialize shared pointer
         stream.reset(
@@ -38,14 +40,18 @@ namespace Audio
     void SimpleSound::closeStream()
     {
         if (!isStreamLoaded())
+        {
             throw(ResourceNotLoadedException());
+        }
         stream.reset();
     }
 
-    SharedPtr<Stream> SimpleSound::getStream() const
+    std::shared_ptr<Stream> SimpleSound::getStream() const
     {
         if (!isStreamLoaded())
+        {
             throw(ResourceNotLoadedException());
+        }
         return stream;
     }
 

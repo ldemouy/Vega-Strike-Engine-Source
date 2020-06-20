@@ -1,7 +1,7 @@
 #include "cmd/unit_generic.h"
 #include "ani_texture.h"
 #include "aldrv/audiolib.h"
-
+#include <algorithm>
 #include <vector>
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,56 +17,61 @@
 using std::set;
 static set<AnimatedTexture *> anis;
 
-static inline unsigned int intmin(unsigned int a, unsigned int b)
-{
-    return a < b ? a : b;
-}
-
-static inline unsigned int intmax(unsigned int a, unsigned int b)
-{
-    return a < b ? b : a;
-}
-
 static enum ADDRESSMODE parseAddressMode(const string &addrmodestr, ADDRESSMODE defaultAddressMode)
 {
     enum ADDRESSMODE addrmode = defaultAddressMode;
     if (addrmodestr == "wrap")
+    {
         addrmode = WRAP;
+    }
 
     else if (addrmodestr == "mirror")
+    {
         addrmode = MIRROR;
+    }
 
     else if (addrmodestr == "clamp")
+    {
         addrmode = CLAMP;
+    }
 
     else if (addrmodestr == "border")
+    {
         addrmode = BORDER;
+    }
     return addrmode;
 }
 
-static void ActivateWhite(int stage)
+static void ActivateWhite(int32_t stage)
 {
     static Texture *white = new Texture("white.bmp", 0, MIPMAP, TEXTURE2D, TEXTURE_2D, 1);
     if (white->LoadSuccess())
+    {
         white->MakeActive(stage);
+    }
 }
 
-void AnimatedTexture::MakeActive(int stage, int pass)
+void AnimatedTexture::MakeActive(int32_t stage, int32_t pass)
 {
     // Set active frame and texture coordinates
     if (timeperframe && !vidSource)
     {
-        unsigned int numframes = numFrames();
-        unsigned int active = ((unsigned int)(curtime / timeperframe));
+        uint32_t numframes = numFrames();
+        uint32_t active = ((uint32_t)(curtime / timeperframe));
         if (GetLoop())
+        {
             active %= numframes;
-
+        }
         else
-            active = intmin(active, numframes - 1);
-        unsigned int nextactive = (GetLoopInterp() ? ((active + 1) % numframes) : intmin(active + 1, numframes - 1));
-        float fraction = (curtime / timeperframe) - (unsigned int)(curtime / timeperframe);
+        {
+            active = std::min(active, numframes - 1);
+        }
+        uint32_t nextactive = (GetLoopInterp() ? ((active + 1) % numframes) : std::min(active + 1, numframes - 1));
+        float fraction = (curtime / timeperframe) - (uint32_t)(curtime / timeperframe);
         if (fraction < 0)
+        {
             fraction += 1.0f;
+        }
         this->active = active;
         this->nextactive = nextactive;
         this->active_fraction = fraction;
@@ -90,7 +95,7 @@ void AnimatedTexture::MakeActive(int stage, int pass)
         {
             if (GetInterpolateTCoord() && (active != nextactive))
             {
-                if (frames_maxtc.size() < intmax(active, nextactive))
+                if (frames_maxtc.size() < std::max(active, nextactive))
                 {
                     this->maxtcoord = (1 - fraction) * frames_maxtc[active] + fraction * frames_maxtc[nextactive];
                     this->mintcoord = (1 - fraction) * frames_mintc[active] + fraction * frames_mintc[nextactive];
@@ -102,7 +107,7 @@ void AnimatedTexture::MakeActive(int stage, int pass)
                 this->mintcoord = frames_mintc[active];
             }
         }
-        active = ((unsigned int)(curtime / timeperframe)) % numframes;
+        active = ((uint32_t)(curtime / timeperframe)) % numframes;
     }
 
     // Effectively activate texture units
@@ -113,28 +118,40 @@ void AnimatedTexture::MakeActive(int stage, int pass)
         {
             if (GetInterpolateFrames() && (active != nextactive))
             {
-                if (gl_options.Multitexture && ((stage + 1) < static_cast<int>(gl_options.Multitexture)))
+                if (gl_options.Multitexture && ((stage + 1) < static_cast<int32_t>(gl_options.Multitexture)))
                 {
                     if (Decal && Decal[nextactive % numframes])
+                    {
                         Decal[nextactive % numframes]->MakeActive(stage + 1);
+                    }
 
                     else
+                    {
                         ActivateWhite(stage + 1);
+                    }
                     GFXTextureEnv(stage + 1, GFXINTERPOLATETEXTURE, active_fraction);
                     if (Decal && Decal[active % numframes])
+                    {
                         Decal[active % numframes]->MakeActive(stage);
+                    }
 
                     else
+                    {
                         ActivateWhite(stage);
+                    }
                     //GFXTextureEnv(stage,GFXMODULATETEXTURE);
                 }
                 else
                 {
                     if (Decal && Decal[active % numframes])
+                    {
                         Decal[active % numframes]->MakeActive(stage);
+                    }
 
                     else
+                    {
                         ActivateWhite(stage);
+                    }
                     multipass_interp_basecolor = GFXColorf();
                     GFXColor color = multipass_interp_basecolor;
                     color.r *= (1.0 - active_fraction);
@@ -147,10 +164,14 @@ void AnimatedTexture::MakeActive(int stage, int pass)
             else
             {
                 if (Decal && Decal[active % numframes])
+                {
                     Decal[active % numframes]->MakeActive(stage);
+                }
 
                 else
+                {
                     ActivateWhite(stage);
+                }
             }
         }
         else if (!vidSource)
@@ -159,7 +180,9 @@ void AnimatedTexture::MakeActive(int stage, int pass)
             if (Decal && *Decal)
             {
                 if (active != activebound)
+                {
                     LoadFrame(active % numframes);
+                }
                 (*Decal)->MakeActive(stage);
             }
         }
@@ -174,7 +197,7 @@ void AnimatedTexture::MakeActive(int stage, int pass)
                     //Override compression options temporarily
                     //NOTE: This is ugly, but otherwise we would have to hack Texture way too much,
                     //or double the code. Let's use this then.
-                    int ocompression = gl_options.compression;
+                    int32_t ocompression = gl_options.compression;
                     gl_options.compression = 0;
 
                     BOOST_LOG_TRIVIAL(info) << "Transferring video frame";
@@ -207,10 +230,14 @@ void AnimatedTexture::MakeActive(int stage, int pass)
         if (!vidMode && GetInterpolateFrames() && (active != nextactive) && !(gl_options.Multitexture && ((stage + 1) < static_cast<int>(gl_options.Multitexture))))
         {
             if (Decal && Decal[nextactive % numframes])
+            {
                 Decal[nextactive % numframes]->MakeActive(stage);
+            }
 
             else
+            {
                 ActivateWhite(stage);
+            }
             GFXColor color = multipass_interp_basecolor;
             color.r *= active_fraction;
             color.g *= active_fraction;
@@ -226,18 +253,22 @@ void AnimatedTexture::MakeActive(int stage, int pass)
     }
 }
 
-bool AnimatedTexture::SetupPass(int pass, int stage, const enum BLENDFUNC src, const enum BLENDFUNC dst)
+bool AnimatedTexture::SetupPass(int32_t pass, int32_t stage, const enum BLENDFUNC src, const enum BLENDFUNC dst)
 {
     switch (pass)
     {
     case -1:
         if (!vidMode && GetInterpolateFrames())
         {
-            if (!(gl_options.Multitexture && ((stage + 1) < static_cast<int>(gl_options.Multitexture))))
+            if (!(gl_options.Multitexture && ((stage + 1) < static_cast<int32_t>(gl_options.Multitexture))))
+            {
                 GFXColorf(multipass_interp_basecolor); //Restore old color
+            }
             else
-                //GFXTextureEnv(texstage,GFXMODULATETEXTURE); //Most expect this
+            //GFXTextureEnv(texstage,GFXMODULATETEXTURE); //Most expect this
+            {
                 GFXTextureEnv(stage + 1, GFXADDTEXTURE); //Most expect this
+            }
         }
         return true;
 
@@ -249,22 +280,26 @@ bool AnimatedTexture::SetupPass(int pass, int stage, const enum BLENDFUNC src, c
 
 void AnimatedTexture::UpdateAllPhysics()
 {
-    for (set<AnimatedTexture *>::iterator iter = anis.begin(); iter != anis.end(); iter++)
+    for (auto iter = anis.begin(); iter != anis.end(); iter++)
+    {
         (*iter)->physicsactive -= SIMULATION_ATOM;
+    }
 }
 
 void AnimatedTexture::UpdateAllFrame()
 {
     double elapsed = GetElapsedTime();
     double realtime = realTime();
-    for (set<AnimatedTexture *>::iterator iter = anis.begin(); iter != anis.end(); iter++)
+    for (auto iter = anis.begin(); iter != anis.end(); iter++)
     {
         AnimatedTexture *ani = *iter;
         if (ani->options & optSoundTiming)
         {
             // lazy init
             if (ani->lastrealtime == 0)
+            {
                 ani->lastrealtime = realtime;
+            }
 
             // de-jitter, playtime reporting tends to have some jitter
             double newcurtime = ani->GetTimeSource()->getPlayingTime();
@@ -308,7 +343,7 @@ void AnimatedTexture::setTime(double tim)
 
 using namespace VSFileSystem;
 
-AnimatedTexture::AnimatedTexture(const char *file, int stage, enum FILTER imm, bool detailtex)
+AnimatedTexture::AnimatedTexture(const char *file, int32_t stage, enum FILTER imm, bool detailtex)
 {
     AniInit();
     VSFile f;
@@ -369,13 +404,13 @@ void AnimatedTexture::AniInit()
 //Load (fp,stage,imm,detailtex);
 //}
 
-AnimatedTexture::AnimatedTexture(VSFileSystem::VSFile &fp, int stage, enum FILTER imm, bool detailtex)
+AnimatedTexture::AnimatedTexture(VSFileSystem::VSFile &fp, int32_t stage, enum FILTER imm, bool detailtex)
 {
     AniInit();
     Load(fp, stage, imm, detailtex);
 }
 
-AnimatedTexture::AnimatedTexture(int stage, enum FILTER imm, bool detailtex) : Texture(stage, imm)
+AnimatedTexture::AnimatedTexture(int32_t stage, enum FILTER imm, bool detailtex) : Texture(stage, imm)
 {
     AniInit();
 }
@@ -396,10 +431,12 @@ Texture *AnimatedTexture::Clone()
     if (Decal)
     {
         *retval = *this;
-        int nf = vidMode ? 1 : numframes;
+        int32_t nf = vidMode ? 1 : numframes;
         retval->Decal = new Texture *[nf];
-        for (int i = 0; i < nf; i++)
+        for (int32_t i = 0; i < nf; i++)
+        {
             retval->Decal[i] = Decal[i]->Clone();
+        }
     }
     else if (vidSource)
     {
@@ -447,7 +484,9 @@ void AnimatedTexture::Destroy()
         int i, nf;
         nf = vidMode ? 1 : numframes;
         for (i = 0; i < nf; i++)
+        {
             delete Decal[i];
+        }
         delete[] Decal;
         Decal = NULL;
     }
@@ -468,7 +507,9 @@ static void alltrim(string &str)
     string::size_type ltrim = str.find_first_not_of(" \t\r\n");
     string::size_type rtrim = str.find_last_not_of(" \t\r\n");
     if (rtrim != string::npos)
+    {
         str.resize(rtrim + 1);
+    }
     str.erase(0, ltrim);
 }
 
@@ -479,16 +520,20 @@ static void alltrim(char *_str)
     strcpy(_str, str.c_str());
 }
 
-void AnimatedTexture::Load(VSFileSystem::VSFile &f, int stage, enum FILTER ismipmapped, bool detailtex)
+void AnimatedTexture::Load(VSFileSystem::VSFile &f, int32_t stage, enum FILTER ismipmapped, bool detailtex)
 {
     curtime = 0;
     frames.clear();
     frames_maxtc.clear();
     frames_mintc.clear();
     if (f.GetType() == VSFileSystem::VideoFile)
+    {
         LoadVideoSource(f);
+    }
     else
+    {
         LoadAni(f, stage, ismipmapped, detailtex);
+    }
 }
 
 void AnimatedTexture::LoadVideoSource(VSFileSystem::VSFile &f)
@@ -508,7 +553,7 @@ void AnimatedTexture::LoadVideoSource(VSFileSystem::VSFile &f)
 
         physicsactive = vidSource->getDuration();
         timeperframe = 1.0 / vidSource->getFrameRate();
-        numframes = (unsigned int)(physicsactive * timeperframe);
+        numframes = (uint8_t)(physicsactive * timeperframe);
 
         loadSuccess = true;
     }
@@ -521,7 +566,7 @@ void AnimatedTexture::LoadVideoSource(VSFileSystem::VSFile &f)
         sizeX = vidSource->getWidth();
         sizeY = vidSource->getHeight();
         mode = _24BIT;
-        data = (unsigned char *)vidSource->getFrameBuffer();
+        data = (uint8_t *)vidSource->getFrameBuffer();
         if ((ismipmapped == BILINEAR || ismipmapped == NEAREST) && gl_options.rect_textures)
         {
             texture_target = TEXTURERECT;
@@ -548,7 +593,7 @@ void AnimatedTexture::LoadVideoSource(VSFileSystem::VSFile &f)
 }
 
 AnimatedTexture *AnimatedTexture::CreateVideoTexture(const std::string &fname,
-                                                     int stage,
+                                                     int32_t stage,
                                                      enum FILTER ismipmapped,
                                                      bool detailtex)
 {
@@ -556,9 +601,13 @@ AnimatedTexture *AnimatedTexture::CreateVideoTexture(const std::string &fname,
     VSFileSystem::VSFile f;
     VSError err = f.OpenReadOnly(fname, VSFileSystem::VideoFile);
     if (err <= Ok)
+    {
         rv->LoadVideoSource(f);
+    }
     else
+    {
         fprintf(stderr, "CreateVideoTexture could not find %s\n", fname.c_str());
+    }
 
     // Videos usually don't want to be looped, so set non-looping as default
     rv->SetLoop(false);
@@ -566,7 +615,7 @@ AnimatedTexture *AnimatedTexture::CreateVideoTexture(const std::string &fname,
     return rv;
 }
 
-void AnimatedTexture::LoadAni(VSFileSystem::VSFile &f, int stage, enum FILTER ismipmapped, bool detailtex)
+void AnimatedTexture::LoadAni(VSFileSystem::VSFile &f, int32_t stage, enum FILTER ismipmapped, bool detailtex)
 {
     char options[1024];
     f.Fscanf("%d %f", &numframes, &timeperframe);
@@ -580,18 +629,24 @@ void AnimatedTexture::LoadAni(VSFileSystem::VSFile &f, int stage, enum FILTER is
     SetInterpolateFrames(XMLSupport::parse_option_ispresent(options, "interpolateFrames"));
     SetInterpolateTCoord(XMLSupport::parse_option_ispresent(options, "interpolateTCoord"));
     if (XMLSupport::parse_option_ispresent(options, "forceLoopInterp"))
+    {
         SetLoopInterp(true);
-
+    }
     else if (XMLSupport::parse_option_ispresent(options, "forceNoLoopInterp"))
+    {
         SetLoopInterp(false);
+    }
     if (XMLSupport::parse_option_ispresent(options, "forceLoop"))
+    {
         SetLoop(true);
-
+    }
     else if (XMLSupport::parse_option_ispresent(options, "forceNoLoop"))
+    {
         SetLoop(false);
+    }
     if (XMLSupport::parse_option_ispresent(options, "startRandom"))
     {
-        int curf = vsrandom.genrand_int32() % numframes;
+        int32_t curf = vsrandom.genrand_int32() % numframes;
         setTime((0.00001 + curf) * timeperframe);
     }
     string addrmodestr = XMLSupport::parse_option_value(options, "addressMode", "");
@@ -604,14 +659,18 @@ void AnimatedTexture::LoadAni(VSFileSystem::VSFile &f, int stage, enum FILTER is
     string defMt = XMLSupport::parse_option_value(options, "maxt", "1");
     string defMr = XMLSupport::parse_option_value(options, "maxr", "1");
 
-    int midframe; //FIXME midframe not initialized by all paths below
-    midframe = 0; //FIXME this line temporarily added by chuck_starchaser
+    int32_t midframe; //FIXME midframe not initialized by all paths below
+    midframe = 0;     //FIXME this line temporarily added by chuck_starchaser
     bool loadall;
     if (!vidMode)
+    {
         loadall = !(g_game.use_animations == 0 || (g_game.use_animations != 0 && g_game.use_textures == 0));
-
+    }
     else
+    {
         loadall = !(g_game.use_videos == 0 || (g_game.use_videos != 0 && g_game.use_textures == 0));
+    }
+
     if (!loadall)
     {
         timeperframe *= numframes;
@@ -620,20 +679,23 @@ void AnimatedTexture::LoadAni(VSFileSystem::VSFile &f, int stage, enum FILTER is
     } //Added by Klauss
 
     active = 0;
-    int nf = (vidMode ? 1 : numframes);
+    int32_t nf = (vidMode ? 1 : numframes);
     Decal = new Texture *[nf];
     if (vidMode)
+    {
         Decal[0] = new Texture;
+    }
     char temp[512] = "white.bmp";
     char file[512] = "white.bmp";
     char alp[512] = "white.bmp";
     char opt[512] = "";
-    int i = 0, j = 0;
-    for (; i < static_cast<int>(numframes); i++)
+    int32_t j = 0;
+    for (int32_t i = 0; i < static_cast<int32_t>(numframes); i++)
+    {
         if (loadall || (i == midframe))
         { //FIXME midframe used without guaranteed initialization
             //if() added by Klauss
-            int numgets = 0;
+            int32_t numgets = 0;
             while (numgets <= 0 && !f.Eof())
             {
                 if (f.ReadLine(temp, 511) == Ok)
@@ -648,7 +710,9 @@ void AnimatedTexture::LoadAni(VSFileSystem::VSFile &f, int stage, enum FILTER is
 
                     numgets = sscanf(temp, "%s %s %[^\r\n]", file, alp, opt);
                     if ((numgets < 2) || (strcmp(alp, "-") == 0))
+                    {
                         alp[0] = '\0';
+                    }
                     alltrim(opt);
                 }
                 else
@@ -717,6 +781,7 @@ void AnimatedTexture::LoadAni(VSFileSystem::VSFile &f, int stage, enum FILTER is
                 }
             }
         }
+    }
     this->texstage = stage;
     this->detailTex = detailtex;
     this->ismipmapped = ismipmapped;
@@ -734,29 +799,37 @@ void AnimatedTexture::LoadAni(VSFileSystem::VSFile &f, int stage, enum FILTER is
     setTime(curtime);
 }
 
-void AnimatedTexture::LoadFrame(int frame)
+void AnimatedTexture::LoadFrame(int32_t frame)
 {
     if (!vidMode || (Decal == NULL) || (*Decal == NULL))
+    {
         return;
+    }
     if ((frame < 0) || (frame >= static_cast<int>(numframes)))
+    {
         return;
+    }
     if ((activebound < numframes) && (frames[frame] == frames[activebound]))
+    {
         return;
+    }
     const char *temp = frames[frame].get().c_str();
     char file[512] = "white.bmp";
     char alp[512] = "white.bmp";
     char opt[512] = "";
-    int numgets = 0;
+    int32_t numgets = 0;
     numgets = sscanf(temp, "%s %s %[^\r\n]", file, alp, opt);
     if ((numgets < 2) || (strcmp(alp, "-") == 0))
+    {
         alp[0] = '\0';
+    }
     string addrmodestr = XMLSupport::parse_option_value(opt, "addressMode", "");
     enum ADDRESSMODE addrmode = parseAddressMode(addrmodestr, defaultAddressMode);
 
     //Override compression options temporarily
     //NOTE: This is ugly, but otherwise we would have to hack Texture way too much,
     //or double the code. Let's use this then.
-    int ocompression = gl_options.compression;
+    int32_t ocompression = gl_options.compression;
     gl_options.compression = 0;
 
     //Without this, VSFileSystem won't find the file -- ugly, but it's how it is.
@@ -793,13 +866,17 @@ void AnimatedTexture::LoadFrame(int frame)
         loadSuccess = false;
     }
     if (err <= Ok)
+    {
         f.Close();
+    }
     gl_options.compression = ocompression;
 
     original = NULL;
     loadSuccess = loadSuccess && (*Decal)->LoadSuccess();
     if (loadSuccess)
+    {
         activebound = frame;
+    }
 }
 
 bool AnimatedTexture::LoadSuccess()
@@ -807,23 +884,31 @@ bool AnimatedTexture::LoadSuccess()
     return loadSuccess != false;
 }
 
-unsigned int AnimatedTexture::numLayers() const
+uint32_t AnimatedTexture::numLayers() const
 {
-    if (GetInterpolateFrames() && (active != nextactive) && gl_options.Multitexture && ((texstage + 1) < static_cast<int>(gl_options.Multitexture)))
+    if (GetInterpolateFrames() && (active != nextactive) && gl_options.Multitexture && ((texstage + 1) < static_cast<int32_t>(gl_options.Multitexture)))
+    {
         return 2;
+    }
 
     else
+    {
         return 1;
+    }
 }
 
-unsigned int AnimatedTexture::numPasses() const
+uint32_t AnimatedTexture::numPasses() const
 {
     if (GetInterpolateFrames() && (active != nextactive))
     {
         if (gl_options.Multitexture && ((texstage + 1) < static_cast<int>(gl_options.Multitexture)))
+        {
             return 1;
+        }
         else
+        {
             return 2;
+        }
     }
     else
     {
@@ -831,14 +916,18 @@ unsigned int AnimatedTexture::numPasses() const
     }
 }
 
-void AnimatedTexture::SetTimeSource(SharedPtr<Audio::Source> source)
+void AnimatedTexture::SetTimeSource(std::shared_ptr<Audio::Source> source)
 {
     timeSource = source;
     if (source)
+    {
         options |= optSoundTiming;
+    }
 
     else
+    {
         options &= ~optSoundTiming;
+    }
 }
 
 void AnimatedTexture::ClearTimeSource()

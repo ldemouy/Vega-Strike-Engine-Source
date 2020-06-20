@@ -4,6 +4,7 @@
 #ifndef __AUDIO_SCENEMANAGER_H__INCLUDED__
 #define __AUDIO_SCENEMANAGER_H__INCLUDED__
 
+#include <memory>
 #include <string>
 #include <map>
 #include <set>
@@ -60,16 +61,16 @@ namespace Audio
     class SceneManager : public Singleton<SceneManager>
     {
     private:
-        AutoPtr<__impl::SceneManagerData> data;
+        std::shared_ptr<__impl::SceneManagerData> data;
 
     public:
-        typedef VirtualIterator<SharedPtr<Scene>> SceneIterator;
+        typedef VirtualIterator<std::shared_ptr<Scene>> SceneIterator;
 
     protected:
         /** Returns the renderer
          * @remarks Throws an exception if no renderer has been set
          */
-        const SharedPtr<Renderer> &internalRenderer() const;
+        const std::shared_ptr<Renderer> &internalRenderer() const;
 
     public:
         /** Construct a new instance of the manager 
@@ -86,12 +87,12 @@ namespace Audio
          * @note The sound must be associated to the correct renderer, or bad things will happen.
          * @see Renderer, which creates sounds.
          */
-        virtual SharedPtr<Source> createSource(SharedPtr<Sound> sound, bool looping = false);
+        virtual std::shared_ptr<Source> createSource(std::shared_ptr<Sound> sound, bool looping = false);
 
         /** Create a new source based on the specified template
          * @remarks All location information will hold unspecified values, so you have to fill them in.
          */
-        SharedPtr<Source> createSource(SharedPtr<SourceTemplate> tpl);
+        std::shared_ptr<Source> createSource(std::shared_ptr<SourceTemplate> tpl);
 
         /** Create a new source based on the specified template, but overriding its sound resource.
          * @remarks All location information will hold unspecified values, so you have to fill them in.
@@ -99,10 +100,10 @@ namespace Audio
          *      on many different streams. Eg: a "music" template for spawning music tracks, a "radio"
          *      template for spawning radio voiceovers, etc...
          */
-        SharedPtr<Source> createSource(SharedPtr<SourceTemplate> tpl, const std::string &name);
+        std::shared_ptr<Source> createSource(std::shared_ptr<SourceTemplate> tpl, const std::string &name);
 
         /** Destroy a source created with this manager */
-        virtual void destroySource(SharedPtr<Source> source);
+        virtual void destroySource(std::shared_ptr<Source> source);
 
         /** Convenience API to play a source once and forget. 
          * @param tpl The source template from which a source should be instanced
@@ -114,7 +115,7 @@ namespace Audio
          * @remarks The source should not be looping, and an exception will be thrown if it is.
          */
         void playSource(
-            SharedPtr<SourceTemplate> tpl,
+            std::shared_ptr<SourceTemplate> tpl,
             const std::string &sceneName,
             LVector3 position,
             Vector3 direction,
@@ -132,7 +133,7 @@ namespace Audio
          * @remarks The source should not be looping, and an exception will be thrown if it is.
          */
         void playSource(
-            SharedPtr<SourceTemplate> tpl,
+            std::shared_ptr<SourceTemplate> tpl,
             const std::string &soundName,
             const std::string &sceneName,
             LVector3 position,
@@ -141,10 +142,10 @@ namespace Audio
             Scalar radius);
 
         /** Create a new named scene */
-        virtual SharedPtr<Scene> createScene(const std::string &name);
+        virtual std::shared_ptr<Scene> createScene(const std::string &name);
 
         /** Get an existing scene by its name */
-        virtual SharedPtr<Scene> getScene(const std::string &name) const;
+        virtual std::shared_ptr<Scene> getScene(const std::string &name) const;
 
         /** Destroy an existing scene by its name */
         virtual void destroyScene(const std::string &name);
@@ -167,13 +168,13 @@ namespace Audio
          *      to the left (what would be required if the listeners of each scene
          *      were rotated, since they're "artificial" listeners).
          */
-        virtual SharedPtr<Listener> getRootListener() const;
+        virtual std::shared_ptr<Listener> getRootListener() const;
 
         /** Get an iterator over all scenes */
-        virtual SharedPtr<SceneIterator> getSceneIterator() const;
+        virtual std::shared_ptr<SceneIterator> getSceneIterator() const;
 
         /** Get an iterator over all active scenes */
-        virtual SharedPtr<SceneIterator> getActiveSceneIterator() const;
+        virtual std::shared_ptr<SceneIterator> getActiveSceneIterator() const;
 
         /** Set a new renderer
          * @param renderer A new renderer to be used.
@@ -184,10 +185,10 @@ namespace Audio
          * @note Overriding implementations must call the base implementation, since 
          *      getRenderer is not overridable.
          */
-        virtual void setRenderer(SharedPtr<Renderer> renderer);
+        virtual void setRenderer(std::shared_ptr<Renderer> renderer);
 
         /** Get the current renderer */
-        SharedPtr<Renderer> getRenderer() const;
+        std::shared_ptr<Renderer> getRenderer() const;
 
         /********* Scene cycle **********/
 
@@ -262,7 +263,7 @@ namespace Audio
          *      to compensate this when setting the "MaxSources" attribute. However,
          *      this compensation may not be perfect.
          */
-        virtual unsigned int getMaxSources() const;
+        virtual uint32_t getMaxSources() const;
 
         /** Set the maximum number of simultaneous sources that can be playing at a time
          * @param n The maximum number of simultaneous playing sources desired.
@@ -271,7 +272,7 @@ namespace Audio
          *      is too high, the closest possible one will be set instead).
          * @see getMaxSources
          */
-        virtual void setMaxSources(unsigned int n);
+        virtual void setMaxSources(uint32_t n);
 
         /** Get the minimum gain that would be culled off
          * @remarks This value specifies the minimum gain of active sources. If a source
@@ -309,11 +310,11 @@ namespace Audio
         /*********** Notification events ************/
 
         /** Notify the scene manager of a source that starts or stops playing. */
-        virtual void notifySourcePlaying(SharedPtr<Source> source, SharedPtr<Scene> scene, bool playing);
+        virtual void notifySourcePlaying(std::shared_ptr<Source> source, std::shared_ptr<Scene> scene, bool playing);
 
     protected:
         /** Add a new scene @see createScene */
-        void addScene(SharedPtr<Scene> scene);
+        void addScene(std::shared_ptr<Scene> scene);
 
         /** Synchronize activation state with the scenes */
         virtual void activationPhaseImpl();

@@ -37,22 +37,34 @@ namespace Audio
         dirty.attributes = 1;
     }
 
-    void Listener::update(int flags)
+    void Listener::update(int32_t flags)
     {
         if (!dirty.attributes)
+        {
             flags &= ~RenderableListener::UPDATE_ATTRIBUTES;
+        }
         if (!dirty.location)
+        {
             flags &= ~RenderableListener::UPDATE_LOCATION;
+        }
         if (!dirty.gain)
+        {
             flags &= ~RenderableListener::UPDATE_GAIN;
+        }
 
         if (getRenderable().get() != 0)
+        {
             getRenderable()->update(flags);
+        }
 
         if (flags & RenderableListener::UPDATE_ATTRIBUTES)
+        {
             dirty.attributes = 0;
+        }
         if (flags & RenderableListener::UPDATE_GAIN)
+        {
             dirty.gain = 0;
+        }
         if (flags & RenderableListener::UPDATE_LOCATION)
         {
             worldToLocal =

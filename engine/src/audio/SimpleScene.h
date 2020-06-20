@@ -10,6 +10,7 @@
 #include "Listener.h"
 
 #include <set>
+#include <memory>
 
 namespace Audio
 {
@@ -26,7 +27,7 @@ namespace Audio
      */
     class SimpleScene : public Scene, public SharedFromThis<SimpleScene>
     {
-        typedef std::set<SharedPtr<Source>> SourceSet;
+        typedef std::set<std::shared_ptr<Source>> SourceSet;
 
         Listener listener;
 
@@ -48,12 +49,12 @@ namespace Audio
         /** @copydoc Scene::add 
          * @remarks source MUST be a SimpleSource
          */
-        virtual void add(SharedPtr<Source> source);
+        virtual void add(std::shared_ptr<Source> source);
 
         /** @copydoc Scene::remove 
          * @remarks source MUST be a SimpleSource
          */
-        virtual void remove(SharedPtr<Source> source);
+        virtual void remove(std::shared_ptr<Source> source);
 
         /** @copydoc Scene::getListener */
         virtual Listener &getListener();
@@ -63,7 +64,7 @@ namespace Audio
         //
 
         /** Notify the scene of a source that starts or stops playing. */
-        virtual void notifySourcePlaying(SharedPtr<Source> source, bool playing);
+        virtual void notifySourcePlaying(std::shared_ptr<Source> source, bool playing);
 
         /** Gets an iterator over active sources */
         SourceIterator getActiveSources();

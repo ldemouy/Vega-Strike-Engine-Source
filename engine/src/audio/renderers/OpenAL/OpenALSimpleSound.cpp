@@ -16,6 +16,7 @@
 #include <utility>
 #include <list>
 #include <string>
+#include <memory>
 
 using namespace Audio::__impl::OpenAL;
 
@@ -51,7 +52,7 @@ namespace Audio
                 // Weird...
                 getStream()->seek(0);
             }
-            SharedPtr<Stream> stream = getStream();
+            std::shared_ptr<Stream> stream = getStream();
 
             // setup formatted buffer
             // if the format does not match an OpenAL built-in format, we must convert it.
@@ -59,9 +60,13 @@ namespace Audio
             targetFormat.signedSamples = (targetFormat.bitsPerSample > 8);
             targetFormat.nativeOrder = 1;
             if (targetFormat.bitsPerSample > 8)
+            {
                 targetFormat.bitsPerSample = 16;
+            }
             else
+            {
                 targetFormat.bitsPerSample = 8;
+            }
 
             // Set capacity to half a second or 16k samples, whatever's bigger
             size_t bufferCapacity =
@@ -116,7 +121,9 @@ namespace Audio
                 {
                     unsigned int finalBytes = 0;
                     for (std::list<SoundBuffer>::const_iterator it = buffers.begin(); it != buffers.end(); ++it)
+                    {
                         finalBytes += it->getUsedBytes();
+                    }
                     buffer.reserve(finalBytes);
                 }
 
@@ -169,7 +176,9 @@ namespace Audio
     void OpenALSimpleSound::unloadImpl()
     {
         if (bufferHandle == AL_NULL_BUFFER)
+        {
             return;
+        }
 
         alDeleteBuffers(1, &bufferHandle);
         bufferHandle = AL_NULL_BUFFER;

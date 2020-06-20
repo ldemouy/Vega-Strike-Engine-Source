@@ -2,6 +2,7 @@
 #define __AUDIO_VIRTUALITERATOR_H__INCLUDED__
 
 #include "Types.h"
+#include <memory>
 #include <iterator>
 
 namespace Audio
@@ -33,7 +34,7 @@ namespace Audio
         virtual iterator_type &operator++() = 0;
         virtual iterator_type &operator--() = 0;
 
-        virtual SharedPtr<iterator_type> clone() const = 0;
+        virtual std::shared_ptr<iterator_type> clone() const = 0;
 
         /// End-of-sequence
         virtual bool eos() const = 0;
@@ -88,9 +89,9 @@ namespace Audio
             return *this;
         };
 
-        virtual SharedPtr<iterator_type> clone() const
+        virtual std::shared_ptr<iterator_type> clone() const
         {
-            return SharedPtr<iterator_type>(new VirtualStandardIterator<_It>(*this));
+            return std::shared_ptr<iterator_type>(new VirtualStandardIterator<_It>(*this));
         };
 
         virtual bool eos() const { return cur == end; }
@@ -146,9 +147,9 @@ namespace Audio
         virtual reference_type operator*() { return VirtualMappingIterator<_It, value_type>::it->second; };
         virtual pointer_type operator->() { return &(VirtualMappingIterator<_It, value_type>::it->second); };
 
-        virtual SharedPtr<iterator_type> clone() const
+        virtual std::shared_ptr<iterator_type> clone() const
         {
-            return SharedPtr<iterator_type>(new VirtualValuesIterator(*this));
+            return std::shared_ptr<iterator_type>(new VirtualValuesIterator(*this));
         }
     };
 
@@ -169,9 +170,9 @@ namespace Audio
         virtual reference_type operator*() { return VirtualMappingIterator<_It, value_type>::it->first; };
         virtual pointer_type operator->() { return VirtualMappingIterator<_It, value_type>::it->first; };
 
-        virtual SharedPtr<iterator_type> clone() const
+        virtual std::shared_ptr<iterator_type> clone() const
         {
-            return SharedPtr<iterator_type>(new VirtualKeysIterator(*this));
+            return std::shared_ptr<iterator_type>(new VirtualKeysIterator(*this));
         }
     };
 
@@ -209,24 +210,32 @@ namespace Audio
         virtual iterator_type &operator++()
         {
             if (it1.eos())
+            {
                 ++it2;
+            }
             else
+            {
                 ++it1;
+            }
             return *this;
         }
 
         virtual iterator_type &operator--()
         {
             if (it1.eos() && !it2.sos())
+            {
                 --it2;
+            }
             else
+            {
                 --it1;
+            }
             return *this;
         }
 
-        virtual SharedPtr<iterator_type> clone() const
+        virtual std::shared_ptr<iterator_type> clone() const
         {
-            return SharedPtr<iterator_type>(new ChainingIterator<_It1, _It2>(it1, it2));
+            return std::shared_ptr<iterator_type>(new ChainingIterator<_It1, _It2>(it1, it2));
         }
 
         virtual bool eos() const

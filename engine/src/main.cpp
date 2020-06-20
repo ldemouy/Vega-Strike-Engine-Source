@@ -18,6 +18,7 @@
  */
 #include "cs_python.h"
 #include "audio/test.h"
+#include <memory>
 #if defined(HAVE_SDL)
 #include <SDL/SDL.h>
 #endif
@@ -210,7 +211,7 @@ void initALRenderer()
 
     if (g_game.sound_enabled)
     {
-        SharedPtr<Audio::Renderer> renderer(new Audio::BorrowedOpenALRenderer);
+        std::shared_ptr<Audio::Renderer> renderer(new Audio::BorrowedOpenALRenderer);
         renderer->setMeterDistance(1.0);
         renderer->setDopplerFactor(0.0);
 
@@ -234,7 +235,7 @@ void initScenes()
 void closeRenderer()
 {
     cerr << "Shutting down renderer..." << endl;
-    Audio::SceneManager::getSingleton()->setRenderer(SharedPtr<Audio::Renderer>());
+    Audio::SceneManager::getSingleton()->setRenderer(std::shared_ptr<Audio::Renderer>());
 }
 
 extern void InitUnitTables();
@@ -302,10 +303,13 @@ int main(int argc, char *argv[])
            "See http://www.gnu.org/copyleft/gpl.html for license details.\n\n");
     /* Seed the random number generator */
     if (benchmark < 0.0)
+    {
         srand(time(NULL));
+    }
     else
-        //in benchmark mode, always use the same seed
+    { //in benchmark mode, always use the same seed
         srand(171070);
+    }
     //this sets up the vegastrike config variable
     setup_game_data();
     //loads the configuration file .vegastrike/vegastrike.config from home dir if such exists
@@ -323,13 +327,17 @@ int main(int argc, char *argv[])
 
     // If no debug argument is supplied, set to what the config file has.
     if (g_game.vsdebug == '0')
+    {
         g_game.vsdebug = game_options.vsdebug;
+    }
 
     initLogging(g_game.vsdebug);
 
     // can use the vegastrike config variable to read in the default mission
     if (game_options.force_client_connect)
+    {
         ignore_network = false;
+    }
     if (mission_name[0] == '\0')
     {
         strncpy(mission_name, game_options.default_mission.c_str(), 1023);
@@ -339,7 +347,9 @@ int main(int argc, char *argv[])
 
     int exitcode;
     if ((exitcode = readCommandLineOptions(argc, argv)) >= 0)
+    {
         return exitcode;
+    }
 
     //might overwrite the default mission with the command line
     InitUnitTables();
@@ -418,7 +428,9 @@ void bootstrap_draw(const std::string &message, Animation *newSplashScreen)
     static Animation *ani = NULL;
     static bool reentryWatchdog = false;
     if (!BootstrapMyStarSystemLoading || reentryWatchdog)
+    {
         return;
+    }
     Music::MuzakCycle(); //Allow for loading music...
     if (SplashScreen == NULL && newSplashScreen == NULL)
     {
@@ -429,7 +441,9 @@ void bootstrap_draw(const std::string &message, Animation *newSplashScreen)
 
     reentryWatchdog = true;
     if (newSplashScreen != NULL)
+    {
         ani = newSplashScreen;
+    }
     UpdateTime();
 
     Matrix tmp;
@@ -458,7 +472,10 @@ void bootstrap_draw(const std::string &message, Animation *newSplashScreen)
     if (ani)
     {
         if (GetElapsedTime() < 10)
+        {
             ani->UpdateAllFrame();
+        }
+        //Investigate if bracing error
         {
             ani->DrawNow(tmp); //VSFileSystem::vs_fprintf( stderr, "(new?) splash screen ('animation'?) %d.  ", (long long)ani ); //temporary, by chuck
         }
@@ -485,7 +502,9 @@ bool SetPlayerLoc(QVector &sys, bool set)
     else
     {
         if (isset)
+        {
             sys = mysys;
+        }
         return isset;
     }
 }
@@ -502,7 +521,9 @@ bool SetPlayerSystem(std::string &sys, bool set)
     else
     {
         if (isset)
+        {
             sys = mysys;
+        }
         return isset;
     }
 }
@@ -520,15 +541,17 @@ vector<string> parse_space_string(std::string s)
 }
 void bootstrap_first_loop()
 {
-    static int i = 0;
+    static int32_t i = 0;
     if (i == 0)
     {
         vector<string> s = parse_space_string(game_options.splash_screen);
         vector<string> sa = parse_space_string(game_options.splash_audio);
-        int snum = time(NULL) % s.size();
+        int32_t snum = time(NULL) % s.size();
         SplashScreen = new Animation(s[snum].c_str(), 0);
         if (sa.size() && sa[0].length())
+        {
             muzak->GotoSong(sa[snum % sa.size()]);
+        }
         bs_tp = new TextPlane();
     }
     bootstrap_draw("Vegastrike Loading...", SplashScreen);
@@ -537,9 +560,13 @@ void bootstrap_first_loop()
         if (_Universe)
         {
             if (game_options.main_menu)
+            {
                 UniverseUtil::startMenuInterface(true);
+            }
             else
+            {
                 _Universe->Loop(bootstrap_main_loop);
+            }
         }
     }
 }
@@ -615,10 +642,14 @@ void bootstrap_main_loop()
         {
             QVector myVec;
             if (SetPlayerLoc(myVec, false))
+            {
                 _Universe->AccessCockpit(0)->savegame->SetPlayerLocation(myVec);
+            }
             std::string st;
             if (SetPlayerSystem(st, false))
+            {
                 _Universe->AccessCockpit(0)->savegame->SetStarSystem(st);
+            }
         }
         vector<SavedUnits> saved;
         vector<string> packedInfo;
@@ -645,11 +676,17 @@ void bootstrap_main_loop()
         _Universe->AccessCockpit(k)->credits = credits;
         ss.push_back(_Universe->Init(mysystem, Vector(0, 0, 0), planetname));
         if (setplayerXloc)
+        {
             playerNloc.push_back(pos);
+        }
         else
+        {
             playerNloc.push_back(QVector(FLT_MAX, FLT_MAX, FLT_MAX));
+        }
         for (unsigned int j = 0; j < saved.size(); j++)
+        {
             savedun.push_back(saved[j]);
+        }
 
         SetStarSystemLoading(true);
         InitializeInput();
@@ -680,7 +717,9 @@ void bootstrap_main_loop()
                         {
                             UniverseUtil::IOmessage(12, "game", "all", game_options.intro4);
                             if (!game_options.intro5.empty())
+                            {
                                 UniverseUtil::IOmessage(16, "game", "all", game_options.intro5);
+                            }
                         }
                     }
                 }
@@ -702,16 +741,22 @@ void bootstrap_main_loop()
         if (game_options.load_last_savegame)
         {
             //Don't write if we didn't load...
-            for (unsigned int i = 0; i < _Universe->numPlayers(); ++i)
+            for (uint32_t i = 0; i < _Universe->numPlayers(); ++i)
+            {
                 WriteSaveGame(_Universe->AccessCockpit(i), false);
+            }
         }
         cur_check = getNewTime();
-        for (unsigned int i = 0; i < _Universe->numPlayers(); ++i)
+        for (uint32_t i = 0; i < _Universe->numPlayers(); ++i)
+        {
             _Universe->AccessCockpit(i)->savegame->LoadSavedMissions();
+        }
         _Universe->Loop(main_loop);
         ///return to idle func which now should call main_loop mohahahah
         if (game_options.auto_hide)
+        {
             UniverseUtil::hideSplashScreen();
+        }
     }
     ///Draw Texture
 }
@@ -738,7 +783,7 @@ std::string ParseCommandLine(int argc, char **lpCmdLine)
     std::string datatmp;
     g_game.vsdebug = '0';
     QVector PlayerLocation;
-    for (int i = 1; i < argc; i++)
+    for (int32_t i = 1; i < argc; i++)
     {
         if (lpCmdLine[i][0] == '-')
         {

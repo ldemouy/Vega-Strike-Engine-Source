@@ -6,6 +6,7 @@
 
 #include "Exceptions.h"
 #include "Types.h"
+#include <memory>
 #include "RenderableListener.h"
 
 namespace Audio
@@ -32,8 +33,8 @@ namespace Audio
 
         Range<Scalar> cosAngleRange;
 
-        SharedPtr<UserData> userDataPtr;
-        SharedPtr<RenderableListener> rendererDataPtr;
+        std::shared_ptr<UserData> userDataPtr;
+        std::shared_ptr<RenderableListener> rendererDataPtr;
 
         Matrix3 worldToLocal;
 
@@ -52,13 +53,13 @@ namespace Audio
             }
 
             /** position, velocity & direction */
-            int location : 1;
+            int32_t location : 1;
 
             /** min/max angle, radius, pf radius ratios, reference freqs */
-            int attributes : 1;
+            int32_t attributes : 1;
 
             /** min/max angle, radius, pf radius ratios, reference freqs */
-            int gain : 1;
+            int32_t gain : 1;
 
             void reset()
             {
@@ -157,27 +158,27 @@ namespace Audio
         }
 
         /** Get renderer-specific data associated (and destroyed) with this sound source */
-        SharedPtr<RenderableListener> getRenderable() const { return rendererDataPtr; }
+        std::shared_ptr<RenderableListener> getRenderable() const { return rendererDataPtr; }
 
         /** Set renderer-specific data to be associated (and destroyed) with this sound source */
-        void setRenderable(SharedPtr<RenderableListener> ptr)
+        void setRenderable(std::shared_ptr<RenderableListener> ptr)
         {
             rendererDataPtr = ptr;
             dirty.setAll();
         }
 
         /** Get user-specific data associated (and destroyed) with this listener */
-        SharedPtr<UserData> getUserData() const { return userDataPtr; }
+        std::shared_ptr<UserData> getUserData() const { return userDataPtr; }
 
         /** Set user-specific data to be associated (and destroyed) with this listener */
-        void setUserData(SharedPtr<UserData> ptr) { userDataPtr = ptr; }
+        void setUserData(std::shared_ptr<UserData> ptr) { userDataPtr = ptr; }
 
         /** @see RenderableListener::update
          * @param flags see RenderableListener::UpdateFlags
          * @note It's not just a convenience, the abstract listener has to update
          *      its internal dirty flags and other things as well.
          */
-        void update(int flags);
+        void update(int32_t flags);
 
         /**
          * Return the direction 'dir' in a local coordinate system centered at

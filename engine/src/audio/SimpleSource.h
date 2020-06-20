@@ -10,6 +10,7 @@
 
 #include "Source.h"
 #include "SimpleScene.h"
+#include <memory>
 
 namespace Audio
 {
@@ -34,7 +35,7 @@ namespace Audio
         virtual ~SimpleSource();
 
         /** Construct a simple source */
-        SimpleSource(SharedPtr<Sound> sound, bool looping = false);
+        SimpleSource(std::shared_ptr<Sound> sound, bool looping = false);
 
         /** Notify attachment to a scene */
         void notifySceneAttached(SimpleScene *scene);

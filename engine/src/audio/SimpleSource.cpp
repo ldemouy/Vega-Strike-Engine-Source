@@ -11,9 +11,9 @@ namespace Audio
     {
     }
 
-    SimpleSource::SimpleSource(SharedPtr<Sound> sound, bool looping) : Source(sound, looping),
-                                                                       playing(false),
-                                                                       scene(0)
+    SimpleSource::SimpleSource(std::shared_ptr<Sound> sound, bool looping) : Source(sound, looping),
+                                                                             playing(false),
+                                                                             scene(0)
     {
     }
 
@@ -31,13 +31,17 @@ namespace Audio
     {
         // If it's playing, must stop and restart - cannot simply play again.
         if (isPlaying())
+        {
             stopPlaying();
+        }
 
         setLastKnownPlayingTime(start);
         playing = true;
 
         if (getScene())
-            getScene()->notifySourcePlaying(shared_from_this(), true);
+        {
+            getScene()->notifySourcePlaying(std::shared_ptr<SimpleSource>(this), true);
+        }
     }
 
     void SimpleSource::stopPlayingImpl()
@@ -47,7 +51,9 @@ namespace Audio
             playing = false;
 
             if (getScene())
-                getScene()->notifySourcePlaying(shared_from_this(), false);
+            {
+                getScene()->notifySourcePlaying(std::shared_ptr<SimpleSource>(this), false);
+            }
         }
     }
 

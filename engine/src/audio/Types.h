@@ -4,13 +4,9 @@
 #ifndef __AUDIO_TYPES_H__INCLUDED__
 #define __AUDIO_TYPES_H__INCLUDED__
 
-#include <boost/smart_ptr.hpp>
 #include <boost/enable_shared_from_this.hpp>
 
 // Some compilers don't like template typedefs
-#define SharedPtr boost::shared_ptr
-#define WeakPtr boost::weak_ptr
-#define AutoPtr boost::scoped_ptr
 #define SharedFromThis boost::enable_shared_from_this
 
 #include "Vector.h"

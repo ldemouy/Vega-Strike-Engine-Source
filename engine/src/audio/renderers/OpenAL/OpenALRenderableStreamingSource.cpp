@@ -12,6 +12,8 @@
 
 #include "vs_math.h"
 
+#include <memory>
+
 namespace Audio
 {
 
@@ -40,14 +42,18 @@ namespace Audio
     {
         if (!isPlayingImpl())
         {
-            SharedPtr<Sound> sound = getSource()->getSound();
+            std::shared_ptr<Sound> sound = getSource()->getSound();
 
             assert(sound->isStreaming() && "OpenALRenderableStreamingSource can only handle streaming sounds");
 
             if (!sound->isLoaded())
+            {
                 sound->load();
+            }
             else if (!buffering)
+            {
                 dynamic_cast<OpenALStreamingSound *>(sound.get())->flushBuffers();
+            }
 
             // Seek the stream to the specified position
             atEos = false;
@@ -82,7 +88,9 @@ namespace Audio
         // reached EOS, they're playing from the framework's POV
         // (ie: just attaching more buffers make them play)
         if (startedPlaying && !atEos)
+        {
             return true;
+        }
 
         ALint state = 0;
         alGetSourcei(getALSource(), AL_SOURCE_STATE, &state);
@@ -95,7 +103,9 @@ namespace Audio
         alGetSourcef(getALSource(), AL_SEC_OFFSET, &offs);
 
         if (offs < 0.f)
+        {
             throw NotImplementedException("getPlayingTimeImpl");
+        }
 
         Timestamp base = dynamic_cast<OpenALStreamingSound *>(getSource()->getSound().get())
                              ->getTimeBase();
@@ -124,12 +134,16 @@ namespace Audio
             // NOTE: Cannot use startPlaying because it stresses the buggy seek method
             //  Must fix that
 
-            SharedPtr<Sound> sound = source->getSound();
+            std::shared_ptr<Sound> sound = source->getSound();
 
             if (!sound->isLoaded())
+            {
                 sound->load();
+            }
             else if (!buffering)
+            {
                 dynamic_cast<OpenALStreamingSound *>(sound.get())->flushBuffers();
+            }
 
             // Make sure we have some starting buffers queued
             queueALBuffers();
@@ -205,10 +219,12 @@ namespace Audio
 
     void OpenALRenderableStreamingSource::queueALBuffers()
     {
-        SharedPtr<Sound> sound = getSource()->getSound();
+        std::shared_ptr<Sound> sound = getSource()->getSound();
 
         if (!sound->isLoaded())
+        {
             sound->load();
+        }
 
         assert(sound->isStreaming() && "OpenALRenderableStreamingSource can only handle streaming sounds");
 
@@ -230,7 +246,9 @@ namespace Audio
             alSourceUnqueueBuffers(als, nbuffers, buffers);
 
             for (ALsizei i = 0; i < nbuffers; ++i)
+            {
                 streamingSound->unqueueBuffer(buffers[i]);
+            }
 
             buffersProcessed -= nbuffers;
         }
@@ -259,7 +277,9 @@ namespace Audio
                 }
             }
             if (buffer != AL_NULL_BUFFER)
+            {
                 alSourceQueueBuffers(als, 1, &buffer);
+            }
         } while (buffer != AL_NULL_BUFFER);
     }
 

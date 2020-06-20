@@ -8,6 +8,7 @@
 #include "Types.h"
 #include "Format.h"
 #include "RenderableSource.h"
+#include <memory>
 
 namespace Audio
 {
@@ -36,11 +37,11 @@ namespace Audio
     class Source
     {
     private:
-        SharedPtr<Sound> soundPtr;
-        SharedPtr<RenderableSource> rendererDataPtr;
-        SharedPtr<UserData> userDataPtr;
-        long userDataLong;
-        SharedPtr<SourceListener> sourceListenerPtr;
+        std::shared_ptr<Sound> soundPtr;
+        std::shared_ptr<RenderableSource> rendererDataPtr;
+        std::shared_ptr<UserData> userDataPtr;
+        int64_t userDataLong;
+        std::shared_ptr<SourceListener> sourceListenerPtr;
 
     protected:
         LVector3 position;
@@ -57,9 +58,9 @@ namespace Audio
 
         struct
         {
-            int looping : 1;
-            int attenuated : 1;
-            int relative : 1;
+            int32_t looping : 1;
+            int32_t attenuated : 1;
+            int32_t relative : 1;
         } flags;
 
         Timestamp lastKnownPlayingTime;
@@ -72,19 +73,19 @@ namespace Audio
         struct
         {
             /** position, velocity & direction */
-            int location : 1;
+            int32_t location : 1;
 
             /** min/max angle, radius, pf radius ratios, reference freqs, attenuation */
-            int attributes : 1;
+            int32_t attributes : 1;
 
             /** gain */
-            int gain : 1;
+            int32_t gain : 1;
 
             /** soundPtr */
-            int soundPtr : 1;
+            int32_t soundPtr : 1;
 
             /** looping */
-            int soundAttributes : 1;
+            int32_t soundAttributes : 1;
 
             void reset()
             {
@@ -106,7 +107,7 @@ namespace Audio
 
     protected:
         /** Internal constructor used by derived classes */
-        Source(SharedPtr<Sound> sound, bool looping = false);
+        Source(std::shared_ptr<Sound> sound, bool looping = false);
 
     public:
         virtual ~Source();
@@ -286,34 +287,34 @@ namespace Audio
         Timestamp getWouldbePlayingTime() const;
 
         /** Get renderer-specific data associated (and destroyed) with this sound source */
-        SharedPtr<RenderableSource> getRenderable() const { return rendererDataPtr; }
+        std::shared_ptr<RenderableSource> getRenderable() const { return rendererDataPtr; }
 
         /** Set renderer-specific data to be associated (and destroyed) with this sound source */
-        void setRenderable(SharedPtr<RenderableSource> ptr);
+        void setRenderable(std::shared_ptr<RenderableSource> ptr);
 
         /** Get user-specific data associated (and destroyed) with this sound source */
-        SharedPtr<UserData> getUserDataPtr() const { return userDataPtr; }
+        std::shared_ptr<UserData> getUserDataPtr() const { return userDataPtr; }
 
         /** Set user-specific data to be associated (and destroyed) with this sound source */
-        void setUserDataLong(SharedPtr<UserData> ptr) { userDataPtr = ptr; }
+        void setUserDataLong(std::shared_ptr<UserData> ptr) { userDataPtr = ptr; }
 
         /** Get user-specific data associated with this sound source */
-        long getUserDataLong() const { return userDataLong; }
+        int64_t getUserDataLong() const { return userDataLong; }
 
         /** Get user-specific data associated with this sound source */
-        void setUserDataLong(long data) { userDataLong = data; }
+        void setUserDataLong(int64_t data) { userDataLong = data; }
 
         /** Get an event listener associated with this sound source */
-        SharedPtr<SourceListener> getSourceListener() const { return sourceListenerPtr; }
+        std::shared_ptr<SourceListener> getSourceListener() const { return sourceListenerPtr; }
 
         /** Set an event listener to be associated with this sound source */
-        void setSourceListener(SharedPtr<SourceListener> ptr) { sourceListenerPtr = ptr; }
+        void setSourceListener(std::shared_ptr<SourceListener> ptr) { sourceListenerPtr = ptr; }
 
         /** Get the associated sound stream */
-        SharedPtr<Sound> getSound() const { return soundPtr; }
+        std::shared_ptr<Sound> getSound() const { return soundPtr; }
 
         /** Set the associated sound stream - Only for SceneManagers to call */
-        void setSound(SharedPtr<Sound> ptr)
+        void setSound(std::shared_ptr<Sound> ptr)
         {
             soundPtr = ptr;
             dirty.soundPtr = 1;
@@ -323,7 +324,7 @@ namespace Audio
          * @param flags see RenderableSource::UpdateFlags
          * @param sceneListener the listener to which this source is associated
          */
-        void updateRenderable(int flags, const Listener &sceneListener);
+        void updateRenderable(int64_t flags, const Listener &sceneListener);
 
         /** Seek to the specified position
          * @note It may not be supported by the renderer on all sources.

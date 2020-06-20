@@ -11,24 +11,24 @@
 namespace Audio
 {
 
-    Source::Source(SharedPtr<Sound> sound, bool _looping) : soundPtr(sound),
+    Source::Source(std::shared_ptr<Sound> sound, bool _looping) : soundPtr(sound),
 
-                                                            // Some safe defaults
-                                                            position(0, 0, 0),
-                                                            direction(0, 0, 1),
-                                                            velocity(0, 0, 0),
+                                                                  // Some safe defaults
+                                                                  position(0, 0, 0),
+                                                                  direction(0, 0, 1),
+                                                                  velocity(0, 0, 0),
 
-                                                            cosAngleRange(-1, -1),
+                                                                  cosAngleRange(-1, -1),
 
-                                                            radius(1),
+                                                                  radius(1),
 
-                                                            pfRadiusRatios(1, 1),
-                                                            referenceFreqs(250, 5000),
+                                                                  pfRadiusRatios(1, 1),
+                                                                  referenceFreqs(250, 5000),
 
-                                                            gain(1),
+                                                                  gain(1),
 
-                                                            lastKnownPlayingTime(0),
-                                                            lastKnownPlayingTimeTime(getRealTime())
+                                                                  lastKnownPlayingTime(0),
+                                                                  lastKnownPlayingTimeTime(getRealTime())
     {
         // Some default flags
         setLooping(_looping);
@@ -74,13 +74,17 @@ namespace Audio
 
             // Must notify the listener, if any
             if (sourceListenerPtr.get() != 0 && sourceListenerPtr->wantPlayEvents())
+            {
                 sourceListenerPtr->onPrePlay(*this, false);
+            }
 
             rendererDataPtr->stopPlaying();
 
             // Must notify the listener, if any
             if (sourceListenerPtr.get() != 0 && sourceListenerPtr->wantPlayEvents())
+            {
                 sourceListenerPtr->onPostPlay(*this, false);
+            }
         }
     }
 
@@ -90,13 +94,17 @@ namespace Audio
         {
             // Must notify the listener, if any
             if (sourceListenerPtr.get() != 0 && sourceListenerPtr->wantPlayEvents())
+            {
                 sourceListenerPtr->onPrePlay(*this, true);
+            }
 
             rendererDataPtr->startPlaying(getWouldbePlayingTime());
 
             // Must notify the listener, if any
             if (sourceListenerPtr.get() != 0 && sourceListenerPtr->wantPlayEvents())
+            {
                 sourceListenerPtr->onPrePlay(*this, true);
+            }
         }
     }
 
@@ -105,9 +113,13 @@ namespace Audio
         try
         {
             if (rendererDataPtr.get() && isActive())
+            {
                 return rendererDataPtr->getPlayingTime();
+            }
             else
+            {
                 return lastKnownPlayingTime;
+            }
         }
         catch (const Exception &e)
         {
@@ -120,7 +132,9 @@ namespace Audio
         try
         {
             if (rendererDataPtr.get() && isActive())
+            {
                 return rendererDataPtr->getPlayingTime();
+            }
         }
         catch (const Exception &e)
         {
@@ -165,23 +179,29 @@ namespace Audio
         dirty.attributes = 1;
     }
 
-    void Source::updateRenderable(int flags, const Listener &sceneListener)
+    void Source::updateRenderable(int64_t flags, const Listener &sceneListener)
     {
         if (rendererDataPtr.get())
         {
-            int oflags = flags;
+            int32_t oflags = flags;
 
             if (!dirty.attributes)
+            {
                 flags &= ~RenderableSource::UPDATE_ATTRIBUTES;
+            }
             if (!dirty.gain)
+            {
                 flags &= ~RenderableSource::UPDATE_GAIN;
+            }
 
             // Must always update location... listeners might move around.
             flags |= RenderableSource::UPDATE_LOCATION;
 
             // Must nofity listener, if any
             if (sourceListenerPtr.get() != 0 && sourceListenerPtr->wantUpdateEvents())
+            {
                 sourceListenerPtr->onUpdate(*this, flags);
+            }
 
             rendererDataPtr->update(flags, sceneListener);
 
@@ -192,11 +212,17 @@ namespace Audio
             else
             {
                 if (flags & RenderableSource::UPDATE_LOCATION)
+                {
                     dirty.location = 0;
+                }
                 if (flags & RenderableSource::UPDATE_ATTRIBUTES)
+                {
                     dirty.attributes = 0;
+                }
                 if (flags & RenderableSource::UPDATE_GAIN)
+                {
                     dirty.gain = 0;
+                }
             }
 
             switch (flags)
@@ -213,17 +239,21 @@ namespace Audio
         }
     }
 
-    void Source::setRenderable(SharedPtr<RenderableSource> ptr)
+    void Source::setRenderable(std::shared_ptr<RenderableSource> ptr)
     {
         // Notify at/detachment to listener, if any
         if (sourceListenerPtr.get() != 0 && sourceListenerPtr->wantAttachEvents())
+        {
             sourceListenerPtr->onPreAttach(*this, ptr.get() != 0);
+        }
 
         rendererDataPtr = ptr;
 
         // Notify at/detachment to listener, if any
         if (sourceListenerPtr.get() != 0 && sourceListenerPtr->wantAttachEvents())
+        {
             sourceListenerPtr->onPostAttach(*this, ptr.get() != 0);
+        }
     }
 
     void Source::seek(Timestamp time)

@@ -19,6 +19,8 @@
 #include "OpenALRenderableSource.h"
 #include "OpenALRenderableStreamingSource.h"
 
+#include <memory>
+
 namespace Audio
 {
 
@@ -68,8 +70,8 @@ namespace Audio
                     }
                 };
 
-                typedef std::map<SoundKey, SharedPtr<Sound>> SoundMap;
-                typedef std::map<SharedPtr<Sound>, SoundKey> ReverseSoundMap;
+                typedef std::map<SoundKey, std::shared_ptr<Sound>> SoundMap;
+                typedef std::map<std::shared_ptr<Sound>, SoundKey> ReverseSoundMap;
 
                 SoundMap loadedSounds;
                 ReverseSoundMap loadedSoundsReverse;
@@ -80,33 +82,41 @@ namespace Audio
                     int dopplerFactor : 1;
                 } dirty;
 
-                SharedPtr<Sound> lookupSound(VSFileSystem::VSFileType type, const std::string &name) const
+                std::shared_ptr<Sound> lookupSound(VSFileSystem::VSFileType type, const std::string &name) const
                 {
                     SoundKey key(type, name);
                     SoundMap::const_iterator it = loadedSounds.find(key);
                     if (it != loadedSounds.end())
+                    {
                         return it->second;
+                    }
                     else
-                        return SharedPtr<Sound>();
+                    {
+                        return std::shared_ptr<Sound>();
+                    }
                 }
 
-                SoundKey lookupSound(const SharedPtr<Sound> &sound) const
+                SoundKey lookupSound(const std::shared_ptr<Sound> &sound) const
                 {
                     ReverseSoundMap::const_iterator it = loadedSoundsReverse.find(sound);
                     if (it != loadedSoundsReverse.end())
+                    {
                         return it->second;
+                    }
                     else
+                    {
                         return SoundKey();
+                    }
                 }
 
-                void addSound(VSFileSystem::VSFileType type, const std::string &name, SharedPtr<Sound> sound)
+                void addSound(VSFileSystem::VSFileType type, const std::string &name, std::shared_ptr<Sound> sound)
                 {
                     SoundKey key(type, name);
                     loadedSounds[key] = sound;
                     loadedSoundsReverse[sound] = key;
                 }
 
-                void unloadSound(const SharedPtr<Sound> &sound)
+                void unloadSound(const std::shared_ptr<Sound> &sound)
                 {
                     SoundKey key = lookupSound(sound);
                     if (!key.isNull())
@@ -119,7 +129,9 @@ namespace Audio
                 void unloadSounds()
                 {
                     for (SoundMap::iterator it = loadedSounds.begin(); it != loadedSounds.end(); ++it)
+                    {
                         it->second->unload();
+                    }
                 }
 
                 void openDevice(const char *deviceSpecifier)
@@ -143,15 +155,21 @@ namespace Audio
                     alDevice = alcOpenDevice((ALCstring)(deviceSpecifier));
 
                     if (!alDevice)
+                    {
                         checkAlError();
+                    }
                     else
+                    {
                         clearAlError();
+                    }
                 }
 
                 void closeDevice()
                 {
                     if (alContext)
+                    {
                         throw Exception("Trying to close device without closing the previous one first");
+                    }
                     if (alDevice)
                     {
                         unloadSounds();
@@ -164,9 +182,13 @@ namespace Audio
                 void openContext(const Format &format)
                 {
                     if (alContext)
+                    {
                         throw Exception("Trying to open context without closing the previous one first");
+                    }
                     if (!alDevice)
+                    {
                         throw Exception("Trying to open context without opening a device first");
+                    }
 
                     clearAlError();
 
@@ -176,9 +198,13 @@ namespace Audio
 
                     alContext = alcCreateContext(alDevice, params);
                     if (!alContext)
+                    {
                         checkAlError();
+                    }
                     else
+                    {
                         clearAlError();
+                    }
 
                     alcMakeContextCurrent(alContext);
                     checkAlError();
@@ -236,13 +262,13 @@ namespace Audio
     {
     }
 
-    SharedPtr<Sound> OpenALRenderer::getSound(
+    std::shared_ptr<Sound> OpenALRenderer::getSound(
         const std::string &name,
         VSFileSystem::VSFileType type,
         bool streaming)
     {
         checkContext();
-        SharedPtr<Sound> sound = data->lookupSound(type, name);
+        std::shared_ptr<Sound> sound = data->lookupSound(type, name);
         if (!sound.get() || streaming)
         {
             if (streaming)
@@ -253,50 +279,50 @@ namespace Audio
                 data->addSound(
                     type,
                     name,
-                    sound = SharedPtr<Sound>(new OpenALStreamingSound(name, type)));
+                    sound = std::shared_ptr<Sound>(new OpenALStreamingSound(name, type)));
             }
             else
             {
                 data->addSound(
                     type,
                     name,
-                    sound = SharedPtr<Sound>(new OpenALSimpleSound(name, type)));
+                    sound = std::shared_ptr<Sound>(new OpenALSimpleSound(name, type)));
             }
         }
         return sound;
     }
 
-    bool OpenALRenderer::owns(SharedPtr<Sound> sound)
+    bool OpenALRenderer::owns(std::shared_ptr<Sound> sound)
     {
         return !data->lookupSound(sound).isNull();
     }
 
-    void OpenALRenderer::attach(SharedPtr<Source> source)
+    void OpenALRenderer::attach(std::shared_ptr<Source> source)
     {
         checkContext();
-        source->setRenderable(SharedPtr<RenderableSource>(
+        source->setRenderable(std::shared_ptr<RenderableSource>(
             source->getSound()->isStreaming()
                 ? (RenderableSource *)new OpenALRenderableStreamingSource(source.get())
                 : (RenderableSource *)new OpenALRenderableSource(source.get())));
     }
 
-    void OpenALRenderer::attach(SharedPtr<Listener> listener)
+    void OpenALRenderer::attach(std::shared_ptr<Listener> listener)
     {
         checkContext();
-        listener->setRenderable(SharedPtr<RenderableListener>(
+        listener->setRenderable(std::shared_ptr<RenderableListener>(
             new OpenALRenderableListener(listener.get())));
     }
 
-    void OpenALRenderer::detach(SharedPtr<Source> source)
+    void OpenALRenderer::detach(std::shared_ptr<Source> source)
     {
         // Just clear it... RenderableListener's destructor will handle everything fine.
-        source->setRenderable(SharedPtr<RenderableSource>());
+        source->setRenderable(std::shared_ptr<RenderableSource>());
     }
 
-    void OpenALRenderer::detach(SharedPtr<Listener> listener)
+    void OpenALRenderer::detach(std::shared_ptr<Listener> listener)
     {
         // Just clear it... RenderableListener's destructor will handle everything fine.
-        listener->setRenderable(SharedPtr<RenderableListener>());
+        listener->setRenderable(std::shared_ptr<RenderableListener>());
     }
 
     void OpenALRenderer::setMeterDistance(Scalar distance)
@@ -322,7 +348,9 @@ namespace Audio
     void OpenALRenderer::setOutputFormat(const Format &format)
     {
         if (!data->alDevice)
+        {
             data->openDevice(NULL);
+        }
         data->closeContext();
         data->openContext(format);
         Renderer::setOutputFormat(format);
@@ -331,7 +359,9 @@ namespace Audio
     void OpenALRenderer::checkContext()
     {
         if (!data->alDevice)
+        {
             data->openDevice(NULL);
+        }
         if (!data->alContext)
         {
             data->openContext(getOutputFormat());
@@ -344,7 +374,9 @@ namespace Audio
         data->suspend();
 
         if (data->dirty.dopplerFactor)
+        {
             setupDopplerEffect();
+        }
     }
 
     void OpenALRenderer::commitTransaction()
@@ -385,13 +417,21 @@ namespace Audio
     BorrowedOpenALRenderer::BorrowedOpenALRenderer(ALCdevice *device, ALCcontext *context) : OpenALRenderer()
     {
         if (device)
+        {
             data->alDevice = device;
+        }
         if (context)
+        {
             data->alContext = context;
+        }
         else
+        {
             data->alContext = alcGetCurrentContext();
+        }
         if (!device && data->alContext)
+        {
             data->alDevice = alcGetContextsDevice(data->alContext);
+        }
 
         initContext();
     }

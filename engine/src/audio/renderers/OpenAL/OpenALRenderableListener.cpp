@@ -20,7 +20,7 @@ namespace Audio
     {
     }
 
-    void OpenALRenderableListener::updateImpl(int flags)
+    void OpenALRenderableListener::updateImpl(int32_t flags)
     {
         if (flags & UPDATE_LOCATION)
         {

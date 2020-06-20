@@ -5,6 +5,8 @@
 #include "OpenALSimpleSound.h"
 #include "OpenALHelpers.h"
 
+#include <memory>
+
 #include "al.h"
 
 #include "../../Source.h"
@@ -52,7 +54,9 @@ namespace Audio
             checkAlError();
 
             if (start != 0)
+            {
                 seekImpl(start);
+            }
         }
     }
 
@@ -74,12 +78,14 @@ namespace Audio
         alGetSourcef(getALSource(), AL_SEC_OFFSET, &offs);
 
         if (offs < 0.f)
+        {
             throw NotImplementedException("getPlayingTimeImpl");
+        }
 
         return Timestamp(offs);
     }
 
-    void OpenALRenderableSource::updateImpl(int flags, const Listener &sceneListener)
+    void OpenALRenderableSource::updateImpl(int32_t flags, const Listener &sceneListener)
     {
         Source *source = getSource();
         ALSourceHandle als = getALSource();
@@ -143,10 +149,12 @@ namespace Audio
     {
         if (!alBuffersAttached)
         {
-            SharedPtr<Sound> sound = getSource()->getSound();
+            std::shared_ptr<Sound> sound = getSource()->getSound();
 
             if (!sound->isLoaded())
+            {
                 sound->load();
+            }
 
             assert(!sound->isStreaming() && "OpenALRenderableSource can only handle streaming sounds");
 

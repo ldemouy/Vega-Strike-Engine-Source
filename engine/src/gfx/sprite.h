@@ -27,7 +27,7 @@
 
 #include "audio/Types.h"
 #include "audio/Source.h"
-
+#include <memory>
 namespace VSFileSystem
 {
     class VSFile;
@@ -86,11 +86,11 @@ public:
     void GetPosition(float &x1, float &y1);
     void SetSize(float s1, float s2);
     void GetSize(float &x1, float &y1);
-    void SetTimeSource(SharedPtr<Audio::Source> source);
+    void SetTimeSource(std::shared_ptr<Audio::Source> source);
     void ClearTimeSource();
     bool Done() const;
     void Reset();
-    SharedPtr<Audio::Source> GetTimeSource() const;
+    std::shared_ptr<Audio::Source> GetTimeSource() const;
     //float &Rotation(){return rotation;};
     Texture *getTexture()
     {

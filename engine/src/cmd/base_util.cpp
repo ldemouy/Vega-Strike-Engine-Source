@@ -52,9 +52,13 @@ namespace BaseUtil
     inline BaseInterface::Room *CheckRoom(int room)
     {
         if (!BaseInterface::CurrentBase)
+        {
             return 0;
+        }
         if (room < 0 || room >= static_cast<int>(BaseInterface::CurrentBase->rooms.size()))
+        {
             return 0;
+        }
         return BaseInterface::CurrentBase->rooms[room];
     }
 
@@ -64,7 +68,7 @@ namespace BaseUtil
 
     class VideoAudioStreamListener : public SourceListener
     {
-        int sourceRoom;
+        int32_t sourceRoom;
         std::string index;
 
     public:
@@ -96,7 +100,9 @@ namespace BaseUtil
                     BaseInterface::Room *room = CheckRoom(sourceRoom);
 
                     if (!room)
+                    {
                         return;
+                    }
 
                     for (size_t i = 0; i < room->objs.size(); i++)
                     {
@@ -124,7 +130,9 @@ namespace BaseUtil
     int Room(std::string text)
     {
         if (!BaseInterface::CurrentBase)
+        {
             return -1;
+        }
         BaseInterface::CurrentBase->rooms.push_back(new BaseInterface::Room());
         BaseInterface::CurrentBase->rooms.back()->deftext = text;
         return BaseInterface::CurrentBase->rooms.size() - 1;
@@ -133,7 +141,9 @@ namespace BaseUtil
     {
         BaseInterface::Room *newroom = CheckRoom(room);
         if (!newroom)
+        {
             return;
+        }
         newroom->objs.push_back(new BaseInterface::Room::BaseVSSprite(file.c_str(), index));
 #ifdef BASE_MAKER
         ((BaseInterface::Room::BaseVSSprite *)newroom->objs.back())->texfile = file;
@@ -141,18 +151,20 @@ namespace BaseUtil
         float tx = 0, ty = 0;
         static bool addspritepos = XMLSupport::parse_bool(vs_config->getVariable("graphics", "offset_sprites_by_pos", "true"));
         if (addspritepos)
+        {
             ((BaseInterface::Room::BaseVSSprite *)newroom->objs.back())->spr.GetPosition(tx, ty);
+        }
         dynamic_cast<BaseInterface::Room::BaseVSSprite *>(newroom->objs.back())->spr.SetPosition(x + tx, y + ty);
     }
 
-    SharedPtr<Source> CreateVideoSoundStream(const std::string &afile, const std::string &scene)
+    std::shared_ptr<Source> CreateVideoSoundStream(const std::string &afile, const std::string &scene)
     {
-        SharedPtr<Sound> sound = SceneManager::getSingleton()->getRenderer()->getSound(
+        std::shared_ptr<Sound> sound = SceneManager::getSingleton()->getRenderer()->getSound(
             afile,
             VSFileSystem::VideoFile,
             true);
 
-        SharedPtr<Source> source = SceneManager::getSingleton()->createSource(
+        std::shared_ptr<Source> source = SceneManager::getSingleton()->createSource(
             sound,
             false);
 
@@ -169,10 +181,12 @@ namespace BaseUtil
         return source;
     }
 
-    void DestroyVideoSoundStream(SharedPtr<Source> source, const std::string &scene)
+    void DestroyVideoSoundStream(std::shared_ptr<Source> source, const std::string &scene)
     {
         if (source->isPlaying())
+        {
             source->stopPlaying();
+        }
         SceneManager::getSingleton()->getScene(scene)->remove(source);
     }
 
@@ -180,7 +194,9 @@ namespace BaseUtil
     {
         BaseInterface::Room *newroom = CheckRoom(room);
         if (!newroom)
+        {
             return false;
+        }
         BaseUtil::Texture(room, index, vfile, x, y);
 
         BaseInterface::Room::BaseVSSprite *baseSprite = dynamic_cast<BaseInterface::Room::BaseVSSprite *>(newroom->objs.back());
@@ -247,7 +263,9 @@ namespace BaseUtil
     {
         BaseInterface::Room *newroom = CheckRoom(room);
         if (!newroom)
+        {
             return;
+        }
         for (size_t i = 0; i < newroom->objs.size(); i++)
         {
             if (newroom->objs[i])
@@ -261,7 +279,7 @@ namespace BaseUtil
 
                     if (movie->soundsource.get() != NULL)
                     {
-                        SharedPtr<SourceListener> transitionListener(
+                        std::shared_ptr<SourceListener> transitionListener(
                             new VideoAudioStreamListener(room, index));
 
                         movie->soundsource->setSourceListener(transitionListener);
@@ -274,92 +292,123 @@ namespace BaseUtil
     {
         BaseInterface::Room *newroom = CheckRoom(room);
         if (!newroom)
+        {
             return;
+        }
         for (size_t i = 0; i < newroom->objs.size(); i++)
+        {
             if (newroom->objs[i])
             {
                 if (newroom->objs[i]->index == index)
-                    //FIXME: Will crash if not a Sprite object.
+                { //FIXME: Will crash if not a Sprite object.
                     dynamic_cast<BaseInterface::Room::BaseVSSprite *>(newroom->objs[i])->SetSprite(file);
+                }
             }
+        }
     }
     void SetTextureSize(int room, std::string index, float w, float h)
     {
         BaseInterface::Room *newroom = CheckRoom(room);
         if (!newroom)
+        {
             return;
+        }
         for (size_t i = 0; i < newroom->objs.size(); i++)
+        {
             if (newroom->objs[i])
             {
                 if (newroom->objs[i]->index == index)
-                    //FIXME: Will crash if not a Sprite object.
+                { //FIXME: Will crash if not a Sprite object.
                     dynamic_cast<BaseInterface::Room::BaseVSSprite *>(newroom->objs[i])->SetSize(w, h);
+                }
             }
+        }
     }
     void SetTexturePos(int room, std::string index, float x, float y)
     {
         BaseInterface::Room *newroom = CheckRoom(room);
         if (!newroom)
+        {
             return;
+        }
         for (size_t i = 0; i < newroom->objs.size(); i++)
+        {
             if (newroom->objs[i])
             {
                 if (newroom->objs[i]->index == index)
-                    //FIXME: Will crash if not a Sprite object.
+                { //FIXME: Will crash if not a Sprite object.
                     dynamic_cast<BaseInterface::Room::BaseVSSprite *>(newroom->objs[i])->SetPos(x, y);
+                }
             }
+        }
     }
     void PlayVideo(int room, std::string index)
     {
         BaseInterface::Room *newroom = CheckRoom(room);
         if (!newroom)
+        {
             return;
+        }
         for (size_t i = 0; i < newroom->objs.size(); i++)
+        {
             if (newroom->objs[i])
             {
                 if (newroom->objs[i]->index == index)
                 {
                     //FIXME: Will crash if not a Sprite object.
-                    SharedPtr<Source> source = dynamic_cast<BaseInterface::Room::BaseVSSprite *>(newroom->objs[i])->soundsource;
+                    std::shared_ptr<Source> source = dynamic_cast<BaseInterface::Room::BaseVSSprite *>(newroom->objs[i])->soundsource;
                     if (source.get() != NULL)
                     {
                         if (!source->isPlaying())
+                        {
                             source->startPlaying();
+                        }
                     }
                 }
             }
+        }
     }
     void StopVideo(int room, std::string index)
     {
         BaseInterface::Room *newroom = CheckRoom(room);
         if (!newroom)
+        {
             return;
+        }
         for (size_t i = 0; i < newroom->objs.size(); i++)
+        {
             if (newroom->objs[i])
             {
                 if (newroom->objs[i]->index == index)
                 {
                     //FIXME: Will crash if not a Sprite object.
-                    SharedPtr<Source> source = dynamic_cast<BaseInterface::Room::BaseVSSprite *>(newroom->objs[i])->soundsource;
+                    std::shared_ptr<Source> source = dynamic_cast<BaseInterface::Room::BaseVSSprite *>(newroom->objs[i])->soundsource;
                     if (source.get() != NULL)
                     {
                         if (source->isPlaying())
+                        {
                             source->stopPlaying();
+                        }
                     }
                 }
             }
+        }
     }
     void SetDJEnabled(bool enabled)
     {
         BaseInterface::CurrentBase->setDJEnabled(enabled);
         if (!enabled)
+        {
             Music::Stop();
+        }
     }
     void Ship(int room, std::string index, QVector pos, Vector Q, Vector R)
     {
         BaseInterface::Room *newroom = CheckRoom(room);
         if (!newroom)
+        {
             return;
+        }
         Vector P = R.Cross(Q);
         P.Normalize();
         newroom->objs.push_back(new BaseInterface::Room::BaseShip(P.i, P.j, P.k, Q.i, Q.j, Q.k, R.i, R.j, R.k, pos, index));
@@ -368,7 +417,9 @@ namespace BaseUtil
     {
         BaseInterface::Room *newroom = CheckRoom(room);
         if (!newroom)
+        {
             return;
+        }
         newroom->objs.push_back(new BaseInterface::Room::BasePython(ind, pythonfile, time));
     }
     void TextBox(int room,
@@ -383,7 +434,9 @@ namespace BaseUtil
     {
         BaseInterface::Room *newroom = CheckRoom(room);
         if (!newroom)
+        {
             return;
+        }
         newroom->objs.push_back(new BaseInterface::Room::BaseText(text, x, y, widheimult.i, widheimult.j, widheimult.k,
                                                                   GFXColor(backcol, backalp), GFXColor(forecol), ind));
     }
@@ -391,21 +444,29 @@ namespace BaseUtil
     {
         BaseInterface::Room *newroom = CheckRoom(room);
         if (!newroom)
+        {
             return;
+        }
         for (size_t i = 0; i < newroom->objs.size(); i++)
+        {
             if (newroom->objs[i])
             {
                 if (newroom->objs[i]->index == index)
-                    //FIXME: Will crash if not a Text object.
+                { //FIXME: Will crash if not a Text object.
                     dynamic_cast<BaseInterface::Room::BaseText *>(newroom->objs[i])->SetText(text);
+                }
             }
+        }
     }
     void SetLinkArea(int room, std::string index, float x, float y, float wid, float hei)
     {
         BaseInterface::Room *newroom = CheckRoom(room);
         if (!newroom)
+        {
             return;
+        }
         for (size_t i = 0; i < newroom->links.size(); i++)
+        {
             if (newroom->links[i])
             {
                 if (newroom->links[i]->index == index)
@@ -416,39 +477,61 @@ namespace BaseUtil
                     newroom->links[i]->hei = hei;
                 }
             }
+        }
     }
     void SetLinkText(int room, std::string index, std::string text)
     {
         BaseInterface::Room *newroom = CheckRoom(room);
         if (!newroom)
+        {
             return;
+        }
         for (size_t i = 0; i < newroom->links.size(); i++)
+        {
             if (newroom->links[i])
+            {
                 if (newroom->links[i]->index == index)
+                {
                     newroom->links[i]->text = text;
+                }
+            }
+        }
     }
     void SetLinkPython(int room, std::string index, std::string python)
     {
         BaseInterface::Room *newroom = CheckRoom(room);
         if (!newroom)
+        {
             return;
+        }
         for (size_t i = 0; i < newroom->links.size(); i++)
+        {
             if (newroom->links[i])
+            {
                 if (newroom->links[i]->index == index)
+                {
                     newroom->links[i]->Relink(python);
+                }
+            }
+        }
     }
     void SetLinkRoom(int room, std::string index, int to)
     {
         BaseInterface::Room *newroom = CheckRoom(room);
         if (!newroom)
+        {
             return;
+        }
         for (size_t i = 0; i < newroom->links.size(); i++)
+        {
             if (newroom->links[i])
             {
                 if (newroom->links[i]->index == index)
-                    //FIXME: Will crash if not a Goto object.
+                { //FIXME: Will crash if not a Goto object.
                     dynamic_cast<BaseInterface::Room::Goto *>(newroom->links[i])->index = to;
+                }
             }
+        }
     }
     void SetLinkEventMask(int room, std::string index, std::string maskdef)
     {
@@ -487,22 +570,33 @@ namespace BaseUtil
         }
         BaseInterface::Room *newroom = CheckRoom(room);
         if (!newroom)
+        {
             return;
+        }
         for (i = 0; i < newroom->links.size(); i++)
+        {
             if (newroom->links[i])
             {
-                if (newroom->links[i]->index == index)
-                    //FIXME: Will crash if not a Goto object.
-                    newroom->links[i]->setEventMask(mask);
+                {
+                    if (newroom->links[i]->index == index)
+                    { //FIXME: Will crash if not a Goto object.
+                        newroom->links[i]->setEventMask(mask);
+                    }
+                }
             }
+        }
     }
     static void BaseLink(BaseInterface::Room *room, float x, float y, float wid, float hei, std::string text, bool reverse = false)
     {
         BaseInterface::Room::Link *lnk;
         if (reverse)
+        {
             lnk = room->links.front();
+        }
         else
+        {
             lnk = room->links.back();
+        }
         lnk->x = x;
         lnk->y = y;
         lnk->wid = wid;
@@ -525,7 +619,9 @@ namespace BaseUtil
     {
         BaseInterface::Room *newroom = CheckRoom(room);
         if (!newroom)
+        {
             return;
+        }
         newroom->links.push_back(new BaseInterface::Room::Goto(index, pythonfile));
         BaseLink(newroom, x, y, wid, hei, text);
         ((BaseInterface::Room::Goto *)newroom->links.back())->index = to;
@@ -545,7 +641,9 @@ namespace BaseUtil
     {
         BaseInterface::Room *newroom = CheckRoom(room);
         if (!newroom)
+        {
             return;
+        }
         newroom->links.push_back(new BaseInterface::Room::Launch(index, pythonfile));
         BaseLink(newroom, x, y, wid, hei, text);
     }
@@ -553,7 +651,9 @@ namespace BaseUtil
     {
         BaseInterface::Room *newroom = CheckRoom(room);
         if (!newroom)
+        {
             return;
+        }
         newroom->links.push_back(new BaseInterface::Room::Eject(index, pythonfile));
         BaseLink(newroom, x, y, wid, hei, text);
     }
@@ -573,7 +673,9 @@ namespace BaseUtil
     {
         BaseInterface::Room *newroom = CheckRoom(room);
         if (!newroom)
+        {
             return;
+        }
         BaseInterface::Room::Comp *newcomp = new BaseInterface::Room::Comp(index, pythonfile);
         newroom->links.push_back(newcomp);
         BaseLink(newroom, x, y, wid, hei, text);
@@ -596,9 +698,13 @@ namespace BaseUtil
         {
             int j;
             for (j = 0; newmode[i] != ' ' && newmode[i] != '\0'; i++, j++)
+            {
                 curmode[j] = newmode[i];
+            }
             while (newmode[i] == ' ')
+            {
                 i++;
+            }
             if (j == 0)
                 continue;
             //in otherwords, if j is 0 then the 0th index will become null
@@ -606,9 +712,13 @@ namespace BaseUtil
             curmode[j] = '\0';
             int modearg = modemap.lookup(curmode);
             if (modearg < BaseComputer::DISPLAY_MODE_COUNT)
+            {
                 newcomp->modes.push_back((BaseComputer::DisplayMode)(modearg));
+            }
             else
+            {
                 VSFileSystem::vs_fprintf(stderr, "WARNING: Unknown computer mode %s found in python script...\n", curmode);
+            }
         }
         delete[] curmode;
     }
@@ -625,51 +735,70 @@ namespace BaseUtil
         //instead of "Talk"/"Say" tags
         BaseInterface::Room *newroom = CheckRoom(room);
         if (!newroom)
+        {
             return;
+        }
         BaseInterface::Room::Python *tmp = new BaseInterface::Room::Python(index, pythonfile);
         if (front)
+        {
             newroom->links.insert(newroom->links.begin(), tmp);
+        }
         else
+        {
             newroom->links.push_back(tmp);
+        }
         BaseLink(newroom, x, y, wid, hei, text, front);
     }
 
     void GlobalKeyPython(std::string pythonfile)
     {
         if (BaseInterface::CurrentBase)
+        {
             BaseInterface::CurrentBase->python_kbhandler = pythonfile;
+        }
     }
 
     void MessageToRoom(int room, std::string text)
     {
         if (!BaseInterface::CurrentBase)
+        {
             return;
+        }
         BaseInterface::CurrentBase->rooms[room]->objs.push_back(new BaseInterface::Room::BaseTalk(text, "currentmsg", true));
     }
     void EnqueueMessageToRoom(int room, std::string text)
     {
         if (!BaseInterface::CurrentBase)
+        {
             return;
+        }
         BaseInterface::CurrentBase->rooms[room]->objs.push_back(new BaseInterface::Room::BaseTalk(text, "currentmsg", false));
     }
     void Message(std::string text)
     {
         if (!BaseInterface::CurrentBase)
+        {
             return;
+        }
         MessageToRoom(BaseInterface::CurrentBase->curroom, text);
     }
     void EnqueueMessage(std::string text)
     {
         if (!BaseInterface::CurrentBase)
+        {
             return;
+        }
         EnqueueMessageToRoom(BaseInterface::CurrentBase->curroom, text);
     }
     void EraseLink(int room, std::string index)
     {
         BaseInterface::Room *newroom = CheckRoom(room);
         if (!newroom)
+        {
             return;
+        }
         for (int i = 0; i < (int)newroom->links.size(); i++)
+        {
             if (newroom->links[i])
             {
                 if (newroom->links[i]->index == index)
@@ -679,13 +808,17 @@ namespace BaseUtil
                     //break;
                 }
             }
+        }
     }
     void EraseObj(int room, std::string index)
     {
         BaseInterface::Room *newroom = CheckRoom(room);
         if (!newroom)
+        {
             return;
+        }
         for (int i = 0; i < (int)newroom->objs.size(); i++)
+        {
             if (newroom->objs[i])
             {
                 if (newroom->objs[i]->index == index)
@@ -695,26 +828,35 @@ namespace BaseUtil
                     //break;
                 }
             }
+        }
     }
     int GetCurRoom()
     {
         if (!BaseInterface::CurrentBase)
+        {
             return -1;
+        }
         return BaseInterface::CurrentBase->curroom;
     }
     void SetCurRoom(int room)
     {
         BaseInterface::Room *newroom = CheckRoom(room);
         if (!newroom)
+        {
             return;
+        }
         if (!BaseInterface::CurrentBase)
+        {
             return;
+        }
         BaseInterface::CurrentBase->GotoLink(room);
     }
     int GetNumRoom()
     {
         if (!BaseInterface::CurrentBase)
+        {
             return -1;
+        }
         return BaseInterface::CurrentBase->rooms.size();
     }
     bool BuyShip(std::string name, bool my_fleet, bool force_base_inventory)
@@ -761,7 +903,9 @@ namespace BaseUtil
         BoostPythonDictionary &data = _GetEventData();
         //Keyboard modifiers (for kb+mouse)
         if (modmask == UINT_MAX)
+        {
             modmask = pullActiveModifiers();
+        }
         data["modifiers"] = modmask;
         data["alt"] = ((modmask & KB_MOD_ALT) != 0);
         data["shift"] = ((modmask & KB_MOD_SHIFT) != 0);
@@ -778,10 +922,14 @@ namespace BaseUtil
         //Keycode
         data["key"] = keycode;
         if ((keycode > 0x20) && (keycode < 0xff))
+        {
             data["char"] = string(1, keycode);
+        }
 
         else
+        {
             data["char"] = string();
+        }
         SetKeyStatusEventData(modmask);
     }
 
@@ -812,7 +960,9 @@ namespace BaseUtil
     void LoadBaseInterfaceAtDock(string name, Unit *dockat, Unit *dockee)
     {
         if (BaseInterface::CurrentBase)
+        {
             BaseInterface::CurrentBase->Terminate();
+        }
         BaseInterface *base = new BaseInterface(name.c_str(), dockat, dockee);
         base->InitCallbacks();
     }
@@ -820,10 +970,13 @@ namespace BaseUtil
     void refreshBaseComputerUI(const Cargo *carg)
     {
         if (carg)
-            //BaseComputer::draw() used dirty to determine what to recalculate.
+        {                            //BaseComputer::draw() used dirty to determine what to recalculate.
             BaseComputer::dirty = 1; //everything.
+        }
         else
+        {
             BaseComputer::dirty = 2; //only title.
+        }
     }
 
     void ExitGame()

@@ -33,8 +33,8 @@ namespace Audio
         {
             struct SourceRef
             {
-                SharedPtr<Source> source;
-                SharedPtr<Scene> scene;
+                std::shared_ptr<Source> source;
+                std::shared_ptr<Scene> scene;
 
                 /** 
                  * If true, an update phase will start playing the source.
@@ -43,9 +43,9 @@ namespace Audio
                  */
                 mutable int needsActivation : 1;
 
-                SourceRef(const SharedPtr<Source> &src, const SharedPtr<Scene> &scn) : source(src),
-                                                                                       scene(scn),
-                                                                                       needsActivation(0)
+                SourceRef(const std::shared_ptr<Source> &src, const std::shared_ptr<Scene> &scn) : source(src),
+                                                                                                   scene(scn),
+                                                                                                   needsActivation(0)
                 {
                 }
 
@@ -63,7 +63,7 @@ namespace Audio
             };
 
             // The many required indexes
-            typedef std::map<std::string, SharedPtr<Scene>> SceneMap;
+            typedef std::map<std::string, std::shared_ptr<Scene>> SceneMap;
             typedef std::set<SourceRef> SourceRefSet;
 
             SceneMap activeScenes;
@@ -72,10 +72,10 @@ namespace Audio
             // Being rendered, they need frequent updates
             SourceRefSet activeSources;
 
-            SharedPtr<Renderer> renderer;
-            SharedPtr<Listener> rootListener;
+            std::shared_ptr<Renderer> renderer;
+            std::shared_ptr<Listener> rootListener;
 
-            unsigned int maxSources;
+            uint32_t maxSources;
             float minGain;
             double maxDistance;
 
@@ -122,29 +122,33 @@ namespace Audio
     {
     }
 
-    const SharedPtr<Renderer> &SceneManager::internalRenderer() const
+    const std::shared_ptr<Renderer> &SceneManager::internalRenderer() const
     {
         if (!data->renderer.get())
+        {
             throw Exception("No renderer");
+        }
         return data->renderer;
     }
 
-    SharedPtr<Source> SceneManager::createSource(SharedPtr<Sound> sound, bool looping)
+    std::shared_ptr<Source> SceneManager::createSource(std::shared_ptr<Sound> sound, bool looping)
     {
         if (!internalRenderer()->owns(sound))
+        {
             throw Exception("Invalid sound: incompatible renderers used");
+        }
 
-        return SharedPtr<Source>(new SimpleSource(sound, looping));
+        return std::shared_ptr<Source>(new SimpleSource(sound, looping));
     }
 
-    SharedPtr<Source> SceneManager::createSource(SharedPtr<SourceTemplate> tpl)
+    std::shared_ptr<Source> SceneManager::createSource(std::shared_ptr<SourceTemplate> tpl)
     {
         return createSource(tpl, tpl->getSoundName());
     }
 
-    SharedPtr<Source> SceneManager::createSource(SharedPtr<SourceTemplate> tpl, const std::string &name)
+    std::shared_ptr<Source> SceneManager::createSource(std::shared_ptr<SourceTemplate> tpl, const std::string &name)
     {
-        SharedPtr<Source> source = createSource(
+        std::shared_ptr<Source> source = createSource(
             internalRenderer()->getSound(
                 name,
                 tpl->getSoundType(),
@@ -161,7 +165,7 @@ namespace Audio
         return source;
     }
 
-    void SceneManager::destroySource(SharedPtr<Source> source)
+    void SceneManager::destroySource(std::shared_ptr<Source> source)
     {
         // By simply unreferencing, it should get destroyed when all references are released.
         // Which is good for multithreading - never destroy something that is being referenced.
@@ -179,32 +183,38 @@ namespace Audio
             it->second->remove(source);
     }
 
-    void SceneManager::addScene(SharedPtr<Scene> scene)
+    void SceneManager::addScene(std::shared_ptr<Scene> scene)
     {
         if (data->activeScenes.count(scene->getName()) || data->inactiveScenes.count(scene->getName()))
+        {
             throw(DuplicateObjectException(scene->getName()));
+        }
 
         data->inactiveScenes[scene->getName()] = scene;
     }
 
-    SharedPtr<Scene> SceneManager::createScene(const std::string &name)
+    std::shared_ptr<Scene> SceneManager::createScene(const std::string &name)
     {
-        SharedPtr<Scene> scenePtr(new SimpleScene(name));
+        std::shared_ptr<Scene> scenePtr(new SimpleScene(name));
         addScene(scenePtr);
         return scenePtr;
     }
 
-    SharedPtr<Scene> SceneManager::getScene(const std::string &name) const
+    std::shared_ptr<Scene> SceneManager::getScene(const std::string &name) const
     {
         SceneManagerData::SceneMap::const_iterator it;
 
         it = data->activeScenes.find(name);
         if (it != data->activeScenes.end())
+        {
             return it->second;
+        }
 
         it = data->inactiveScenes.find(name);
         if (it != data->inactiveScenes.end())
+        {
             return it->second;
+        }
 
         throw(NotFoundException(name));
     }
@@ -223,7 +233,7 @@ namespace Audio
     {
         // Simply move the pointer from one map to the other.
         // The next update will take care of activating sources as necessary.
-        SharedPtr<Scene> scene = getScene(name);
+        std::shared_ptr<Scene> scene = getScene(name);
         if (active)
         {
             data->inactiveScenes.erase(name);
@@ -241,13 +251,15 @@ namespace Audio
         return data->activeScenes.count(name) > 0;
     }
 
-    void SceneManager::setRenderer(SharedPtr<Renderer> renderer)
+    void SceneManager::setRenderer(std::shared_ptr<Renderer> renderer)
     {
         if (data->renderer.get())
         {
             // Detach all active sources
             for (SceneManagerData::SourceRefSet::const_iterator it = data->activeSources.begin(); it != data->activeSources.end(); ++it)
+            {
                 data->renderer->detach(it->source);
+            }
 
             // Detach the root listener
             data->renderer->detach(data->rootListener);
@@ -263,27 +275,29 @@ namespace Audio
 
             // Attach all active sources
             for (SceneManagerData::SourceRefSet::const_iterator it = data->activeSources.begin(); it != data->activeSources.end(); ++it)
+            {
                 data->renderer->attach(it->source);
+            }
         }
     }
 
-    SharedPtr<Renderer> SceneManager::getRenderer() const
+    std::shared_ptr<Renderer> SceneManager::getRenderer() const
     {
         return data->renderer;
     }
 
-    unsigned int SceneManager::getMaxSources() const
+    uint32_t SceneManager::getMaxSources() const
     {
         return data->maxSources;
     }
 
-    void SceneManager::setMaxSources(unsigned int n)
+    void SceneManager::setMaxSources(uint32_t n)
     {
         data->maxSources = n;
     }
 
     void SceneManager::playSource(
-        SharedPtr<SourceTemplate> tpl,
+        std::shared_ptr<SourceTemplate> tpl,
         const std::string &sceneName,
         LVector3 position,
         Vector3 direction,
@@ -293,7 +307,7 @@ namespace Audio
         if (tpl->isLooping())
             throw(Exception("Cannot fire a looping source and forget!"));
 
-        SharedPtr<Source> src = createSource(tpl);
+        std::shared_ptr<Source> src = createSource(tpl);
 
         src->setPosition(position);
         src->setDirection(direction);
@@ -306,7 +320,7 @@ namespace Audio
     }
 
     void SceneManager::playSource(
-        SharedPtr<SourceTemplate> tpl,
+        std::shared_ptr<SourceTemplate> tpl,
         const std::string &soundName,
         const std::string &sceneName,
         LVector3 position,
@@ -317,7 +331,7 @@ namespace Audio
         if (tpl->isLooping())
             throw(Exception("Cannot fire a looping source and forget!"));
 
-        SharedPtr<Source> src = createSource(tpl, soundName);
+        std::shared_ptr<Source> src = createSource(tpl, soundName);
 
         src->setPosition(position);
         src->setDirection(direction);
@@ -351,9 +365,9 @@ namespace Audio
         data->maxDistance = distance;
     }
 
-    SharedPtr<SceneManager::SceneIterator> SceneManager::getSceneIterator() const
+    std::shared_ptr<SceneManager::SceneIterator> SceneManager::getSceneIterator() const
     {
-        return SharedPtr<SceneIterator>(
+        return std::shared_ptr<SceneIterator>(
             new ChainingIterator<VirtualValuesIterator<SceneManagerData::SceneMap::iterator>>(
                 VirtualValuesIterator<SceneManagerData::SceneMap::iterator>(
                     data->activeScenes.begin(),
@@ -363,9 +377,9 @@ namespace Audio
                     data->inactiveScenes.end())));
     }
 
-    SharedPtr<SceneManager::SceneIterator> SceneManager::getActiveSceneIterator() const
+    std::shared_ptr<SceneManager::SceneIterator> SceneManager::getActiveSceneIterator() const
     {
-        return SharedPtr<SceneIterator>(
+        return std::shared_ptr<SceneIterator>(
             new VirtualValuesIterator<SceneManagerData::SceneMap::iterator>(
                 data->activeScenes.begin(),
                 data->activeScenes.end()));
@@ -399,7 +413,9 @@ namespace Audio
 
             data->lastListenerUpdateTime = realTime;
             if (needListenerAttUpdate)
+            {
                 data->lastListenerAttUpdateTime = realTime;
+            }
         }
 
         if (needPosUpdates || needAttUpdates)
@@ -408,7 +424,9 @@ namespace Audio
 
             data->lastPositionUpdateTime = realTime;
             if (needAttUpdates)
+            {
                 data->lastAttributeUpdateTime = realTime;
+            }
         }
 
         internalRenderer()->commitTransaction();
@@ -444,7 +462,7 @@ namespace Audio
         // "SourceIterator"s as entries. These are SimpleScene-specific, so any subclass of
         // SceneManager will probably want to override the activation phase.
 
-        const SharedPtr<Renderer> &renderer = internalRenderer();
+        const std::shared_ptr<Renderer> &renderer = internalRenderer();
 
         LScalar maxDistanceSq = data->maxDistance * data->maxDistance;
 
@@ -504,14 +522,16 @@ namespace Audio
             newSources.insert(
                 SceneManagerData::SourceRef(
                     *(it->iter),
-                    dynamic_cast<SimpleScene *>(it->scene)->shared_from_this()));
+                    std::shared_ptr<Audio::Scene>(dynamic_cast<SimpleScene *>(it->scene))));
         }
 
         // Detach deactivated sources
         for (SceneManagerData::SourceRefSet::iterator sit = data->activeSources.begin(); sit != data->activeSources.end(); ++sit)
         {
             if (newSources.find(*sit) == newSources.end())
+            {
                 renderer->detach(sit->source);
+            }
         }
 
         // Attach newly activated sources, detach and remove finished ones
@@ -541,7 +561,7 @@ namespace Audio
                         erase = true;
 
                         // Check if it has a listener, notify in that case
-                        SharedPtr<SourceListener> listener = nit->source->getSourceListener();
+                        std::shared_ptr<SourceListener> listener = nit->source->getSourceListener();
                         if (listener.get() != NULL && listener->wantPlayEvents())
                         {
                             listener->onEndOfStream(*nit->source);
@@ -636,12 +656,12 @@ namespace Audio
         data->activationFrequency = interval;
     }
 
-    SharedPtr<Listener> SceneManager::getRootListener() const
+    std::shared_ptr<Listener> SceneManager::getRootListener() const
     {
         return data->rootListener;
     }
 
-    void SceneManager::notifySourcePlaying(SharedPtr<Source> source, SharedPtr<Scene> scene, bool playing)
+    void SceneManager::notifySourcePlaying(std::shared_ptr<Source> source, std::shared_ptr<Scene> scene, bool playing)
     {
         // If the source is within maxDistance from its scene's listener,
         // schedule an immediate activation phase

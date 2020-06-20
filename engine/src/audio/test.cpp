@@ -37,7 +37,9 @@ namespace Audio
             new TemplateManager();
 
             if (SceneManager::getSingleton() == 0)
+            {
                 throw Exception("Singleton null after SceneManager instantiation");
+            }
 
             cerr << "OK" << endl;
         }
@@ -47,7 +49,7 @@ namespace Audio
             cerr << "  Clearing Scene" << endl;
 
             SceneManager *sm = SceneManager::getSingleton();
-            for (SharedPtr<SceneManager::SceneIterator> it = sm->getSceneIterator(); !it->eos();)
+            for (auto it = sm->getSceneIterator(); !it->eos();)
             {
                 string sceneName = it->get()->getName();
                 cerr << "    destroying \"" << sceneName.c_str() << "\"" << flush;
@@ -58,7 +60,9 @@ namespace Audio
             }
 
             if (!sm->getSceneIterator()->eos())
+            {
                 throw Exception("WTF: SceneManager has scenes after clearing them all?");
+            }
         }
 
         void smTick()
@@ -107,7 +111,7 @@ namespace Audio
             SceneManager *sm = SceneManager::getSingleton();
 
             // Create (and verify that) a test scene
-            SharedPtr<Scene> scene = sm->createScene("testScene");
+            std::shared_ptr<Scene> scene = sm->createScene("testScene");
             sm->getScene("testScene");
             sm->setSceneActive("testScene", true);
 
@@ -118,8 +122,8 @@ namespace Audio
             //   4. Finish (16s)
             cerr << "  Creating resources" << endl;
             cerr << "    creating sounds..." << flush;
-            SharedPtr<Sound> absound = sm->getRenderer()->getSound("afterburner.wav", VSFileSystem::SoundFile);
-            SharedPtr<Sound> beamsound = sm->getRenderer()->getSound("beam.wav", VSFileSystem::SoundFile);
+            std::shared_ptr<Sound> absound = sm->getRenderer()->getSound("afterburner.wav", VSFileSystem::SoundFile);
+            std::shared_ptr<Sound> beamsound = sm->getRenderer()->getSound("beam.wav", VSFileSystem::SoundFile);
             cerr << " ok" << endl;
             cerr << "    loading sounds..." << flush;
             absound->load();
@@ -132,9 +136,9 @@ namespace Audio
             cerr << " ok" << endl;
 
             cerr << "    creating sources..." << flush;
-            SharedPtr<Source> absource = sm->createSource(absound, true);
-            SharedPtr<Source> beamsource1 = sm->createSource(beamsound);
-            SharedPtr<Source> beamsource2 = sm->createSource(beamsound);
+            std::shared_ptr<Source> absource = sm->createSource(absound, true);
+            std::shared_ptr<Source> beamsource1 = sm->createSource(beamsound);
+            std::shared_ptr<Source> beamsource2 = sm->createSource(beamsound);
             absource->setPosition(Vector3(0, 0, -1));
             beamsource1->setPosition(Vector3(-1, 0, 0));
             beamsource2->setPosition(Vector3(+1, 0, 0));
@@ -149,19 +153,27 @@ namespace Audio
 
             absource->startPlaying();
             for (i = 0; i < 40; ++i) // 4s = 40 ticks
+            {
                 smTick();
+            }
 
             beamsource1->startPlaying();
             for (i = 0; i < 40; ++i) // 4s = 40 ticks
+            {
                 smTick();
+            }
 
             beamsource2->startPlaying();
             for (i = 0; i < 80; ++i) // 8s = 80 ticks
+            {
                 smTick();
+            }
 
             absource->stopPlaying();
             for (i = 0; i < 10; ++i) // 1s = 10 ticks
+            {
                 smTick();
+            }
 
             cerr << " ok" << endl;
         }
@@ -175,7 +187,7 @@ namespace Audio
             SceneManager *sm = SceneManager::getSingleton();
 
             // Create (and verify that) a test scene
-            SharedPtr<Scene> scene = sm->createScene("testScene");
+            std::shared_ptr<Scene> scene = sm->createScene("testScene");
             sm->getScene("testScene");
             sm->setSceneActive("testScene", true);
 
@@ -186,8 +198,8 @@ namespace Audio
             //   4. Finish (16s)
             cerr << "  Creating resources" << endl;
             cerr << "    looking up templates..." << flush;
-            SharedPtr<SourceTemplate> abtpl = TemplateManager::getSingleton()->getSourceTemplate(abtplName);
-            SharedPtr<SourceTemplate> beamtpl = TemplateManager::getSingleton()->getSourceTemplate(beamtplName);
+            std::shared_ptr<SourceTemplate> abtpl = TemplateManager::getSingleton()->getSourceTemplate(abtplName);
+            std::shared_ptr<SourceTemplate> beamtpl = TemplateManager::getSingleton()->getSourceTemplate(beamtplName);
             cerr << " ok" << endl;
 
             cerr << "    setting up listener..." << flush;
@@ -196,7 +208,7 @@ namespace Audio
             cerr << " ok" << endl;
 
             cerr << "    creating looping sources..." << flush;
-            SharedPtr<Source> absource = sm->createSource(abtpl);
+            std::shared_ptr<Source> absource = sm->createSource(abtpl);
             absource->setPosition(Vector3(0, 0, -1));
             scene->add(absource);
             cerr << " ok" << endl;
@@ -205,25 +217,33 @@ namespace Audio
 
             absource->startPlaying();
             for (i = 0; i < 40; ++i) // 4s = 40 ticks
+            {
                 smTick();
+            }
 
             sm->playSource(beamtpl, "testScene",
                            LVector3(-1, 0, 0),
                            Vector3(0, 0, 1), Vector3(0, 0, 0),
                            1);
             for (i = 0; i < 40; ++i) // 4s = 40 ticks
+            {
                 smTick();
+            }
 
             sm->playSource(beamtpl, "testScene",
                            LVector3(+1, 0, 0),
                            Vector3(0, 0, 1), Vector3(0, 0, 0),
                            1);
             for (i = 0; i < 80; ++i) // 8s = 80 ticks
+            {
                 smTick();
+            }
 
             absource->stopPlaying();
             for (i = 0; i < 10; ++i) // 1s = 10 ticks
+            {
                 smTick();
+            }
 
             cerr << " ok" << endl;
         }
@@ -232,9 +252,9 @@ namespace Audio
         {
             cerr << " Simple scene (dynamic templates)" << endl;
 
-            SharedPtr<SourceTemplate> abtpl(
+            std::shared_ptr<SourceTemplate> abtpl(
                 new SourceTemplate("afterburner.wav", VSFileSystem::SoundFile, true));
-            SharedPtr<SourceTemplate> beamtpl(
+            std::shared_ptr<SourceTemplate> beamtpl(
                 new SourceTemplate("beam.wav", VSFileSystem::SoundFile, false));
             beamtpl->setGain(0.5f);
 
@@ -262,7 +282,7 @@ namespace Audio
             {
             }
 
-            LVector3 computePosition(long which, double phaseOffset = 0.0) const
+            LVector3 computePosition(int64_t which, double phaseOffset = 0.0) const
             {
                 assert(which >= 0 && which < (long)engPaths.size());
 
@@ -278,7 +298,7 @@ namespace Audio
                 return vBase;
             }
 
-            LVector3 computeVelocity(long which, double phaseOffset = 0.0) const
+            LVector3 computeVelocity(int64_t which, double phaseOffset = 0.0) const
             {
                 assert(which >= 0 && which < (long)engPaths.size());
 
@@ -301,11 +321,11 @@ namespace Audio
             *      receive. See RenderableSource::UpdateFlags
             * @see SourceListener::onUpdate
             */
-            virtual void onUpdate(Source &source, int updateFlags)
+            virtual void onUpdate(Source &source, int32_t updateFlags)
             {
                 if (updateFlags & RenderableSource::UPDATE_LOCATION)
                 {
-                    long which = source.getUserDataLong();
+                    int64_t which = source.getUserDataLong();
 
                     source.setPosition(computePosition(which));
                     source.setDirection(computeVelocity(which).normalized());
@@ -320,17 +340,17 @@ namespace Audio
 
             clearScene();
 
-            int i;
+            int32_t i;
             double t;
 
             SceneManager *sm = SceneManager::getSingleton();
 
             // Create (and verify that) the test scene set
-            SharedPtr<Scene> cpscene = sm->createScene("testSceneCP");
+            std::shared_ptr<Scene> cpscene = sm->createScene("testSceneCP");
             sm->getScene("testSceneCP");
             sm->setSceneActive("testSceneCP", true);
 
-            SharedPtr<Scene> spcscene = sm->createScene("testSceneSPC");
+            std::shared_ptr<Scene> spcscene = sm->createScene("testSceneSPC");
             sm->getScene("testSceneSPC");
             sm->setSceneActive("testSceneSPC", true);
 
@@ -359,11 +379,11 @@ namespace Audio
 
             cerr << "  Creating resources" << endl;
             cerr << "    looking up templates..." << flush;
-            SharedPtr<SourceTemplate> abtpl = TemplateManager::getSingleton()->getSourceTemplate(
+            std::shared_ptr<SourceTemplate> abtpl = TemplateManager::getSingleton()->getSourceTemplate(
                 "test.sources:afterburner");
-            SharedPtr<SourceTemplate> engtpl = TemplateManager::getSingleton()->getSourceTemplate(
+            std::shared_ptr<SourceTemplate> engtpl = TemplateManager::getSingleton()->getSourceTemplate(
                 "test.sources:engine");
-            SharedPtr<SourceTemplate> engexpl = TemplateManager::getSingleton()->getSourceTemplate(
+            std::shared_ptr<SourceTemplate> engexpl = TemplateManager::getSingleton()->getSourceTemplate(
                 "test.sources:explosion");
             cerr << " ok" << endl;
 
@@ -379,15 +399,15 @@ namespace Audio
 
             cerr << "    creating looping sources..." << flush;
 
-            SharedPtr<Source> absource = sm->createSource(abtpl);
+            std::shared_ptr<Source> absource = sm->createSource(abtpl);
             absource->setPosition(Vector3(0, 0, -1));
             cpscene->add(absource);
 
-            vector<SharedPtr<Source>> engsources;
+            vector<std::shared_ptr<Source>> engsources;
             vector<LVector3> engpaths; // x=phase, y=speed, z=wobble
 
             // Fill in engpaths
-            SharedPtr<SourceListener> englistener(
+            std::shared_ptr<SourceListener> englistener(
                 new EngParticleListener(engpaths, worldsize));
 
             {
@@ -400,7 +420,7 @@ namespace Audio
 
                     engpaths.push_back(LVector3(phase, speed, radii));
 
-                    SharedPtr<Source> src = sm->createSource(engtpl);
+                    std::shared_ptr<Source> src = sm->createSource(engtpl);
                     src->setUserDataLong(i);
                     src->setSourceListener(englistener);
                     engsources.push_back(src);
@@ -417,8 +437,10 @@ namespace Audio
             absource->startPlaying();
 
             {
-                for (vector<SharedPtr<Source>>::iterator i = engsources.begin(); i != engsources.end(); ++i)
+                for (auto i = engsources.begin(); i != engsources.end(); ++i)
+                {
                     (*i)->startPlaying();
+                }
             }
 
             for (t = getRealTime(); (getRealTime() - t) < 20.0;)
@@ -447,7 +469,7 @@ namespace Audio
 
             absource->stopPlaying();
             {
-                for (vector<SharedPtr<Source>>::iterator i = engsources.begin(); i != engsources.end(); ++i)
+                for (auto i = engsources.begin(); i != engsources.end(); ++i)
                     (*i)->stopPlaying();
             }
 
@@ -469,7 +491,7 @@ namespace Audio
             SceneManager *sm = SceneManager::getSingleton();
 
             // Create (and verify that) a test scene
-            SharedPtr<Scene> scene = sm->createScene("testScene");
+            std::shared_ptr<Scene> scene = sm->createScene("testScene");
             sm->getScene("testScene");
             sm->setSceneActive("testScene", true);
 
@@ -477,7 +499,7 @@ namespace Audio
             //   1. A streaming music track playing as usual
             cerr << "  Creating resources" << endl;
             cerr << "    creating sounds..." << flush;
-            SharedPtr<Sound> music = sm->getRenderer()->getSound(
+            std::shared_ptr<Sound> music = sm->getRenderer()->getSound(
                 "AyMambo.ogg", VSFileSystem::MusicFile, true);
             cerr << " ok" << endl;
             cerr << "    loading sounds..." << flush;
@@ -490,7 +512,7 @@ namespace Audio
             cerr << " ok" << endl;
 
             cerr << "    creating sources..." << flush;
-            SharedPtr<Source> musicsource = sm->createSource(music);
+            std::shared_ptr<Source> musicsource = sm->createSource(music);
             musicsource->setPosition(Vector3(0, 0, 0));
             musicsource->setGain(1.0f);
             musicsource->setAttenuated(false);
@@ -512,7 +534,9 @@ namespace Audio
                 double shouldPlayingTime = realTime - startPlayingTime;
                 double delta = fabs(curPlayingTime - shouldPlayingTime);
                 if (delta > timeDelta)
+                {
                     timeDelta = delta;
+                }
 
                 // Resync supposed start time to account for systematic
                 // drift (which isn't that bad, and quite normal in fact)
@@ -523,10 +547,14 @@ namespace Audio
 
             musicsource->stopPlaying();
             for (i = 0; i < 10; ++i) // 1s = 10 ticks
+            {
                 smTick();
+            }
 
             if (timeDelta > (1.0 / 30.0))
+            {
                 cerr << "\nWARNING: Poor time tracking resolution\n";
+            }
             cerr << "  Time drift at " << int(timeDelta * 1000) << "ms" << endl;
 
             cerr << " ok" << endl;
@@ -538,13 +566,12 @@ namespace Audio
 
             clearScene();
 
-            int i;
             double timeDelta = 0.0;
 
             SceneManager *sm = SceneManager::getSingleton();
 
             // Create (and verify that) a test scene
-            SharedPtr<Scene> scene = sm->createScene("testScene");
+            std::shared_ptr<Scene> scene = sm->createScene("testScene");
             sm->getScene("testScene");
             sm->setSceneActive("testScene", true);
 
@@ -552,9 +579,9 @@ namespace Audio
             //   1. Two streaming music tracks playing simultaneously
             cerr << "  Creating resources" << endl;
             cerr << "    creating sounds..." << flush;
-            SharedPtr<Sound> music = sm->getRenderer()->getSound(
+            std::shared_ptr<Sound> music = sm->getRenderer()->getSound(
                 "AyMambo.ogg", VSFileSystem::MusicFile, true);
-            SharedPtr<Sound> music2 = sm->getRenderer()->getSound(
+            std::shared_ptr<Sound> music2 = sm->getRenderer()->getSound(
                 "Bliss.ogg", VSFileSystem::MusicFile, true);
             cerr << " ok" << endl;
             cerr << "    loading sounds..." << flush;
@@ -569,13 +596,13 @@ namespace Audio
 
             cerr << "    creating sources..." << flush;
 
-            SharedPtr<Source> musicsource = sm->createSource(music);
+            std::shared_ptr<Source> musicsource = sm->createSource(music);
             musicsource->setPosition(Vector3(0, 0, 0));
             musicsource->setGain(1.0f);
             musicsource->setAttenuated(false);
             musicsource->setRelative(true);
 
-            SharedPtr<Source> musicsource2 = sm->createSource(music2);
+            std::shared_ptr<Source> musicsource2 = sm->createSource(music2);
             musicsource2->setPosition(Vector3(0, 0, 0));
             musicsource2->setGain(1.0f);
             musicsource2->setAttenuated(false);
@@ -591,7 +618,7 @@ namespace Audio
             double startPlayingTime = getRealTime();
             musicsource->startPlaying();
             musicsource2->startPlaying();
-            for (i = 0; i < 200; ++i)
+            for (int32_t i = 0; i < 200; ++i)
             { // 20s = 200 ticks
                 smTick();
 
@@ -611,15 +638,21 @@ namespace Audio
             }
 
             musicsource->stopPlaying();
-            for (i = 0; i < 50; ++i) // 5s = 50 ticks
+            for (int32_t i = 0; i < 50; ++i) // 5s = 50 ticks
+            {
                 smTick();
+            }
 
             musicsource2->stopPlaying();
-            for (i = 0; i < 10; ++i) // 1s = 10 ticks
+            for (int32_t i = 0; i < 10; ++i) // 1s = 10 ticks
+            {
                 smTick();
+            }
 
             if (timeDelta > (1.0 / 30.0))
+            {
                 cerr << "\nWARNING: Poor time tracking resolution\n";
+            }
             cerr << "  Time drift at " << int(timeDelta * 1000) << "ms" << endl;
 
             cerr << " ok" << endl;
@@ -631,13 +664,13 @@ namespace Audio
 
             clearScene();
 
-            int i;
+            int32_t i;
             double timeDelta = 0.0;
 
             SceneManager *sm = SceneManager::getSingleton();
 
             // Create (and verify that) a test scene
-            SharedPtr<Scene> scene = sm->createScene("testScene");
+            std::shared_ptr<Scene> scene = sm->createScene("testScene");
             sm->getScene("testScene");
             sm->setSceneActive("testScene", true);
 
@@ -645,9 +678,9 @@ namespace Audio
             //   1. Two streaming music tracks playing simultaneously
             cerr << "  Creating resources" << endl;
             cerr << "    creating sounds..." << flush;
-            SharedPtr<Sound> music = sm->getRenderer()->getSound(
+            std::shared_ptr<Sound> music = sm->getRenderer()->getSound(
                 "SonOfSandFleaRemix.ogg", VSFileSystem::MusicFile, true);
-            SharedPtr<Sound> music2 = sm->getRenderer()->getSound(
+            std::shared_ptr<Sound> music2 = sm->getRenderer()->getSound(
                 "SonOfSandFleaRemix.ogg", VSFileSystem::MusicFile, true);
             cerr << " ok" << endl;
             cerr << "    loading sounds..." << flush;
@@ -662,13 +695,13 @@ namespace Audio
 
             cerr << "    creating sources..." << flush;
 
-            SharedPtr<Source> musicsource = sm->createSource(music);
+            std::shared_ptr<Source> musicsource = sm->createSource(music);
             musicsource->setPosition(Vector3(0, 0, 0));
             musicsource->setGain(1.0f);
             musicsource->setAttenuated(false);
             musicsource->setRelative(true);
 
-            SharedPtr<Source> musicsource2 = sm->createSource(music2);
+            std::shared_ptr<Source> musicsource2 = sm->createSource(music2);
             musicsource2->setPosition(Vector3(0, 0, 0));
             musicsource2->setGain(1.0f);
             musicsource2->setAttenuated(false);
@@ -694,7 +727,9 @@ namespace Audio
                 double shouldPlayingTime = realTime - startPlayingTime;
                 double delta = fabs(curPlayingTime - shouldPlayingTime);
                 if (delta > timeDelta)
+                {
                     timeDelta = delta;
+                }
 
                 // Resync supposed start time to account for systematic
                 // drift (which isn't that bad, and quite normal in fact)
@@ -705,14 +740,20 @@ namespace Audio
 
             musicsource->stopPlaying();
             for (i = 0; i < 50; ++i) // 5s = 50 ticks
+            {
                 smTick();
+            }
 
             musicsource2->stopPlaying();
             for (i = 0; i < 10; ++i) // 1s = 10 ticks
+            {
                 smTick();
+            }
 
             if (timeDelta > (1.0 / 30.0))
+            {
                 cerr << "\nWARNING: Poor time tracking resolution\n";
+            }
             cerr << "  Time drift at " << int(timeDelta * 1000) << "ms" << endl;
 
             cerr << " ok" << endl;
@@ -723,7 +764,7 @@ namespace Audio
             cerr << "  Initializing renderer..." << endl;
             SceneManager *sm = SceneManager::getSingleton();
 
-            SharedPtr<Renderer> renderer(new OpenALRenderer);
+            std::shared_ptr<Renderer> renderer(new OpenALRenderer);
             renderer->setOutputFormat(Format(44100, 16, 2));
 
             sm->setRenderer(renderer);
@@ -732,7 +773,7 @@ namespace Audio
         void closeRenderer()
         {
             cerr << "Shutting down renderer..." << endl;
-            SceneManager::getSingleton()->setRenderer(SharedPtr<Renderer>());
+            SceneManager::getSingleton()->setRenderer(std::shared_ptr<Renderer>());
         }
 
         int main(int argc, char **argv)

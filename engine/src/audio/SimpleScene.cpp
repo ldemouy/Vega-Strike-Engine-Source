@@ -25,12 +25,12 @@ namespace Audio
         }
     }
 
-    void SimpleScene::add(SharedPtr<Source> source)
+    void SimpleScene::add(std::shared_ptr<Source> source)
     {
         attach(dynamic_cast<SimpleSource *>(source.get()));
     }
 
-    void SimpleScene::remove(SharedPtr<Source> source)
+    void SimpleScene::remove(std::shared_ptr<Source> source)
     {
         detach(dynamic_cast<SimpleSource *>(source.get()));
     }
@@ -40,14 +40,14 @@ namespace Audio
         return listener;
     }
 
-    void SimpleScene::notifySourcePlaying(SharedPtr<Source> source, bool playing)
+    void SimpleScene::notifySourcePlaying(std::shared_ptr<Source> source, bool playing)
     {
         if (playing)
             activeSources.insert(source);
         else
             activeSources.erase(source);
 
-        SceneManager::getSingleton()->notifySourcePlaying(source, shared_from_this(), playing);
+        SceneManager::getSingleton()->notifySourcePlaying(source, std::shared_ptr<SimpleScene>(this), playing);
     }
 
     void SimpleScene::attach(SimpleSource *source)

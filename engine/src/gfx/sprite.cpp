@@ -55,9 +55,13 @@ static std::pair<bool, VSSprite *> cacheLookup(const char *file)
     std::string hashName = VSFileSystem::GetHashName(std::string(file));
     VSSpriteCache::iterator it = sprite_cache.find(hashName);
     if (it != sprite_cache.end())
+    {
         return std::pair<bool, VSSprite *>(true, it->second);
+    }
     else
+    {
         return std::pair<bool, VSSprite *>(false, (VSSprite *)NULL);
+    }
 }
 
 static void cacheInsert(const char *file, VSSprite *spr)
@@ -75,7 +79,9 @@ VSSprite::VSSprite(const VSSprite &source)
 {
     *this = source;
     if (surface != NULL)
+    {
         surface = surface->Clone();
+    }
 }
 
 VSSprite::VSSprite(const char *file, enum FILTER texturefilter, GFXBOOL force)
@@ -97,7 +103,9 @@ VSSprite::VSSprite(const char *file, enum FILTER texturefilter, GFXBOOL force)
             {
                 *this = *lkup.second;
                 if (surface != NULL)
+                {
                     surface = surface->Clone();
+                }
             }
             else
             {
@@ -125,7 +133,7 @@ VSSprite::VSSprite(const char *file, enum FILTER texturefilter, GFXBOOL force)
         surface = NULL;
         if (g_game.use_sprites || force == GFXTRUE)
         {
-            int len = strlen(texture);
+            int32_t len = strlen(texture);
             if (len > 4 && texture[len - 1] == 'i' && texture[len - 2] == 'n' && texture[len - 3] == 'a' && texture[len - 4] == '.')
             {
                 surface = new AnimatedTexture(f, 0, texturefilter, GFXFALSE);
@@ -196,7 +204,9 @@ VSSprite::~VSSprite()
 {
     VSDESTRUCT2
     if (surface != NULL)
+    {
         delete surface;
+    }
 }
 
 void VSSprite::SetST(const float s, const float t)
@@ -214,7 +224,9 @@ void VSSprite::GetST(float &s, float &t)
 void VSSprite::SetTime(double newtime)
 {
     if (surface)
+    {
         surface->setTime(newtime);
+    }
 }
 
 void VSSprite::DrawHere(Vector &ll, Vector &lr, Vector &ur, Vector &ul)
@@ -246,22 +258,23 @@ void VSSprite::Draw()
     if (surface)
     {
         //don't do anything if no surface
-        size_t lyr;
         size_t numlayers = surface->numLayers();
         bool multitex = (numlayers > 1);
-        int numpasses = surface->numPasses();
+        int32_t numpasses = surface->numPasses();
         GFXDisable(CULLFACE);
         Vector ll, lr, ur, ul;
         DrawHere(ll, lr, ur, ul);
         BLENDFUNC src, dst;
         GFXGetBlendMode(src, dst);
-        for (lyr = 0; (lyr < gl_options.Multitexture) || (lyr < numlayers); lyr++)
+        for (size_t layer = 0; (layer < gl_options.Multitexture) || (layer < numlayers); layer++)
         {
-            GFXToggleTexture((lyr < numlayers), lyr, surface->texture_target);
-            if (lyr < numlayers)
-                GFXTextureCoordGenMode(lyr, NO_GEN, NULL, NULL);
+            GFXToggleTexture((layer < numlayers), layer, surface->texture_target);
+            if (layer < numlayers)
+            {
+                GFXTextureCoordGenMode(layer, NO_GEN, NULL, NULL);
+            }
         }
-        for (int pass = 0; pass < numpasses; pass++)
+        for (int32_t pass = 0; pass < numpasses; pass++)
         {
             if (surface->SetupPass(pass, 0, src, dst))
             {
@@ -296,8 +309,10 @@ void VSSprite::Draw()
             }
         }
         surface->SetupPass(-1, 0, src, dst);
-        for (lyr = 0; lyr < numlayers; lyr++)
-            GFXToggleTexture(false, lyr, surface->texture_target);
+        for (size_t layer = 0; layer < numlayers; layer++)
+        {
+            GFXToggleTexture(false, layer, surface->texture_target);
+        }
         GFXEnable(CULLFACE);
     }
 }
@@ -336,38 +351,52 @@ void VSSprite::GetRotation(float &rot)
     rot = rotation;
 }
 
-void VSSprite::SetTimeSource(SharedPtr<Audio::Source> source)
+void VSSprite::SetTimeSource(std::shared_ptr<Audio::Source> source)
 {
     if (isAnimation)
+    {
         ((AnimatedTexture *)surface)->SetTimeSource(source);
+    }
 }
 
-SharedPtr<Audio::Source> VSSprite::GetTimeSource() const
+std::shared_ptr<Audio::Source> VSSprite::GetTimeSource() const
 {
     if (isAnimation)
+    {
         return ((AnimatedTexture *)surface)->GetTimeSource();
+    }
     else
-        return SharedPtr<Audio::Source>();
+    {
+        return std::shared_ptr<Audio::Source>();
+    }
 }
 
 void VSSprite::ClearTimeSource()
 {
     if (isAnimation)
+    {
         ((AnimatedTexture *)surface)->ClearTimeSource();
+    }
 }
 
 bool VSSprite::Done() const
 {
     if (isAnimation)
+    {
         return ((AnimatedTexture *)surface)->Done();
+    }
     else
+    {
         return false;
+    }
 }
 
 void VSSprite::Reset()
 {
     if (isAnimation)
+    {
         ((AnimatedTexture *)surface)->Reset();
+    }
 }
 
 bool VSSprite::LoadSuccess() const

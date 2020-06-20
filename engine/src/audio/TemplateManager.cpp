@@ -16,6 +16,8 @@
 
 #include "vs_math.h"
 
+#include <memory>
+
 using std::map;
 using std::min;
 using std::string;
@@ -34,7 +36,7 @@ namespace Audio
             struct DefinitionFileInfo
             {
                 /** Pointer to the already-parsed document */
-                SharedPtr<XMLDOM::XMLDocument> parsed;
+                std::shared_ptr<XMLDOM::XMLDocument> parsed;
 
                 /** Last time the file was used - for aging and purging */
                 mutable Timestamp lastUsageTime;
@@ -66,8 +68,8 @@ namespace Audio
             };
 
             // The many required indices
-            typedef map<string, WeakPtr<SourceTemplate>> TemplateMap;
-            typedef map<string, SharedPtr<SourceTemplate>> PermTemplateMap;
+            typedef map<string, std::weak_ptr<SourceTemplate>> TemplateMap;
+            typedef map<string, std::shared_ptr<SourceTemplate>> PermTemplateMap;
             typedef map<string, DefinitionFileInfo> DefinitionMap;
 
             TemplateMap loadedTemplates;
@@ -76,15 +78,19 @@ namespace Audio
 
             string defaultDefinitionFile;
 
-            SharedPtr<XMLDOM::XMLDocument> getDefinitionFile(const std::string &path)
+            std::shared_ptr<XMLDOM::XMLDocument> getDefinitionFile(const std::string &path)
             {
                 DefinitionMap::iterator it = loadedDefinitions.find(path);
                 if (it != loadedDefinitions.end())
                 {
                     if (it->second.parsed.get() == 0)
+                    {
                         it->second.load(path);
+                    }
                     else
+                    {
                         it->second.touch();
+                    }
                     return it->second.parsed;
                 }
                 else
@@ -93,15 +99,19 @@ namespace Audio
                 }
             }
 
-            SharedPtr<XMLDOM::XMLDocument> getDefinitionFile(const std::string &path) const
+            std::shared_ptr<XMLDOM::XMLDocument> getDefinitionFile(const std::string &path) const
             {
                 DefinitionMap::const_iterator it = loadedDefinitions.find(path);
                 if (it != loadedDefinitions.end())
                 {
                     if (it->second.parsed.get() == 0)
+                    {
                         throw ResourceNotLoadedException();
+                    }
                     else
+                    {
                         it->second.touch();
+                    }
                     return it->second.parsed;
                 }
                 else
@@ -145,17 +155,25 @@ namespace Audio
         static bool parseBool(const std::string &s)
         {
             if (s.empty())
+            {
                 throw InvalidParametersException("Missing required attribute");
+            }
             else
+            {
                 return XMLSupport::parse_bool(s);
+            }
         }
 
         static float parseFloat(const std::string &s)
         {
             if (s.empty())
+            {
                 throw InvalidParametersException("Invalid float attribute");
+            }
             else
+            {
                 return XMLSupport::parse_floatf(s);
+            }
         }
 
     }; // namespace __impl
@@ -180,7 +198,7 @@ namespace Audio
         }
     }
 
-    void TemplateManager::addDefinitionFile(const string &path, SharedPtr<XMLDOM::XMLDocument> definition)
+    void TemplateManager::addDefinitionFile(const string &path, std::shared_ptr<XMLDOM::XMLDocument> definition)
     {
         if (data->loadedDefinitions.count(path) == 0)
         {
@@ -191,12 +209,12 @@ namespace Audio
         }
     }
 
-    SharedPtr<XMLDOM::XMLDocument> TemplateManager::getDefinitionFile(const std::string &path) const
+    std::shared_ptr<XMLDOM::XMLDocument> TemplateManager::getDefinitionFile(const std::string &path) const
     {
         return ((const TemplateManagerData &)*data).getDefinitionFile(path);
     }
 
-    SharedPtr<XMLDOM::XMLDocument> TemplateManager::getDefinitionFile(const std::string &path)
+    std::shared_ptr<XMLDOM::XMLDocument> TemplateManager::getDefinitionFile(const std::string &path)
     {
         try
         {
@@ -219,13 +237,15 @@ namespace Audio
         return data->defaultDefinitionFile;
     }
 
-    SharedPtr<SourceTemplate> TemplateManager::getSourceTemplate(const std::string &name)
+    std::shared_ptr<SourceTemplate> TemplateManager::getSourceTemplate(const std::string &name)
     {
-        SharedPtr<SourceTemplate> rv;
+        std::shared_ptr<SourceTemplate> rv;
 
         TemplateManagerData::TemplateMap::const_iterator it = data->loadedTemplates.find(name);
         if (it != data->loadedTemplates.end())
+        {
             rv = it->second.lock();
+        }
 
         if (!rv.get())
         {
@@ -236,37 +256,49 @@ namespace Audio
         return rv;
     }
 
-    SharedPtr<SourceTemplate> TemplateManager::loadSourceTemplate(const std::string &name)
+    std::shared_ptr<SourceTemplate> TemplateManager::loadSourceTemplate(const std::string &name)
     {
         string::size_type sep = name.find_first_of(':');
-        SharedPtr<XMLDOM::XMLDocument> def;
+        std::shared_ptr<XMLDOM::XMLDocument> def;
 
         if (sep != string::npos)
+        {
             def = getDefinitionFile(name.substr(0, sep));
+        }
         else
+        {
             def = getDefinitionFile(getDefaultDefinitionFile());
+        }
 
         const XMLDOM::XMLElement *tdef = 0;
         if (sep != string::npos)
+        {
             tdef = def->getElementByName(name.substr(sep + 1, string::npos));
+        }
         else
+        {
             tdef = def->getElementByName(name);
+        }
 
         if (!tdef)
+        {
             throw NotFoundException(name);
+        }
 
         string src =
             tdef->getAttributeValue("src", "");
 
         if (src.empty())
+        {
             throw InvalidParametersException("Invalid source template: no sound specified");
+        }
 
         VSFileSystem::VSFileType type =
             parseVSFileType(tdef->getAttributeValue("type", "unknown"));
         bool looping =
             parseBool(tdef->getAttributeValue("looping", "false"));
 
-        SharedPtr<SourceTemplate> rv(
+        std::shared_ptr<SourceTemplate> rv(
             new SourceTemplate(src, type, looping));
 
         rv->setAngleRange(Range<Scalar>(
@@ -290,27 +322,31 @@ namespace Audio
         return rv;
     }
 
-    void TemplateManager::addSourceTemplate(const string &name, SharedPtr<SourceTemplate> tpl, bool perm)
+    void TemplateManager::addSourceTemplate(const string &name, std::shared_ptr<SourceTemplate> tpl, bool perm)
     {
         static string empty;
         addSourceTemplate(empty, name, tpl, perm);
     }
 
-    void TemplateManager::addSourceTemplate(const string &path, const string &name, SharedPtr<SourceTemplate> tpl, bool perm)
+    void TemplateManager::addSourceTemplate(const string &path, const string &name, std::shared_ptr<SourceTemplate> tpl, bool perm)
     {
         string key(path + ":" + name);
-        SharedPtr<SourceTemplate> rv;
+        std::shared_ptr<SourceTemplate> rv;
 
         TemplateManagerData::TemplateMap::const_iterator it = data->loadedTemplates.find(key);
         if (it != data->loadedTemplates.end())
+        {
             rv = it->second.lock();
+        }
 
         if (!rv.get())
         {
             rv = tpl;
             data->loadedTemplates[key] = rv;
             if (perm)
+            {
                 data->permLoadedTemplates[key] = rv;
+            }
         }
         else
         {
