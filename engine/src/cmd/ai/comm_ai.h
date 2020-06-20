@@ -16,8 +16,8 @@ protected:
     float mood;
     UnitContainer contraband_searchee;
     Vector SpeedAndCourse;
-    int which_cargo_item;
-    void GetMadAt(Unit *which, int howMad);
+    int32_t which_cargo_item;
+    void GetMadAt(Unit *which, int32_t howMad);
 
 protected:
 public:
@@ -31,8 +31,8 @@ public:
     void TerminateContrabandSearch(bool foundcontraband);
     void InitiateContrabandSearch(float PlayerProbability, float TargetProbability);
     void UpdateContrabandSearch();
-    CommunicatingAI(int ttype,
-                    int stype,
+    CommunicatingAI(int32_t ttype,
+                    int32_t stype,
                     float mood = 0,
                     float anger = -666 /*-.5*/,
                     float appeasement = 666,
@@ -41,8 +41,8 @@ public:
     virtual void ProcessCommMessage(class CommunicationMessage &c);
     virtual void AdjustRelationTo(Unit *un, float factor);
     virtual ~CommunicatingAI();
-    virtual int selectCommunicationMessage(class CommunicationMessage &c, Unit *);
-    virtual int selectCommunicationMessageMood(CommunicationMessage &c, float mood);
+    virtual int32_t selectCommunicationMessage(class CommunicationMessage &c, Unit *);
+    virtual int32_t selectCommunicationMessageMood(CommunicationMessage &c, float mood);
 };
 
 #endif
