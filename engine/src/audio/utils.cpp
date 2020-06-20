@@ -37,9 +37,13 @@ namespace Audio
         // Account for dispersion/sensing angle limitations
         Scalar cosangle = listener.getAtDirection().dot(src.getDirection());
         if (cosangle < listener.getCosAngleRange().min)
+        {
             gain *= listener.getCosAngleRange().phase(cosangle);
+        }
         if (cosangle < src.getCosAngleRange().min)
+        {
             gain *= src.getCosAngleRange().phase(cosangle);
+        }
 
         return gain;
     }
