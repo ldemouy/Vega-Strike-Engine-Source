@@ -59,14 +59,14 @@ namespace Audio
          *      ignore them (just log them or something like that). Updates are non-critical
          *      and may fail silently.
          */
-        void update(int flags);
+        void update(int32_t flags);
 
         // The following section contains all the virtual functions that need be implemented
         // by a concrete class. All are protected, so the interface is independent
         // of implementations.
     protected:
         /** @see update. */
-        virtual void updateImpl(int flags) = 0;
+        virtual void updateImpl(int32_t flags) = 0;
     };
 
 }; // namespace Audio

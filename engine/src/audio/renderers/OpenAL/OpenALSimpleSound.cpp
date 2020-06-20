@@ -119,8 +119,8 @@ namespace Audio
             {
                 // Create a compound buffer with all buffers concatenated
                 {
-                    unsigned int finalBytes = 0;
-                    for (std::list<SoundBuffer>::const_iterator it = buffers.begin(); it != buffers.end(); ++it)
+                    uint32_t finalBytes = 0;
+                    for (auto it = buffers.begin(); it != buffers.end(); ++it)
                     {
                         finalBytes += it->getUsedBytes();
                     }
@@ -129,7 +129,7 @@ namespace Audio
 
                 {
                     char *buf = (char *)buffer.getBuffer();
-                    for (std::list<SoundBuffer>::const_iterator it = buffers.begin(); it != buffers.end(); ++it)
+                    for (auto it = buffers.begin(); it != buffers.end(); ++it)
                     {
                         memcpy(buf, it->getBuffer(), it->getUsedBytes());
                         buf += it->getUsedBytes();

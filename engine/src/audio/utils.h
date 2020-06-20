@@ -45,9 +45,13 @@ namespace Audio
     {
         typename std::map<std::string, T>::const_iterator it = enumMap.find(s);
         if (it != enumMap.end())
+        {
             return it->second;
+        }
         else
+        {
             throw InvalidParametersException("Enumerated value \"" + s + "\" not recognized");
+        }
     }
 
     /** Parse an enumerated string into its actual value 
@@ -61,9 +65,13 @@ namespace Audio
     {
         typename std::map<std::string, T>::const_iterator it = enumMap.find(s);
         if (it != enumMap.end())
+        {
             return it->second;
+        }
         else
+        {
             return deflt;
+        }
     }
 
 } // namespace Audio

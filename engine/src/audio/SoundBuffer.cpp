@@ -18,7 +18,7 @@ namespace Audio
     {
     }
 
-    SoundBuffer::SoundBuffer(unsigned int capacity, const Format &format)
+    SoundBuffer::SoundBuffer(uint32_t capacity, const Format &format)
         : buffer(0),
           byteCapacity(0),
           bytesUsed(0)
@@ -31,7 +31,9 @@ namespace Audio
         bytesUsed = byteCapacity = other.bytesUsed;
         buffer = malloc(byteCapacity);
         if (buffer == 0)
+        {
             throw OutOfMemoryException();
+        }
         memcpy(buffer, other.buffer, bytesUsed);
         format = other.format;
     }
@@ -41,24 +43,28 @@ namespace Audio
         bytesUsed = byteCapacity = other.bytesUsed;
         buffer = realloc(buffer, byteCapacity);
         if (buffer == 0)
+        {
             throw OutOfMemoryException();
+        }
         memcpy(buffer, other.buffer, bytesUsed);
         format = other.format;
 
         return *this;
     }
 
-    void SoundBuffer::reserve(unsigned int capacity)
+    void SoundBuffer::reserve(uint32_t capacity)
     {
         byteCapacity = capacity;
         bytesUsed = 0;
 
         buffer = realloc(buffer, byteCapacity);
         if (buffer == 0)
+        {
             throw OutOfMemoryException();
+        }
     }
 
-    void SoundBuffer::reserve(unsigned int capacity, const Format &_format)
+    void SoundBuffer::reserve(uint32_t capacity, const Format &_format)
     {
         format = _format;
         reserve(capacity * _format.frameSize());
@@ -67,7 +73,9 @@ namespace Audio
     void SoundBuffer::reformat(const Format &newFormat)
     {
         if (newFormat != format)
+        {
             throw(NotImplementedException("Format conversion"));
+        }
     }
 
     void SoundBuffer::swap(SoundBuffer &other)
@@ -92,7 +100,9 @@ namespace Audio
         else
         {
             if (bytesUsed != byteCapacity)
+            {
                 buffer = realloc(buffer, byteCapacity = bytesUsed);
+            }
         }
     }
 

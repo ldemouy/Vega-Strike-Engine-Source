@@ -65,7 +65,7 @@ namespace Audio
         return getPlayingTimeImpl();
     }
 
-    void RenderableSource::update(int flags, const Listener &sceneListener)
+    void RenderableSource::update(int32_t flags, const Listener &sceneListener)
     {
         try
         {

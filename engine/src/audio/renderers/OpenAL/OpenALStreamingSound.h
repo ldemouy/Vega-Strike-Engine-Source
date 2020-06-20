@@ -43,8 +43,8 @@ namespace Audio
 
         size_t bufferSamples;
 
-        unsigned char readBufferIndex;
-        unsigned char playBufferIndex;
+        uint8_t readBufferIndex;
+        uint8_t playBufferIndex;
 
     public:
         /** Internal constructor used by derived classes 
@@ -55,7 +55,7 @@ namespace Audio
          *      samples below which a read would be triggered.
          */
         OpenALStreamingSound(const std::string &name, VSFileSystem::VSFileType type = VSFileSystem::UnknownFile,
-                             unsigned int bufferSamples = 0);
+                             uint32_t bufferSamples = 0);
 
     public:
         virtual ~OpenALStreamingSound();

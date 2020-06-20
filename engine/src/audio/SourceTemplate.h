@@ -45,10 +45,10 @@ namespace Audio
 
         struct
         {
-            int looping : 1;
-            int streaming : 1;
-            int attenuated : 1;
-            int relative : 1;
+            int32_t looping : 1;
+            int32_t streaming : 1;
+            int32_t attenuated : 1;
+            int32_t relative : 1;
         } flags;
 
     public:

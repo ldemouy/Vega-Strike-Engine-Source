@@ -23,12 +23,14 @@ namespace Audio
         universalCodecs.clear();
         extensionCodecs.clear();
 
-        for (CodecPriority::const_iterator it = codecPriority.begin(); it != codecPriority.end(); ++it)
+        for (auto it = codecPriority.begin(); it != codecPriority.end(); ++it)
+        {
             delete it->first;
+        }
         codecPriority.clear();
     }
 
-    void CodecRegistry::add(Codec *codec, int priority)
+    void CodecRegistry::add(Codec *codec, int32_t priority)
     {
         if (codecPriority.find(codec) == codecPriority.end())
         {
@@ -40,7 +42,7 @@ namespace Audio
             const Codec::Extensions *ext = codec->getExtensions();
             if (ext)
             {
-                for (Codec::Extensions::const_iterator it = ext->begin(); it != ext->end(); ++it)
+                for (auto it = ext->begin(); it != ext->end(); ++it)
                 {
                     std::cout << " " << it->c_str();
                     extensionCodecs[*it].insert(codec);
@@ -69,8 +71,10 @@ namespace Audio
             const Codec::Extensions *ext = codec->getExtensions();
             if (ext)
             {
-                for (Codec::Extensions::const_iterator it = ext->begin(); it != ext->end(); ++it)
+                for (auto it = ext->begin(); it != ext->end(); ++it)
+                {
                     extensionCodecs[*it].erase(codec);
+                }
             }
             else
             {
@@ -83,10 +87,14 @@ namespace Audio
     {
         NameCodec::const_iterator it = nameCodec.find(name);
         if (it != nameCodec.end())
+        {
             return it->second;
+        }
         else
+        {
             throw CodecNotFoundException(
                 std::string("No codec with name \"") + name + "\" has been registered");
+        }
     }
 
     template <typename INDEX, typename T>
@@ -130,13 +138,21 @@ namespace Audio
             ExtensionCodecs::const_iterator eit = extensionCodecs.find(
                 path.substr(sep + 1, std::string::npos));
             if (eit != extensionCodecs.end())
-                for (CodecSet::const_iterator esit = eit->second.begin(); esit != eit->second.end(); ++esit)
+            {
+                for (auto esit = eit->second.begin(); esit != eit->second.end(); ++esit)
+                {
                     candidates.push_back(*esit);
+                }
+            }
         }
 
-        for (CodecSet::const_iterator uit = universalCodecs.begin(); uit != universalCodecs.end(); ++uit)
+        for (auto uit = universalCodecs.begin(); uit != universalCodecs.end(); ++uit)
+        {
             if ((*uit)->canHandle(path, false, type))
+            {
                 candidates.push_back(*uit);
+            }
+        }
 
         // Now we'll sort candidates by priority, and return the first codec that can actually handle the file.
         if (candidates.begin() != candidates.end())
@@ -148,10 +164,14 @@ namespace Audio
 
             // Why do we need an explicit cast *to* const?
             // See http://www.mpi-inf.mpg.de/~hitoshi/otherprojects/tips/cpp-memo.shtml
-            for (std::vector<Codec *>::const_reverse_iterator it = candidates.rbegin();
+            for (auto it = candidates.rbegin();
                  it != reinterpret_cast<const std::vector<Codec *> &>(candidates).rend(); ++it)
+            {
                 if ((*it)->canHandle(path, true, type))
+                {
                     return *it;
+                }
+            }
         }
 
         // No candidate is able to handle this one!
@@ -169,7 +189,9 @@ namespace Audio
         : codec(_codec)
     {
         if (!CodecRegistry::getSingleton())
+        {
             new CodecRegistry();
+        }
         CodecRegistry::getSingleton()->add(codec);
     }
 

@@ -96,7 +96,7 @@ namespace Audio
          *      ignore them (just log them or something like that). Updates are non-critical
          *      and may fail silently.
          */
-        void update(int flags, const Listener &sceneListener);
+        void update(int32_t flags, const Listener &sceneListener);
 
         // The following section contains all the virtual functions that need be implemented
         // by a concrete Sound class. All are protected, so the interface is independent

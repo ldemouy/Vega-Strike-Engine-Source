@@ -56,7 +56,7 @@ namespace Audio
         virtual Timestamp getPlayingTimeImpl() const;
 
         /** @see RenderableSource::updateImpl. */
-        virtual void updateImpl(int flags, const Listener &sceneListener);
+        virtual void updateImpl(int32_t flags, const Listener &sceneListener);
 
         /** @see RenderableSource::seekImpl. */
         virtual void seekImpl(Timestamp time);

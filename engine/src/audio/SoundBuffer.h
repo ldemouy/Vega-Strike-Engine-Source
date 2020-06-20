@@ -28,8 +28,8 @@ namespace Audio
     {
     private:
         void *buffer;
-        unsigned int byteCapacity;
-        unsigned int bytesUsed;
+        uint32_t byteCapacity;
+        uint32_t bytesUsed;
 
         Format format;
 
@@ -38,7 +38,7 @@ namespace Audio
         SoundBuffer();
 
         /** Create a buffer of specified sample capacity and format */
-        SoundBuffer(unsigned int capacity, const Format &format);
+        SoundBuffer(uint32_t capacity, const Format &format);
 
         /** Create a copy of the other buffer
          * @remarks Only used bytes will be copied. 
@@ -49,25 +49,25 @@ namespace Audio
          * @param capacity The buffer's capacity in bytes
          * @remarks Destroys the current data in the buffer.
          */
-        void reserve(unsigned int capacity);
+        void reserve(uint32_t capacity);
 
         /** Set a buffer's capacity and format.
          * @param capacity The buffer's capacity in samples (or frames) for 'format'
          * @param format The new format associated to the buffer
          * @remarks Destroys the current data in the buffer.
          */
-        void reserve(unsigned int capacity, const Format &format);
+        void reserve(uint32_t capacity, const Format &format);
 
         /** Get a buffer's byte capacity */
-        unsigned int getByteCapacity() const { return byteCapacity; }
+        uint32_t getByteCapacity() const { return byteCapacity; }
 
         /** Get a buffer's sample capacity 
          * @remarks Frame capacity actually, which is not the same for multichannel formats. 
          */
-        unsigned int getSampleCapacity() const { return byteCapacity / format.frameSize(); }
+        uint32_t getSampleCapacity() const { return byteCapacity / format.frameSize(); }
 
         /** Get the portion of the buffer actually used for holding useful data */
-        unsigned int getUsedBytes() const { return bytesUsed; }
+        uint32_t getUsedBytes() const { return bytesUsed; }
 
         /** Get write access to the buffer */
         void *getBuffer() { return buffer; }
@@ -86,10 +86,10 @@ namespace Audio
         }
 
         /** Set the portion of the buffer actually used for holding useful data */
-        void setUsedBytes(unsigned int used) { bytesUsed = used; }
+        void setUsedBytes(uint32_t used) { bytesUsed = used; }
 
         /** Get a buffer's sample capacity for a certain format */
-        unsigned int getSampleCount() const { return bytesUsed / format.frameSize(); }
+        uint32_t getSampleCount() const { return bytesUsed / format.frameSize(); }
 
         /** Reformat the samples in the buffer without reallocating if possible (inplace) 
          * @remarks If the new format requires more bytes than the buffer's byte capacity,

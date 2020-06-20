@@ -27,8 +27,8 @@ namespace Audio
 {
 
     OpenALStreamingSound::OpenALStreamingSound(const std::string &name, VSFileSystem::VSFileType type,
-                                               unsigned int _bufferSamples) : SimpleSound(name, type, true),
-                                                                              bufferSamples(_bufferSamples)
+                                               uint32_t _bufferSamples) : SimpleSound(name, type, true),
+                                                                          bufferSamples(_bufferSamples)
     {
         for (size_t i = 0; i < NUM_BUFFERS; ++i)
             bufferHandles[i] = AL_NULL_BUFFER;

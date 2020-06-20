@@ -17,7 +17,7 @@ namespace Audio
         listener = 0;
     }
 
-    void RenderableListener::update(int flags)
+    void RenderableListener::update(int32_t flags)
     {
         try
         {

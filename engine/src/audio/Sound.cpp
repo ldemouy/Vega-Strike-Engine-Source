@@ -26,9 +26,13 @@ namespace Audio
         if (!isLoaded())
         {
             if (!isLoading())
+            {
                 loadImpl(wait);
+            }
             if (wait && !isLoaded())
+            {
                 waitLoad();
+            }
         }
     }
 

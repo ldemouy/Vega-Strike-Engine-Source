@@ -121,7 +121,7 @@ namespace Audio
             ->seek(time);
     }
 
-    void OpenALRenderableStreamingSource::updateImpl(int flags, const Listener &sceneListener)
+    void OpenALRenderableStreamingSource::updateImpl(int32_t flags, const Listener &sceneListener)
     {
         Source *source = getSource();
         ALSourceHandle als = getALSource();

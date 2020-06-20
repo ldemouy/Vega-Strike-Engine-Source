@@ -33,17 +33,17 @@ namespace Audio
         {
             /** Loaded state of the resource.
             */
-            int loaded : 1;
+            int32_t loaded : 1;
 
             /** Background loading state of the resource.
             * @note Accessible to derived classes to support easier and safer threading
             */
-            int loading : 1;
+            int32_t loading : 1;
 
             /** Sound is a streaming resource 
             * @note Accessible to derived classes to support easier and safer threading
              */
-            int streaming : 1;
+            int32_t streaming : 1;
         } flags;
 
     protected:

@@ -33,7 +33,7 @@ namespace Audio
     private:
         // The many required indexes
         typedef std::set<Codec *> CodecSet;
-        typedef std::map<Codec *, int> CodecPriority;
+        typedef std::map<Codec *, int32_t> CodecPriority;
         typedef std::map<std::string, CodecSet> ExtensionCodecs;
         typedef std::map<std::string, Codec *> NameCodec;
 
@@ -55,7 +55,7 @@ namespace Audio
          *      that any further call will be a no-op. Previos priority will still apply.
          * @param codec The codec to be added to the registry.
          */
-        void add(Codec *codec, int priority = 0);
+        void add(Codec *codec, int32_t priority = 0);
 
         /**
          * Remove a codec from the registry
@@ -98,7 +98,7 @@ namespace Audio
         Codec *codec;
 
     public:
-        CodecRegistration(Codec *codec, int priority = 0);
+        CodecRegistration(Codec *codec, int32_t priority = 0);
         ~CodecRegistration();
     };
 
