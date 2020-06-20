@@ -24,7 +24,7 @@ public:
     ~Resizable()
     {
         free(q);
-        q = NULL;
+        q = nullptr;
     }
     void assert_free(unsigned int n)
     {

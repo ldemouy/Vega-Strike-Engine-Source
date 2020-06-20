@@ -447,7 +447,7 @@ std::vector<Mesh *> MakeMesh(unsigned int mysize)
 {
     std::vector<Mesh *> temp;
     for (unsigned int i = 0; i < mysize; i++)
-        temp.push_back(NULL);
+        temp.push_back(nullptr);
     return temp;
 }
 
@@ -627,7 +627,7 @@ void Unit::beginElement(const string &name, const AttributeList &attributes)
             {
             case XFILE:
                 ADDDEFAULT;
-                addRapidMesh(xml, (*iter).value.c_str(), xml->unitscale, faction, NULL);
+                addRapidMesh(xml, (*iter).value.c_str(), xml->unitscale, faction, nullptr);
                 xml->hasColTree = true;
                 break;
             case RAPID:
@@ -795,7 +795,7 @@ void Unit::beginElement(const string &name, const AttributeList &attributes)
         }
         int upgrfac = FactionUtil::GetUpgradeFaction();
         Unit *upgradee = UnitFactory::createUnit(filename.c_str(), true, upgrfac);
-        Unit::Upgrade(upgradee, moffset, soffset, GetModeFromName(filename.c_str()), true, percent, NULL);
+        Unit::Upgrade(upgradee, moffset, soffset, GetModeFromName(filename.c_str()), true, percent, nullptr);
         upgradee->Kill();
         break;
     }
@@ -1103,7 +1103,7 @@ void Unit::beginElement(const string &name, const AttributeList &attributes)
             }
         }
         indx = xml->units.size();
-        xml->units.push_back(UnitFactory::createUnit(filename.c_str(), true, faction, xml->unitModifications, NULL)); //I set here the fg arg to NULL
+        xml->units.push_back(UnitFactory::createUnit(filename.c_str(), true, faction, xml->unitModifications, nullptr)); //I set here the fg arg to nullptr
         if (xml->units.back()->name == "LOAD_FAILED")
         {
             xml->units.back()->limits.yaw = 0;
@@ -1120,7 +1120,7 @@ void Unit::beginElement(const string &name, const AttributeList &attributes)
         xml->units[indx]->limits.structurelimits = R.Cast();
         xml->units[indx]->limits.limitmin = fbrltb[0];
         xml->units[indx]->name = filename;
-        if (xml->units[indx]->pImage->unitwriter != NULL)
+        if (xml->units[indx]->pImage->unitwriter != nullptr)
             xml->units[indx]->pImage->unitwriter->setName(filename);
         CheckAccessory(xml->units[indx]); //turns on the ceerazy rotation for the turret
         break;
@@ -2051,15 +2051,15 @@ void Unit::LoadXML(VSFileSystem::VSFile &f, const char *modifications, string *x
     xml->calculated_role = false;
     xml->damageiterator = 0;
     xml->unitModifications = modifications;
-    xml->shieldmesh = NULL;
-    xml->rapidmesh = NULL;
+    xml->shieldmesh = nullptr;
+    xml->rapidmesh = nullptr;
     xml->hasColTree = true;
     xml->unitlevel = 0;
     xml->unitscale = 1;
-    XML_Parser parser = XML_ParserCreate(NULL);
+    XML_Parser parser = XML_ParserCreate(nullptr);
     XML_SetUserData(parser, this);
     XML_SetElementHandler(parser, &Unit::beginElement, &Unit::endElement);
-    if (xmlbuffer != NULL)
+    if (xmlbuffer != nullptr)
         XML_Parse(parser, xmlbuffer->c_str(), xmlbuffer->length(), 1);
     else
         XML_Parse(parser, (f.ReadFull()).c_str(), f.Size(), 1);
@@ -2067,7 +2067,7 @@ void Unit::LoadXML(VSFileSystem::VSFile &f, const char *modifications, string *x
     //Load meshes into subunit
     pImage->unitwriter->EndTag("Unit");
     meshdata = xml->meshes;
-    meshdata.push_back(NULL);
+    meshdata.push_back(nullptr);
     corner_min = Vector(FLT_MAX, FLT_MAX, FLT_MAX);
     corner_max = Vector(-FLT_MAX, -FLT_MAX, -FLT_MAX);
     warpenergy = maxwarpenergy;
@@ -2108,7 +2108,7 @@ void Unit::LoadXML(VSFileSystem::VSFile &f, const char *modifications, string *x
     this->colTrees = collideTrees::Get(collideTreeHash);
     if (this->colTrees)
         this->colTrees->Inc();
-    csOPCODECollider *colShield = NULL;
+    csOPCODECollider *colShield = nullptr;
     if (xml->shieldmesh)
     {
         meshdata.back() = xml->shieldmesh;
@@ -2126,7 +2126,7 @@ void Unit::LoadXML(VSFileSystem::VSFile &f, const char *modifications, string *x
         static int shieldstacks = XMLSupport::parse_int(vs_config->getVariable("graphics", "shield_detail", "16"));
         static std::string shieldtex = vs_config->getVariable("graphics", "shield_texture", "shield.bmp");
         static std::string shieldtechnique = vs_config->getVariable("graphics", "shield_technique", "");
-        meshdata.back() = new SphereMesh(rSize(), shieldstacks, shieldstacks, shieldtex.c_str(), shieldtechnique, NULL, false, ONE, ONE);
+        meshdata.back() = new SphereMesh(rSize(), shieldstacks, shieldstacks, shieldtex.c_str(), shieldtechnique, nullptr, false, ONE, ONE);
     }
     meshdata.back()->EnableSpecialFX();
     if (!this->colTrees)
@@ -2134,12 +2134,12 @@ void Unit::LoadXML(VSFileSystem::VSFile &f, const char *modifications, string *x
         polies.clear();
         if (xml->rapidmesh)
             xml->rapidmesh->GetPolys(polies);
-        csOPCODECollider *csrc = NULL;
+        csOPCODECollider *csrc = nullptr;
         if (xml->hasColTree)
             csrc = getCollideTree(Vector(1, 1, 1),
                                   xml->rapidmesh
                                       ? &polies
-                                      : NULL);
+                                      : nullptr);
         this->colTrees = new collideTrees(collideTreeHash,
                                           csrc,
                                           colShield);

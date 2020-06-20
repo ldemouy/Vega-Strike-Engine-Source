@@ -57,7 +57,7 @@ namespace XMLSupport
 
     AttributeList::AttributeList(const XML_Char **atts)
     {
-        for (; *atts != NULL; atts += 2)
+        for (; *atts != nullptr; atts += 2)
             push_back(Attribute(atts[0], atts[1]));
     }
 

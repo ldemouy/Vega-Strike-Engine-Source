@@ -110,11 +110,11 @@ void ShipCommands::roll(bool *isKeyDown)
     broll = isKeyDown;
 }
 
-static ShipCommands *ship_commands = NULL;
+static ShipCommands *ship_commands = nullptr;
 
 void ShipCommands::setkps(const char *in)
 {
-    if (in == NULL)
+    if (in == nullptr)
         throw "What speed?";
     float kps = XMLSupport::parse_float(std::string(in));
     Unit *player = UniverseUtil::getPlayer();
@@ -139,5 +139,5 @@ void UninitShipCommands()
 {
     if (ship_commands)
         delete ship_commands;
-    ship_commands = NULL;
+    ship_commands = nullptr;
 }

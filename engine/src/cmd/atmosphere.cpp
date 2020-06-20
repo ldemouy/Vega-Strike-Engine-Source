@@ -32,7 +32,7 @@ void Atmosphere::setArray1(float c0[3], const GFXColor &c1)
 
 Atmosphere::Atmosphere(const Parameters &params) : user_params(params), divisions(64)
 {
-    dome = new SphereMesh(params.radius, divisions, divisions, "white.bmp", "", NULL, true, ONE, ZERO, false, 0, M_PI / 2);
+    dome = new SphereMesh(params.radius, divisions, divisions, "white.bmp", "", nullptr, true, ONE, ZERO, false, 0, M_PI / 2);
 }
 
 Atmosphere::~Atmosphere()
@@ -61,7 +61,7 @@ void Atmosphere::Update(const QVector &position, const Matrix &tmatrix)
     QVector localDir;
     float rho1 = 0.0;
     Unit *primary;
-    for (un_iter iter = system->getUnitList().createIterator(); (primary = *iter) != NULL; ++iter)
+    for (un_iter iter = system->getUnitList().createIterator(); (primary = *iter) != nullptr; ++iter)
         if (primary->isUnit() == PLANETPTR && (currPlanet = (GamePlanet *)primary)->hasLights())
         {
             /* for now just assume all planets with lights are really bright */
@@ -85,7 +85,7 @@ void Atmosphere::Update(const QVector &position, const Matrix &tmatrix)
                 lprime.Normalize();
                 //float theta = atan2(lprime.i,lprime.j);
                 //float size = .125;
-                sunboxes.push_back(new SunBox(NULL));
+                sunboxes.push_back(new SunBox(nullptr));
                 break;
             }
         }

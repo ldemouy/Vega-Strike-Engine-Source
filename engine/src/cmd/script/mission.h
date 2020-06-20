@@ -359,7 +359,7 @@ public:
     {
         scopetype = sctype;
         objectname = string();
-        object = NULL;
+        object = nullptr;
     }
     varInst()
     {
@@ -415,8 +415,8 @@ public:
 
     scriptContext()
     {
-        varinsts = NULL;
-        block_node = NULL;
+        varinsts = nullptr;
+        block_node = nullptr;
     }
 };
 
@@ -681,7 +681,7 @@ private:
 
     void trace(missionNode *node, int mode);
 
-    varInst *doScript(missionNode *node, int mode, varInstMap *varmap = NULL);
+    varInst *doScript(missionNode *node, int mode, varInstMap *varmap = nullptr);
     void doBlock(missionNode *node, int mode);
     bool doBooleanVar(missionNode *node, int mode);
     varInst *lookupLocalVariable(missionNode *asknode);
@@ -720,7 +720,7 @@ private:
     double doFloatVar(missionNode *node, int mode);
     double doFMath(missionNode *node, int mode);
 
-    void doArguments(missionNode *node, int mode, varInstMap *varmap = NULL);
+    void doArguments(missionNode *node, int mode, varInstMap *varmap = nullptr);
     void doReturn(missionNode *node, int mode);
     void doGlobals(missionNode *node, int mode);
     void doImport(missionNode *node, int mode);
@@ -759,7 +759,7 @@ private:
     varInst *callGetGameTime(missionNode *node, int mode);
     varInst *callResetTimeCompression(missionNode *node, int mode);
     varInst *callGetSystemName(missionNode *node, int mode);
-    varInst *callGetSystemFile(missionNode *node, int mode, StarSystem *ss = NULL);
+    varInst *callGetSystemFile(missionNode *node, int mode, StarSystem *ss = nullptr);
     varInst *callGetNumAdjacentSystems(missionNode *node, int mode);
     varInst *callGetGalaxyProperty(missionNode *node, int mode);
     varInst *callGetAdjacentSystem(missionNode *node, int mode);

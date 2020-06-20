@@ -1134,10 +1134,10 @@ void LaunchConverter( const char *input, const char *output, const char *args = 
     if (!pid) {
         string soundserver_path = VSFileSystem::datadir+"/bin/mesher";
         string firstarg = string( "\"" )+soundserver_path+string( "\"" );
-        pid = execlp( soundserver_path.c_str(), soundserver_path.c_str(), input, output, args, NULL );
+        pid = execlp( soundserver_path.c_str(), soundserver_path.c_str(), input, output, args, nullptr );
         soundserver_path = VSFileSystem::datadir+"/mesher";
         firstarg = string( "\"" )+soundserver_path+string( "\"" );
-        pid = execlp( soundserver_path.c_str(), soundserver_path.c_str(), input, output, args, NULL );
+        pid = execlp( soundserver_path.c_str(), soundserver_path.c_str(), input, output, args, nullptr );
         VSFileSystem::vs_fprintf( stderr, "Unable to spawn converter\n" );
         exit( -1 );
     } else {
@@ -1151,11 +1151,11 @@ void LaunchConverter( const char *input, const char *output, const char *args = 
 #else
     string ss_path  = VSFileSystem::datadir+"\\bin\\mesher.exe";
     string firstarg = string( "\"" )+ss_path+string( "\"" );
-    int    pid = spawnl( P_WAIT, ss_path.c_str(), firstarg.c_str(), intmp.c_str(), outtmp.c_str(), args, NULL );
+    int    pid = spawnl( P_WAIT, ss_path.c_str(), firstarg.c_str(), intmp.c_str(), outtmp.c_str(), args, nullptr );
     if (pid == -1) {
         ss_path  = VSFileSystem::datadir+"\\mesher.exe";
         firstarg = string( "\"" )+ss_path+string( "\"" );
-        int pid = spawnl( P_WAIT, ss_path.c_str(), firstarg.c_str(), intmp.c_str(), outtmp.c_str(), args, NULL );
+        int pid = spawnl( P_WAIT, ss_path.c_str(), firstarg.c_str(), intmp.c_str(), outtmp.c_str(), args, nullptr );
         if (pid == -1)
             VSFileSystem::vs_fprintf( stderr, "Unable to spawn obj converter Error (%d)\n", pid );
     }
@@ -1370,7 +1370,7 @@ void Mesh::LoadXML( VSFileSystem::VSFile &f,
     xml->recalc_norm   = false;
     xml->scale    = scale;
     xml->lodscale = scale;
-    XML_Parser parser = XML_ParserCreate( NULL );
+    XML_Parser parser = XML_ParserCreate( nullptr );
     XML_SetUserData( parser, xml );
     XML_SetElementHandler( parser, &Mesh::beginElement, &Mesh::endElement );
     XML_Parse( parser, ( f.ReadFull() ).c_str(), f.Size(), 1 );
@@ -1383,7 +1383,7 @@ void Mesh::LoadXML( VSFileSystem::VSFile &f,
     PostProcessLoading( xml, textureOverride );
     numlods = xml->lod.size()+1;
     if (origthis) {
-        orig = NULL;
+        orig = nullptr;
     } else {
         orig = new Mesh[numlods];
         unsigned int i;
@@ -1836,12 +1836,12 @@ void Mesh::PostProcessLoading( MeshXML *xml, const vector< string > &textureOver
             }
         }
     while ( Decal.size() < xml->decals.size() )
-        Decal.push_back( NULL );
+        Decal.push_back( nullptr );
     {
         for (unsigned int i = 0; i < xml->decals.size(); i++)
             Decal[i] = ( TempGetTexture( xml, i, factionname ) );
     }
-    while (Decal.back() == NULL && Decal.size() > 1)
+    while (Decal.back() == nullptr && Decal.size() > 1)
         Decal.pop_back();
     initTechnique( xml->technique );
 

@@ -81,10 +81,10 @@ Control *GroupControl::removeControlFromGroup(Control *c)
                 return ret;
         }
     }
-    return NULL;
+    return nullptr;
 }
 
-//Find a control using its id.  NULL returned if none found.
+//Find a control using its id.  nullptr returned if none found.
 //Note that the control may be hidden.
 Control *GroupControl::findControlById(const std::string &id)
 {
@@ -104,7 +104,7 @@ Control *GroupControl::findControlById(const std::string &id)
                 return ret;
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 //Draw the control.

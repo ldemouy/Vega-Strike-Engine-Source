@@ -46,7 +46,7 @@
 
 varInst *Mission::call_string(missionNode *node, int mode)
 {
-    varInst *viret = NULL;
+    varInst *viret = nullptr;
     if (mode == SCRIPT_PARSE)
     {
         string cmd = node->attr_value("name");
@@ -125,7 +125,7 @@ varInst *Mission::call_string(missionNode *node, int mode)
         deleteVarInst(ovi);
         return viret;
     }            //else objects
-    return NULL; //never reach
+    return nullptr; //never reach
 }
 
 string Mission::getStringArgument(missionNode *node, int mode, int arg_nr)
@@ -178,11 +178,11 @@ varInst *Mission::call_string_new(missionNode *node, int mode, string initstring
 
 string *Mission::getStringObject(missionNode *node, int mode, varInst *ovi)
 {
-    string *my_object = NULL;
+    string *my_object = nullptr;
     if (mode == SCRIPT_RUN)
     {
         my_object = (string *)ovi->object;
-        if (my_object == NULL)
+        if (my_object == nullptr)
         {
             fatalError(node, mode, "string: no object");
             assert(0);

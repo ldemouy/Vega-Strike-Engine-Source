@@ -30,17 +30,17 @@ void LoadMainConfig(void)
     int got_config = 0;
     int got_temp = 0;
     int got_column = 0;
-    if ((fp = fopen(CONFIG_FILE, "r")) == NULL)
+    if ((fp = fopen(CONFIG_FILE, "r")) == nullptr)
     {
         string opath(origpath);
         opath += string("/") + CONFIG_FILE;
-        if ((fp = fopen(opath.c_str(), "r")) == NULL)
+        if ((fp = fopen(opath.c_str(), "r")) == nullptr)
         {
             fprintf(stderr, "Unable to read from %s\n", CONFIG_FILE);
             exit(-1);
         }
     }
-    while ((p = fgets(line, MAX_READ, fp)) != NULL)
+    while ((p = fgets(line, MAX_READ, fp)) != nullptr)
     {
         if (line[0] == '#')
             continue;
@@ -51,7 +51,7 @@ void LoadMainConfig(void)
         n_parm = next_parm(parm);
         if (strcmp("program_name", parm) == 0)
         {
-            if (CONFIG.program_name != NULL)
+            if (CONFIG.program_name != nullptr)
             {
                 fprintf(stderr, "Duplicate program_name in config file\n");
                 continue;
@@ -67,7 +67,7 @@ void LoadMainConfig(void)
         }
         if (strcmp("config_file", parm) == 0)
         {
-            if (CONFIG.config_file != NULL)
+            if (CONFIG.config_file != nullptr)
             {
                 fprintf(stderr, "Duplicate config_file in config file\n");
                 continue;
@@ -83,7 +83,7 @@ void LoadMainConfig(void)
         }
         if (strcmp("temp_file", parm) == 0)
         {
-            if (CONFIG.temp_file != NULL)
+            if (CONFIG.temp_file != nullptr)
             {
                 fprintf(stderr, "Duplicate temp_file in config file\n");
                 continue;
@@ -172,16 +172,16 @@ void LoadConfig(void)
 
     G_CURRENT = &GROUPS;
     C_CURRENT = &CATS;
-    if (useGameConfig() || (fp = fopen(CONFIG.config_file, "r")) == NULL)
+    if (useGameConfig() || (fp = fopen(CONFIG.config_file, "r")) == nullptr)
     {
         origconfig = true;
-        if ((fp = fopen(mangle_config(CONFIG.config_file).c_str(), "r")) == NULL)
+        if ((fp = fopen(mangle_config(CONFIG.config_file).c_str(), "r")) == nullptr)
         {
             fprintf(stderr, "Unable to read from %s\n", CONFIG_FILE);
             exit(-1);
         }
     }
-    while ((p = fgets(line, MAX_READ, fp)) != NULL)
+    while ((p = fgets(line, MAX_READ, fp)) != nullptr)
     {
         parm = line;
         if (parm[0] == '<')
@@ -270,23 +270,23 @@ void Modconfig(int setting, const char *name, const char *group)
     char *p, *parm, *n_parm, *start_write, *end_write;
     int commenting = 0; //0 if scanning, 1 if adding comments, 2 if removing comments
     int skip;
-    if (useGameConfig() || (rp = fopen(CONFIG.config_file, "r")) == NULL)
+    if (useGameConfig() || (rp = fopen(CONFIG.config_file, "r")) == nullptr)
     {
-        if ((rp = fopen(mangle_config(CONFIG.config_file).c_str(), "r")) == NULL)
+        if ((rp = fopen(mangle_config(CONFIG.config_file).c_str(), "r")) == nullptr)
         {
             fprintf(stderr, "Unable to read from %s\n", CONFIG_FILE);
             exit(-1);
         }
     }
-    if ((wp = fopen(CONFIG.temp_file, "w")) == NULL)
+    if ((wp = fopen(CONFIG.temp_file, "w")) == nullptr)
     {
-        if ((wp = fopen(mangle_config(CONFIG.temp_file).c_str(), "w")) == NULL)
+        if ((wp = fopen(mangle_config(CONFIG.temp_file).c_str(), "w")) == nullptr)
         {
             fprintf(stderr, "Unable to write to %s\n", CONFIG.temp_file);
             exit(-1);
         }
     }
-    while ((p = fgets(line, MAX_READ, rp)) != NULL)
+    while ((p = fgets(line, MAX_READ, rp)) != nullptr)
     {
         chomp(line);
         strncpy(write, line, MAX_READ);
@@ -417,9 +417,9 @@ void Modconfig(int setting, const char *name, const char *group)
     fclose(wp);
     fclose(rp);
     //Now we commit the changes
-    if ((rp = fopen(CONFIG.temp_file, "r")) == NULL)
+    if ((rp = fopen(CONFIG.temp_file, "r")) == nullptr)
     {
-        if ((rp = fopen(mangle_config(CONFIG.temp_file).c_str(), "r")) == NULL)
+        if ((rp = fopen(mangle_config(CONFIG.temp_file).c_str(), "r")) == nullptr)
         {
             fprintf(stderr, "Unable to read from %s\n", CONFIG.temp_file);
 
@@ -432,20 +432,20 @@ void Modconfig(int setting, const char *name, const char *group)
  *               tmp1 = mangle_config (CONFIG.config_file);
  *       }
  */
-    if ((wp = fopen(tmp1.c_str(), "w")) == NULL)
+    if ((wp = fopen(tmp1.c_str(), "w")) == nullptr)
     {
         tmp1 = mangle_config(CONFIG.config_file);
-        if ((wp = fopen(tmp1.c_str(), "w")) == NULL)
+        if ((wp = fopen(tmp1.c_str(), "w")) == nullptr)
         {
             tmp1 = CONFIG.config_file;
-            if ((wp = fopen(tmp1.c_str(), "w")) == NULL)
+            if ((wp = fopen(tmp1.c_str(), "w")) == nullptr)
             {
                 fprintf(stderr, "Unable to write  to %s\n", CONFIG.config_file);
                 exit(1);
             }
         }
     }
-    while ((p = fgets(line, MAX_READ, rp)) != NULL)
+    while ((p = fgets(line, MAX_READ, rp)) != nullptr)
         fprintf(wp, "%s", line);
     fclose(rp);
     fclose(wp);

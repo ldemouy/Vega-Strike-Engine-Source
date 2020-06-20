@@ -113,7 +113,7 @@ public:
     QuestionDialog() : m_deleteWindow(true) {}
     virtual ~QuestionDialog(void)
     {
-        if (m_window != NULL && m_deleteWindow)
+        if (m_window != nullptr && m_deleteWindow)
             delete m_window;
     }
 

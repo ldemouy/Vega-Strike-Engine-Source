@@ -13,14 +13,14 @@ protected:
                  bool SubUnit,
                  int faction,
                  const std::string &unitModifications = std::string(""),
-                 Flightgroup *fg = NULL);
+                 Flightgroup *fg = nullptr);
     GameBuilding(Terrain *parent,
                  bool vehicle,
                  const char *filename,
                  bool SubUnit,
                  int faction,
                  const std::string &unitModifications = std::string(""),
-                 Flightgroup *fg = NULL);
+                 Flightgroup *fg = nullptr);
 
     friend class UnitFactory;
 
@@ -32,7 +32,7 @@ public:
                                 const Matrix &,
                                 const Vector &CumulativeVelocity,
                                 bool ResolveLast,
-                                UnitCollection *uc = NULL);
+                                UnitCollection *uc = nullptr);
 
 protected:
     /// default constructor forbidden

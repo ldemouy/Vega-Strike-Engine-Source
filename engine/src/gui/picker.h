@@ -81,7 +81,7 @@ public:
     virtual PickerCell *cellAt(int index) = 0;
     //Get a particular cell (const).
     virtual const PickerCell *cellAt(int index) const = 0;
-    //Find a cell by id.  Returns NULL if not found.
+    //Find a cell by id.  Returns nullptr if not found.
     virtual PickerCell *cellWithId(const std::string &id);
 
     //Utility functions:
@@ -118,7 +118,7 @@ public:
     //Make a cell selected.
     virtual void selectCell(PickerCell *cell, bool scroll = false);
 
-    //Return the cell that is currently selected.  Can be NULL.
+    //Return the cell that is currently selected.  Can be nullptr.
     virtual PickerCell *selectedCell(void)
     {
         return m_selectedCell;
@@ -131,7 +131,7 @@ public:
 
     //Make sure the cell is visible in the scroll area.  If it is, nothing
     //happens.  If it's not, we move it into the visible section.
-    //If NULL, this routine does nothing.
+    //If nullptr, this routine does nothing.
     virtual void scrollToCell(const PickerCell *cell, bool middle = false);
 
     //This should be called when the lists of cells have been changed
@@ -254,7 +254,7 @@ protected:
         int level;           //How much indent for this cell.  0 = no indent.
         PaintText paintText; //Object containing drawn text.
 
-        DisplayCell(PickerCell *c = NULL, int l = 0) : cell(c), level(l), paintText() {}
+        DisplayCell(PickerCell *c = nullptr, int l = 0) : cell(c), level(l), paintText() {}
     };
 
     PickerCells *m_cells;                //The collection containing the list entries.

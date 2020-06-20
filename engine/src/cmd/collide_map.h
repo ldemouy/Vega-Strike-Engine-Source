@@ -123,7 +123,7 @@ public:
     iterator changeKey(iterator iter, const Collidable &newKey, iterator tless, iterator tmore);
     iterator begin()
     {
-        return sorted.size() != 0 ? &*sorted.begin() : NULL;
+        return sorted.size() != 0 ? &*sorted.begin() : nullptr;
     }
     iterator end()
     {
@@ -191,11 +191,11 @@ inline void init_null_collide_iter()
 }
 inline bool is_null(const CollideMap::iterator &it)
 {
-    return it == NULL;
+    return it == nullptr;
 }
 inline void set_null(CollideMap::iterator &it)
 {
-    it = NULL;
+    it = nullptr;
 }
 
 #endif

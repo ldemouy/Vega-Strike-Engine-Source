@@ -34,7 +34,7 @@ public:
     ~VSSprite();
     bool LoadSuccess()
     {
-        return surface != NULL;
+        return surface != nullptr;
     }
     void Draw();
     void DrawHere( Vector &ll, Vector &lr, Vector &ur, Vector &ul );

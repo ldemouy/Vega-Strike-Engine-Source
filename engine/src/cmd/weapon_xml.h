@@ -52,7 +52,7 @@ struct weapon_info
     mutable class Mesh *gun1; //requres nonconst to add to orig drawing queue when drawing
     void init()
     {
-        gun = gun1 = NULL;
+        gun = gun1 = nullptr;
         TextureStretch = 1;
         role_bits = 0;
         offset = Vector(0, 0, 0);

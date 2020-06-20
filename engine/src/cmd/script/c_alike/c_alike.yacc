@@ -347,7 +347,7 @@ string parseCalike(char const *filename)
 
   yyin=fopen(filename,"r");
 
-  if(yyin==NULL){
+  if(yyin==nullptr){
     // file not found
     return empty_string;
   }

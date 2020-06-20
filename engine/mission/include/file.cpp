@@ -46,11 +46,11 @@ void LoadMission(char *filename) {
 	SetString(&DATA.numplayers,"1");
 	free(file);
 
-	if (top == NULL) { cout << "Unable to load mission file\n"; return; }
+	if (top == nullptr) { cout << "Unable to load mission file\n"; return; }
 
 	read = top;
 
-	ScanNode(NULL, top, filename);
+	ScanNode(nullptr, top, filename);
 }
 string ClassName (string pythonfilename) {
   string::size_type where=pythonfilename.find_last_of ("/");
@@ -180,7 +180,7 @@ void ScanNode (string *parent, easyDomNode *node, string  filename) {
 
 		ScanNode(&current, *siter, filename);
 	}
-	if (parent == NULL) { return; }		// We're at the top node, probably <mission></mission>
+	if (parent == nullptr) { return; }		// We're at the top node, probably <mission></mission>
 	CheckVar(*parent, current, node->attr_value("name"), node->attr_value("value"));
 }
 

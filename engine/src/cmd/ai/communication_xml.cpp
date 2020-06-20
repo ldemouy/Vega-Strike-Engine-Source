@@ -161,7 +161,7 @@ void FSM::LoadXML(const char *filename)
         assert(0);
         return;
     }
-    XML_Parser parser = XML_ParserCreate(NULL);
+    XML_Parser parser = XML_ParserCreate(nullptr);
     XML_SetUserData(parser, this);
     XML_SetElementHandler(parser, &FSM::beginElement, &FSM::endElement);
 

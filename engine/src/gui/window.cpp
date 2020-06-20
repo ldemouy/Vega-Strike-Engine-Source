@@ -57,7 +57,7 @@ void Window::open(void)
 //Done with the window.
 void Window::close(void)
 {
-    processCommand("Window::Close", NULL);
+    processCommand("Window::Close", nullptr);
 }
 
 //Manage controls.
@@ -76,7 +76,7 @@ Control *Window::removeControlFromWindow(Control *c)
     return m_controls->removeControlFromGroup(c);
 }
 
-//Find a control using its id.  NULL returned if none found.
+//Find a control using its id.  nullptr returned if none found.
 //Note that the control may be hidden.
 Control *Window::findControlById(const std::string &id)
 {
@@ -135,7 +135,7 @@ bool Window::processMouseDrag(const InputEvent &event)
 bool Window::processCommand(const EventCommandId &command, Control *control)
 {
     //The controller should see the command first.
-    if (m_controller != NULL)
+    if (m_controller != nullptr)
         if (m_controller->processWindowCommand(command, control))
             return true;
     //Default command responders.
@@ -150,7 +150,7 @@ bool Window::processCommand(const EventCommandId &command, Control *control)
 }
 
 //CONSTRUCTION
-Window::Window(void) : m_rect(0.0, 0.0, 0.0, 0.0), m_color(GUI_OPAQUE_BLACK()), m_outlineColor(GUI_CLEAR), m_outlineWidth(1.0), m_deleteOnClose(true), m_controls(NULL), m_controller(NULL)
+Window::Window(void) : m_rect(0.0, 0.0, 0.0, 0.0), m_color(GUI_OPAQUE_BLACK()), m_outlineColor(GUI_CLEAR), m_outlineWidth(1.0), m_deleteOnClose(true), m_controls(nullptr), m_controller(nullptr)
 {
     m_controls = new GroupControl();
 }
@@ -251,12 +251,12 @@ void WindowManager::shutDown(void)
 }
 
 //Pointer to the one, global window manager.
-WindowManager *globalWindowManagerPtr = NULL;
+WindowManager *globalWindowManagerPtr = nullptr;
 
 //Get the one window manager.
 WindowManager &globalWindowManager(void)
 {
-    if (globalWindowManagerPtr == NULL)
+    if (globalWindowManagerPtr == nullptr)
         globalWindowManagerPtr = new WindowManager;
     return *globalWindowManagerPtr;
 }

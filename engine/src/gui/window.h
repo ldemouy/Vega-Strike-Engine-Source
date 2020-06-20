@@ -57,7 +57,7 @@ public:
     //Take a control away from this window and save it elsewhere.
     virtual Control *removeControlFromWindow(Control *c);
 
-    //Find a control using its id.  NULL returned if none found.
+    //Find a control using its id.  nullptr returned if none found.
     //Note that the control may be hidden.
     virtual Control *findControlById(const std::string &id);
 

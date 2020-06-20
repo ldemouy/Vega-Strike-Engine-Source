@@ -65,7 +65,7 @@ void BaseInterface::Room::Comp::EndXML( FILE *fp )
     Link::EndXML( fp );
     VSFileSystem::Write( ", '", 3, 1, fp );
     for (int i = 0; i < modes.size(); i++) {
-        char *mode = NULL;
+        char *mode = nullptr;
         switch (modes[i])
         {
         case BaseComputer::CARGO:

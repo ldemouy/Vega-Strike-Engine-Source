@@ -118,7 +118,7 @@ void GFXVertexList::Init(enum POLYTYPE *poly,
 
     int stride = 0;
 
-    changed = HAS_COLOR * ((colors != NULL) ? 1 : 0);
+    changed = HAS_COLOR * ((colors != nullptr) ? 1 : 0);
     if (numlists > 0)
     {
         mode = new POLYTYPE[numlists];
@@ -133,7 +133,7 @@ void GFXVertexList::Init(enum POLYTYPE *poly,
     }
     else
     {
-        mode = NULL;
+        mode = nullptr;
         unique_mode = false;
     }
     this->numlists = numlists;
@@ -167,8 +167,8 @@ void GFXVertexList::Init(enum POLYTYPE *poly,
     }
     else
     {
-        data.vertices = NULL;
-        data.colors = NULL;
+        data.vertices = nullptr;
+        data.colors = nullptr;
     }
     this->offsets = new int[numlists];
     memcpy(this->offsets, offsets, sizeof(int) * numlists);
@@ -211,7 +211,7 @@ void GFXVertexList::Init(enum POLYTYPE *poly,
     }
     else
     {
-        index.b = NULL;
+        index.b = nullptr;
     }
     changed |= stride;
     RenormalizeNormals();
@@ -239,9 +239,9 @@ void GFXVertexList::Init(enum POLYTYPE *poly,
         {
             if (index.b)
                 free(index.b);
-            index.b = NULL;
-            data.vertices = NULL;
-            data.colors = NULL;
+            index.b = nullptr;
+            data.vertices = nullptr;
+            data.colors = nullptr;
         }
     }
     if (Mutable)

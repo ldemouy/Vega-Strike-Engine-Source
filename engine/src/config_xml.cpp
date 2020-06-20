@@ -392,7 +392,7 @@ void GameVegaConfig::checkBind(configNode *node)
         player_bound = "0";
     }
     KBHandler handler = commandMap[cmdstr];
-    if (handler == NULL)
+    if (handler == nullptr)
     {
         cout << "No such command: " << cmdstr << endl;
         return;

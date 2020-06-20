@@ -15,7 +15,7 @@ extern enum weapon_info::MOUNT_SIZE lookupMountSize(const char *str);
 
 #if (defined(__APPLE__) == POSH_BIG_ENDIAN) || !defined(INTEL_X86)
 //pre-optimization bug with "gcc 3.1 (20021003) prerelease"
-int counts = time(NULL);
+int counts = time(nullptr);
 #else
 int counts = 0;
 #endif
@@ -538,9 +538,9 @@ weapon_info *getTemplate(const string &kkey)
             if (CachedFileLookup(lookup_cache, meshname, MeshFile) <= Ok)
             {
                 WeaponMeshCache::setCachedMutable(wi->weapon_name, wi->gun =
-                                                                       Mesh::LoadMesh(meshname.c_str(), Vector(1, 1, 1), 0, NULL));
+                                                                       Mesh::LoadMesh(meshname.c_str(), Vector(1, 1, 1), 0, nullptr));
                 WeaponMeshCache::setCachedMutable(wi->weapon_name + "_flare", wi->gun1 =
-                                                                                  Mesh::LoadMesh(meshname.c_str(), Vector(1, 1, 1), 0, NULL));
+                                                                                  Mesh::LoadMesh(meshname.c_str(), Vector(1, 1, 1), 0, nullptr));
             }
         }
     }
@@ -554,7 +554,7 @@ void LoadWeapons(const char *filename)
     VSError err = f.OpenReadOnly(filename, UnknownFile);
     if (err > Ok)
         return;
-    XML_Parser parser = XML_ParserCreate(NULL);
+    XML_Parser parser = XML_ParserCreate(nullptr);
     XML_SetElementHandler(parser, &beginElementXML_Char, &endElement);
     XML_Parse(parser, (f.ReadFull()).c_str(), f.Size(), 1);
     f.Close();

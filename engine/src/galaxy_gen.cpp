@@ -33,7 +33,7 @@ using namespace VSFileSystem;
 using std::string;
 using std::vector;
 
-static VSRandom starsysrandom(time(NULL));
+static VSRandom starsysrandom(time(nullptr));
 static void seedrand(uint64_t seed)
 {
     starsysrandom = VSRandom(seed);
@@ -1653,14 +1653,14 @@ int main(int argc, char **argv)
                        systemname,
                        filen,
                        srad, comp;
-                       strtol(argv[4], NULL, 10),
-                       strtol(argv[5], NULL, 10),
-                       strtol(argv[6], NULL, 10),
-                       strtol(argv[7], NULL, 10),
+                       strtol(argv[4], nullptr, 10),
+                       strtol(argv[5], nullptr, 10),
+                       strtol(argv[6], nullptr, 10),
+                       strtol(argv[7], nullptr, 10),
                        nebula,
                        asteroid,
                        numbigthings,
-                       strtol(argv[9], NULL, 10),
+                       strtol(argv[9], nullptr, 10),
                        argv[10],
                        argv[11],
                        jumps);

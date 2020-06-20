@@ -43,7 +43,7 @@
 //#define _G_XML          	// Enable the XML string parsing
 
 // If memory can't be allocated to perform a function, and EXIT_ON_FATAL is not defined,
-// the function will return NULL. With this defined, functions which return pointers to
+// the function will return nullptr. With this defined, functions which return pointers to
 // new memory will return a valid pointer. Only remove this if you want to handle error
 // control yourself
 

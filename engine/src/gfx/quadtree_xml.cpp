@@ -368,7 +368,7 @@ void QuadTree::LoadXML(const char *filename, const Vector &Scales, const float R
     xml->scalet = .001;
     xml->radius = 10000;
     xml->detail = 20;
-    XML_Parser parser = XML_ParserCreate(NULL);
+    XML_Parser parser = XML_ParserCreate(nullptr);
     XML_SetUserData(parser, this);
     XML_SetElementHandler(parser, &QuadTree::beginElement, &QuadTree::endElement);
     XML_Parse(parser, (f.ReadFull()).c_str(), f.Size(), 1);
@@ -399,7 +399,7 @@ void QuadTree::LoadXML(const char *filename, const Vector &Scales, const float R
         }
         else
         {
-            textures[i].tex.t = NULL;
+            textures[i].tex.t = nullptr;
         }
     }
     bool biggest = true;

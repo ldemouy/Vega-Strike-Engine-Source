@@ -103,7 +103,7 @@ FlyByKeyboard::FlyByKeyboard(unsigned int whichplayer) : FlyByWire(), axis_key(0
     this->whichplayer = whichplayer;
     while (starshipcontrolkeys.size() <= whichplayer)
         starshipcontrolkeys.push_back(StarShipControlKeyboard());
-    autopilot = NULL;
+    autopilot = nullptr;
     inauto = false;
 
     //Initial Joystick Mode
@@ -147,7 +147,7 @@ void FlyByKeyboard::Execute(bool resetangvelocity)
     if (SSCK.setnulvel)
     {
         SSCK.setnulvel = false;
-        parent->VelocityReference(NULL);
+        parent->VelocityReference(nullptr);
     }
     if (SSCK.switch_combat_mode)
     {
@@ -173,7 +173,7 @@ void FlyByKeyboard::Execute(bool resetangvelocity)
             // Use AutoDocker if docking clearance on target, otherwise use AutoPilot
             static bool autodock =
                 XMLSupport::parse_bool(vs_config->getVariable("test", "autodocker", "false"));
-            Order *autoNavigator = NULL;
+            Order *autoNavigator = nullptr;
             if (autodock)
             {
                 Unit *station = parent->Target();
@@ -182,7 +182,7 @@ void FlyByKeyboard::Execute(bool resetangvelocity)
                     autoNavigator = new Orders::AutoDocking(station);
                 }
             }
-            if (autoNavigator == NULL)
+            if (autoNavigator == nullptr)
             {
                 autoNavigator = new Orders::AutoLongHaul();
                 autoNavigator->SetParent(parent);
@@ -434,7 +434,7 @@ void FlyByKeyboard::Execute(bool resetangvelocity)
         if (autopilot)
         {
             autopilot->Destroy();
-            autopilot = NULL;
+            autopilot = nullptr;
         }
         SSCK.autopilot = false;
         SSCK.terminateauto = false;
@@ -477,7 +477,7 @@ void FlyByKeyboard::Execute(bool resetangvelocity)
     if (queryType(FACING | MOVEMENT))
     {
         Order::Execute();
-        if (queryType(FACING | MOVEMENT) == NULL)
+        if (queryType(FACING | MOVEMENT) == nullptr)
             FlyByKeyboard::inauto = false;
         done = false;
     }

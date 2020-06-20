@@ -19,7 +19,7 @@ int main( int argc, char **argv )
     struct stat s;
     fstat( fp, &s );
     size_t size = s.st_size;
-    char  *mem  = (char*) mmap( NULL, size, PROT_READ|PROT_WRITE, MAP_SHARED, fp, 0 );
+    char  *mem  = (char*) mmap( nullptr, size, PROT_READ|PROT_WRITE, MAP_SHARED, fp, 0 );
     int    sum  = 0;
     FILE  *rand = fopen( "/dev/random", "r" );
     for (size_t i = 0; i < size; ++i) {

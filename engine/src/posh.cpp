@@ -297,7 +297,7 @@ posh_s64_t POSH_SwapS64(posh_s64_t v)
 /**
  * Writes an unsigned 16-bit value to a little endian buffer
  *
- *  @param dst[out] pointer to the destination buffer, may not be NULL
+ *  @param dst[out] pointer to the destination buffer, may not be nullptr
  *  @param value[in] host-endian unsigned 16-bit value
  *  @returns a pointer to the location two bytes after dst
  *  @remarks does no validation of the inputs
@@ -314,7 +314,7 @@ posh_u16_t *POSH_WriteU16ToLittle(void *dst, posh_u16_t value)
 /**
  * Writes a signed 16-bit value to a little endian buffer
  *
- *  @param dst[out] pointer to the destination buffer, may not be NULL
+ *  @param dst[out] pointer to the destination buffer, may not be nullptr
  *  @param value[in] host-endian signed 16-bit value
  *  @returns a pointer to the location two bytes after dst
  *  @remarks does no validation of the inputs.  This simply calls
@@ -328,7 +328,7 @@ posh_s16_t *POSH_WriteS16ToLittle(void *dst, posh_s16_t value)
 /**
  * Writes an unsigned 32-bit value to a little endian buffer
  *
- *  @param dst[out] pointer to the destination buffer, may not be NULL
+ *  @param dst[out] pointer to the destination buffer, may not be nullptr
  *  @param value[in] host-endian signed 32-bit value
  *  @returns a pointer to the location four bytes after dst
  *  @remarks does no validation of the inputs.
@@ -345,7 +345,7 @@ posh_u32_t *POSH_WriteU32ToLittle(void *dst, posh_u32_t value)
 /**
  * Writes a signed 32-bit value to a little endian buffer
  *
- *  @param dst[out] pointer to the destination buffer, may not be NULL
+ *  @param dst[out] pointer to the destination buffer, may not be nullptr
  *  @param value[in] host-endian signed 32-bit value
  *  @returns a pointer to the location four bytes after dst
  *  @remarks does no validation of the inputs.  This simply calls
@@ -359,7 +359,7 @@ posh_s32_t *POSH_WriteS32ToLittle(void *dst, posh_s32_t value)
 /**
  * Writes an unsigned 16-bit value to a big endian buffer
  *
- *  @param dst[out] pointer to the destination buffer, may not be NULL
+ *  @param dst[out] pointer to the destination buffer, may not be nullptr
  *  @param value[in] host-endian unsigned 16-bit value
  *  @returns a pointer to the location two bytes after dst
  *  @remarks does no validation of the inputs
@@ -376,7 +376,7 @@ posh_u16_t *POSH_WriteU16ToBig(void *dst, posh_u16_t value)
 /**
  * Writes a signed 16-bit value to a big endian buffer
  *
- *  @param dst[out] pointer to the destination buffer, may not be NULL
+ *  @param dst[out] pointer to the destination buffer, may not be nullptr
  *  @param value[in] host-endian signed 16-bit value
  *  @returns a pointer to the location two bytes after dst
  *  @remarks does no validation of the inputs.  This simply calls
@@ -390,7 +390,7 @@ posh_s16_t *POSH_WriteS16ToBig(void *dst, posh_s16_t value)
 /**
  * Writes an unsigned 32-bit value to a big endian buffer
  *
- *  @param dst[out] pointer to the destination buffer, may not be NULL
+ *  @param dst[out] pointer to the destination buffer, may not be nullptr
  *  @param value[in] host-endian unsigned 32-bit value
  *  @returns a pointer to the location four bytes after dst
  *  @remarks does no validation of the inputs.
@@ -407,7 +407,7 @@ posh_u32_t *POSH_WriteU32ToBig(void *dst, posh_u32_t value)
 /**
  * Writes a signed 32-bit value to a big endian buffer
  *
- *  @param dst[out] pointer to the destination buffer, may not be NULL
+ *  @param dst[out] pointer to the destination buffer, may not be nullptr
  *  @param value[in] host-endian signed 32-bit value
  *  @returns a pointer to the location four bytes after dst
  *  @remarks does no validation of the inputs.  This simply calls
@@ -423,7 +423,7 @@ posh_s32_t *POSH_WriteS32ToBig(void *dst, posh_s32_t value)
  * Writes an unsigned 64-bit value to a little-endian buffer
  *
  *  @ingroup SixtyFourBit
- *  @param dst[out] pointer to the destination buffer, may not be NULL
+ *  @param dst[out] pointer to the destination buffer, may not be nullptr
  *  @param value[in] host-endian unsigned 64-bit value
  *  @returns a pointer to the location eight bytes after dst
  *  @remarks does no validation of the inputs.
@@ -441,7 +441,7 @@ posh_u64_t *POSH_WriteU64ToLittle(void *dst, posh_u64_t value)
  * Writes a signed 64-bit value to a little-endian buffer
  *
  *  @ingroup SixtyFourBit
- *  @param dst[out] pointer to the destination buffer, may not be NULL
+ *  @param dst[out] pointer to the destination buffer, may not be nullptr
  *  @param value[in] host-endian unsigned 64-bit value
  *  @returns a pointer to the location eight bytes after dst
  *  @remarks does no validation of the inputs.
@@ -455,7 +455,7 @@ posh_s64_t *POSH_WriteS64ToLittle(void *dst, posh_s64_t value)
  * Writes an unsigned 64-bit value to a big-endian buffer
  *
  *  @ingroup SixtyFourBit
- *  @param dst[out] pointer to the destination buffer, may not be NULL
+ *  @param dst[out] pointer to the destination buffer, may not be nullptr
  *  @param value[in] host-endian unsigned 64-bit value
  *  @returns a pointer to the location eight bytes after dst
  *  @remarks does no validation of the inputs.
@@ -473,7 +473,7 @@ posh_u64_t *POSH_WriteU64ToBig(void *dst, posh_u64_t value)
  * Writes a signed 64-bit value to a big-endian buffer
  *
  *  @ingroup SixtyFourBit
- *  @param dst[out] pointer to the destination buffer, may not be NULL
+ *  @param dst[out] pointer to the destination buffer, may not be nullptr
  *  @param value[in] host-endian signed 64-bit value
  *  @returns a pointer to the location eight bytes after dst
  *  @remarks does no validation of the inputs.
@@ -718,7 +718,7 @@ void POSH_DoubleBits(double d, posh_byte_t dst[8])
  *  @returns double precision floating point representation of the raw bits
  *  @remarks No error checking is performed, so there are no guarantees that the
  *           result is a valid number, nor is there any check to ensure that src is
- *           non-NULL.  BE CAREFUL USING THIS.
+ *           non-nullptr.  BE CAREFUL USING THIS.
  */
 double POSH_DoubleFromBits(const posh_byte_t src[8])
 {

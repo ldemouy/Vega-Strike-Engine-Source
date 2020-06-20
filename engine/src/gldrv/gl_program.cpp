@@ -29,7 +29,7 @@ static ProgramICache programICache;
 static ProgramCache::key_type cacheKey( const std::string &vp, const std::string &fp, const char *defines )
 {
     unsigned int defhash = 0;
-    if (defines != NULL) {
+    if (defines != nullptr) {
         defhash = 0xBA0BAB00;
         while (*defines) 
             defhash ^= (defhash * 127) | *(defines++);
@@ -106,7 +106,7 @@ static VSFileSystem::VSError getProgramSource(const std::string &path, std::vect
             if (strncmp(buf, include_directive, include_directive_len) == 0) {
                 // Process include directives
                 char *eos = strchr(buf+include_directive_len, '\"');
-                if (eos != NULL) {
+                if (eos != nullptr) {
                     *eos = 0;
                     std::string includepath = dirname + "/" + std::string(buf+include_directive_len);
                     if (processed_includes.count(includepath) == 0) {
@@ -190,8 +190,8 @@ static int GFXCreateProgramNoCache( const char *vprogram, const char *fprogram, 
 {
     if (vprogram[0] == '\0' && fprogram[0] == '\0') return 0;
 #ifndef __APPLE__
-    if (glGetProgramInfoLog_p == NULL || glCreateShader_p == NULL || glShaderSource_p == NULL || glCompileShader_p == NULL
-        || glAttachShader_p == NULL || glLinkProgram_p == NULL || glGetShaderiv_p == NULL || glGetProgramiv_p == NULL)
+    if (glGetProgramInfoLog_p == nullptr || glCreateShader_p == nullptr || glShaderSource_p == nullptr || glCompileShader_p == nullptr
+        || glAttachShader_p == nullptr || glLinkProgram_p == nullptr || glGetShaderiv_p == nullptr || glGetProgramiv_p == nullptr)
         return 0;
 #else
 #ifdef OSX_LOWER_THAN_10_4
@@ -216,7 +216,7 @@ static int GFXCreateProgramNoCache( const char *vprogram, const char *fprogram, 
         return 0;
     }
     
-    if (extra_defines != NULL) {
+    if (extra_defines != nullptr) {
         vertexprg = appendDefines( vertexprg, extra_defines );
         fragprg   = appendDefines( fragprg, extra_defines );
     }
@@ -227,7 +227,7 @@ static int GFXCreateProgramNoCache( const char *vprogram, const char *fprogram, 
     if (vperr <= Ok) {
         vproghandle = glCreateShader_p( GL_VERTEX_SHADER );
         const char *tmp = vertexprg.c_str();
-        glShaderSource_p( vproghandle, 1, &tmp, NULL );
+        glShaderSource_p( vproghandle, 1, &tmp, nullptr );
         glCompileShader_p( vproghandle );
         GLint successp  = 0;
         glGetShaderiv_p( vproghandle, GL_COMPILE_STATUS, &successp );
@@ -247,7 +247,7 @@ static int GFXCreateProgramNoCache( const char *vprogram, const char *fprogram, 
     if (fperr <= Ok) {
         fproghandle = glCreateShader_p( GL_FRAGMENT_SHADER );
         const char *tmp = fragprg.c_str();
-        glShaderSource_p( fproghandle, 1, &tmp, NULL );
+        glShaderSource_p( fproghandle, 1, &tmp, nullptr );
         glCompileShader_p( fproghandle );
         GLint successp  = 0;
         glGetShaderiv_p( fproghandle, GL_COMPILE_STATUS, &successp );
@@ -370,10 +370,10 @@ int getDefaultProgram()
         if (hifiProgramName.length() == 0) {
             lowfiprog = hifiprog = 0;
         } else {
-            lowfiprog = GFXCreateProgram( lowfiProgramName.c_str(), lowfiProgramName.c_str(), NULL );
-            if (lowfiprog == 0) lowfiprog = GFXCreateProgram( hifiProgramName.c_str(), hifiProgramName.c_str(), NULL );
-            hifiprog  = GFXCreateProgram( hifiProgramName.c_str(), hifiProgramName.c_str(), NULL );
-            if (hifiprog == 0) hifiprog = GFXCreateProgram( lowfiProgramName.c_str(), lowfiProgramName.c_str(), NULL );
+            lowfiprog = GFXCreateProgram( lowfiProgramName.c_str(), lowfiProgramName.c_str(), nullptr );
+            if (lowfiprog == 0) lowfiprog = GFXCreateProgram( hifiProgramName.c_str(), hifiProgramName.c_str(), nullptr );
+            hifiprog  = GFXCreateProgram( hifiProgramName.c_str(), hifiProgramName.c_str(), nullptr );
+            if (hifiprog == 0) hifiprog = GFXCreateProgram( lowfiProgramName.c_str(), lowfiProgramName.c_str(), nullptr );
         }
         defaultprog    = hifiprog;
         programChanged = true;
@@ -396,16 +396,16 @@ void GFXReloadDefaultShader()
     }
     programChanged = true;
     if (islow) {
-        hifiprog    = GFXCreateProgram( hifiProgramName.c_str(), hifiProgramName.c_str(), NULL );
-        if (hifiprog == 0) hifiprog = GFXCreateProgram( lowfiProgramName.c_str(), lowfiProgramName.c_str(), NULL );
-        lowfiprog   = GFXCreateProgram( lowfiProgramName.c_str(), lowfiProgramName.c_str(), NULL );
-        if (lowfiprog == 0) lowfiprog = GFXCreateProgram( hifiProgramName.c_str(), hifiProgramName.c_str(), NULL );
+        hifiprog    = GFXCreateProgram( hifiProgramName.c_str(), hifiProgramName.c_str(), nullptr );
+        if (hifiprog == 0) hifiprog = GFXCreateProgram( lowfiProgramName.c_str(), lowfiProgramName.c_str(), nullptr );
+        lowfiprog   = GFXCreateProgram( lowfiProgramName.c_str(), lowfiProgramName.c_str(), nullptr );
+        if (lowfiprog == 0) lowfiprog = GFXCreateProgram( hifiProgramName.c_str(), hifiProgramName.c_str(), nullptr );
         defaultprog = lowfiprog;
     } else {
-        lowfiprog   = GFXCreateProgram( lowfiProgramName.c_str(), lowfiProgramName.c_str(), NULL );
-        if (lowfiprog == 0) lowfiprog = GFXCreateProgram( hifiProgramName.c_str(), hifiProgramName.c_str(), NULL );
-        hifiprog    = GFXCreateProgram( hifiProgramName.c_str(), hifiProgramName.c_str(), NULL );
-        if (hifiprog == 0) hifiprog = GFXCreateProgram( lowfiProgramName.c_str(), lowfiProgramName.c_str(), NULL );
+        lowfiprog   = GFXCreateProgram( lowfiProgramName.c_str(), lowfiProgramName.c_str(), nullptr );
+        if (lowfiprog == 0) lowfiprog = GFXCreateProgram( hifiProgramName.c_str(), hifiProgramName.c_str(), nullptr );
+        hifiprog    = GFXCreateProgram( hifiProgramName.c_str(), hifiProgramName.c_str(), nullptr );
+        if (hifiprog == 0) hifiprog = GFXCreateProgram( lowfiProgramName.c_str(), lowfiProgramName.c_str(), nullptr );
         defaultprog = hifiprog;
     }
 }
@@ -485,7 +485,7 @@ bool GFXShaderReloaded()
                     defaultprog = lowfiprog;
                 else
                     defaultprog = 0;
-                GFXActivateShader( (char*) NULL );
+                GFXActivateShader( (char*) nullptr );
             }
             break;
         case TOOFAST:
@@ -495,7 +495,7 @@ bool GFXShaderReloaded()
                     defaultprog = lowfiprog;
                 else
                     defaultprog = hifiprog;
-                GFXActivateShader( (char*) NULL );
+                GFXActivateShader( (char*) nullptr );
             }
             break;
         default:
@@ -531,7 +531,7 @@ int GFXActivateShader( const char *program )
     int defaultprogram = getDefaultProgram();
     int curprogram     = defaultprogram;
     if (program)
-        curprogram = GFXCreateProgram( program, program, NULL );
+        curprogram = GFXCreateProgram( program, program, nullptr );
     return GFXActivateShader( curprogram );
 }
 
@@ -650,7 +650,7 @@ int GFXNamedShaderConstant( char *progID, const char *name )
 {
     int programname = defaultprog;
     if (progID)
-        programname = programCache[cacheKey( progID, progID, NULL )];
+        programname = programCache[cacheKey( progID, progID, nullptr )];
     return GFXNamedShaderConstant( programname, name );
 }
 

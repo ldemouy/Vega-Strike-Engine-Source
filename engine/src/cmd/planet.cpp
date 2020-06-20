@@ -29,13 +29,13 @@
 
 GamePlanet::GamePlanet() : GameUnit<Planet>(0)
 {
-    atmosphere = NULL;
-    terrain = NULL;
+    atmosphere = nullptr;
+    terrain = nullptr;
     radius = 0.0;
-    shine = NULL;
+    shine = nullptr;
     inside = false;
     Init();
-    terraintrans = NULL;
+    terraintrans = nullptr;
     SetAI(new Order()); //no behavior
 }
 
@@ -74,7 +74,7 @@ Mesh *MakeFogMesh(const AtmosphericFogMesh &f, float radius)
     }
     vector<string> override;
     override.push_back(nam);
-    Mesh *ret = Mesh::LoadMesh(f.meshname.c_str(), Vector(f.scale * radius, f.scale * radius, f.scale * radius), 0, NULL, override);
+    Mesh *ret = Mesh::LoadMesh(f.meshname.c_str(), Vector(f.scale * radius, f.scale * radius, f.scale * radius), 0, nullptr, override);
     ret->setConvex(true);
     SetFogMaterialColor(ret, GFXColor(f.er, f.eg, f.eb, f.ea), GFXColor(f.dr, f.dg, f.db, f.da));
     return ret;
@@ -111,7 +111,7 @@ public:
 void GamePlanet::AddFog(const std::vector<AtmosphericFogMesh> &v, bool opticalillusion)
 {
     if (meshdata.empty())
-        meshdata.push_back(NULL);
+        meshdata.push_back(nullptr);
 #ifdef MESHONLY
     Mesh *shield = meshdata.back();
     meshdata.pop_back();
@@ -144,7 +144,7 @@ void GamePlanet::AddCity(const std::string &texture,
                          bool reverse_normals)
 {
     if (meshdata.empty())
-        meshdata.push_back(NULL);
+        meshdata.push_back(nullptr);
     Mesh *shield = meshdata.back();
     meshdata.pop_back();
     static float materialweight = XMLSupport::parse_float(vs_config->getVariable("graphics", "city_light_strength", "10"));
@@ -176,11 +176,11 @@ void GamePlanet::AddAtmosphere(const std::string &texture,
                                bool inside_out)
 {
     if (meshdata.empty())
-        meshdata.push_back(NULL);
+        meshdata.push_back(nullptr);
     Mesh *shield = meshdata.back();
     meshdata.pop_back();
     static int stacks = XMLSupport::parse_int(vs_config->getVariable("graphics", "planet_detail", "24"));
-    meshdata.push_back(new SphereMesh(radius, stacks, stacks, texture.c_str(), string(), NULL, inside_out, blendSrc, blendDst));
+    meshdata.push_back(new SphereMesh(radius, stacks, stacks, texture.c_str(), string(), nullptr, inside_out, blendSrc, blendDst));
     if (meshdata.back())
     {
         //By klauss - this needs to be done for most atmospheres
@@ -206,7 +206,7 @@ void GamePlanet::AddRing(const std::string &texture,
                          BLENDFUNC blendDst)
 {
     if (meshdata.empty())
-        meshdata.push_back(NULL);
+        meshdata.push_back(nullptr);
     Mesh *shield = meshdata.back();
     meshdata.pop_back();
     static int stacks = XMLSupport::parse_int(vs_config->getVariable("graphics", "planet_detail", "24"));
@@ -244,10 +244,10 @@ GamePlanet::GamePlanet(QVector x,
                        string fgid,
                        bool inside_out) : GameUnit<Planet>(0)
 {
-    atmosphere = NULL;
-    terrain = NULL;
+    atmosphere = nullptr;
+    terrain = nullptr;
 
-    shine = NULL;
+    shine = nullptr;
     unsigned int nlights = 0;
     if (!ligh.empty())
         nlights = ligh.size();
@@ -273,13 +273,13 @@ GamePlanet::GamePlanet(QVector x,
         Unit *neujum = UnitFactory::createUnit(wormholeneutralname.c_str(), true, neutralfaction);
         Unit *jump = jum;
         bool anytrue = false;
-        while (jump != NULL)
+        while (jump != nullptr)
         {
             if (jump->name != "LOAD_FAILED")
             {
                 anytrue = true;
                 radius = jump->rSize();
-                Mesh *shield = jump->meshdata.size() ? jump->meshdata.back() : NULL;
+                Mesh *shield = jump->meshdata.size() ? jump->meshdata.back() : nullptr;
                 if (jump->meshdata.size())
                     jump->meshdata.pop_back();
                 while (jump->meshdata.size())
@@ -296,20 +296,20 @@ GamePlanet::GamePlanet(QVector x,
             if (jump != neujum)
                 jump = neujum;
             else
-                jump = NULL;
+                jump = nullptr;
         }
         if (anytrue)
-            meshdata.push_back(NULL); //shield mesh...otherwise is a standard planet
+            meshdata.push_back(nullptr); //shield mesh...otherwise is a standard planet
         wormhole = anytrue;
     }
     if (!wormhole)
     {
         static int stacks = XMLSupport::parse_int(vs_config->getVariable("graphics", "planet_detail", "24"));
         atmospheric = !(blendSrc == ONE && blendDst == ZERO);
-        meshdata.push_back(new SphereMesh(radius, stacks, stacks, textname.c_str(), technique, NULL, inside_out, blendSrc, blendDst));
+        meshdata.push_back(new SphereMesh(radius, stacks, stacks, textname.c_str(), technique, nullptr, inside_out, blendSrc, blendDst));
         meshdata.back()->setEnvMap(GFXFALSE);
         meshdata.back()->SetMaterial(ourmat);
-        meshdata.push_back(NULL);
+        meshdata.push_back(nullptr);
     }
     calculate_extent(false);
     if (wormhole)
@@ -348,7 +348,7 @@ GamePlanet::GamePlanet(QVector x,
             {
                 delete meshdata[0];
                 meshdata.clear();
-                meshdata.push_back(NULL);
+                meshdata.push_back(nullptr);
             }
         }
     }
@@ -415,7 +415,7 @@ void GamePlanet::ProcessTerrains()
     {
         Planet *pl = (Planet *)PlanetTerrainDrawQueue.back()->GetUnit();
         pl->DrawTerrain();
-        PlanetTerrainDrawQueue.back()->SetUnit(NULL);
+        PlanetTerrainDrawQueue.back()->SetUnit(nullptr);
         delete PlanetTerrainDrawQueue.back();
         PlanetTerrainDrawQueue.pop_back();
     }
@@ -556,7 +556,7 @@ PlanetaryTransform *GamePlanet::setTerrain(ContinuousTerrain *t, float ratiox, i
 
     return terraintrans;
 #endif
-    return NULL;
+    return nullptr;
 }
 
 void GamePlanet::setAtmosphere(Atmosphere *t)
@@ -567,7 +567,7 @@ void GamePlanet::setAtmosphere(Atmosphere *t)
 void GamePlanet::Kill(bool erasefromsave)
 {
     Unit *tmp;
-    for (un_iter iter = satellites.createIterator(); (tmp = *iter) != NULL; ++iter)
+    for (un_iter iter = satellites.createIterator(); (tmp = *iter) != nullptr; ++iter)
         tmp->SetAI(new Order);
     /* probably not FIXME...right now doesn't work on paged out systems... not a big deal */
     for (unsigned int i = 0; i < this->lights.size(); i++)

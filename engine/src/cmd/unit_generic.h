@@ -270,7 +270,7 @@ public:
  *  the unit.
  */
     //Uses a lot of stuff that does not belong to here
-    Unit(const char *filename, bool SubUnit, int faction, std::string customizedUnit = std::string(""), Flightgroup *flightgroup = NULL, int fg_subnumber = 0, std::string *netxml = NULL);
+    Unit(const char *filename, bool SubUnit, int faction, std::string customizedUnit = std::string(""), Flightgroup *flightgroup = nullptr, int fg_subnumber = 0, std::string *netxml = nullptr);
 
 private:
     /** Fix all those uninitialized variables by calling this from every
@@ -280,10 +280,10 @@ private:
 public:
     //Initialize many of the defaults inherant to the constructor
     void Init();
-    void Init(const char *filename, bool SubUnit, int faction, std::string customizedUnit = std::string(""), Flightgroup *flightgroup = NULL, int fg_subnumber = 0, std::string *netxml = NULL);
+    void Init(const char *filename, bool SubUnit, int faction, std::string customizedUnit = std::string(""), Flightgroup *flightgroup = nullptr, int fg_subnumber = 0, std::string *netxml = nullptr);
     friend class UnitFactory;
-    //table can be NULL, but setting it appropriately may increase performance
-    void LoadRow(class CSVRow &row, std::string unitMod, std::string *netxml = NULL);
+    //table can be nullptr, but setting it appropriately may increase performance
+    void LoadRow(class CSVRow &row, std::string unitMod, std::string *netxml = nullptr);
     virtual ~Unit();
 
     // TODO: implement enum class as type safe bitmask...
@@ -397,7 +397,7 @@ public:
                     int additive,
                     bool force,
                     double &percentage,
-                    const Unit *templ = NULL,
+                    const Unit *templ = nullptr,
                     bool force_change_on_nothing = false,
                     bool gen_downgrade_list = true);
     bool Upgrade(const Unit *upgrador,
@@ -406,13 +406,13 @@ public:
                  int additive,
                  bool force,
                  double &percentage,
-                 const Unit *templ = NULL,
+                 const Unit *templ = nullptr,
                  bool force_change_on_nothing = false,
                  bool gen_downgrade_list = true);
     int RepairCost();                                                     //returns how many things need to be repaired--if nothing is damaged it will return 1 for labor.  doesn't assume any given cost on such thigns.
     int RepairUpgrade();                                                  //returns how many things were repaired
                                                                           //returns percentOperational,maxPercentOperational,and whether mount is damaged (1 is damaged, 0 is fine, -1 is invalid mount)
-    bool RepairUpgradeCargo(Cargo *item, Unit *baseUnit, float *credits); //item must not be NULL but baseUnit/credits are only used for pricing.
+    bool RepairUpgradeCargo(Cargo *item, Unit *baseUnit, float *credits); //item must not be nullptr but baseUnit/credits are only used for pricing.
     Vector MountPercentOperational(int whichmount);
     bool ReduceToTemplate();
     virtual double Upgrade(const std::string &file, int mountoffset, int subunitoffset, bool force, bool loop_through_mounts);
@@ -535,7 +535,7 @@ public:
     //Uses GFX stuff so only in Unit class
     virtual VSSprite *getHudImage() const
     {
-        return NULL;
+        return nullptr;
     }
     //Not needed just in Unit class
 
@@ -717,8 +717,8 @@ public:
     void WriteUnit(const char *modificationname = "");
     std::string WriteUnitString();
     //Loads a unit from an xml file into a complete datastructure
-    void LoadXML(const char *filename, const char *unitModifications = "", std::string *xmlbuffer = NULL);
-    void LoadXML(VSFileSystem::VSFile &f, const char *unitModifications = "", std::string *xmlbuffer = NULL);
+    void LoadXML(const char *filename, const char *unitModifications = "", std::string *xmlbuffer = nullptr);
+    void LoadXML(VSFileSystem::VSFile &f, const char *unitModifications = "", std::string *xmlbuffer = nullptr);
 
     /*
  **************************************************************************************
@@ -1036,7 +1036,7 @@ public:
                                 const Matrix &transmat,
                                 const Vector &CumulativeVelocity,
                                 bool ResolveLast,
-                                UnitCollection *uc = NULL);
+                                UnitCollection *uc = nullptr);
     //Useful if you want to override subunit processing, but not self-processing (Asteroids, people?)
     virtual void UpdateSubunitPhysics(const Transformation &trans,
                                       const Matrix &transmat,
@@ -1156,8 +1156,8 @@ public:
     void setAverageGunSpeed();
     int LockMissile() const; //-1 is no lock necessary 1 is locked
     void LockTarget(bool myboo);
-    bool TargetLocked(const Unit *checktarget = NULL) const;
-    bool TargetTracked(const Unit *checktarget = NULL);
+    bool TargetLocked(const Unit *checktarget = nullptr) const;
+    bool TargetTracked(const Unit *checktarget = nullptr);
     float TrackingGuns(bool &missileLock);
     //Changes currently selected weapon
     void ToggleWeapon(bool Missile, bool forward = true);
@@ -1263,7 +1263,7 @@ public:
     Cargo &GetCargo(unsigned int i);
     const Cargo &GetCargo(unsigned int i) const;
     void GetSortedCargoCat(const std::string &category, size_t &catbegin, size_t &catend);
-    //below function returns NULL if not found
+    //below function returns nullptr if not found
     Cargo *GetCargo(const std::string &s, unsigned int &i);
     const Cargo *GetCargo(const std::string &s, unsigned int &i) const;
     unsigned int numCargo() const;
@@ -1290,7 +1290,7 @@ public:
     class csOPCODECollider *getCollideTree(const Vector &scale = Vector(1,
                                                                         1,
                                                                         1),
-                                           std::vector<struct mesh_polygon> * = NULL);
+                                           std::vector<struct mesh_polygon> * = nullptr);
     //Because accessing in daughter classes member function from Unit * instances
     Order *aistate;
     Order *getAIState() const
@@ -1609,7 +1609,7 @@ struct Unit::XML
 
 inline Unit *UnitContainer::GetUnit()
 {
-    if (unit != NULL)
+    if (unit != nullptr)
     {
 #ifdef CONTAINER_DEBUG
         CheckUnit(unit);
@@ -1617,7 +1617,7 @@ inline Unit *UnitContainer::GetUnit()
         if (unit->Killed())
         {
             unit->UnRef();
-            unit = NULL;
+            unit = nullptr;
         }
     }
     return unit;
@@ -1668,7 +1668,7 @@ public:
 
     MeshAnimation(Unit *_unitDst);
 
-    bool Init(const char *filename, int faction, Flightgroup *flightgrp = NULL, const char *animationExt = NULL);
+    bool Init(const char *filename, int faction, Flightgroup *flightgrp = nullptr, const char *animationExt = nullptr);
 
     static void UpdateFrames();
 

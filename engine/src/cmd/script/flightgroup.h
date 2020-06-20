@@ -36,7 +36,7 @@ public:
         nr_ships--;
         nr_ships_left--;
         if (leader.GetUnit() == trashed)
-            leader.SetUnit(NULL);
+            leader.SetUnit(nullptr);
     }
     static Flightgroup *newFlightgroup(const std::string &name,
                                        const std::string &type,
@@ -51,10 +51,10 @@ public:
     {
         //betterto have a flightgroup constructor
         //fprintf (stderr,"constructing FG 0x%x\n",this);
-        orderlist = NULL;
+        orderlist = nullptr;
         nr_waves_left = nr_ships_left = nr_ships = flightgroup_nr = 0;
         leader_decision = -1;
-        squadLogo = NULL;
+        squadLogo = nullptr;
     }
     void Init(Flightgroup *fg,
               const std::string &name,
@@ -66,7 +66,7 @@ public:
               Mission *mis)
     {
         bool new_fg = false;
-        if (fg == NULL)
+        if (fg == nullptr)
         {
             new_fg = true;
             this->name = name;
@@ -82,8 +82,8 @@ public:
             this->nr_waves_left = num_waves - 1;
             mission->AddFlightgroup(this);
         }
-        this->target = NULL;
-        this->leader = NULL;
+        this->target = nullptr;
+        this->leader = nullptr;
         this->ainame = order;
         this->type = type;
         this->nr_ships += num_ships;

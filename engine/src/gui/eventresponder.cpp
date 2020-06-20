@@ -93,7 +93,7 @@ bool EventResponder::processMouseDrag(const InputEvent &event)
 //Send a command event into the event chain.
 void EventResponder::sendCommand(const EventCommandId &command, Control *control)
 {
-    if (m_commandTarget != NULL)
+    if (m_commandTarget != nullptr)
         if (m_commandTarget->processCommand(command, control))
             return;
     globalEventManager().sendCommand(command, control);
@@ -102,7 +102,7 @@ void EventResponder::sendCommand(const EventCommandId &command, Control *control
 //Set a specified target for commands.  Commands aren't forwarded into the
 //event chain, they are sent to this specific target.  This can be used, for
 //instance, to tie two controls tightly together.
-//Use NULL to clear the target and forward commands into the event chain.
+//Use nullptr to clear the target and forward commands into the event chain.
 void EventResponder::setCommandTarget(EventResponder *responder)
 {
     m_commandTarget = responder;
@@ -115,7 +115,7 @@ void EventResponder::setModal(bool flag)
 }
 
 //CONSTRUCTION
-EventResponder::EventResponder(void) : m_modal(false), m_commandTarget(NULL)
+EventResponder::EventResponder(void) : m_modal(false), m_commandTarget(nullptr)
 {
 }
 

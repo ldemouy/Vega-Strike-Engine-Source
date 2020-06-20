@@ -45,7 +45,7 @@ static void fixup_function_pointers(void)
      *     talBombOnError = (void (*)(void))
      *             GP("alBombOnError_LOKI");
      *
-     *     if(talBombOnError == NULL) {
+     *     if(talBombOnError == nullptr) {
      *             VSFileSystem::vs_fprintf(stderr,
      *                     "Could not GetProcAddress alBombOnError_LOKI\n");
      *             exit(1);
@@ -54,7 +54,7 @@ static void fixup_function_pointers(void)
      *     talBufferi = (void (*)(ALuint, ALenum, ALint ))
      *             GP("alBufferi_LOKI");
      *
-     *     if(talBufferi == NULL) {
+     *     if(talBufferi == nullptr) {
      *             VSFileSystem::vs_fprintf(stderr,
      *                     "Could not GetProcAddress alBufferi_LOKI\n");
      *             exit(1);
@@ -70,7 +70,7 @@ static void fixup_function_pointers(void)
      *     talBufferAppendWriteData = (ALuint (*)(ALuint, ALenum, ALvoid *, ALint, ALint, ALenum)) GP("alBufferAppendWriteData_LOKI");
      *
      *     talGenStreamingBuffers = (void (*)(ALsizei n, ALuint *bids )) GP("alGenStreamingBuffers_LOKI");
-     *     if( talGenStreamingBuffers == NULL ) {
+     *     if( talGenStreamingBuffers == nullptr ) {
      *             VSFileSystem::vs_fprintf( stderr, "Could not GP alGenStreamingBuffers_LOKI\n");
      *             exit(1);
      *     }
@@ -126,12 +126,12 @@ float AUDGetDoppler()
 
 #ifdef HAVE_AL
 ///I don't think we'll need to switch contexts or devices in vegastrike
-static ALCdevice *dev = NULL;
+static ALCdevice *dev = nullptr;
 
 #ifndef _WIN32
-static ALvoid *context_id = NULL;
+static ALvoid *context_id = nullptr;
 #else
-static ALCcontext *context_id = NULL;
+static ALCcontext *context_id = nullptr;
 #endif
 #endif
 bool AUDInit()
@@ -162,17 +162,17 @@ bool AUDInit()
 #elif __APPLE__
     dev = alcOpenDevice((ALCchar *)"sdl");
 #endif
-    if (dev == NULL)
+    if (dev == nullptr)
     {
         // use default device
-        dev = alcOpenDevice(NULL);
+        dev = alcOpenDevice(nullptr);
     }
-    if (dev == NULL)
+    if (dev == nullptr)
     {
         return false;
     }
     context_id = alcCreateContext(dev, attrlist);
-    if (context_id == NULL)
+    if (context_id == nullptr)
     {
         alcCloseDevice(dev);
         return false;

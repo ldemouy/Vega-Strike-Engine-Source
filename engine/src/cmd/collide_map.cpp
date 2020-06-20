@@ -11,18 +11,18 @@ void CollideArray::erase(iterator target)
     if (target >= this->begin() && target < this->end())
     {
         target->radius = 0;
-        target->ref.unit = NULL;
+        target->ref.unit = nullptr;
         size_t diff = (target - this->begin());
         if (this->unsorted.size() > diff)
         {
             //for secondary collide arrays that have no unsorted array
             iterator tmp = &*(this->unsorted.begin() + diff);
             tmp->radius = 0;
-            tmp->ref.unit = NULL;
+            tmp->ref.unit = nullptr;
         }
         return;
     }
-    else if (target == NULL)
+    else if (target == nullptr)
     {
         return;
     }
@@ -628,7 +628,7 @@ bool CollideMap::CheckUnitCollisions(Bolt *bol, const Collidable &updated)
 bool CollideMap::CheckCollisions(Unit *un, const Collidable &updated)
 {
     //need to check beams
-    if (un->activeStarSystem == NULL)
+    if (un->activeStarSystem == nullptr)
         un->activeStarSystem = _Universe->activeStarSystem();
     else
         assert(un->activeStarSystem == _Universe->activeStarSystem());
@@ -638,7 +638,7 @@ bool CollideMap::CheckCollisions(Unit *un, const Collidable &updated)
 bool CollideMap::CheckUnitCollisions(Unit *un, const Collidable &updated)
 {
     //need to check beams
-    if (un->activeStarSystem == NULL)
+    if (un->activeStarSystem == nullptr)
         un->activeStarSystem = _Universe->activeStarSystem();
     else
         assert(un->activeStarSystem == _Universe->activeStarSystem());

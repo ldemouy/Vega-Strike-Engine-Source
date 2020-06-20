@@ -89,11 +89,11 @@ Mount::Mount(const string &filename, int am, int vol, float xyscale, float zscal
     sound = -1;
     type = &wi;
     this->volume = vol;
-    ref.gun = NULL;
+    ref.gun = nullptr;
     status = (UNCHOSEN);
     processed = Mount::PROCESSED;
     weapon_info *temp = getTemplate(filename);
-    if (temp == NULL)
+    if (temp == nullptr)
     {
         status = UNCHOSEN;
         time_to_lock = 0;
@@ -117,7 +117,7 @@ void AdjustMatrixToTrackTarget(Matrix &mat, const Vector &velocity, Unit *target
 void Mount::UnFire()
 {
     processed = UNFIRED;
-    if (status != ACTIVE || ref.gun == NULL || type->type != weapon_info::BEAM)
+    if (status != ACTIVE || ref.gun == nullptr || type->type != weapon_info::BEAM)
         return;
     ref.gun->Destabilize();
 }
@@ -139,7 +139,7 @@ void Mount::ReplaceMounts(Unit *un, const Mount *other)
     this->xyscale = xyscale;
     this->zscale = zscale;
     this->bank = thisbank;
-    ref.gun = NULL;
+    ref.gun = nullptr;
     if (type->type != weapon_info::BEAM)
         ref.refire = type->Refire();
     this->ReplaceSound();
@@ -213,7 +213,7 @@ bool Mount::PhysicsAlignedFire(Unit *caller,
 {
     using namespace VSFileSystem;
     if (time_to_lock > 0)
-        target = NULL;
+        target = nullptr;
     static bool lock_disrupted_by_false_fire =
         XMLSupport::parse_bool(vs_config->getVariable("physics", "out_of_arc_fire_disrupts_lock", "false"));
     if (lock_disrupted_by_false_fire)
@@ -235,7 +235,7 @@ bool Mount::PhysicsAlignedFire(Unit *caller,
         mat.p = Transform(mat, (type->offset + Vector(0, 0, zscale)).Cast());
         static bool firemissingautotrackers =
             XMLSupport::parse_bool(vs_config->getVariable("physics", "fire_missing_autotrackers", "true"));
-        if (autotrack && NULL != target)
+        if (autotrack && nullptr != target)
         {
             if (!AdjustMatrix(mat, velocity, target, type->Speed, autotrack >= 2, trackingcone))
                 if (!firemissingautotrackers)
@@ -292,7 +292,7 @@ bool Mount::PhysicsAlignedFire(Unit *caller,
             else
             {
                 Flightgroup *testfg = caller->getFlightgroup();
-                if (testfg == NULL)
+                if (testfg == nullptr)
                 {
                     static Flightgroup bas;
                     bas.name = "Base";
@@ -310,7 +310,7 @@ bool Mount::PhysicsAlignedFire(Unit *caller,
                                                                   "",
                                                                   "",
                                                                   mission);
-                    if (fg != NULL)
+                    if (fg != nullptr)
                     {
                         fg->target.SetUnit(caller->Target());
                         fg->directive = "a";
@@ -327,7 +327,7 @@ bool Mount::PhysicsAlignedFire(Unit *caller,
                 {
                     Flightgroup *fg = caller->getFlightgroup();
                     int fgsnumber = 0;
-                    if (fg != NULL)
+                    if (fg != nullptr)
                     {
                         fgsnumber = fg->nr_ships;
                         fg->nr_ships++;
@@ -396,7 +396,7 @@ bool Mount::PhysicsAlignedFire(Unit *caller,
             XMLSupport::parse_bool(vs_config->getVariable("audio", "ai_high_quality_weapon", "false"));
         static bool ai_sound = XMLSupport::parse_bool(vs_config->getVariable("audio", "ai_sound", "true"));
         Cockpit *cp;
-        bool ips = ((cp = _Universe->isPlayerStarshipVoid(owner)) != NULL);
+        bool ips = ((cp = _Universe->isPlayerStarshipVoid(owner)) != nullptr);
         double distancesqr = (tmp.position - AUDListenerLocation()).MagnitudeSquared();
         static double maxdistancesqr =
             XMLSupport::parse_float(vs_config->getVariable("audio", "max_range_to_hear_weapon_fire",
@@ -418,7 +418,7 @@ bool Mount::PhysicsAlignedFire(Unit *caller,
             Vector sound_vel;
             float sound_gain;
 
-            if (ips && cp != NULL && cp->GetView() <= CP_RIGHT)
+            if (ips && cp != nullptr && cp->GetView() <= CP_RIGHT)
             {
                 sound_pos = QVector(0, 0, 0);
                 sound_vel = Vector(0, 0, 0);
@@ -501,7 +501,7 @@ bool Mount::Fire(Unit *firer, void *owner, bool Missile, bool listen_to_owner)
         return false;
     if (type->type == weapon_info::BEAM)
     {
-        bool fireit = ref.gun == NULL;
+        bool fireit = ref.gun == nullptr;
         if (!fireit)
             fireit = ref.gun->Ready();
         else

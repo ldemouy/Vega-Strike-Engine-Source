@@ -180,7 +180,7 @@ protected:
 
 private:
     void Init();
-    void Init(VSFileSystem::VSFile *f, textureTransform *t = NULL, bool strip = false, VSFileSystem::VSFile *f2 = NULL);
+    void Init(VSFileSystem::VSFile *f, textureTransform *t = nullptr, bool strip = false, VSFileSystem::VSFile *f2 = nullptr);
 
     VSFileSystem::VSError CheckPNGSignature(VSFileSystem::VSFile *file);
     VSFileSystem::VSError CheckJPEGSignature(VSFileSystem::VSFile *file);
@@ -212,7 +212,7 @@ private:
 public:
     VSImage();
     //f2 is needed for bmp loading
-    VSImage(VSFileSystem::VSFile *f, textureTransform *t = NULL, bool strip = false, VSFileSystem::VSFile *f2 = NULL);
+    VSImage(VSFileSystem::VSFile *f, textureTransform *t = nullptr, bool strip = false, VSFileSystem::VSFile *f2 = nullptr);
     ~VSImage();
 
     //if we statically allocate it, then gl_texture will kill it when destructor is called...and if we delete this texture we be messed
@@ -250,9 +250,9 @@ public:
 
     //f2 is needed for bmp loading
     unsigned char *ReadImage(VSFileSystem::VSFile *f,
-                             textureTransform *t = NULL,
+                             textureTransform *t = nullptr,
                              bool strip = false,
-                             VSFileSystem::VSFile *f2 = NULL);
+                             VSFileSystem::VSFile *f2 = nullptr);
 
     VSFileSystem::VSError WriteImage(char *filename,
                                      unsigned char *data,

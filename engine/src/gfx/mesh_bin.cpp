@@ -40,7 +40,7 @@ void Mesh::LoadBinary(const char *filename, int faction)
 {
     GFXBOOL objtex;
     int TexNameLength;
-    char *TexName = NULL;
+    char *TexName = nullptr;
     int NumPoints;
     float *vb;
     int NumTris;
@@ -248,13 +248,13 @@ void Mesh::LoadBinary(const char *filename, int faction)
         if (AlphaMap)
         {
             if (Decal.empty())
-                Decal.push_back(NULL);
+                Decal.push_back(nullptr);
             Decal[0] = createTexture(TexName, 0);
         }
         else
         {
             if (Decal.empty())
-                Decal.push_back(NULL);
+                Decal.push_back(nullptr);
             Decal[0] = createTexture(TexName, 0);
         }
         if (!Decal[0])

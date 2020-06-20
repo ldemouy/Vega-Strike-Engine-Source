@@ -36,9 +36,9 @@ easyDomNode::easyDomNode() {}
 void easyDomNode::set(easyDomNode *_parent, string _name, const XML_Char **atts)
 {
     parent = _parent;
-    if (atts != NULL)
+    if (atts != nullptr)
     {
-        for (; *atts != NULL; atts += 2)
+        for (; *atts != nullptr; atts += 2)
         {
 #if 0
             att_name.push_back( (*iter).name );

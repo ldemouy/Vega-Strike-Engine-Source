@@ -243,7 +243,7 @@ int main( int argc, char *argv[] )
 void DrawArrays()
 {
     for (size_t i = 0; i < varrays.size(); ++i)
-        if (varrays[i] != NULL) {
+        if (varrays[i] != nullptr) {
             fprintf( stderr, "Drawing %d\n", i );
             varrays[i]->Draw();
             fprintf( stderr, "done\n", i );
@@ -273,7 +273,7 @@ void DrawScene()
             if (v) {
                 fprintf( stderr, "Deleting %d\n", i );
                 delete v;
-                varrays[i]   = NULL;
+                varrays[i]   = nullptr;
                 didsomething = true;
             }
             break;

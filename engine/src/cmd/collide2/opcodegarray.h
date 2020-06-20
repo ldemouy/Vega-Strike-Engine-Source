@@ -45,14 +45,14 @@
         if (root)                                                                \
         {                                                                        \
           free(root);                                                            \
-          root = NULL;                                                           \
+          root = nullptr;                                                           \
         }                                                                        \
       }                                                                          \
     }                                                                            \
     Name()                                                                       \
     {                                                                            \
       limit = length = 0;                                                        \
-      root = NULL;                                                               \
+      root = nullptr;                                                               \
       ExtraConstructor;                                                          \
     }                                                                            \
     ~Name()                                                                      \

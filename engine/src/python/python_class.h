@@ -99,11 +99,11 @@ BOOST_PYTHON_BEGIN_CONVERSION_NAMESPACE \
 
 //non_null_from_python
 #ifdef FROM_PYTHON_ERRORS
-#define PYTHON_INIT_INHERIT_GLOBALS(name,SuperClass) template <> PythonClass <SuperClass> *PythonClass< SuperClass >::last_instance = NULL; \
+#define PYTHON_INIT_INHERIT_GLOBALS(name,SuperClass) template <> PythonClass <SuperClass> *PythonClass< SuperClass >::last_instance = nullptr; \
 	ADD_FROM_PYTHON_FUNCTION(SuperClass)
 #define PYTHON_INIT_GLOBALS(name,Class) ADD_FROM_PYTHON_FUNCTION(Class)
 #else
-#define PYTHON_INIT_INHERIT_GLOBALS(name,SuperClass) template <> PythonClass <SuperClass> *PythonClass< SuperClass >::last_instance = NULL;
+#define PYTHON_INIT_INHERIT_GLOBALS(name,SuperClass) template <> PythonClass <SuperClass> *PythonClass< SuperClass >::last_instance = nullptr;
 #define PYTHON_INIT_GLOBALS(name,Class)
 #endif
 //These two functions purposely have opening/closing braces that don't match up
@@ -158,7 +158,7 @@ class PythonClass:public SuperClass
   static PythonClass * LastPythonClass()
   {
     PythonClass * myclass = last_instance;
-    last_instance=NULL;
+    last_instance=nullptr;
     return myclass;
   }
   virtual void callFunction (std::string str) 

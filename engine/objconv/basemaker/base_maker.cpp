@@ -35,15 +35,15 @@
  * Globals
  */
 game_data_t    g_game;
-ForceFeedback *forcefeedback    = NULL;
-VegaConfig    *vs_config        = NULL;
+ForceFeedback *forcefeedback    = nullptr;
+VegaConfig    *vs_config        = nullptr;
 bool cleanexit = false;
 bool run_only_player_starsystem = true;
-NetClient     *Network     = NULL;
-NetServer     *VSServer    = NULL;
-FILE       *fpread      = NULL;
+NetClient     *Network     = nullptr;
+NetServer     *VSServer    = nullptr;
+FILE       *fpread      = nullptr;
 float       simulation_atom_var = (float) (1.0/10.0);
-Mission    *mission     = NULL;
+Mission    *mission     = nullptr;
 double      benchmark   = -1.0;
 bool        STATIC_VARS_DESTROYED = false;
 const char *mission_key = "unit_to_dock_with";
@@ -97,7 +97,7 @@ public:
     ~VSSprite();
     bool LoadSuccess()
     {
-        return surface != NULL;
+        return surface != nullptr;
     }
     void Draw();
     void DrawHere( Vector &ll, Vector &lr, Vector &ur, Vector &ul );
@@ -152,7 +152,7 @@ public:
 # define M_PI_2 (1.57079632679489661923)
 #endif
 
-static float *mview = NULL;
+static float *mview = nullptr;
 static int    bogus_int; //added by chuck_starchaser to squash ignored returns warnings.
 
 VSSprite::VSSprite( const char *file, enum FILTER texturefilter, GFXBOOL force )
@@ -162,7 +162,7 @@ VSSprite::VSSprite( const char *file, enum FILTER texturefilter, GFXBOOL force )
     widtho2   = 0;
     heighto2  = 0;
     rotation  = 0;
-    surface   = NULL;
+    surface   = nullptr;
     maxs      = maxt = 0;
     bogus_int = chdir( "sprites" );
     FILE *f;
@@ -177,14 +177,14 @@ VSSprite::VSSprite( const char *file, enum FILTER texturefilter, GFXBOOL force )
 
         widtho2  /= 2;
         heighto2 /= -2;
-        surface   = NULL;
+        surface   = nullptr;
         if (texturea[0] == '0')
             surface = new Texture( texture );
         else
             surface = new Texture( texture );
         if (!surface) {
             delete surface;
-            surface = NULL;
+            surface = nullptr;
         }
         //Finally close file
         fclose( f );
@@ -212,7 +212,7 @@ void VSSprite::ReadTexture( FILE *f )
 
 VSSprite::~VSSprite()
 {
-    if (surface != NULL)
+    if (surface != nullptr)
         delete surface;
 }
 
@@ -543,7 +543,7 @@ enum DisplayMode
     NEWS,                   //Show news items.
     INFO,                               //Show basic info.
     DISPLAY_MODE_COUNT,     //Number of display modes.
-    NULL_DISPLAY=DISPLAY_MODE_COUNT,         //No display.
+    nullptr_DISPLAY=DISPLAY_MODE_COUNT,         //No display.
 };
 
 #define BASE_EXTENSION ".py"
@@ -950,7 +950,7 @@ void Base::Room::Comp::EndXML( FILE *fp )
     Link::EndXML( fp );
     fwrite( ", '", 3, 1, fp );
     for (int i = 0; i < modes.size(); i++) {
-        char const *mode = NULL;
+        char const *mode = nullptr;
         switch (modes[i])
         {
         case CARGO:
@@ -1044,7 +1044,7 @@ void Base::Room::PrintLinks( FILE *fp )
 void Base::EndXML()
 {
     bogus_int = chdir( "bases" );
-    FILE *fp = NULL;
+    FILE *fp = nullptr;
     if (time_of_day) {
         const char *times_of_day[3] = {"_day", "_night", "_sunset"};
         for (int i = 0; i < 3; ++i) {
@@ -1480,7 +1480,7 @@ void Base::Room::Draw( Base *base )
         if (objs[i])
             objs[i]->Draw( base );
 }
-static Base::Room::BaseTalk *only_one_talk = NULL;
+static Base::Room::BaseTalk *only_one_talk = nullptr;
 
 Base::Room::BaseTalk::BaseTalk( std::string msg, std::string ind, bool only_one ) : BaseObj( ind )
     , curchar( 0 )
@@ -1556,7 +1556,7 @@ bool LinkStage2( std::string input, unsigned int inputroomindex, void *dat1, voi
          *  bogus_int = fscanf(fp,"%d",&((Goto*)links.back())->index);
          */
         Input( "Which room should this go to?", &LinkStage3Goto, false, inputroomindex,
-               &( ( (Base::Room::Goto*) ( links->back() ) )->index ), NULL, NULL, 0, 0 );
+               &( ( (Base::Room::Goto*) ( links->back() ) )->index ), nullptr, nullptr, 0, 0 );
         ret = false;
     } else if (input == "launch") {
         links->push_back( new Base::Room::Launch( inputroomindex, "my_launch_id", "launch" ) );
@@ -1590,8 +1590,8 @@ bool LinkStage2( std::string input, unsigned int inputroomindex, void *dat1, voi
                true,
                inputroomindex,
                &( ( (Base::Room::Comp*) ( links->back() ) )->modes ),
-               NULL,
-               NULL,
+               nullptr,
+               nullptr,
                0,
                0 );
         ret = false;
@@ -1621,7 +1621,7 @@ bool LinkStage1( std::string input, unsigned int inputroomindex, void *dat1, voi
            inputroomindex,
            dat1,
            strdup( input.c_str() ),
-           NULL,
+           nullptr,
            x,
            y );
     return false;
@@ -1635,7 +1635,7 @@ void Base::Room::Click( Base *base, float x, float y, int button, int state )
                true,
                this->index,
                &objs,
-               NULL,
+               nullptr,
                "texture",
                x,
                y );
@@ -1643,7 +1643,7 @@ void Base::Room::Click( Base *base, float x, float y, int button, int state )
         return;
     }
     if (makingstate == 1) {
-        Input( "Input the title of the link (ESC=cancel)? ", &LinkStage1, true, this->index, &links, NULL, NULL, x, y );
+        Input( "Input the title of the link (ESC=cancel)? ", &LinkStage1, true, this->index, &links, nullptr, nullptr, x, y );
         makingstate = 0;
         return;
     }
@@ -1778,14 +1778,14 @@ bool SetRoomString( std::string input, unsigned int room_index, void *dat1, void
     std::string *deftext = (std::string*) dat1;
     *deftext = input;
 //if (Base::CurrentBase&&Base::CurrentBase->rooms.size()==0) {
-//AddRoomSprite(Base::CurrentBase->basefile, &objs, NULL, "background", 0.97, -0.97);
+//AddRoomSprite(Base::CurrentBase->basefile, &objs, nullptr, "background", 0.97, -0.97);
 //} else {
     Input( "What is the texture for this room (No extension; file must be png or jpeg format.)?",
            &AddRoomSprite,
            false,
            room_index,
            dat2,
-           NULL,
+           nullptr,
            "background",
            0.97,
            -0.97 );
@@ -1808,7 +1808,7 @@ void Base::GotoLink( int linknum )
         while (rooms.size() <= linknum) {
             rooms.push_back( new Room( rooms.size() ) );
             Input( "Input Name of Room (Shown at bottom of screen): ", &SetRoomString, false, linknum,
-                   &(rooms.back()->deftext), &(rooms.back()->objs), NULL, 0, 0 );
+                   &(rooms.back()->deftext), &(rooms.back()->objs), nullptr, 0, 0 );
         }
         GotoLink( linknum );
 #endif
@@ -1820,7 +1820,7 @@ Base::~Base()
 #ifdef BASE_MAKER
     EndXML();
 #endif
-    Base::CurrentBase = NULL;
+    Base::CurrentBase = nullptr;
     for (int i = 0; i < rooms.size(); i++)
         delete rooms[i];
 }
@@ -1959,7 +1959,7 @@ void Base::Room::Talk::Click( Base *base, float x, float y, int button, int stat
         Link::Click( base, x, y, button, state );
         if (index >= 0) {
             delete base->rooms[curroom]->objs[index];
-            base->rooms[curroom]->objs[index] = NULL;
+            base->rooms[curroom]->objs[index] = nullptr;
             index = -1;
             base->othtext.SetText( "" );
         } else if ( say.size() ) {
@@ -2060,7 +2060,7 @@ void Base::DrawWin()
 int main( int argc, char **argv )
 {
     printf( "Loading...\n" );
-    Base::CurrentBase   = NULL;
+    Base::CurrentBase   = nullptr;
     glutInit( &argc, argv );
     glutInitWindowSize( 800, 600 );
     g_game.x_resolution = 800;

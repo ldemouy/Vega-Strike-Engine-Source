@@ -273,14 +273,14 @@ namespace Audio
                 else
                 {
                     atEos = true;
-                    buffer = AL_NULL_BUFFER;
+                    buffer = AL_nullptr_BUFFER;
                 }
             }
-            if (buffer != AL_NULL_BUFFER)
+            if (buffer != AL_nullptr_BUFFER)
             {
                 alSourceQueueBuffers(als, 1, &buffer);
             }
-        } while (buffer != AL_NULL_BUFFER);
+        } while (buffer != AL_nullptr_BUFFER);
     }
 
 }; // namespace Audio

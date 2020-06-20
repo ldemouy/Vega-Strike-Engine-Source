@@ -83,6 +83,6 @@ Animation *getRandomCachedAni()
     }
     else
     {
-        return NULL;
+        return nullptr;
     }
 }

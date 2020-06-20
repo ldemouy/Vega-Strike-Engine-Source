@@ -45,7 +45,7 @@
 
 varInst *Mission::call_olist(missionNode *node, int mode)
 {
-    varInst *viret = NULL;
+    varInst *viret = nullptr;
     if (mode == SCRIPT_PARSE)
     {
         string cmd = node->attr_value("name");
@@ -189,16 +189,16 @@ varInst *Mission::call_olist(missionNode *node, int mode)
         deleteVarInst(ovi);
         return viret;
     }
-    return NULL; //never reach
+    return nullptr; //never reach
 }
 
 olist_t *Mission::getOListObject(missionNode *node, int mode, varInst *ovi)
 {
-    olist_t *my_object = NULL;
+    olist_t *my_object = nullptr;
     if (mode == SCRIPT_RUN)
     {
         my_object = (olist_t *)ovi->object;
-        if (my_object == NULL)
+        if (my_object == nullptr)
         {
             fatalError(node, mode, "olist: no object");
             assert(0);

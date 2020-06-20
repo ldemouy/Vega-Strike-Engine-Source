@@ -209,7 +209,7 @@ Building *UnitFactory::createBuilding(ContinuousTerrain *parent,
                                       const std::string &unitModifications,
                                       Flightgroup *fg)
 {
-    return NULL;
+    return nullptr;
 }
 
 Building *UnitFactory::createBuilding(Terrain *parent,
@@ -220,7 +220,7 @@ Building *UnitFactory::createBuilding(Terrain *parent,
                                       const std::string &unitModifications,
                                       Flightgroup *fg)
 {
-    return NULL;
+    return nullptr;
 }
 
 Asteroid *UnitFactory::createAsteroid(const char *filename,
@@ -251,12 +251,12 @@ Asteroid *UnitFactory::createAsteroid(const char *filename,
 
 Terrain *UnitFactory::createTerrain(const char *file, Vector scale, float position, float radius, Matrix &t)
 {
-    return NULL;
+    return nullptr;
 }
 
 ContinuousTerrain *UnitFactory::createContinuousTerrain(const char *file, Vector scale, float position, Matrix &t)
 {
-    return NULL;
+    return nullptr;
 }
 
 void UnitFactory::broadcastUnit(Unit *unit, unsigned short zone)

@@ -33,22 +33,22 @@
  */
 extern void ModifyMouseSensitivity(int &x, int &y);
 //This is the one, unique event manager.
-static EventManager *globalEventManagerPtr = NULL;
+static EventManager *globalEventManagerPtr = nullptr;
 
 //STATIC: Get the global instance of the event manager
 EventManager &globalEventManager(void)
 {
-    if (globalEventManagerPtr == NULL)
+    if (globalEventManagerPtr == nullptr)
     {
         EventManager::initializeEventManager();
-        assert(globalEventManagerPtr != NULL); //Make sure we got a manager!
+        assert(globalEventManagerPtr != nullptr); //Make sure we got a manager!
     }
     return *globalEventManagerPtr;
 }
 
 bool hasGlobalEventManager(void)
 {
-    return globalEventManagerPtr != NULL;
+    return globalEventManagerPtr != nullptr;
 }
 
 //STATIC: Initialize the event manager.  This starts the event loop, etc.
@@ -64,7 +64,7 @@ static std::vector<EventResponder *> deleteQueue;
 
 void EventManager::addToDeleteQueue(EventResponder *controlToDelete)
 {
-    if (controlToDelete == NULL || find(deleteQueue.begin(), deleteQueue.end(), controlToDelete) != deleteQueue.end())
+    if (controlToDelete == nullptr || find(deleteQueue.begin(), deleteQueue.end(), controlToDelete) != deleteQueue.end())
     {
         bool DUPLICATE_DELETE_OF_OBJECT = true;
         char tempstr[254];
@@ -213,7 +213,7 @@ extern void InitCallbacks(void);
 //Called to revert to old event management.
 void EventManager::checkForShutDownEventManager(void)
 {
-    if (m_responders.empty() && globalEventManagerPtr != NULL)
+    if (m_responders.empty() && globalEventManagerPtr != nullptr)
     {
         //There are no more responders.  We assume no more of our windows, and reset mouse callbacks.
         //If we don't have a global event manager, we already did this.
@@ -221,7 +221,7 @@ void EventManager::checkForShutDownEventManager(void)
 
         //Get rid of global event manager object until we need it again.
         delete globalEventManagerPtr;
-        globalEventManagerPtr = NULL;
+        globalEventManagerPtr = nullptr;
     }
 }
 

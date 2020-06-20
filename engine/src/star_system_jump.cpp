@@ -44,7 +44,7 @@ Animation *GetVolatileAni(unsigned int which)
 {
     if (which < VolatileJumpAnimations.size())
         return VolatileJumpAnimations[which].a;
-    return NULL;
+    return nullptr;
 }
 
 unsigned int AddAnimation(const QVector &pos, const float size, bool mvolatile, const std::string &name, float percentgrow)
@@ -60,7 +60,7 @@ unsigned int AddAnimation(const QVector &pos, const float size, bool mvolatile, 
     }
     else
     {
-        assert(JumpAnimations[AnimationNulls.back()].a == NULL);
+        assert(JumpAnimations[AnimationNulls.back()].a == nullptr);
         JumpAnimations[AnimationNulls.back()] = ResizeAni(ani, percentgrow);
         i = AnimationNulls.back();
         AnimationNulls.pop_back();
@@ -80,7 +80,7 @@ void GameStarSystem::VolitalizeJumpAnimation(const int ani)
     if (ani != -1)
     {
         VolatileJumpAnimations.push_back(ResizeAni(JumpAnimations[ani].a, game_options.jumpanimationshrink));
-        JumpAnimations[ani].a = NULL;
+        JumpAnimations[ani].a = nullptr;
         AnimationNulls.push_back(ani);
     }
 }

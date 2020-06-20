@@ -8,7 +8,7 @@
 #include <algorithm>
 #include "unit_generic.h"
 #include "configxml.h"
-GFXVertexList *bolt_draw::boltmesh = NULL;
+GFXVertexList *bolt_draw::boltmesh = nullptr;
 
 bolt_draw::~bolt_draw()
 {
@@ -23,8 +23,8 @@ bolt_draw::~bolt_draw()
 
 bolt_draw::bolt_draw()
 {
-    boltmesh = NULL;
-    boltdecals = NULL;
+    boltmesh = nullptr;
+    boltdecals = nullptr;
 }
 int Bolt::AddTexture(bolt_draw *q, std::string file)
 {

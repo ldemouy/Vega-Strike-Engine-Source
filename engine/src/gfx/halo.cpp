@@ -26,7 +26,7 @@ Halo::Halo(const char *texture, const GFXColor &col, const QVector &pos, float s
     coltmp[2].SetColor(col);
     coltmp[3].SetColor(col);
 
-    quadnum = halodrawqueue[decal]->AddQuad(NULL, coltmp);
+    quadnum = halodrawqueue[decal]->AddQuad(nullptr, coltmp);
 }
 
 Halo::~Halo()
@@ -35,7 +35,7 @@ Halo::~Halo()
     if (halodecal.DelTexture(decal))
     {
         delete halodrawqueue[decal]; //deletes the quad
-        halodrawqueue[decal] = NULL;
+        halodrawqueue[decal] = nullptr;
     }
 }
 
@@ -52,7 +52,7 @@ void Halo::Draw(const Transformation &quat, const Matrix &m, float alpha)
                                                       "false")) ||
         XMLSupport::parse_bool(
             vs_config->getVariable("graphics", "HaloFarDraw", "false"));
-    CalculateOrientation(pos, p, q, r, wid, hei, HaloOffset, far_shine, NULL);
+    CalculateOrientation(pos, p, q, r, wid, hei, HaloOffset, far_shine, nullptr);
     p = p * wid;
     r = -r;
     q = q * hei;

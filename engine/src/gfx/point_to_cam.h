@@ -25,7 +25,7 @@ inline bool CalculateOrientation(QVector &Pos,
                                  float &hei,
                                  float OffsetByThisPercent,
                                  bool moveiftoofar,
-                                 Matrix *local_transformation = NULL)
+                                 Matrix *local_transformation = nullptr)
 {
     const float kkkk = 3; //this seems to work for no good reason
     _Universe->AccessCamera()->GetPQR(p, q, r);

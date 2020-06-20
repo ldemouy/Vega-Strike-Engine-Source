@@ -68,7 +68,7 @@ public:
 			if((*iter).key == key)
 				break;
 		if(iter==end)
-			return NULL;
+			return nullptr;
 		else
 			return (*iter).value;
 	}

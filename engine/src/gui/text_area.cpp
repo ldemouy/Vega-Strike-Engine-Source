@@ -23,12 +23,12 @@
 //Array of textures for the text area
 //GUITexture *Images;
 
-//List of images to load. Last element must always be NULL
+//List of images to load. Last element must always be nullptr
 /*
  *  char *LoadImages[] = {  TEXT_AREA_00, TEXT_AREA_01, TEXT_AREA_02, TEXT_AREA_03, TEXT_AREA_04,
  *                       TEXT_AREA_05, TEXT_AREA_06, TEXT_AREA_07, TEXT_AREA_08, TEXT_AREA_09,
  *                       TEXT_AREA_10, TEXT_AREA_11, TEXT_AREA_12, TEXT_AREA_13,
- *                       NULL
+ *                       nullptr
  *  };
  */
 
@@ -96,8 +96,8 @@ TextArea::TextArea(float x, float y, float wid, float hei, int scrollbar)
     vertical_left_of_text = 0.02;
     text_spacing = (font_size_float / 100) + (horizontal_spacer * 2);
 
-    //The parent TextAreaItem. This is the only link where parent == NULL. It is not displayed and handled only internally
-    ItemList = new TextAreaItem("", "", NULL);
+    //The parent TextAreaItem. This is the only link where parent == nullptr. It is not displayed and handled only internally
+    ItemList = new TextAreaItem("", "", nullptr);
     if (wid < 0 || hei < 0)
     {
         printf("Cannot draw border with negative height or width\n");
@@ -212,7 +212,7 @@ void TextArea::AddTextItem(const char *name, const char *description, const char
     TextAreaItem *master;
     master = ItemList->FindChild(parent_name);
     item_count++;
-    if (master == NULL)
+    if (master == nullptr)
         ItemList->AddChild(name, description, col);
 
     else
@@ -242,12 +242,12 @@ void TextArea::ChangeTextItemColor(const char *name, const GFXColor &col)
 void TextArea::ClearList(void)
 {
     //Wipe the list clean
-    if (ItemList != NULL)
+    if (ItemList != nullptr)
         delete ItemList;
     item_count = 0;
     cur_selected = 0;
     top_item_number = 0;
-    ItemList = new TextAreaItem("", "", NULL);
+    ItemList = new TextAreaItem("", "", nullptr);
 }
 
 void TextArea::SetText(const char *text)
@@ -255,7 +255,7 @@ void TextArea::SetText(const char *text)
     do_highlight = 0;
     do_multiline = 1;
     ClearList();
-    ChompIntoItems(text, NULL);
+    ChompIntoItems(text, nullptr);
 }
 
 char *TextArea::GetSelectedItemName(void)
@@ -439,7 +439,7 @@ void TextArea::LoadTextures(void)
      *  else { images_loaded = 1; }
      *
      *  max = 0;
-     *  while (LoadImages[max] != NULL) { max++; }
+     *  while (LoadImages[max] != nullptr) { max++; }
      *  Images = new GUITexture [max];
      * #ifdef DEBUG
      *  cout << "Loading " << max << " images\n";
@@ -590,7 +590,7 @@ void TextArea::ChompIntoItems(const char *text, const char *parent)
 }
 
 /*TextAreaItem::TextAreaItem(void) {
- *       TextAreaItem("blank","", NULL);
+ *       TextAreaItem("blank","", nullptr);
  *  }*/
 //#include <stdlib.h>
 //#define rnd (((float)rand())/((float)RAND_MAX))
@@ -609,22 +609,22 @@ TextAreaItem::TextAreaItem(const char *new_name, const char *desc, TextAreaItem 
         description = 0;
     child_count_multiplier = 0;
     child_count = 0;
-    child = NULL;
-    parent = NULL;
-    //if (parent == NULL) { expanded = 1; }
+    child = nullptr;
+    parent = nullptr;
+    //if (parent == nullptr) { expanded = 1; }
 }
 
 TextAreaItem::~TextAreaItem(void)
 {
     int cur = 0;
-    if (name != NULL)
+    if (name != nullptr)
         free(name);
-    if (description != NULL)
+    if (description != nullptr)
         free(description); //if there are no children, it won't run through this for
     for (cur = 0; cur < child_count; cur++)
-        if (child[cur] != NULL)
+        if (child[cur] != nullptr)
             delete child[cur];
-    if (child != NULL)
+    if (child != nullptr)
         delete child;
 }
 
@@ -633,17 +633,17 @@ TextAreaItem *TextAreaItem::FindChild(const char *search_name)
     int cur = 0;
     //int max = child_count_multiplier * 10;
     TextAreaItem *match;
-    if (search_name == NULL)
+    if (search_name == nullptr)
         return this;
     if (strcmp(name, search_name) == 0)
         return this;
     for (cur = 0; cur < child_count; cur++)
     {
         match = child[cur]->FindChild(search_name);
-        if (match != NULL)
+        if (match != nullptr)
             return match;
     }
-    return NULL;
+    return nullptr;
 }
 
 void TextAreaItem::Sort(void)
@@ -675,10 +675,10 @@ TextAreaItem *TextAreaItem::FindCount(int count, int cur)
     for (cur = 0; cur < child_count; cur++)
     {
         match = child[cur]->FindCount(count, cur + 1);
-        if (match != NULL)
+        if (match != nullptr)
             return match;
     }
-    return NULL;
+    return nullptr;
 }
 
 typedef TextAreaItem *TextAreaItemStr;
@@ -692,7 +692,7 @@ void TextAreaItem::AddChild(const char *new_name, const char *desc, const GFXCol
     {
         child_count_multiplier++;
         newlist = new TextAreaItemStr[child_count_multiplier * 10];
-        if (child != NULL)
+        if (child != nullptr)
         {
             for (cur = 0; cur < child_count - 1; cur++)
                 newlist[cur] = child[cur];
@@ -700,6 +700,6 @@ void TextAreaItem::AddChild(const char *new_name, const char *desc, const GFXCol
         }
         child = newlist;
     }
-    child[child_count - 1] = new TextAreaItem(new_name, desc, NULL);
+    child[child_count - 1] = new TextAreaItem(new_name, desc, nullptr);
     child[child_count - 1]->col = col;
 }

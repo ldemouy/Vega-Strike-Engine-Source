@@ -86,8 +86,8 @@ struct GLTexture
     GLenum targets;
     enum FILTER mipmapped;
 };
-//static GLTexture *textures=NULL;
-//static GLEnum * targets=NULL;
+//static GLTexture *textures=nullptr;
+//static GLEnum * targets=nullptr;
 
 static vector<GLTexture> textures;
 static int activetexture[32] = {
@@ -350,7 +350,7 @@ GFXBOOL /*GFXDRVAPI*/ GFXCreateTexture(int width,
     if ((*handle) == static_cast<int>(textures.size()))
     {
         textures.push_back(GLTexture());
-        textures.back().palette = NULL;
+        textures.back().palette = nullptr;
         textures.back().alive = GFXTRUE;
         textures.back().name = -1;
         textures.back().width = textures.back().height = textures.back().iwidth = textures.back().iheight = 1;
@@ -410,7 +410,7 @@ GFXBOOL /*GFXDRVAPI*/ GFXCreateTexture(int width,
     textures[*handle].height = height;
     textures[*handle].iwidth = width;
     textures[*handle].iheight = height;
-    textures[*handle].palette = NULL;
+    textures[*handle].palette = nullptr;
     if (palette && textureformat == PALETTE8)
     {
         BOOST_LOG_TRIVIAL(trace) << " palette ";
@@ -743,8 +743,8 @@ GFXBOOL /*GFXDRVAPI*/ GFXTransferTexture(unsigned char *buffer,
 
     int logsize = 1;
     int logwid = 1;
-    unsigned char *data = NULL;
-    unsigned char *tempbuf = NULL;
+    unsigned char *data = nullptr;
+    unsigned char *tempbuf = nullptr;
     GLenum internalformat;
     GLenum image2D = GetImageTarget(imagetarget);
     glBindTexture(textures[handle].targets, textures[handle].name);
@@ -997,7 +997,7 @@ GFXBOOL /*GFXDRVAPI*/ GFXTransferTexture(unsigned char *buffer,
             }
             if (tempbuf)
                 free(tempbuf);
-            tempbuf = NULL;
+            tempbuf = nullptr;
         }
         else
         {
@@ -1116,7 +1116,7 @@ void GFXInitTextureManager()
 {
     for (size_t handle = 0; handle < textures.size(); ++handle)
     {
-        textures[handle].palette = NULL;
+        textures[handle].palette = nullptr;
         textures[handle].width = textures[handle].height = textures[handle].iwidth = textures[handle].iheight = 0;
         textures[handle].texturestage = 0;
         textures[handle].name = 0;

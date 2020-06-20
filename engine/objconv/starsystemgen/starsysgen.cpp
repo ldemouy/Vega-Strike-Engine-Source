@@ -10,7 +10,7 @@
 #define M_PI 3.1415926536
 #endif
 using namespace std;
-static unsigned int starsysrandom = time( NULL );
+static unsigned int starsysrandom = time( nullptr );
 static void seedrand( int seed )
 {
     starsysrandom = seed;
@@ -154,7 +154,7 @@ float grand()
     return float( ssrand() )/RAND_MAX;
 }
 vector< Color >lights;
-FILE *fp = NULL;
+FILE *fp = nullptr;
 
 float difffunc( float inputdiffuse )
 {
@@ -817,7 +817,7 @@ void generateStarSystem( string datapath,
     if (seed)
         seedrand( seed );
     else
-        seedrand( time( NULL ) );
+        seedrand( time( nullptr ) );
     nument[0] = numstars;
     nument[1] = numgasgiants;
     nument[2] = numrockyplanets;
@@ -882,15 +882,15 @@ int main( int argc, char **argv )
                         sectorname,
                         systemname,
                         filen,
-                        strtol( argv[3], NULL, 10 ),
-                        strtol( argv[4], NULL, 10 ),
-                        strtol( argv[5], NULL, 10 ),
-                        strtol( argv[6], NULL, 10 ),
-                        strtol( argv[7], NULL, 10 ),
+                        strtol( argv[3], nullptr, 10 ),
+                        strtol( argv[4], nullptr, 10 ),
+                        strtol( argv[5], nullptr, 10 ),
+                        strtol( argv[6], nullptr, 10 ),
+                        strtol( argv[7], nullptr, 10 ),
                         nebula,
                         asteroid,
                         numbigthings,
-                        strtol( argv[9], NULL, 10 ),
+                        strtol( argv[9], nullptr, 10 ),
                         argv[10],
                         argv[11],
                         jumps );

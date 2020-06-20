@@ -42,7 +42,7 @@ void Terrain::ApplyForce(Unit *un, const Vector &normal, float dist)
 {
     un->ApplyForce(normal * .4 * un->GetMass() * fabs(normal.Dot((un->GetVelocity() / SIMULATION_ATOM)) + fabs(dist) / (SIMULATION_ATOM)));
     un->ApplyDamage(un->Position().Cast() - normal * un->rSize(), -normal, .5 * fabs(normal.Dot(un->GetVelocity())) * mass * SIMULATION_ATOM,
-                    un, GFXColor(1, 1, 1, 1), NULL);
+                    un, GFXColor(1, 1, 1, 1), nullptr);
 }
 void Terrain::Collide(Unit *un, const Matrix &t)
 {
@@ -77,7 +77,7 @@ void Terrain::EnableDraw()
 void Terrain::Collide()
 {
     Unit *unit;
-    for (un_iter iter = _Universe->activeStarSystem()->getUnitList().createIterator(); (unit = *iter) != NULL; ++iter)
+    for (un_iter iter = _Universe->activeStarSystem()->getUnitList().createIterator(); (unit = *iter) != nullptr; ++iter)
         Collide(unit);
 }
 static GFXColor getTerrainColor()

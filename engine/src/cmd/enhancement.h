@@ -13,7 +13,7 @@ protected:
     GameEnhancement(const char *filename,
                     int faction,
                     const string &modifications,
-                    Flightgroup *flightgrp = NULL,
+                    Flightgroup *flightgrp = nullptr,
                     int fg_subnumber = 0) : GameUnit<Enhancement>(filename, false, faction, modifications, flightgrp, fg_subnumber)
     {
         string file(filename);

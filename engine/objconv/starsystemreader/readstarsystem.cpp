@@ -151,14 +151,14 @@ public:
                         habitableSystems.push_back( &s[j] );
             if ( habitableSystems.empty() ) {
                 fprintf( stderr, "Fatal Error: No habitable systems in the %s sector!!!\n", outgoing.c_str() );
-                return NULL;
+                return nullptr;
             } else {
                 return habitableSystems[(int) ( ( ( (float) genrand_int32() )/GENRAND_MAX )*habitableSystems.size() )];
             }
         } else {
             string  sys = outgoing;
             sys = outgoing.substr( slash );
-            System *bestChoice = NULL;
+            System *bestChoice = nullptr;
             if ( sys.length() )
                 if (sys[0] == '/')
                     sys = sys.substr( 1 );
@@ -168,7 +168,7 @@ public:
                     if (s[j].sector != outgoing) {
                         fprintf( stderr, "Error: System %s not in %s but in %s\n", sys.c_str(),
                                 outgoing.c_str(), s[j].sector.c_str() );
-                        if (bestChoice == NULL)
+                        if (bestChoice == nullptr)
                             bestChoice = &s[j];
                         else if (bestChoice != &s[j])
                             fprintf( stderr,
@@ -536,7 +536,7 @@ public:
             string faction = (*borderSystems[i])["faction"];
             for (std::vector< std::string >::const_iterator iter = borderSystems[i]->jumps.begin(); iter != end; ++iter) {
                 System *jump = System::findSystem( s, *iter );
-                if ( jump != NULL && systems.find( jump ) == systems.end() ) {
+                if ( jump != nullptr && systems.find( jump ) == systems.end() ) {
                     //not in our territory! and it is valid.
                     if ( ( (*jump)["faction"] == "unknown"
                           && (jump->takenover[faction] += takeneutralprob) > 1 )
@@ -1020,7 +1020,7 @@ void processsystems( std::vector< System > &s )
             for (unsigned int k = 0; k < jsize; ++k) {
                 string  outgoing = s[i].jumps[k];
                 System *foundsys = System::findSystem( s, outgoing );
-                if (foundsys != NULL) {
+                if (foundsys != nullptr) {
                     string fullname     = s[i].sector+"/"+s[i].name;
                     unsigned int jjsize = foundsys->jumps.size();
                     bool   found = false;

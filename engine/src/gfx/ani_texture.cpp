@@ -375,7 +375,7 @@ void AnimatedTexture::AniInit()
 {
     Texture::InitTexture();
 
-    Decal = NULL;
+    Decal = nullptr;
     activebound = -1;
     physicsactive = 0;
     loadSuccess = false;
@@ -461,9 +461,9 @@ Texture *AnimatedTexture::Clone()
 AnimatedTexture::~AnimatedTexture()
 {
     Destroy();
-    data = NULL;
+    data = nullptr;
     active = 0;
-    palette = NULL;
+    palette = nullptr;
 }
 
 AnimatedTexture::AnimatedTexture()
@@ -488,7 +488,7 @@ void AnimatedTexture::Destroy()
             delete Decal[i];
         }
         delete[] Decal;
-        Decal = NULL;
+        Decal = nullptr;
     }
 }
 
@@ -790,7 +790,7 @@ void AnimatedTexture::LoadAni(VSFileSystem::VSFile &f, int32_t stage, enum FILTE
         wrapper_file_path = f.GetFilename();
         wrapper_file_type = f.GetType();
     }
-    original = NULL;
+    original = nullptr;
     loadSuccess = true;
 
     anis.insert(this);
@@ -801,7 +801,7 @@ void AnimatedTexture::LoadAni(VSFileSystem::VSFile &f, int32_t stage, enum FILTE
 
 void AnimatedTexture::LoadFrame(int32_t frame)
 {
-    if (!vidMode || (Decal == NULL) || (*Decal == NULL))
+    if (!vidMode || (Decal == nullptr) || (*Decal == nullptr))
     {
         return;
     }
@@ -871,7 +871,7 @@ void AnimatedTexture::LoadFrame(int32_t frame)
     }
     gl_options.compression = ocompression;
 
-    original = NULL;
+    original = nullptr;
     loadSuccess = loadSuccess && (*Decal)->LoadSuccess();
     if (loadSuccess)
     {

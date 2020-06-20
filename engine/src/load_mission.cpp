@@ -84,7 +84,7 @@ void processDelayedMissions()
             int i = _Universe->CurrentCockpit();
             _Universe->SetActiveCockpit(delayed_missions.back().player);
             StarSystem *ss = _Universe->AccessCockpit()->activeStarSystem;
-            if (ss == NULL)
+            if (ss == nullptr)
                 ss = _Universe->activeStarSystem();
             _Universe->pushActiveStarSystem(ss);
             LoadMission(delayed_missions.back().str.c_str(), delayed_missions.back().script, false);
@@ -268,7 +268,7 @@ void LoadMission(const char *nission_name, const std::string &script, bool loadF
     if (err > Ok)
         return;
     f.Close();
-    if (Mission::getNthPlayerMission(_Universe->CurrentCockpit(), 0) != NULL)
+    if (Mission::getNthPlayerMission(_Universe->CurrentCockpit(), 0) != nullptr)
     {
         pushSaveString(_Universe->CurrentCockpit(), "active_scripts", script);
         pushSaveString(_Universe->CurrentCockpit(), "active_missions", nission_name);

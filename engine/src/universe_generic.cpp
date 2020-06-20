@@ -34,12 +34,12 @@ void Universe::clearAllSystems()
         star_system.pop_back();
     }
     active_star_system.clear();
-    script_system = NULL;
+    script_system = nullptr;
 }
 
 Cockpit *Universe::createCockpit(std::string player)
 {
-    Cockpit *cp = new Cockpit("", NULL, player);
+    Cockpit *cp = new Cockpit("", nullptr, player);
     cockpit.push_back(cp);
     return cp;
 }
@@ -51,12 +51,12 @@ Unit *DockToSavedBases(int playernum, QVector &safevec)
     if (!plr || !plr->getStarSystem())
     {
         safevec = QVector(0, 0, 0);
-        return NULL;
+        return nullptr;
     }
     vector<string> strs = loadStringList(playernum, mission_key);
     if (strs.size())
         str = strs[0];
-    Unit *closestUnit = NULL;
+    Unit *closestUnit = nullptr;
     float lastdist = 0;
     float dist = 0;
     Unit *un;
@@ -65,7 +65,7 @@ Unit *DockToSavedBases(int playernum, QVector &safevec)
         if (un->name == str || un->getFullname() == str)
         {
             dist = UnitUtil::getSignificantDistance(plr, un);
-            if (closestUnit == NULL || dist < lastdist)
+            if (closestUnit == nullptr || dist < lastdist)
             {
                 lastdist = dist;
                 closestUnit = un;
@@ -85,7 +85,7 @@ Unit *DockToSavedBases(int playernum, QVector &safevec)
             if (i >= dprt.size())
             {
                 safevec = QVector(0, 0, 0);
-                return NULL;
+                return nullptr;
             }
             if (!dprt[i].IsOccupied())
                 break;
@@ -103,18 +103,18 @@ Unit *DockToSavedBases(int playernum, QVector &safevec)
             _Universe->AccessCockpit(playernum)->retry_dock -= 1;
     }
     safevec = dock_position;
-    return (closestUnit && closestUnit->isDocked(plr)) ? closestUnit : NULL;
+    return (closestUnit && closestUnit->isDocked(plr)) ? closestUnit : nullptr;
 }
 
 Cockpit *Universe::isPlayerStarship(const Unit *doNotDereference)
 {
     using std::vector;
     if (!doNotDereference)
-        return NULL;
+        return nullptr;
     for (std::vector<Cockpit *>::iterator iter = cockpit.begin(); iter < cockpit.end(); iter++)
         if (doNotDereference == (*(iter))->GetParent())
             return *(iter);
-    return NULL;
+    return nullptr;
 }
 
 int Universe::whichPlayerStarship(const Unit *doNotDereference)
@@ -149,7 +149,7 @@ void Universe::SetActiveCockpit(Cockpit *cp)
 // TODO: candidate for deletion
 void Universe::SetupCockpits(std::vector<std::string> players)
 {
-    cockpit.push_back(new Cockpit("", NULL, players[0]));
+    cockpit.push_back(new Cockpit("", nullptr, players[0]));
 }
 
 void SortStarSystems(std::vector<StarSystem *> &ss, StarSystem *drawn)
@@ -182,17 +182,17 @@ void Universe::Init(const char *gal)
         LoadFactionXML("factions.xml");
         firsttime = true;
     }
-    script_system = NULL;
+    script_system = nullptr;
 }
 
 Universe::Universe(int argc, char **argv, const char *galaxy_str, bool server)
-    : current_cockpit(0), script_system(NULL)
+    : current_cockpit(0), script_system(nullptr)
 {
     this->Init(galaxy_str);
 }
 
 Universe::Universe()
-    : current_cockpit(0), script_system(NULL)
+    : current_cockpit(0), script_system(nullptr)
 {
 }
 
@@ -243,7 +243,7 @@ StarSystem *Universe::getStarSystem(string name)
         if (ss->getName() == name)
             return ss;
     }
-    return NULL;
+    return nullptr;
 }
 
 extern void MakeStarSystem(string file, Galaxy *galaxy, string origin, int forcerandom);
@@ -351,7 +351,7 @@ int Universe::StarSystemIndex(StarSystem *ss)
 static void AppendUnitTables(const string &csvfiles)
 {
     CSVTable *table = loadCSVTableList(csvfiles, VSFileSystem::UnitFile, true);
-    if (table != NULL)
+    if (table != nullptr)
         unitTables.push_back(table);
 }
 

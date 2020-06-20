@@ -12,7 +12,7 @@
 typedef ALuint ALSourceHandle;
 typedef ALuint ALBufferHandle;
 
-#define AL_NULL_BUFFER (ALBufferHandle(0))
+#define AL_nullptr_BUFFER (ALBufferHandle(0))
 
 #ifndef AL_SEC_OFFSET
 /* Supported on Windows, but the headers might be out of date. */

@@ -21,7 +21,7 @@ struct BeamDrawContext
 static DecalQueue beamdecals;
 static vector<vector<BeamDrawContext>> beamdrawqueue;
 
-Beam::Beam(const Transformation &trans, const weapon_info &clne, void *own, Unit *firer, int sound) : vlist(NULL), Col(clne.r, clne.g, clne.b, clne.a)
+Beam::Beam(const Transformation &trans, const weapon_info &clne, void *own, Unit *firer, int sound) : vlist(nullptr), Col(clne.r, clne.g, clne.b, clne.a)
 {
     VSCONSTRUCT2('B')
     listen_to_owner = false; //warning this line of code is also present in beam_server.cpp change one, change ALL

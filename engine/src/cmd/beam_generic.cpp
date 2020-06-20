@@ -54,7 +54,7 @@ void ScaleByAlpha(GFXColorVertex &vert, float alpha)
 void Beam::Init(const Transformation &trans, const weapon_info &cln, void *own, Unit *firer)
 {
     //Matrix m;
-    CollideInfo.object.b = NULL;
+    CollideInfo.object.b = nullptr;
     CollideInfo.type = LineCollide::BEAM;
     //DO NOT DELETE - shared vlist
     //if (vlist)
@@ -338,7 +338,7 @@ void Beam::UpdatePhysics(const Transformation &trans,
     }
     else
     {
-        CollideHuge(CollideInfo, listen_to_owner ? targetToCollideWith : NULL, firer, superunit);
+        CollideHuge(CollideInfo, listen_to_owner ? targetToCollideWith : nullptr, firer, superunit);
         if (!(curlength <= range && curlength > 0))
         {
             //if curlength just happens to be nan --FIXME THIS MAKES NO SENSE AT ALL --chuck_starchaser
@@ -351,7 +351,7 @@ void Beam::UpdatePhysics(const Transformation &trans,
         QVector tmpMini = center.Min(tmpvec);
         tmpvec = center.Max(tmpvec);
 #ifdef BEAMCOLQ
-        if (TableLocationChanged(CollideInfo, tmpMini, tmpvec) || (curthick > 0 && CollideInfo.object.b == NULL))
+        if (TableLocationChanged(CollideInfo, tmpMini, tmpvec) || (curthick > 0 && CollideInfo.object.b == nullptr))
         {
             RemoveFromSystem(false);
 #endif
@@ -377,7 +377,7 @@ extern Cargo *GetMasterPartList(const char *);
 
 bool Beam::Collide(Unit *target, Unit *firer, Unit *superunit)
 {
-    if (this == NULL || target == NULL)
+    if (this == nullptr || target == nullptr)
     {
         VSFileSystem::vs_fprintf(stderr, "Recovering from nonfatal beam error when beam inactive\n");
         return false;
@@ -479,7 +479,7 @@ bool Beam::Collide(Unit *target, Unit *firer, Unit *superunit)
             else if (target->faction == cargofaction)
                 fp = c_fp, fi = c_fi;
 
-            else if (target->getAIState() == NULL)
+            else if (target->getAIState() == nullptr)
                 fp = d_fp, fi = d_fi;
             //tractor/repulsor beam!
             if (fp || target->isTractorable(Unit::tractorPush))
@@ -516,7 +516,7 @@ bool Beam::Collide(Unit *target, Unit *firer, Unit *superunit)
                     //lets add our cargo to him
                     Cargo *c = GetMasterPartList(target->name.get().c_str());
                     Cargo tmp;
-                    bool isnotcargo = (c == NULL);
+                    bool isnotcargo = (c == nullptr);
                     if (!isnotcargo)
                         if (c->GetCategory().find("upgrades") == 0)
                             isnotcargo = true;
@@ -547,7 +547,7 @@ bool Beam::Collide(Unit *target, Unit *firer, Unit *superunit)
                             tmp.volume = starshipvolume;
                         }
                     }
-                    if (c != NULL)
+                    if (c != nullptr)
                     {
                         Cargo adder = *c;
                         adder.quantity = 1;

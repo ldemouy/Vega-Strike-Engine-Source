@@ -235,7 +235,7 @@ JoyStick::JoyStick(int32_t which) : mouse(which == MOUSE_JOYSTICK)
         return;
     }
     joy = SDL_JoystickOpen(which); //joystick nr should be configurable
-    if (joy == NULL)
+    if (joy == nullptr)
     {
         printf("warning: no joystick nr %d\n", which);
         joy_available = false;

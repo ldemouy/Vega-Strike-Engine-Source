@@ -22,14 +22,14 @@ protected:
              bool SubUnit,
              int faction,
              const std::string &unitModifications = std::string(""),
-             Flightgroup *fg = NULL);
+             Flightgroup *fg = nullptr);
     Building(Terrain *parent,
              bool vehicle,
              const char *filename,
              bool SubUnit,
              int faction,
              const std::string &unitModifications = std::string(""),
-             Flightgroup *fg = NULL);
+             Flightgroup *fg = nullptr);
 
     friend class UnitFactory;
 
@@ -46,7 +46,7 @@ public:
                                 const Matrix &transmat,
                                 const Vector &CumulativeVelocity,
                                 bool ResolveLast,
-                                UnitCollection *uc = NULL)
+                                UnitCollection *uc = nullptr)
     {
         Unit::UpdatePhysics2(trans, old_physical_state, accel, difficulty, transmat, CumulativeVelocity, ResolveLast, uc);
     }

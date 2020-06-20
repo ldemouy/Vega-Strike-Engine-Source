@@ -40,12 +40,12 @@ extern vector<std::shared_ptr<Faction>> factions;
 StarDate::StarDate()
 {
     initial_time = mission->getGametime();
-    initial_star_time = NULL;
+    initial_star_time = nullptr;
 }
 
 void StarDate::Init(double time)
 {
-    if (initial_star_time != NULL)
+    if (initial_star_time != nullptr)
     {
         delete[] initial_star_time;
     }
@@ -63,7 +63,7 @@ double StarDate::GetCurrentStarTime(int faction)
     //Get the number of seconds elapsed since the server start
     double time_since_server_started = mission->getGametime() - initial_time;
     //Add them to the current date
-    if (initial_star_time == NULL)
+    if (initial_star_time == nullptr)
     {
         return time_since_server_started;
     }
@@ -77,7 +77,7 @@ double StarDate::GetCurrentStarTime(int faction)
 //into stardate
 double StarDate::GetElapsedStarTime(int faction)
 {
-    if (initial_star_time == NULL)
+    if (initial_star_time == nullptr)
     {
         return initial_time;
     }
@@ -95,7 +95,7 @@ double StarDate::GetElapsedStarTime(int faction)
 
 void StarDate::InitTrek(string date)
 {
-    if (initial_star_time != NULL)
+    if (initial_star_time != nullptr)
     {
         //we must be reinitializing;
         delete[] initial_star_time;

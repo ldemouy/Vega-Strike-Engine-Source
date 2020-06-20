@@ -20,7 +20,7 @@ collideTrees::collideTrees(const std::string &hk, csOPCODECollider *cT,
                            csOPCODECollider *cS) : hash_key(hk), colShield(cS)
 {
     for (unsigned int i = 0; i < collideTreesMaxTrees; ++i)
-        rapidColliders[i] = NULL;
+        rapidColliders[i] = nullptr;
     rapidColliders[0] = cT;
 
     refcount = 1;
@@ -37,16 +37,16 @@ csOPCODECollider *collideTrees::colTree(Unit *un, const Vector &othervelocity)
     static unsigned int max_collide_trees = static_cast<unsigned int>(XMLSupport::parse_int(vs_config->getVariable("physics", "max_collide_trees", "16384")));
     if (un->rSize() * un->rSize() > SIMULATION_ATOM * SIMULATION_ATOM * speedsquared || max_collide_trees == 1)
         return rapidColliders[0];
-    if (rapidColliders[0] == NULL)
-        return NULL;
+    if (rapidColliders[0] == nullptr)
+        return nullptr;
     if (un->rSize() <= 0.) //Shouldn't happen bug I've seen this for asteroid fields...
-        return NULL;
+        return nullptr;
     //Force pow to 0 in order to avoid nan problems...
     unsigned int pow = 0;
     if (pow >= collideTreesMaxTrees || pow >= max_collide_trees)
         pow = collideTreesMaxTrees - 1;
     int val = 1 << pow;
-    if (rapidColliders[pow] == NULL)
+    if (rapidColliders[pow] == nullptr)
         rapidColliders[pow] = un->getCollideTree(Vector(1, 1, val));
     return rapidColliders[pow];
 }

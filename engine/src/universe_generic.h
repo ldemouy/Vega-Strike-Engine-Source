@@ -102,16 +102,16 @@ public:
     ///Wrapper function for Star System
     virtual Camera *AccessCamera(int num)
     {
-        return NULL;
+        return nullptr;
     }
     virtual Camera *AccessCamera()
     {
-        return NULL;
+        return nullptr;
     }
     ///Returns the current hud cam
     virtual Camera *AccessHudCamera()
     {
-        return NULL;
+        return nullptr;
     }
     ///Wrapper function for star system
     virtual void SetViewport() {}
@@ -122,7 +122,7 @@ public:
     virtual void activateLightMap(int stage = 1) {}
     virtual Texture *getLightMap()
     {
-        return NULL;
+        return nullptr;
     }
     virtual void SelectCamera(int cam) {}
     //virtual unsigned int CurrentCockpit(){return 0;}
@@ -158,7 +158,7 @@ public:
     //void SetActiveCockpit (Cockpit * which);
     StarSystem *getActiveStarSystem(unsigned int size)
     {
-        return size >= active_star_system.size() ? NULL : active_star_system[size];
+        return size >= active_star_system.size() ? nullptr : active_star_system[size];
     }
     unsigned int getNumActiveStarSystem()
     {
@@ -195,7 +195,7 @@ public:
     ///returns active star system
     StarSystem *activeStarSystem()
     {
-        return active_star_system.empty() ? NULL
+        return active_star_system.empty() ? nullptr
                                           : active_star_system.back();
     }
     ///Wrapper function for Star System
@@ -236,7 +236,7 @@ public:
     StarSystem *getStarSystem(string name);
     StarSystem *scriptStarSystem()
     {
-        if (script_system != NULL)
+        if (script_system != nullptr)
             return script_system;
 
         else
@@ -247,11 +247,11 @@ public:
     {
         if (name == "-active-")
         {
-            script_system = NULL;
+            script_system = nullptr;
             return true;
         }
         StarSystem *ss = getStarSystem(name);
-        if (script_system != NULL)
+        if (script_system != nullptr)
         {
             script_system = ss;
             return true;

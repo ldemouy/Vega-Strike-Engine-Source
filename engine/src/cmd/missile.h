@@ -53,12 +53,12 @@ public:
                                 const Matrix &transmat,
                                 const Vector &CumulativeVelocity,
                                 bool ResolveLast,
-                                UnitCollection *uc = NULL)
+                                UnitCollection *uc = nullptr)
     {
         Unit *targ;
         if ((targ = (Unit::Target())))
             if (rand() / ((float)RAND_MAX) < ((float)UnitUtil::getECM(targ)) * SIMULATION_ATOM / 32768)
-                Target(NULL);
+                Target(nullptr);
         //go wild
         if (retarget == -1)
         {
@@ -67,8 +67,8 @@ public:
             else
                 retarget = 0;
         }
-        if (retarget && targ == NULL)
-            Target(NULL);
+        if (retarget && targ == nullptr)
+            Target(nullptr);
         GameUnit<Missile>::UpdatePhysics2(trans,
                                           old_physical_state,
                                           accel,

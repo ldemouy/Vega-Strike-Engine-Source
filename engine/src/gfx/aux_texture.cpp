@@ -48,7 +48,7 @@ Texture *Texture::Exists(string s, string a)
 Texture *Texture::Exists(string s)
 {
     Texture *tmp = texHashTable.Get(VSFileSystem::GetHashName(s));
-    if (tmp == NULL)
+    if (tmp == nullptr)
     {
         string tmpo;
         tmp = texHashTable.Get(VSFileSystem::GetSharedTextureHashName(s));
@@ -89,7 +89,7 @@ GFXBOOL Texture::checkold(const string &s, bool shared, string &hashname)
 {
     hashname = shared ? VSFileSystem::GetSharedTextureHashName(s) : VSFileSystem::GetHashName(s);
     Texture *oldtex = texHashTable.Get(hashname);
-    if (oldtex != NULL)
+    if (oldtex != nullptr)
     {
         //*this = *oldtex;//will be obsoleted--unpredictable results with string()
         setReference(oldtex);
@@ -109,9 +109,9 @@ void Texture::modold(const string &s, bool shared, string &hashname)
     //oldtex->InitTexture();new calls this
     oldtex->name = -1;
     oldtex->refcount = 1;
-    oldtex->original = NULL;
-    oldtex->palette = NULL;
-    oldtex->data = NULL;
+    oldtex->original = nullptr;
+    oldtex->palette = nullptr;
+    oldtex->data = nullptr;
     texHashTable.Put(hashname, oldtex);
     original = oldtex;
 }
@@ -122,8 +122,8 @@ void Texture::InitTexture()
     original = 0;
     refcount = 0;
     name = -1;
-    palette = NULL;
-    data = NULL;
+    palette = nullptr;
+    data = nullptr;
     mintcoord = Vector(0.0f, 0.0f, 0.0f);
     maxtcoord = Vector(1.0f, 1.0f, 1.0f);
     address_mode = DEFAULT_ADDRESS_MODE;
@@ -134,7 +134,7 @@ void Texture::setold()
     //*original = *this;//will be obsoleted in new C++ standard unpredictable results when using string() (and its strangeass copy constructor)
     *original = *this;
     //memcpy (original, this, sizeof (Texture));
-    original->original = NULL;
+    original->original = nullptr;
     original->refcount++;
 }
 
@@ -167,7 +167,7 @@ Texture *Texture::Clone()
     }
     else
     {
-        retval->original = NULL;
+        retval->original = nullptr;
     }
     retval->refcount = 0;
     return retval;
@@ -181,26 +181,26 @@ void Texture::FileNotFound(const string &texfilename)
 
     setbad(texfilename);
     name = -1;
-    data = NULL;
-    if (original != NULL)
+    data = nullptr;
+    if (original != nullptr)
     {
         original->name = -1;
         delete original;
-        original = NULL;
+        original = nullptr;
     }
-    palette = NULL;
+    palette = nullptr;
 }
 
 bool Texture::checkbad(const string &s)
 {
     string hashname = VSFileSystem::GetSharedTextureHashName(s);
-    bool *found = NULL;
+    bool *found = nullptr;
     found = badtexHashTable.Get(hashname);
-    if (found != NULL)
+    if (found != nullptr)
         return true;
     hashname = VSFileSystem::GetHashName(s);
     found = badtexHashTable.Get(hashname);
-    if (found != NULL)
+    if (found != nullptr)
         return true;
     return false;
 }
@@ -221,9 +221,9 @@ Texture::Texture(int stage,
                  enum ADDRESSMODE address_mode)
 {
     InitTexture();
-    data = NULL;
+    data = nullptr;
     ismipmapped = mipmap;
-    palette = NULL;
+    palette = nullptr;
     texture_target = target;
     image_target = imagetarget;
     this->stage = stage;
@@ -241,14 +241,14 @@ Texture::Texture(VSFile *f,
                  enum ADDRESSMODE address_mode,
                  Texture *main)
 {
-    data = NULL;
+    data = nullptr;
     ismipmapped = mipmap;
     InitTexture();
-    palette = NULL;
+    palette = nullptr;
     texture_target = target;
     image_target = imagetarget;
     this->stage = stage;
-    data = this->ReadImage(f, NULL, true, NULL);
+    data = this->ReadImage(f, nullptr, true, nullptr);
     if (data)
     {
         if (mode >= _DXT1 && mode <= _DXT5)
@@ -264,7 +264,7 @@ Texture::Texture(VSFile *f,
         else
             Bind(maxdimension, detailtexture);
         free(data);
-        data = NULL;
+        data = nullptr;
         if (!nocache)
             setold();
     }
@@ -306,8 +306,8 @@ void Texture::Load(const char *FileName,
         free(data);
     if (palette)
         free(palette);
-    data = NULL;
-    palette = NULL;
+    data = nullptr;
+    palette = nullptr;
     ismipmapped = mipmap;
     texture_target = target;
     image_target = imagetarget;
@@ -384,9 +384,9 @@ void Texture::Load(const char *FileName,
         bootstrap_draw("Loading " + string(FileName));
     //strcpy(filename, FileName);
     if (err2 > Ok)
-        data = this->ReadImage(&f, NULL, true, NULL);
+        data = this->ReadImage(&f, nullptr, true, nullptr);
     else
-        data = this->ReadImage(&f, NULL, true, &f2);
+        data = this->ReadImage(&f, nullptr, true, &f2);
     if (data)
     {
         if (mode >= _DXT1 && mode <= _DXT5)
@@ -402,7 +402,7 @@ void Texture::Load(const char *FileName,
         else
             Bind(maxdimension, detailtexture);
         free(data);
-        data = NULL;
+        data = nullptr;
         if (!nocache)
             setold();
     }
@@ -467,8 +467,8 @@ void Texture::Load(const char *FileNameRGB,
         free(data);
     if (palette)
         free(palette);
-    data = NULL;
-    palette = NULL;
+    data = nullptr;
+    palette = nullptr;
     ismipmapped = mipmap;
 
     this->stage = stage;
@@ -523,8 +523,8 @@ void Texture::Load(const char *FileNameRGB,
 
             if (err1 > Ok)
             {
-                data = NULL;
-                FileNameA = NULL;
+                data = nullptr;
+                FileNameA = nullptr;
             }
         }
         else
@@ -533,9 +533,9 @@ void Texture::Load(const char *FileNameRGB,
         }
     }
     if (err1 > Ok)
-        data = this->ReadImage(&f, NULL, true, NULL);
+        data = this->ReadImage(&f, nullptr, true, nullptr);
     else
-        data = this->ReadImage(&f, NULL, true, &f1);
+        data = this->ReadImage(&f, nullptr, true, &f1);
     if (data)
     {
         if (mode >= _DXT1 && mode <= _DXT5)
@@ -551,7 +551,7 @@ void Texture::Load(const char *FileNameRGB,
         else
             Bind(maxdimension, detailtexture);
         free(data);
-        data = NULL;
+        data = nullptr;
         if (!nocache)
             setold();
     }
@@ -567,21 +567,21 @@ void Texture::Load(const char *FileNameRGB,
 
 Texture::~Texture()
 {
-    if (original == NULL)
+    if (original == nullptr)
     {
         /**DEPRECATED
-         *     if(data != NULL)
+         *     if(data != nullptr)
          *     {
          *             delete [] data;
          *
-         *             data = NULL;
+         *             data = nullptr;
          *     }
          */
         UnBind();
-        if (palette != NULL)
+        if (palette != nullptr)
         {
             free(palette);
-            palette = NULL;
+            palette = nullptr;
         }
     }
     else
@@ -660,27 +660,27 @@ int Texture::Bind(int maxdimension, GFXBOOL detailtexture)
         switch (mode)
         {
         case _DXT1:
-            GFXCreateTexture(sizeX, sizeY, DXT1, &name, NULL, stage, ismipmapped, texture_target, address_mode);
+            GFXCreateTexture(sizeX, sizeY, DXT1, &name, nullptr, stage, ismipmapped, texture_target, address_mode);
             break;
         case _DXT1RGBA:
-            GFXCreateTexture(sizeX, sizeY, DXT1RGBA, &name, NULL, stage, ismipmapped, texture_target, address_mode);
+            GFXCreateTexture(sizeX, sizeY, DXT1RGBA, &name, nullptr, stage, ismipmapped, texture_target, address_mode);
             break;
 
         case _DXT3:
-            GFXCreateTexture(sizeX, sizeY, DXT3, &name, NULL, stage, ismipmapped, texture_target, address_mode);
+            GFXCreateTexture(sizeX, sizeY, DXT3, &name, nullptr, stage, ismipmapped, texture_target, address_mode);
             break;
         case _DXT5:
-            GFXCreateTexture(sizeX, sizeY, DXT5, &name, NULL, stage, ismipmapped, texture_target, address_mode);
+            GFXCreateTexture(sizeX, sizeY, DXT5, &name, nullptr, stage, ismipmapped, texture_target, address_mode);
             break;
 
         case _24BITRGBA:
-            //GFXCreateTexture(sizeX, sizeY, RGBA32, &name, NULL, stage);
-            GFXCreateTexture(sizeX, sizeY, RGBA32, &name, NULL, stage, ismipmapped, texture_target, address_mode);
+            //GFXCreateTexture(sizeX, sizeY, RGBA32, &name, nullptr, stage);
+            GFXCreateTexture(sizeX, sizeY, RGBA32, &name, nullptr, stage, ismipmapped, texture_target, address_mode);
             break;
         case _24BIT:
             //not supported by most cards, so i use rgba32
             //GFXCreateTexture(sizeX, sizeY, RGB24, &name);
-            GFXCreateTexture(sizeX, sizeY, RGB24, &name, NULL, stage, ismipmapped, texture_target, address_mode);
+            GFXCreateTexture(sizeX, sizeY, RGB24, &name, nullptr, stage, ismipmapped, texture_target, address_mode);
             break;
         case _8BIT:
             GFXCreateTexture(sizeX, sizeY, PALETTE8, &name, (char *)palette, stage, ismipmapped, texture_target, address_mode);

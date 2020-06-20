@@ -39,27 +39,27 @@ VegaConfig::VegaConfig(const char *configfile)
 {
     configNodeFactory domf;
     configNode *top = (configNode *)domf.LoadXML(configfile);
-    if (top == NULL)
+    if (top == nullptr)
     {
         cout << "Panic exit - no configuration" << endl;
         exit(0);
     }
-    variables = NULL;
-    colors = NULL;
+    variables = nullptr;
+    colors = nullptr;
     checkConfig(top);
 }
 
 VegaConfig::~VegaConfig()
 {
-    if (variables != NULL)
+    if (variables != nullptr)
     {
         delete variables;
     }
-    if (colors != NULL)
+    if (colors != nullptr)
     {
         delete colors;
     }
-    if (bindings != NULL)
+    if (bindings != nullptr)
     {
         delete bindings;
     }
@@ -102,7 +102,7 @@ bool VegaConfig::checkConfig(configNode *node)
 
 void VegaConfig::doVariables(configNode *node)
 {
-    if (variables != NULL)
+    if (variables != nullptr)
     {
         cout << "only one variable section allowed" << endl;
         return;
@@ -274,7 +274,7 @@ bool VegaConfig::checkColor(string prefix, configNode *node)
 
 void VegaConfig::doColors(configNode *node)
 {
-    if (colors != NULL)
+    if (colors != nullptr)
     {
         cout << "only one variable section allowed" << endl;
         return;
@@ -407,7 +407,7 @@ configNode *VegaConfig::findSection(string section, configNode *startnode)
     }
     cout << "WARNING: no section/variable/color named " << section << endl;
 
-    return NULL;
+    return nullptr;
 }
 
 /* *********************************************************** */
@@ -422,10 +422,10 @@ void VegaConfig::setVariable(configNode *entry, string value)
 bool VegaConfig::setVariable(string section, string name, string value)
 {
     configNode *sectionnode = findSection(section, variables);
-    if (sectionnode != NULL)
+    if (sectionnode != nullptr)
     {
         configNode *varnode = findEntry(name, sectionnode);
-        if (varnode != NULL)
+        if (varnode != nullptr)
         {
             //now set the thing
             setVariable(varnode, value);
@@ -439,13 +439,13 @@ bool VegaConfig::setVariable(string section, string name, string value)
 bool VegaConfig::setVariable(string section, string subsection, string name, string value)
 {
     configNode *sectionnode = findSection(section, variables);
-    if (sectionnode != NULL)
+    if (sectionnode != nullptr)
     {
         configNode *subnode = findSection(name, sectionnode);
-        if (subnode != NULL)
+        if (subnode != nullptr)
         {
             configNode *varnode = findEntry(name, subnode);
-            if (varnode != NULL)
+            if (varnode != nullptr)
             {
                 //now set the thing
                 setVariable(varnode, value);

@@ -22,7 +22,7 @@ namespace Converter {
 					FILE * Inputfile=fopen(input.c_str(),"rb");
 					FILE * OutputObj=fopen(output.c_str(),"w+"); //create file for text output
 					FILE * OutputMtl=fopen(mtl.c_str(),"w");
-					FILE * Outputfile=NULL;
+					FILE * Outputfile=nullptr;
 					BFXMToXmeshOrOBJ(Inputfile,Outputfile,OutputObj,OutputMtl,base,'o');
 					return RC_OK;
 				} else {

@@ -218,7 +218,7 @@ bool whitespaceNewline(char *inp)
 string savedFactions;
 void FactionUtil::LoadSerializedFaction(char *&buf)
 {
-    if (buf == NULL)
+    if (buf == nullptr)
     {
         char *bleh = strdup(savedFactions.c_str());
         char *blah = bleh;

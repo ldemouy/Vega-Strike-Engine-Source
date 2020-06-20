@@ -76,7 +76,7 @@ namespace Audio
         /** Keep buffers going.
          *
          * @returns An AL buffer handle that can be queued in an AL streaming source, or
-         *      AL_NULL_BUFFER if there's no available buffer for the operation (which means
+         *      AL_nullptr_BUFFER if there's no available buffer for the operation (which means
          *      the source should free some buffers)
          * @remarks It will check the buffer queue, and if there are free buffers, it will
          *      free one with new data.

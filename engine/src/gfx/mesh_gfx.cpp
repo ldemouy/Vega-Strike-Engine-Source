@@ -82,7 +82,7 @@ public:
 
     OrigMeshContainer()
     {
-        orig = NULL;
+        orig = nullptr;
     }
     OrigMeshContainer(Mesh *orig, float d, int passno)
     {
@@ -159,8 +159,8 @@ public:
                     else if (atu.sourceType == Technique::Pass::TextureUnit::Decal)
                     {
                         //Compare decal textures
-                        const Texture *ta = (atu.sourceIndex < static_cast<int>(orig->Decal.size())) ? orig->Decal[atu.sourceIndex] : NULL;
-                        const Texture *tb = (btu.sourceIndex < static_cast<int>(b.orig->Decal.size())) ? b.orig->Decal[btu.sourceIndex] : NULL;
+                        const Texture *ta = (atu.sourceIndex < static_cast<int>(orig->Decal.size())) ? orig->Decal[atu.sourceIndex] : nullptr;
+                        const Texture *tb = (btu.sourceIndex < static_cast<int>(b.orig->Decal.size())) ? b.orig->Decal[btu.sourceIndex] : nullptr;
                         PLESSX(ta, tb);
                     }
                 }
@@ -233,7 +233,7 @@ Texture *Mesh::TempGetTexture(MeshXML *xml, std::string filename, std::string fa
     static bool factionalize_textures =
         XMLSupport::parse_bool(vs_config->getVariable("graphics", "faction_dependant_textures", "true"));
     string faction_prefix = (factionalize_textures ? (factionname + "_") : string());
-    Texture *ret = NULL;
+    Texture *ret = nullptr;
     string facplus = faction_prefix + filename;
     if (filename.find(".ani") != string::npos)
     {
@@ -245,7 +245,7 @@ Texture *Mesh::TempGetTexture(MeshXML *xml, std::string filename, std::string fa
             if (!ret->LoadSuccess())
             {
                 delete ret;
-                ret = NULL;
+                ret = nullptr;
             }
             else
             {
@@ -302,7 +302,7 @@ Texture *Mesh::TempGetTexture(MeshXML *xml, int index, std::string factionname) 
     static bool factionalize_textures =
         XMLSupport::parse_bool(vs_config->getVariable("graphics", "faction_dependant_textures", "true"));
     string faction_prefix = (factionalize_textures ? (factionname + "_") : string());
-    Texture *tex = NULL;
+    Texture *tex = nullptr;
     assert(index < (int)xml->decals.size());
     MeshXML::ZeTexture *zt = &(xml->decals[index]);
     if (zt->animated_name.length())
@@ -317,7 +317,7 @@ Texture *Mesh::TempGetTexture(MeshXML *xml, int index, std::string factionname) 
     }
     else if (zt->decal_name.length() == 0)
     {
-        tex = NULL;
+        tex = nullptr;
     }
     else
     {
@@ -412,20 +412,20 @@ Mesh::~Mesh()
                 }
         delete vlist;
         for (unsigned int i = 0; i < Decal.size(); i++)
-            if (Decal[i] != NULL)
+            if (Decal[i] != nullptr)
             {
                 delete Decal[i];
-                Decal[i] = NULL;
+                Decal[i] = nullptr;
             }
-        if (squadlogos != NULL)
+        if (squadlogos != nullptr)
         {
             delete squadlogos;
-            squadlogos = NULL;
+            squadlogos = nullptr;
         }
-        if (forcelogos != NULL)
+        if (forcelogos != nullptr)
         {
             delete forcelogos;
-            forcelogos = NULL;
+            forcelogos = nullptr;
         }
         if (meshHashTable.Get(hash_name) == this)
             meshHashTable.Delete(hash_name);
@@ -444,7 +444,7 @@ Mesh::~Mesh()
                     }
                 }
         }
-        if (draw_queue != NULL)
+        if (draw_queue != nullptr)
             delete[] draw_queue;
     }
     else
@@ -841,14 +841,14 @@ bool SetupSpecMapFirstPass(Texture **decal,
                                     GFXColor(0, 0, 0, 0),
                                     GFXColor(0, 0, 0, 0));
         retval = true;
-        if (envMap && detailTexture == NULL)
+        if (envMap && detailTexture == nullptr)
         {
             if ((decalSize > GLOW_PASS) && decal[GLOW_PASS] && gl_options.Multitexture && multitex_glowpass)
             {
                 decal[GLOW_PASS]->MakeActive(1);
                 GFXTextureEnv(1, GFXADDTEXTURE);
                 GFXToggleTexture(true, 1);
-                GFXTextureCoordGenMode(1, NO_GEN, NULL, NULL);
+                GFXTextureCoordGenMode(1, NO_GEN, nullptr, nullptr);
                 skip_glowpass = true;
             }
             else
@@ -909,7 +909,7 @@ void RestoreFirstPassState(Texture *detailTexture,
         for (unsigned int i = 1; i < sizeplus1; i++)
             GFXToggleTexture(false, i + 1); //turn off high detial tex
 
-        GFXTextureCoordGenMode(1, NO_GEN, NULL, NULL);
+        GFXTextureCoordGenMode(1, NO_GEN, nullptr, nullptr);
     }
 }
 
@@ -956,7 +956,7 @@ void RestoreEnvmapState()
         XMLSupport::parse_bool(vs_config->getVariable("graphics", "separatespecularcolor", "false")) ? GFXTRUE : GFXFALSE;
     GFXSetSeparateSpecularColor(separatespec);
     GFXEnable(LIGHTING);
-    GFXTextureCoordGenMode(0, NO_GEN, NULL, NULL);
+    GFXTextureCoordGenMode(0, NO_GEN, nullptr, nullptr);
     GFXTextureEnv(0, GFXMODULATETEXTURE);
     GFXDepthFunc(LEQUAL);
     GFXPopBlendMode();
@@ -1074,7 +1074,7 @@ void RestoreSpecMapState(bool envMap, bool detailMap, bool write_to_depthmap, fl
         }
         else
         {
-            GFXTextureCoordGenMode(0, NO_GEN, NULL, NULL);
+            GFXTextureCoordGenMode(0, NO_GEN, nullptr, nullptr);
         }
     }
     else
@@ -1088,7 +1088,7 @@ void RestoreSpecMapState(bool envMap, bool detailMap, bool write_to_depthmap, fl
     }
     if (detailMap)
     {
-        GFXTextureCoordGenMode(1, NO_GEN, NULL, NULL);
+        GFXTextureCoordGenMode(1, NO_GEN, nullptr, nullptr);
     }
     if (write_to_depthmap)
         GFXEnable(DEPTHWRITE);
@@ -1707,7 +1707,7 @@ void Mesh::ProcessFixedDrawQueue(size_t techpass, int whichdrawqueue, bool zsort
                         Decal[tu.targetIndex] = this->Decal[tu.defaultIndex];
                     else
                         //Invalid reference, activate global default (null)
-                        Decal[tu.targetIndex] = NULL;
+                        Decal[tu.targetIndex] = nullptr;
                     break;
                 case Technique::Pass::TextureUnit::None: //chuck_starchaser
                 case Technique::Pass::TextureUnit::Environment:
@@ -1906,7 +1906,7 @@ void Mesh::ProcessFixedDrawQueue(size_t techpass, int whichdrawqueue, bool zsort
                 break;
             case ENVSPEC_PASS:
                 if (!nomultienv)
-                    RestoreSpecMapState((splitpass1 ? false : getEnvMap()), detailTexture != NULL, zwrite, polygon_offset);
+                    RestoreSpecMapState((splitpass1 ? false : getEnvMap()), detailTexture != nullptr, zwrite, polygon_offset);
 
                 else
                     RestoreEnvmapState();
@@ -1993,13 +1993,13 @@ void Mesh::CreateLogos(MeshXML *xml, int faction, Flightgroup *fg)
             numsquadlogo++;
     }
     unsigned int nfl = numforcelogo;
-    Logo **tmplogo = NULL;
-    Texture *Dec = NULL;
+    Logo **tmplogo = nullptr;
+    Texture *Dec = nullptr;
     for (index = 0, nfl = numforcelogo, tmplogo = &forcelogos, Dec = FactionUtil::getForceLogo(faction);
          index < 2;
-         index++, nfl = numsquadlogo, tmplogo = &squadlogos, Dec = (fg == NULL ? FactionUtil::getSquadLogo(faction) : fg->squadLogo))
+         index++, nfl = numsquadlogo, tmplogo = &squadlogos, Dec = (fg == nullptr ? FactionUtil::getSquadLogo(faction) : fg->squadLogo))
     {
-        if (Dec == NULL)
+        if (Dec == nullptr)
             Dec = FactionUtil::getSquadLogo(faction);
         if (nfl == 0)
             continue;

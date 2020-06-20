@@ -34,7 +34,7 @@ public:
     }
 };
 
-VidFile::VidFile() : impl(NULL)
+VidFile::VidFile() : impl(nullptr)
 {
 }
 
@@ -46,7 +46,7 @@ VidFile::~VidFile()
 
 bool VidFile::isOpen() const
 {
-    return impl != NULL;
+    return impl != nullptr;
 }
 
 void VidFile::open(const std::string &path, size_t maxDimension, bool forcePOT)

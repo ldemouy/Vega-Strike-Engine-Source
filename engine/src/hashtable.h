@@ -91,7 +91,7 @@ public:
         typename supertype::const_iterator end = this->end();
         if (iter != end)
             return iter->second;
-        return NULL;
+        return nullptr;
     }
 
     void Put(const KEY &key, VALUE *value)

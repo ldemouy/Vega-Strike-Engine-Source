@@ -60,7 +60,7 @@ template <class TClass>
 class Functor : public TFunctor
 {
     //To add a new callback method, add a new fpt type here,
-    //set it to NULL in nullify, then add it to the list
+    //set it to nullptr in nullify, then add it to the list
     //of if/else in the main Call method.
 private:
     void (TClass::*fpt1)();
@@ -86,13 +86,13 @@ public:
         //d[2] == arg2, etc.
         //sometimes socket can be ignored
         //}}}
-        if (fpt1 != NULL)
+        if (fpt1 != nullptr)
         {
             //fpt1() no args {{{
             (*pt2Object.*fpt1)();
         }
         //}}}
-        else if (fpt2 != NULL)
+        else if (fpt2 != nullptr)
         {
             //fpt2(std::string &)  {{{
             std::string a;
@@ -105,16 +105,16 @@ public:
             (*pt2Object.*fpt2)(a);
             //}}}
         }
-        else if (fpt3 != NULL)
+        else if (fpt3 != nullptr)
         {
             //fpt3(const char *); {{{
             if (d.size() >= 2)
                 (*pt2Object.*fpt3)(d[1].c_str());
             else
-                (*pt2Object.*fpt3)((const char *)NULL);
+                (*pt2Object.*fpt3)((const char *)nullptr);
             //}}}
         }
-        else if (fpt4 != NULL)
+        else if (fpt4 != nullptr)
         {
             //(const char *array[]); {{{
             std::vector<const char *> buf;
@@ -130,16 +130,16 @@ public:
             (*pt2Object.*fpt4)(&buf[0]);
             //}}}
         }
-        else if (fpt5 != NULL)
+        else if (fpt5 != nullptr)
         {
             //(const char *, const char *); {{{
             if (d.size() < 2)
             {
-                (*pt2Object.*fpt5)((const char *)NULL, (const char *)NULL);
+                (*pt2Object.*fpt5)((const char *)nullptr, (const char *)nullptr);
             }
             else if (d.size() < 3)
             {
-                (*pt2Object.*fpt5)(d[1].c_str(), (const char *)NULL);
+                (*pt2Object.*fpt5)(d[1].c_str(), (const char *)nullptr);
             }
             else
             {
@@ -147,13 +147,13 @@ public:
             }
             //}}}
         }
-        else if (fpt6 != NULL)
+        else if (fpt6 != nullptr)
         {
             //(bool *); {{{
             (*pt2Object.*fpt6)(isDown);
         }
         //}}}
-        else if (fpt7 != NULL)
+        else if (fpt7 != nullptr)
         {
             //(int) {{{
             if (d.size() < 2)
@@ -166,7 +166,7 @@ public:
             }
             //}}}
         }
-        else if (fpt8 != NULL)
+        else if (fpt8 != nullptr)
         {
             //(char) {{{
             if (d.size() < 2)
@@ -180,7 +180,7 @@ public:
                 //}}}
             }
         }
-        else if (fpt9 != NULL)
+        else if (fpt9 != nullptr)
         {
             //(std::vector<std::string *> *d) {{{
             std::vector<std::string *> dup;
@@ -193,7 +193,7 @@ public:
             (*pt2Object.*fpt9)(&dup);
             //}}}
         }
-        else if (fpt10 != NULL)
+        else if (fpt10 != nullptr)
         {
             //(std::vector<std::string *> *d, int) {{{
             std::vector<std::string *> dup;
@@ -206,7 +206,7 @@ public:
             (*pt2Object.*fpt10)(&dup, sock_in);
             //}}}
         }
-        else if (fpt11 != NULL)
+        else if (fpt11 != nullptr)
         {
             //(std::string &, int&); {{{
             std::string a;
@@ -219,7 +219,7 @@ public:
             (*pt2Object.*fpt11)(a, sock_in);
             //}}}
         }
-        else if (fpt12 != NULL)
+        else if (fpt12 != nullptr)
         {
             //(std::vector<std::string *> *, int &, bool); // {{{
             std::vector<std::string *> dup;
@@ -233,23 +233,23 @@ public:
         } //}}}
         return &(attribs.m_return);
 
-        return NULL;
+        return nullptr;
     } //}}}
     void nullify()
     {
         //Set all the fpt's to null {{{
-        fpt1 = NULL;
-        fpt2 = NULL;
-        fpt3 = NULL;
-        fpt4 = NULL;
-        fpt5 = NULL;
-        fpt6 = NULL;
-        fpt7 = NULL;
-        fpt8 = NULL;
-        fpt9 = NULL;
-        fpt10 = NULL;
-        fpt11 = NULL;
-        fpt12 = NULL;
+        fpt1 = nullptr;
+        fpt2 = nullptr;
+        fpt3 = nullptr;
+        fpt4 = nullptr;
+        fpt5 = nullptr;
+        fpt6 = nullptr;
+        fpt7 = nullptr;
+        fpt8 = nullptr;
+        fpt9 = nullptr;
+        fpt10 = nullptr;
+        fpt11 = nullptr;
+        fpt12 = nullptr;
     } //Nullify }}}
       //Constructors, call nullify, set pt2object and function pointer {{{
     Functor(TClass *_pt2Object, void (TClass::*_fpt)())

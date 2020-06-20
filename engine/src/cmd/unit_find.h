@@ -119,14 +119,14 @@ public:
     }
     NearestUnitLocator()
     {
-        retval.unit = NULL;
+        retval.unit = nullptr;
     }
     void init(CollideMap *cm, CollideMap::iterator parent)
     {
         this->location = parent;
         startkey = (*location)->getKey();
         rad = FLT_MAX;
-        retval.unit = NULL;
+        retval.unit = nullptr;
     }
     bool cullless(CollideMap::iterator tless)
     {

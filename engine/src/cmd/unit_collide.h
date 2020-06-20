@@ -290,7 +290,7 @@ struct collideTrees
 
     bool usingColTree() const
     {
-        return rapidColliders[0] != NULL;
+        return rapidColliders[0] != nullptr;
     }
 
     csOPCODECollider *colTree(Unit *un, const Vector &othervelocity); //gets the appropriately scaled unit collide tree

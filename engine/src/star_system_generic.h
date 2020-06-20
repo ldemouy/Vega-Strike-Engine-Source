@@ -164,7 +164,7 @@ public:
     virtual void activateLightMap(int stage = 1) {}
     virtual Texture *getLightMap()
     {
-        return NULL;
+        return nullptr;
     }
     ///activates the light map texture
     virtual unsigned int numTerrain()
@@ -187,19 +187,19 @@ public:
     virtual void SwapOut() {}
     virtual Terrain *getTerrain(unsigned int which)
     {
-        return NULL;
+        return nullptr;
     }
     virtual ContinuousTerrain *getContTerrain(unsigned int which)
     {
-        return NULL;
+        return nullptr;
     }
     virtual Background *getBackground()
     {
-        return NULL;
+        return nullptr;
     }
     virtual ClickList *getClickList()
     {
-        return NULL;
+        return nullptr;
     }
     ///Gets the current simulation frame
     unsigned int getCurrentSimFrame() const

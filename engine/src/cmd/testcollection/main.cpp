@@ -18,7 +18,7 @@ Unit *createUnit()
 
 void Iteration(UnitCollection *c, int *levels2)
 {
-    Unit *unit = NULL;
+    Unit *unit = nullptr;
     ++(*levels2);
     for (un_iter iter = c->createIterator(); unit = *iter;)
     {
@@ -43,20 +43,20 @@ void Iteration(UnitCollection *c, int *levels2)
 int main()
 {
     Unit *unit;
-    srand(time(NULL));
+    srand(time(nullptr));
     UnitCollection *c = new UnitCollection;
     Unit *u[SIZE];
     time_t seconds;
     for (int i = 0; i < SIZE; ++i)
         u[i] = createUnit();
-    seconds = time(NULL);
+    seconds = time(nullptr);
     for (int i = 0; i < (SIZE / 2); ++i)
         c->prepend(u[i]);
-    seconds = time(NULL) - seconds;
+    seconds = time(nullptr) - seconds;
     printf("constructed list of size : %d  in %d seconds using prepend\n", SIZE / 2, seconds);
     printf("Randomnly inserting %d \n", SIZE / 2);
     int ii = SIZE / 2;
-    seconds = time(NULL);
+    seconds = time(nullptr);
     while (ii < SIZE)
         for (un_iter iter = c->createIterator(); !iter.isDone() && ii < SIZE; ++iter)
         {
@@ -72,7 +72,7 @@ int main()
                 ++ii;
             }
         }
-    seconds = time(NULL) - seconds;
+    seconds = time(nullptr) - seconds;
     printf(".... took %d seconds \n", seconds);
     for (int i = 0; i < SIZE / 32; ++i)
         if (rand() < RAND_MAX / 20)
@@ -80,7 +80,7 @@ int main()
     printf("randomly killed SIZE/32 to start off with \n");
 
     printf("beginning unitCollection removal/advance operations\n");
-    seconds = time(NULL);
+    seconds = time(nullptr);
     int passes = 0;
     int levels = 0;
     while (!c->empty())
@@ -94,7 +94,7 @@ int main()
     }
     UnitCollection::FreeUnusedNodes();
 #endif
-    seconds = time(NULL) - seconds;
+    seconds = time(nullptr) - seconds;
     printf("operations took %d seconds \n", seconds);
     levels = levels / passes;
     printf("Average number of concurrent iterators %d\n", levels);

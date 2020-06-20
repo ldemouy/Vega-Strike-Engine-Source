@@ -173,7 +173,7 @@ namespace UniverseUtil
     }
     Cargo getRandCargo(int quantity, string category)
     {
-        Cargo *ret = NULL;
+        Cargo *ret = nullptr;
         Unit *mpl = &GetUnitMasterPartList();
         unsigned int max = mpl->numCargo();
         if (!category.empty())
@@ -284,12 +284,12 @@ namespace UniverseUtil
         int fac = FactionUtil::GetFactionIndex(faction);
         int enfac = FactionUtil::GetFactionIndex(enfaction);
         Unit *un;
-        Unit *en = NULL;
-        Unit *al = NULL;
+        Unit *en = nullptr;
+        Unit *al = nullptr;
         for (un_iter i = _Universe->activeStarSystem()->getUnitList().createIterator(); (un = *i) && ((!en) || (!al)); ++i)
         {
             if (un->faction == enfac && UnitUtil::getFlightgroupName(un) == enfgname)
-                if ((NULL == en) || (rand() % 3 == 0))
+                if ((nullptr == en) || (rand() % 3 == 0))
                     en = un;
             if (un->faction == fac && UnitUtil::getFlightgroupName(un) == fgname)
                 al = un;
@@ -436,7 +436,7 @@ namespace UniverseUtil
     Unit *getUnit(int index)
     {
         un_iter iter = activeSys->getUnitList().createIterator();
-        Unit *un = NULL;
+        Unit *un = nullptr;
         for (int i = -1; (un = *iter) && i < index; ++iter)
         {
             if (un->GetHull() > 0)
@@ -460,14 +460,14 @@ namespace UniverseUtil
         }
         if (!allowslowness)
             return 0;
-        return ((activeSys->getUnitList().contains((Unit *)ptr)) ? reinterpret_cast<Unit *>(ptr) : NULL);
+        return ((activeSys->getUnitList().contains((Unit *)ptr)) ? reinterpret_cast<Unit *>(ptr) : nullptr);
     }
     Unit *getUnitByName(std::string name)
     {
         un_iter iter = activeSys->getUnitList().createIterator();
         while (!iter.isDone() && UnitUtil::getName(*iter) != name)
             ++iter;
-        return ((!iter.isDone()) ? (*iter) : NULL);
+        return ((!iter.isDone()) ? (*iter) : nullptr);
     }
     int getNumUnits()
     {
@@ -681,7 +681,7 @@ namespace UniverseUtil
             bool collision = false;
             {
                 //fixme, make me faster, use collide map
-                for (un_iter i = sts->getUnitList().createIterator(); (un = *i) != NULL; ++i)
+                for (un_iter i = sts->getUnitList().createIterator(); (un = *i) != nullptr; ++i)
                 {
                     if (UnitUtil::isAsteroid(un) || un->isUnit() == NEBULAPTR)
                         continue;
@@ -799,7 +799,7 @@ namespace UniverseUtil
     Unit *getPlayerX(int which)
     {
         if (which >= getNumPlayers())
-            return NULL;
+            return nullptr;
         return _Universe->AccessCockpit(which)->GetParent();
     }
     float getPlanetRadiusPercent()

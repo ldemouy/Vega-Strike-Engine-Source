@@ -21,8 +21,8 @@ StreamTexture::StreamTexture(int width, int height, enum FILTER filtertype, unsi
     this->stage = 0;
     this->sizeX = width;
     this->sizeY = height;
-    this->original = NULL;
-    this->palette = NULL;
+    this->original = nullptr;
+    this->palette = nullptr;
     this->refcount = 0;
     texture_target = TEXTURE2D;
     image_target = TEXTURE_2D;
@@ -56,7 +56,7 @@ StreamTexture::~StreamTexture()
     name = -1;
     if (this->mutabledata)
         free(this->mutabledata);
-    this->mutabledata = NULL;
+    this->mutabledata = nullptr;
 }
 
 void StreamTexture::MakeActive(int stage)

@@ -755,23 +755,23 @@ void HelpOut(bool crit, std::string conv)
     Unit *un = _Universe->AccessCockpit()->GetParent();
     if (un)
     {
-        Unit *par = NULL;
-        DoSpeech(un, NULL, FSM::Node::MakeNode(conv, .1));
+        Unit *par = nullptr;
+        DoSpeech(un, nullptr, FSM::Node::MakeNode(conv, .1));
         for (un_iter ui = _Universe->activeStarSystem()->getUnitList().createIterator();
              (par = (*ui));
              ++ui)
             if ((crit && UnitUtil::getFactionRelation(par, un) > 0) || par->faction == un->faction)
             {
                 Unit *threat = GetThreat(par, un);
-                CommunicationMessage c(par, un, NULL, 0);
+                CommunicationMessage c(par, un, nullptr, 0);
                 if (threat)
                 {
                     par->Target(threat);
-                    c.SetCurrentState(c.fsm->GetYesNode(), NULL, 0);
+                    c.SetCurrentState(c.fsm->GetYesNode(), nullptr, 0);
                 }
                 else
                 {
-                    c.SetCurrentState(c.fsm->GetNoNode(), NULL, 0);
+                    c.SetCurrentState(c.fsm->GetNoNode(), nullptr, 0);
                 }
                 Order *o = un->getAIState();
                 if (o)
@@ -1046,8 +1046,8 @@ bool TargNear(Unit *me, Unit *target)
 bool getNearestTargetUnit(Unit *me, int iType)
 {
     QVector pos(me->Position());
-    Unit *un = NULL;
-    Unit *targ = NULL;
+    Unit *un = nullptr;
+    Unit *targ = nullptr;
     double minrange = FLT_MAX;
     for (un_iter i = _Universe->activeStarSystem()->getUnitList().createIterator(); (un = (*i)); ++i)
     {
@@ -1070,7 +1070,7 @@ bool getNearestTargetUnit(Unit *me, int iType)
         if ((iType == 5) && (!un->isJumppoint()))
             continue;
         double temp = (un->Position() - pos).Magnitude();
-        if (targ == NULL)
+        if (targ == nullptr)
         {
             targ = un;
             minrange = temp;
@@ -1081,7 +1081,7 @@ bool getNearestTargetUnit(Unit *me, int iType)
             minrange = temp;
         }
     }
-    if (targ == NULL)
+    if (targ == nullptr)
         return false;
     me->Target(targ);
 
@@ -1093,7 +1093,7 @@ bool ChooseTargets(Unit *me, bool (*typeofunit)(Unit *, Unit *), bool reverse)
     UnitCollection &drawlist = _Universe->activeStarSystem()->getUnitList();
     vector<Unit *> vec;
     Unit *target;
-    for (un_iter iter = drawlist.createIterator(); (target = *iter) != NULL; ++iter)
+    for (un_iter iter = drawlist.createIterator(); (target = *iter) != nullptr; ++iter)
         vec.push_back(target);
     if (vec.size() == 0)
         return false;
@@ -1111,7 +1111,7 @@ bool ChooseTargets(Unit *me, bool (*typeofunit)(Unit *, Unit *), bool reverse)
             {
                 me->Target(*veciter);
 
-                if ((*veciter) != NULL)
+                if ((*veciter) != nullptr)
                 {
                     if (reverse)
                     {
@@ -1160,7 +1160,7 @@ void ChooseSubTargets(Unit *me)
         return;
     }
     Unit *tUnit;
-    for (; (tUnit = *uniter) != NULL; ++uniter)
+    for (; (tUnit = *uniter) != nullptr; ++uniter)
         if (tUnit == me->Target())
         {
             ++uniter;
@@ -1199,7 +1199,7 @@ static bool UnDockNow(Unit *me, Unit *targ)
     bool ret = false;
     Unit *un;
     for (un_iter i = _Universe->activeStarSystem()->getUnitList().createIterator();
-         (un = *i) != NULL;
+         (un = *i) != nullptr;
          ++i)
         if (un->isDocked(me))
             if (me->UnDock(un))
@@ -1314,7 +1314,7 @@ static bool TryDock(Unit *parent, Unit *targ, unsigned char playa, int severity)
     static bool nojumpinSPEC = XMLSupport::parse_bool(vs_config->getVariable("physics", "noSPECJUMP", "true"));
     bool SPEC_interference = targ && parent && nojumpinSPEC && (targ->graphicOptions.InWarp || parent->graphicOptions.InWarp);
     unsigned char gender = 0;
-    vector<Animation *> *anim = NULL;
+    vector<Animation *> *anim = nullptr;
     if (SPEC_interference)
         //FIXME js_NUDGE -- need some indicator of non-interaction because one or both objects are in SPEC.
         return false;
@@ -1401,7 +1401,7 @@ static void DoDockingOps(Unit *parent, Unit *targ, unsigned char playa, unsigned
         {
             for (int severity = 0; severity < maxseverity && !isDone; ++severity)
                 for (un_iter u = _Universe->activeStarSystem()->getUnitList().createIterator();
-                     (targ = *u) != NULL && !isDone;
+                     (targ = *u) != nullptr && !isDone;
                      ++u)
                     //Let's make sure potentials are actually in range, and have
                     //docking ports before we try to dock with them.
@@ -1429,7 +1429,7 @@ static void DoDockingOps(Unit *parent, Unit *targ, unsigned char playa, unsigned
         }
         vectorOfKeyboardInput[playa].doc = false;
     }
-    if (vectorOfKeyboardInput[playa].req && endt != NULL)
+    if (vectorOfKeyboardInput[playa].req && endt != nullptr)
     {
         bool request = ExecuteRequestClearenceKey(parent, endt);
         if (!request)
@@ -1446,17 +1446,17 @@ static void DoDockingOps(Unit *parent, Unit *targ, unsigned char playa, unsigned
         }
         vectorOfKeyboardInput[playa].req = false;
     }
-    if (vectorOfKeyboardInput[playa].und && endt != NULL)
+    if (vectorOfKeyboardInput[playa].und && endt != nullptr)
     {
-        CommunicationMessage c(endt, parent, NULL, 0);
+        CommunicationMessage c(endt, parent, nullptr, 0);
         if (UnDockNow(parent, endt))
         {
-            c.SetCurrentState(c.fsm->GetUnDockNode(), NULL, 0);
+            c.SetCurrentState(c.fsm->GetUnDockNode(), nullptr, 0);
             abletodock(5);
         }
         else
         {
-            c.SetCurrentState(c.fsm->GetFailDockNode(), NULL, 0);
+            c.SetCurrentState(c.fsm->GetFailDockNode(), nullptr, 0);
             abletodock(4);
         }
         parent->getAIState()->Communicate(c);
@@ -1482,7 +1482,7 @@ static void MyFunction()
     //dead dead dead dead
     static Animation Statuc(comm_static.c_str());
     //yep really dead
-    _Universe->AccessCockpit()->SetCommAnimation(&Statuc, NULL);
+    _Universe->AccessCockpit()->SetCommAnimation(&Statuc, nullptr);
 }
 
 void FireKeyboard::ProcessCommMessage(class CommunicationMessage &c)
@@ -1508,7 +1508,7 @@ void FireKeyboard::ProcessCommMessage(class CommunicationMessage &c)
     else if (0)
     {
         //none of this happens
-        whichsound = DoSpeech(NULL, NULL, *c.getCurrentState());
+        whichsound = DoSpeech(nullptr, nullptr, *c.getCurrentState());
         //this is when a unit is already dead
         if (parent == _Universe->AccessCockpit()->GetParent())
             MyFunction();
@@ -1523,7 +1523,7 @@ using std::list;
 
 static CommunicationMessage *GetTargetMessageQueue(Unit *targ, std::list<CommunicationMessage> &messagequeue)
 {
-    CommunicationMessage *mymsg = NULL;
+    CommunicationMessage *mymsg = nullptr;
     for (list<CommunicationMessage>::iterator i = messagequeue.begin(); i != messagequeue.end(); i++)
         if ((*i).sender.GetUnit() == targ)
         {
@@ -1567,7 +1567,7 @@ void Arrested(Unit *parent)
     {
         Unit *un;
         for (un_iter i = _Universe->activeStarSystem()->getUnitList().createIterator();
-             (un = *i) != NULL;
+             (un = *i) != nullptr;
              ++i)
             if (un->faction == own || un->faction == police || un->faction == police2)
             {
@@ -1597,22 +1597,22 @@ void Arrested(Unit *parent)
         else
         {
             Unit *un;
-            Unit *owner = NULL;
-            Unit *base = NULL;
-            for (un_iter i = _Universe->activeStarSystem()->getUnitList().createIterator(); (un = *i) != NULL; ++i)
+            Unit *owner = nullptr;
+            Unit *base = nullptr;
+            for (un_iter i = _Universe->activeStarSystem()->getUnitList().createIterator(); (un = *i) != nullptr; ++i)
             {
-                if (owner == NULL && un->getFlightgroup() && un->faction == own)
+                if (owner == nullptr && un->getFlightgroup() && un->faction == own)
                     if (UnitUtil::isSignificant(un) && (!un->isJumppoint()))
                         owner = un;
                 if (UnitUtil::isSignificant(un) && (!un->isJumppoint()))
                     base = un;
             }
-            if (owner == NULL)
+            if (owner == nullptr)
                 owner = base;
             if (owner)
             {
                 Order *tmp = parent->aistate;
-                parent->aistate = NULL;
+                parent->aistate = nullptr;
                 parent->PrimeOrders(new Orders::DockingOps(owner, tmp, true, true));
                 arrested_list_do_not_dereference.insert(parent);
                 for (int i = parent->numCargo() - 1; i >= 0; --i)
@@ -1642,7 +1642,7 @@ static void ForceChangeTarget(Unit *parent)
     {
         if (force_change_only_unit)
         {
-            parent->Target(NULL);
+            parent->Target(nullptr);
         }
         else
         {
@@ -1681,14 +1681,14 @@ void FireKeyboard::Execute()
         ShouldFire(targ);
         if (targ->GetHull() < 0)
         {
-            parent->Target(NULL);
+            parent->Target(nullptr);
             ForceChangeTarget(parent);
             refresh_target = true;
         }
         else if (false == parent->InRange(targ, mm, true, true, true) && !parent->TargetLocked())
         {
             ChooseTargets(parent, TargUn, false); //only go for other active units in cone
-            if (parent->Target() == NULL)
+            if (parent->Target() == nullptr)
                 parent->Target(targ);
         }
     }
@@ -1806,7 +1806,7 @@ void FireKeyboard::Execute()
             if (tmp->owner == getTopLevelOwner())
                 sysobj = true;
         ChooseTargets(parent, TargUn, false);
-        if ((parent->Target() == NULL) && tmp == parent->Target() && sysobj && smart_targetting)
+        if ((parent->Target() == nullptr) && tmp == parent->Target() && sysobj && smart_targetting)
         {
             ChooseTargets(parent, TargSig, false);
             if (tmp == parent->Target())
@@ -2080,7 +2080,7 @@ void FireKeyboard::Execute()
             f().restoreTargetKeys[i] = RELEASE;
             Unit *un;
             for (un_iter u = _Universe->activeStarSystem()->getUnitList().createIterator();
-                 (un = *u) != NULL;
+                 (un = *u) != nullptr;
                  ++u)
                 if (un == savedTargets[i])
                 {
@@ -2098,9 +2098,9 @@ void FireKeyboard::Execute()
             {
                 CommunicationMessage *mymsg = GetTargetMessageQueue(targ, resp);
                 FSM *fsm = FactionUtil::GetConversation(parent->faction, targ->faction);
-                if (mymsg == NULL || mymsg->curstate >= static_cast<int>(fsm->nodes.size()))
+                if (mymsg == nullptr || mymsg->curstate >= static_cast<int>(fsm->nodes.size()))
                 {
-                    CommunicationMessage c(parent, targ, i, NULL, parent->pilot->getGender());
+                    CommunicationMessage c(parent, targ, i, nullptr, parent->pilot->getGender());
                     unsigned int whichspeech = DoSpeech(targ, targ, *c.getCurrentState());
                     float gain;
                     int sound = c.getCurrentState()->GetSound(c.sex, whichspeech, gain);
@@ -2117,7 +2117,7 @@ void FireKeyboard::Execute()
                     FSM::Node *n = mymsg->getCurrentState();
                     if (i < n->edges.size())
                     {
-                        CommunicationMessage c(parent, targ, *mymsg, i, NULL, parent->pilot->getGender());
+                        CommunicationMessage c(parent, targ, *mymsg, i, nullptr, parent->pilot->getGender());
                         unsigned int whichmessage = DoSpeech(targ, targ, *c.getCurrentState());
                         float gain;
                         int sound = c.getCurrentState()->GetSound(c.sex, whichmessage, gain);
@@ -2140,7 +2140,7 @@ void FireKeyboard::Execute()
                 parent->TargetTurret(targ);
             CommunicationMessage *mymsg = GetTargetMessageQueue(targ, resp);
             FSM *fsm = FactionUtil::GetConversation(parent->faction, targ->faction);
-            if (mymsg == NULL)
+            if (mymsg == nullptr)
                 _Universe->AccessCockpit()->communication_choices =
                     fsm->GetEdgesString(fsm->getDefaultState(parent->getRelation(targ)));
             else
@@ -2185,7 +2185,7 @@ void FireKeyboard::Execute()
     if (f().eject == PRESS)
     {
         f().eject = DOWN;
-        Cockpit *cp = NULL;
+        Cockpit *cp = nullptr;
         if ((parent->name != "eject") && (parent->name != "Pilot") && (cp = _Universe->isPlayerStarship(parent)))
             cp->Eject();
     }
@@ -2194,7 +2194,7 @@ void FireKeyboard::Execute()
     {
         f().ejectdock = DOWN;
         Unit *utdw = parent;
-        Cockpit *cp = NULL; //check if docking ports exist, no docking ports = no need to ejectdock so don't do anything
+        Cockpit *cp = nullptr; //check if docking ports exist, no docking ports = no need to ejectdock so don't do anything
         if ((SelectDockPort(utdw, parent) > -1) && (cp = _Universe->isPlayerStarship(parent)))
             cp->EjectDock(); //use specialized ejectdock in the future
     }

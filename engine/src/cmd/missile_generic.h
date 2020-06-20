@@ -106,7 +106,7 @@ public:
                                 const Matrix &transmat,
                                 const Vector &CumulativeVelocity,
                                 bool ResolveLast,
-                                UnitCollection *uc = NULL);
+                                UnitCollection *uc = nullptr);
 
 protected:
     /// default constructor forbidden

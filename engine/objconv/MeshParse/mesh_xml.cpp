@@ -505,7 +505,7 @@ void LoadXML( const char *filename, XML &xml )
         exit( 0 );
     }
     xml.scale = 1;
-    XML_Parser parser = XML_ParserCreate( NULL );
+    XML_Parser parser = XML_ParserCreate( nullptr );
     XML_SetUserData( parser, &xml );
     XML_SetElementHandler( parser, &beginElement, &endElement );
     do {
@@ -529,7 +529,7 @@ void UnitLoadXML( const char *filename, XML &xml )
         exit( 0 );
     }
     xml.unitscale = 1;
-    XML_Parser parser = XML_ParserCreate( NULL );
+    XML_Parser parser = XML_ParserCreate( nullptr );
     XML_SetUserData( parser, &xml );
     XML_SetElementHandler( parser, &unitBeginElement, &unitEndElement );
     do {

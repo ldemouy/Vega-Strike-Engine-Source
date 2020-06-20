@@ -298,7 +298,7 @@ void Universe::getJumpPath(const std::string &from, const std::string &to, vecto
 
     // seed with starting point
     visited[from] = 0;
-    origin.push_back(NULL);
+    origin.push_back(nullptr);
     open.push_back(&from);
 
     // Textbook BFS search
@@ -337,7 +337,7 @@ void Universe::getJumpPath(const std::string &from, const std::string &to, vecto
     while (velem != visited.end())
     {
         path.push_back(velem->first);
-        if (origin[velem->second] == NULL)
+        if (origin[velem->second] == nullptr)
         {
             velem = visited.end();
         }

@@ -23,7 +23,7 @@
 #include "in_kb.h"
 #include "vs_random.h"
 static double firsttime;
-VSRandom vsrandom(time(NULL));
+VSRandom vsrandom(time(nullptr));
 
 #ifdef WIN32
 #ifndef NOMINMAX
@@ -164,7 +164,7 @@ void micro_sleep(unsigned int n)
 
     tv.tv_usec = n % 1000000;
     tv.tv_sec = n / 1000000;
-    select(0, NULL, NULL, NULL, &tv);
+    select(0, nullptr, nullptr, nullptr, &tv);
 }
 #endif
 
@@ -176,7 +176,7 @@ void InitTime()
 
 #elif defined(HAVE_GETTIMEOFDAY)
     struct timeval tv;
-    (void)gettimeofday(&tv, NULL);
+    (void)gettimeofday(&tv, nullptr);
 
     newtime = (double)tv.tv_sec + (double)tv.tv_usec * 1.e-6;
     lasttime = newtime - .0001;
@@ -204,7 +204,7 @@ double queryTime()
     return ((double)tmpnewtime) / (double)freq - firsttime;
 #elif defined(HAVE_GETTIMEOFDAY)
     struct timeval tv;
-    (void)gettimeofday(&tv, NULL);
+    (void)gettimeofday(&tv, nullptr);
     double tmpnewtime = (double)tv.tv_sec + (double)tv.tv_usec * 1.e-6;
     return tmpnewtime - firsttime;
 #elif defined(HAVE_SDL)
@@ -224,7 +224,7 @@ double realTime()
     return ((double)tmpnewtime) / (double)freq;
 #elif defined(HAVE_GETTIMEOFDAY)
     struct timeval tv;
-    (void)gettimeofday(&tv, NULL);
+    (void)gettimeofday(&tv, nullptr);
     double tmpnewtime = (double)tv.tv_sec + (double)tv.tv_usec * 1.e-6;
 #elif defined(HAVE_SDL)
     double tmpnewtime = SDL_GetTicks() * 1.e-3;
@@ -252,7 +252,7 @@ void UpdateTime()
         firsttime = dblnewtime;
 #elif defined(HAVE_GETTIMEOFDAY)
     struct timeval tv;
-    (void)gettimeofday(&tv, NULL);
+    (void)gettimeofday(&tv, nullptr);
     lasttime = newtime;
     newtime = (double)tv.tv_sec + (double)tv.tv_usec * 1.e-6;
     elapsedtime = newtime - lasttime;

@@ -67,7 +67,7 @@ public:
         if (!Done())
             return &(*system).second;
         else
-            return NULL;
+            return nullptr;
     }
     std::string GetSystem() const
     {
@@ -149,7 +149,7 @@ static GFXColorVertex *AllocVerticesForSystem(std::string our_system_name, float
     if (our_system_name.size() > 0)
     {
         string lumi = _Universe->getGalaxyProperty(our_system_name, "luminosity");
-        if (lumi.length() == 0 || strtod(lumi.c_str(), NULL) == 0)
+        if (lumi.length() == 0 || strtod(lumi.c_str(), nullptr) == 0)
         {
             our_system_name = "";
         }
@@ -446,7 +446,7 @@ PointStarVlist::~PointStarVlist()
     delete nonstretchvlist;
 }
 
-Stars::Stars(int num, float spread) : vlist(NULL), spread(spread)
+Stars::Stars(int num, float spread) : vlist(nullptr), spread(spread)
 {
     static string starspritetextures = vs_config->getVariable("graphics", "near_stars_sprite_texture", "");
     static float starspritesize =

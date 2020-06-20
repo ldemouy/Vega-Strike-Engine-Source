@@ -56,7 +56,7 @@ bool GuiTexture::read(const std::string &fileName)
 void GuiTexture::draw(const Rect &rect) const
 {
     //Don't draw unless there is something usable.
-    if (m_texture == NULL || !m_texture->LoadSuccess())
+    if (m_texture == nullptr || !m_texture->LoadSuccess())
         return;
     m_texture->MakeActive();
     GFXColor4f(1, 1, 1, 1);
@@ -86,7 +86,7 @@ void GuiTexture::draw(const Rect &rect) const
 }
 
 //CONSTRUCTION
-GuiTexture::GuiTexture(void) : m_texture(NULL)
+GuiTexture::GuiTexture(void) : m_texture(nullptr)
 {
 }
 

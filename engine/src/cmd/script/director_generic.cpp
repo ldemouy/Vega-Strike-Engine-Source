@@ -368,7 +368,7 @@ void Mission::loadModule(string modulename)
 
     string filename = "modules/" + modulename + ".module";
     missionNode *import_top = importf->LoadXML(filename.c_str());
-    if (import_top == NULL)
+    if (import_top == nullptr)
     {
     }
     import_top->Tag(&tagmap);
@@ -384,7 +384,7 @@ void Mission::loadMissionModules()
         import_stack.pop_back();
 
         missionNode *module = runtime.modules[importname];
-        if (module == NULL)
+        if (module == nullptr)
             loadModule(importname);
         else
             debug(3, node, SCRIPT_PARSE, "already have module " + importname);
@@ -397,10 +397,10 @@ void Mission::RunDirectorScript(const string &script)
 }
 bool Mission::runScript(missionNode *module_node, const string &scriptname, unsigned int classid)
 {
-    if (module_node == NULL)
+    if (module_node == nullptr)
         return false;
     missionNode *script_node = module_node->script.scripts[scriptname];
-    if (script_node == NULL)
+    if (script_node == nullptr)
         return false;
     runtime.cur_thread->module_stack.push_back(module_node);
     runtime.cur_thread->classid_stack.push_back(classid);
@@ -470,7 +470,7 @@ void Mission::DirectorStart(missionNode *node)
     runtime.threads.push_back(main_thread);
     runtime.cur_thread = main_thread;
 
-    director = NULL;
+    director = nullptr;
     std::string doparse = node->attr_value("do_parse");
     if (!doparse.empty())
         if (XMLSupport::parse_bool(doparse) == false)
@@ -518,7 +518,7 @@ void Mission::DirectorInitgame()
 #endif
         runtime.pymissions = (pythonMission::FactoryString(nextpythonmission));
         delete[] nextpythonmission; //delete the allocated memory
-        nextpythonmission = NULL;
+        nextpythonmission = nullptr;
         if (!this->unpickleData.empty())
         {
             if (runtime.pymissions)
@@ -528,7 +528,7 @@ void Mission::DirectorInitgame()
             }
         }
     }
-    if (director == NULL)
+    if (director == nullptr)
         return;
     RunDirectorScript("initgame");
 }

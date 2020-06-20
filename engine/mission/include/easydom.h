@@ -114,12 +114,12 @@ template<class domNodeType> class easyDomFactory {
   if(!inFile) {
     //cout << "warning: could not open file: " << filename << endl;
     //    assert(0);
-    return NULL;
+    return nullptr;
   }
 
   xml = new easyDomFactoryXML;
 
-  XML_Parser parser = XML_ParserCreate(NULL);
+  XML_Parser parser = XML_ParserCreate(nullptr);
   XML_SetUserData(parser, this);
   XML_SetElementHandler(parser, &easyDomFactory::beginElement, &easyDomFactory::endElement);
   XML_SetCharacterDataHandler(parser,&easyDomFactory::charHandler);
@@ -155,12 +155,12 @@ domNodeType *LoadCalike(const char *filename) {
   if(module_str.empty()) {
     //cout << "warning: could not open file: " << filename << endl;
     //    assert(0);
-    return NULL;
+    return nullptr;
   }
 
   xml = new easyDomFactoryXML;
 
-  XML_Parser parser = XML_ParserCreate(NULL);
+  XML_Parser parser = XML_ParserCreate(nullptr);
   XML_SetUserData(parser, this);
   XML_SetElementHandler(parser, &easyDomFactory::beginElement, &easyDomFactory::endElement);
   XML_SetCharacterDataHandler(parser,&easyDomFactory::charHandler);
@@ -221,7 +221,7 @@ domNodeType *LoadCalike(const char *filename) {
   domNodeType *parent;
 
   if(nodestack.empty()){
-    parent=NULL;
+    parent=nullptr;
   }
   else{
     parent=nodestack.top();
@@ -234,7 +234,7 @@ domNodeType *LoadCalike(const char *filename) {
     //cout <<  name << "::" << (*iter).name << endl;
   }
 
-  if(parent==NULL){
+  if(parent==nullptr){
     topnode=thisnode;
   }
   else{

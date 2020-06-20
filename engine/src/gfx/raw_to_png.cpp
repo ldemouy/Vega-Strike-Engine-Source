@@ -60,7 +60,7 @@ unsigned short *Rread(const char *myfile)
 void Wwrite(const char *myfile, unsigned short *data)
 {
     FILE *fp = VSFileSystem::vs_open(myfile, "wb");
-    png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, (png_voidp)NULL, NULL, NULL);
+    png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, (png_voidp)nullptr, nullptr, nullptr);
     //user_error_fn, user_warning_fn);
     if (!png_ptr)
         return;
@@ -68,7 +68,7 @@ void Wwrite(const char *myfile, unsigned short *data)
     if (!info_ptr)
     {
         png_destroy_write_struct(&png_ptr,
-                                 (png_infopp)NULL);
+                                 (png_infopp)nullptr);
         return;
     }
     if (setjmp(png_ptr->jmpbuf))

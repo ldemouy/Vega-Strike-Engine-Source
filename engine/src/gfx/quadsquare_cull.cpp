@@ -66,10 +66,10 @@ void quadsquare::StaticCullAux(const quadcornerdata &cd, float ThresholdDetail, 
 
     //Check edge vertices to see if they're necessary.
     float size = 2 << cd.Level; //Edge length.
-    if (Child[0] == NULL && Child[3] == NULL && Error[0] * ThresholdDetail < size)
+    if (Child[0] == nullptr && Child[3] == nullptr && Error[0] * ThresholdDetail < size)
     {
         quadsquare *s = GetFarNeighbor(0, cd);
-        if (s == NULL || (s->Child[1] == NULL && s->Child[2] == NULL))
+        if (s == nullptr || (s->Child[1] == nullptr && s->Child[2] == nullptr))
         {
             //Force vertex height to the edge value.
             unsigned short y = (unsigned short)((cd.Verts[0].Y + cd.Verts[3].Y) * 0.5);
@@ -81,10 +81,10 @@ void quadsquare::StaticCullAux(const quadcornerdata &cd, float ThresholdDetail, 
             Dirty = true;
         }
     }
-    if (Child[2] == NULL && Child[3] == NULL && Error[1] * ThresholdDetail < size)
+    if (Child[2] == nullptr && Child[3] == nullptr && Error[1] * ThresholdDetail < size)
     {
         quadsquare *s = GetFarNeighbor(3, cd);
-        if (s == NULL || (s->Child[0] == NULL && s->Child[1] == NULL))
+        if (s == nullptr || (s->Child[0] == nullptr && s->Child[1] == nullptr))
         {
             unsigned short y = (unsigned short)((cd.Verts[2].Y + cd.Verts[3].Y) * 0.5);
             Vertex[4].Y = y;
@@ -104,7 +104,7 @@ void quadsquare::StaticCullAux(const quadcornerdata &cd, float ThresholdDetail, 
                 Dirty = true;
         }
     //If we have no children and no necessary edges, then see if we can delete ourself.
-    if (StaticChildren == false && cd.Parent != NULL)
+    if (StaticChildren == false && cd.Parent != nullptr)
     {
         bool NecessaryEdges = false;
         for (i = 0; i < 4; i++)

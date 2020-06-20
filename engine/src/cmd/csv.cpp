@@ -122,7 +122,7 @@ void CSVTable::Init(const string &data)
     const string delim(",;");
     const char *cdata = data.c_str();
     const char *csep = strchr(cdata, '\n');
-    if (csep == NULL)
+    if (csep == nullptr)
         return;
     string buffer(cdata, csep - cdata);
     cdata = csep + 1;
@@ -132,13 +132,13 @@ void CSVTable::Init(const string &data)
     while (cdata && *cdata)
     {
         csep = strchr(cdata, '\n');
-        if (csep == NULL)
+        if (csep == nullptr)
             buffer.assign(cdata);
 
         else
             buffer.assign(cdata, csep - cdata);
-        if (csep == NULL)
-            cdata = NULL;
+        if (csep == nullptr)
+            cdata = nullptr;
 
         else
             cdata = csep + 1;
@@ -334,7 +334,7 @@ void CSVTable::SetupOptimizer(const vector<string> &keys, unsigned int type)
 CSVTable *loadCSVTableList(const string &csvfiles, VSFileSystem::VSFileType fileType, bool critical)
 {
     string::size_type pwhere = 0, where, where2 = 0;
-    CSVTable *table = NULL;
+    CSVTable *table = nullptr;
     while (where2 != string::npos)
     {
         where = where2 = csvfiles.find_first_of(" \t\r\n", pwhere);
@@ -351,7 +351,7 @@ CSVTable *loadCSVTableList(const string &csvfiles, VSFileSystem::VSFileType file
             if (err <= VSFileSystem::Ok)
             {
                 BOOST_LOG_TRIVIAL(info) << boost::format("Loading CSV database from '%1%'") % tmp;
-                if (table == NULL)
+                if (table == nullptr)
                     table = new CSVTable(thisFile, thisFile.GetRoot());
                 else
                     table->Merge(CSVTable(thisFile, thisFile.GetRoot()));

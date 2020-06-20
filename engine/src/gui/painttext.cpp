@@ -72,7 +72,7 @@ static const char DT_FORMAT_RESET_CHAR = '!';        //Reset to original color/s
 
 static const char DT_FORMAT_COLOR_SEP = ':'; //Separator in color specification.
 
-static const float BOGUS_LINE_SPACING = -100.0; //"NULL" value for line spacing.
+static const float BOGUS_LINE_SPACING = -100.0; //"nullptr" value for line spacing.
 
 //The ellipsis at the end of a line is represented as a special text fragment.  We mark
 //the fragment with this constant as the start position.

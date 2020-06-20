@@ -209,7 +209,7 @@ namespace AIEvents
                 }
             }
         }
-        XML_Parser parser = XML_ParserCreate(NULL);
+        XML_Parser parser = XML_ParserCreate(nullptr);
         XML_SetUserData(parser, &result);
         XML_SetElementHandler(parser, &GeneralAIEventBegin, &GeneralAIEventEnd);
         XML_Parse(parser, (f.ReadFull()).c_str(), f.Size(), 1);

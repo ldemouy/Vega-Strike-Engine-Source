@@ -39,7 +39,7 @@ public:
     class UnitIterator
     {
     public:
-        UnitIterator() : col(NULL) {}
+        UnitIterator() : col(nullptr) {}
         UnitIterator(const UnitIterator &);
         UnitIterator(UnitCollection *);
         virtual ~UnitIterator();
@@ -89,7 +89,7 @@ public:
         {
             if (col && it != col->u.end())
                 return *it;
-            return NULL;
+            return nullptr;
         }
 
     protected:
@@ -109,7 +109,7 @@ public:
     class ConstIterator
     {
     public:
-        ConstIterator() : col(NULL) {}
+        ConstIterator() : col(nullptr) {}
         ConstIterator(const ConstIterator &);
         ConstIterator(const UnitCollection *);
         ~ConstIterator();
@@ -133,7 +133,7 @@ public:
         {
             if (it != col->u.end() && !col->empty())
                 return *it;
-            return NULL;
+            return nullptr;
         }
 
     protected:
@@ -204,7 +204,7 @@ public:
     /* We only erase the unit from the list under the following conditions:
      * 1. if we have less than 4 iterators being held
      * 2. if none of those iterators are referencing the requested unit
-     * Otherwise the Unit pointer is removed from the list and set to NULL,
+     * Otherwise the Unit pointer is removed from the list and set to nullptr,
      * and the iterator is referenced on another list to be deleted
      * the delete list is processed when the number of iterators hits 1 or 0.
      * The reason for this is so we can be scalable to 20,000+ units and
@@ -228,7 +228,7 @@ public:
         for (std::list<Unit *>::reverse_iterator it = u.rbegin(); it != u.rend(); ++it)
             if (*it)
                 return *it;
-        return NULL;
+        return nullptr;
     }
 
     /* Returns first non-null unit in list. May be Killed() */
@@ -237,7 +237,7 @@ public:
         for (std::list<Unit *>::iterator it = u.begin(); it != u.end(); ++it)
             if (*it)
                 return *it;
-        return NULL;
+        return nullptr;
     }
 
 private:
@@ -245,7 +245,7 @@ private:
     friend class ConstIterator;
 
     /* Does not clear list.  It sets all the Unit pointers to null
-     * And sets all the current iterator's collection pointers to NULL.
+     * And sets all the current iterator's collection pointers to nullptr.
      * Effectively shutting the list down so it can be destroyed safely. */
     void destr();
 
@@ -267,7 +267,7 @@ private:
     std::vector<class UnitCollection::UnitIterator *> activeIters;
 
     /* This is a list of positions in the collection that are pointing to
-     * NULL units, positions that should be removed from the collection
+     * nullptr units, positions that should be removed from the collection
      * but couldn't because another iterator was referencing it. */
     std::vector<std::list<class Unit *>::iterator> removedIters;
 

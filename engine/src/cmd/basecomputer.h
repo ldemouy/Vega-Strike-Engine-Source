@@ -55,7 +55,7 @@ public:
         LOADSAVE,                          //LOAD SAVE
         NETWORK,                           //Network submenu of Loadsave.
         DISPLAY_MODE_COUNT,                //Number of display modes.
-        NULL_DISPLAY = DISPLAY_MODE_COUNT, //No display.
+        nullptr_DISPLAY = DISPLAY_MODE_COUNT, //No display.
     };
 
     //Set up the window and get everything ready.
@@ -85,7 +85,7 @@ public:
         SELL_UPGRADE,     //Sell an improvement on current ship.
         BUY_SHIP,         //Replace our current ship with a new one.
         ACCEPT_MISSION,   //Accept a mission.
-        NULL_TRANSACTION, //Not initialized yet.
+        nullptr_TRANSACTION, //Not initialized yet.
     };
 
 protected:
@@ -95,7 +95,7 @@ protected:
         vector<CargoColor> masterList; //All the items that could be in the picker.
         Picker *picker;                //The picker loaded with the list.
         TransactionType transaction;   //The kind of transaction these items will generate.
-        TransactionList() : picker(NULL), transaction(NULL_TRANSACTION) {}
+        TransactionList() : picker(nullptr), transaction(nullptr_TRANSACTION) {}
     };
 
     class LoadSaveQuitConfirm : public WindowController
@@ -299,7 +299,7 @@ protected:
     DisplayMode m_currentDisplay;              //The current display mode.
     TransactionList m_transList1;              //The commonly-used list/picker.
     TransactionList m_transList2;              //If there are two pickers, the second one.
-    TransactionList *m_selectedList;           //Which transaction list has the selection. NULL = none.
+    TransactionList *m_selectedList;           //Which transaction list has the selection. nullptr = none.
     Control *m_modeGroups[DISPLAY_MODE_COUNT]; //Array of GroupControls, one for each mode.
     bool m_playingMuzak;                       //True = We are playing muzak for some mode.
 

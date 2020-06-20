@@ -13,18 +13,18 @@ const GFXVertex InitialVertices[4] = {
 
 QuadTree::QuadTree(const char *filename, const Vector &Scales, const float radius) : minX(0), minZ(0), maxX(0), maxZ(0), Scales(Scales), vertices(GFXTRI, 4, InitialVertices, 4, true)
 {
-    neighbors[0] = NULL;
-    neighbors[1] = NULL;
-    neighbors[2] = NULL;
-    neighbors[3] = NULL;
+    neighbors[0] = nullptr;
+    neighbors[1] = nullptr;
+    neighbors[2] = nullptr;
+    neighbors[3] = nullptr;
     detail = 128;
     Identity(transformation);
     transformation.r[0] = Scales.i;
     transformation.r[4] = Scales.j;
     transformation.r[8] = Scales.k;
     //nonlinear_transform = new IdentityTransform;
-    RootCornerData.Parent = NULL;
-    RootCornerData.Square = NULL;
+    RootCornerData.Parent = nullptr;
+    RootCornerData.Square = nullptr;
     RootCornerData.ChildIndex = 0;
     RootCornerData.Level = 15;
     RootCornerData.xorg = 0;

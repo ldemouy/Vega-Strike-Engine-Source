@@ -22,8 +22,8 @@ namespace Converter {
 					string basename = input.substr(0,input.find_last_of("."));
 					FILE * Inputfile=fopen(input.c_str(),"rb");
 					FILE * Outputfile=fopen(output.c_str(),"w+"); //create file for text output
-					FILE * OutputObj=NULL;
-					FILE * OutputMtl=NULL;
+					FILE * OutputObj=nullptr;
+					FILE * OutputMtl=nullptr;
 					BFXMToXmeshOrOBJ(Inputfile,Outputfile,OutputObj,OutputMtl,basename,'x');
 					return RC_OK;
 				} else {

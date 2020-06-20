@@ -43,7 +43,7 @@ void RingMesh::InitRing(float iradius,
     //mx = Vector (-radialSize,-radialSize,-radialSize);
     mn = Vector(0, 0, 0);
     mx = Vector(0, 0, 0);
-    vector<MeshDrawContext> *odq = NULL;
+    vector<MeshDrawContext> *odq = nullptr;
     for (int l = 0; l < numspheres; l++)
     {
         draw_queue = new vector<MeshDrawContext>[NUM_ZBUF_SEQ + 1];
@@ -55,7 +55,7 @@ void RingMesh::InitRing(float iradius,
             slices -= 2;
         float theta, dtheta;
         int i, j, imin, imax;
-        vlist = NULL;
+        vlist = nullptr;
         /* Code below adapted from gluSphere */
         dtheta = (theta_max - theta_min) / (GLfloat)slices;
         int numQuadstrips = 2;
@@ -116,20 +116,20 @@ void RingMesh::InitRing(float iradius,
             {
                 found_texture = true;
                 if (Decal.empty())
-                    Decal.push_back(NULL);
+                    Decal.push_back(nullptr);
                 Decal[0] = new AnimatedTexture(texture, 0, mipmap);
             }
         }
         if (!found_texture)
         {
             if (Decal.empty())
-                Decal.push_back(NULL);
+                Decal.push_back(nullptr);
             Decal[0] = new Texture(texture, 0, mipmap, TEXTURE2D, TEXTURE_2D, g_game.use_planet_textures ? GFXTRUE : GFXFALSE);
         }
         setEnvMap(envMapping);
         Mesh *oldorig = orig;
         refcount = 1;
-        orig = NULL;
+        orig = nullptr;
         if (l >= 1)
         {
             lodsize = (numspheres + 1 - l) * pixelscalesize;

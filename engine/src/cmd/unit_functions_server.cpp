@@ -3,7 +3,7 @@
 
 VSSprite *createVSSprite(const char *file)
 {
-    return NULL;
+    return nullptr;
 }
 
 bool isVSSpriteLoaded(const VSSprite *file)
@@ -26,5 +26,5 @@ std::string getRandomCachedAniString()
 
 Animation *getRandomCachedAni()
 {
-    return NULL;
+    return nullptr;
 }

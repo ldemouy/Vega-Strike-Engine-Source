@@ -36,7 +36,7 @@ Background::Background( const char *file, int numstars, float spread, const std:
     : Enabled( true )
     , degamma( degamma_ )
     , color( color_ )
-    , stars( NULL )
+    , stars( nullptr )
 {
     string temp;
     static string starspritetextures = vs_config->getVariable( "graphics", "far_stars_sprite_texture", "" );
@@ -56,9 +56,9 @@ Background::Background( const char *file, int numstars, float spread, const std:
                                                                                  "true" ) ) ? filename : "", starspritetextures,
                                  starspritesize );
     }
-    up = left = down = front = right = back = NULL;
+    up = left = down = front = right = back = nullptr;
 
-    SphereBackground = NULL;
+    SphereBackground = nullptr;
 
 #ifndef NV_CUBE_MAP
     static int max_cube_size = XMLSupport::parse_int( vs_config->getVariable( "graphics", "max_cubemap_size", "1024" ) );
@@ -79,13 +79,13 @@ Background::Background( const char *file, int numstars, float spread, const std:
             temp   = string( file )+"_sphere.bmp";
             suffix = ".bmp";             //backwards compatibility
         }
-        SphereBackground = new SphereMesh( 20, 8, 8, temp.c_str(), "", NULL, true );
+        SphereBackground = new SphereMesh( 20, 8, 8, temp.c_str(), "", nullptr, true );
         //SphereBackground->Pitch(PI*.5);//that's the way prophecy's textures are set up
         //SphereBackground->SetOrientation(Vector(1,0,0),
         //Vector(0,0,-1),
         //Vector(0,1,0));//that's the way prophecy's textures are set up
         delete up;
-        up = NULL;
+        up = nullptr;
     } else {
         //up->Clamp();
         //up->Filter();
@@ -146,13 +146,13 @@ Background::BackgroundClone Background::Cache()
 {
     BackgroundClone ret;
 #ifndef NV_CUBE_MAP
-    ret.backups[0] = up ? up->Clone() : NULL;
-    ret.backups[1] = down ? down->Clone() : NULL;
-    ret.backups[2] = left ? left->Clone() : NULL;
-    ret.backups[3] = right ? right->Clone() : NULL;
-    ret.backups[4] = front ? front->Clone() : NULL;
-    ret.backups[5] = back ? back->Clone() : NULL;
-    ret.backups[6] = NULL;
+    ret.backups[0] = up ? up->Clone() : nullptr;
+    ret.backups[1] = down ? down->Clone() : nullptr;
+    ret.backups[2] = left ? left->Clone() : nullptr;
+    ret.backups[3] = right ? right->Clone() : nullptr;
+    ret.backups[4] = front ? front->Clone() : nullptr;
+    ret.backups[5] = back ? back->Clone() : nullptr;
+    ret.backups[6] = nullptr;
     if (SphereBackground)
         for (int i = 0; i < 7 && i < SphereBackground->numTextures(); ++i)
             ret.backups[(i+6)%7] = SphereBackground->texture( i )->Clone();
@@ -165,7 +165,7 @@ void Background::BackgroundClone::FreeClone()
     for (int i = 0; i < 7; ++i)
         if (backups[i]) {
             delete backups[i];
-            backups[i] = NULL;
+            backups[i] = nullptr;
         }
 
 #endif
@@ -216,7 +216,7 @@ void Background::Draw()
                 //For rendering with a single cube map as texture
 
                 {                 //up
-                    NULL,
+                    nullptr,
                     {
                         {-1, +1, +1}, {-1, +1, -1}, {+1, +1, -1}, {+1, +1, +1}
                     },
@@ -225,7 +225,7 @@ void Background::Draw()
                     },
                 },
                 {                 //left
-                    NULL,
+                    nullptr,
                     {
                         {-1,+1, -1}, {-1, +1, +1}, {-1, -1, +1}, {-1, -1, -1}
                     },
@@ -234,7 +234,7 @@ void Background::Draw()
                     },
                 },
                 {                 //front
-                    NULL,
+                    nullptr,
                     {
                         {-1, +1, +1}, {+1, +1, +1}, {+1, -1, +1}, {-1, -1, +1}
                     },
@@ -243,7 +243,7 @@ void Background::Draw()
                     },
                 },
                 {                 //right
-                    NULL,
+                    nullptr,
                     {
                         {+1, +1, +1}, {+1, +1, -1}, {+1, -1, -1}, {+1, -1, +1}
                     },
@@ -252,7 +252,7 @@ void Background::Draw()
                     },
                 },
                 {                 //back
-                    NULL,
+                    nullptr,
                     {
                         {+1, +1, -1}, {-1, +1, -1}, {-1, -1, -1}, {+1, -1, -1}
                     },
@@ -261,7 +261,7 @@ void Background::Draw()
                     },
                 },
                 {                 //down
-                    NULL,
+                    nullptr,
                     {
                         {-1, -1, +1}, {+1, -1, +1}, {+1, -1, -1}, {-1, -1, -1}
                     },
@@ -274,7 +274,7 @@ void Background::Draw()
                 //For rendering with multiple 2D texture faces
 
                 {                 //up
-                    NULL,
+                    nullptr,
                     {
                         {-1, +1, +1}, {-1, +1, -1}, {+1, +1, -1}, {+1, +1, +1}
                     },
@@ -283,7 +283,7 @@ void Background::Draw()
                     }
                 },
                 {                 //left
-                    NULL,
+                    nullptr,
                     {
                         {-1, +1, -1}, {-1, +1, +1}, {-1, -1, +1}, {-1, -1, -1}
                     },
@@ -292,7 +292,7 @@ void Background::Draw()
                     }
                 },
                 {                 //front
-                    NULL,
+                    nullptr,
                     {
                         {-1, +1, +1}, {+1, +1, +1}, {+1, -1, +1}, {-1, -1, +1}
                     },
@@ -301,7 +301,7 @@ void Background::Draw()
                     }
                 },
                 {                 //right
-                    NULL,
+                    nullptr,
                     {
                         {+1, +1, +1}, {+1, +1, -1}, {+1, -1, -1}, {+1, -1, +1}
                     },
@@ -310,7 +310,7 @@ void Background::Draw()
                     }
                 },
                 {                 //back
-                    NULL,
+                    nullptr,
                     {
                         {+1, +1, -1}, {-1, +1, -1}, {-1, -1, -1}, {+1, -1, -1}
                     },
@@ -319,7 +319,7 @@ void Background::Draw()
                     }
                 },
                 {                 //down
-                    NULL,
+                    nullptr,
                     {
                         {-1, -1, +1}, {+1, -1, +1}, {+1, -1, -1}, {-1, -1, -1}
                     },
@@ -339,7 +339,7 @@ void Background::Draw()
                 Texture *tex = skybox_rendering_sequence[skr].tex;
 
 #ifdef NV_CUBE_MAP
-                if (tex == NULL)
+                if (tex == nullptr)
                     tex = _Universe->getLightMap();
                 const int    numpasses = 1;
                 static const float edge_fixup =
@@ -372,7 +372,7 @@ void Background::Draw()
                 for (lyr = 0; (lyr < gl_options.Multitexture) || (lyr < numlayers); lyr++) {
                     GFXToggleTexture( (lyr < numlayers), lyr );
                     if (lyr < numlayers)
-                        GFXTextureCoordGenMode( lyr, NO_GEN, NULL, NULL );
+                        GFXTextureCoordGenMode( lyr, NO_GEN, nullptr, nullptr );
                 }
 #endif
                 for (int pass = 0; pass < numpasses; pass++)
@@ -381,7 +381,7 @@ void Background::Draw()
                             tex->MakeActive( 0, pass );
                         GFXTextureAddressMode( CLAMP );
                         GFXTextureEnv( 0, GFXMODULATETEXTURE );
-                        GFXTextureCoordGenMode( 0, NO_GEN, NULL, NULL );
+                        GFXTextureCoordGenMode( 0, NO_GEN, nullptr, nullptr );
 
 #define X( i ) skybox_rendering_sequence[skr].vertices[i][0]*size
 #define Y( i ) skybox_rendering_sequence[skr].vertices[i][1]*size
@@ -433,7 +433,7 @@ void Background::Draw()
 #else
                 for (lyr = 0; lyr < numlayers; lyr++) {
                     GFXToggleTexture( false, lyr );
-                    if (lyr < numlayers) GFXTextureCoordGenMode( lyr, NO_GEN, NULL, NULL );
+                    if (lyr < numlayers) GFXTextureCoordGenMode( lyr, NO_GEN, nullptr, nullptr );
                 }
                 if (tex)
                     tex->SetupPass( -1, 0, ONE, ZERO );

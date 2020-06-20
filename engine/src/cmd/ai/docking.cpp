@@ -15,8 +15,8 @@ static void DockedScript(Unit *docker, Unit *base)
         docker->GetComputerData().target.SetUnit(base);
         UniverseUtil::setScratchUnit(docker);
         CompileRunPython(script);
-        UniverseUtil::setScratchUnit(NULL);
-        docker->GetComputerData().target.SetUnit(targ); //should be NULL;
+        UniverseUtil::setScratchUnit(nullptr);
+        docker->GetComputerData().target.SetUnit(targ); //should be nullptr;
     }
 }
 namespace Orders
@@ -26,7 +26,7 @@ namespace Orders
                                                                                                             10, false),
                                                                                                      docking(unitToDockWith), state(GETCLEARENCE), oldstate(ai)
     {
-        formerOwnerDoNotDereference = NULL;
+        formerOwnerDoNotDereference = nullptr;
         this->keeptrying = keeptrying;
         facedtarget = false;
         physicallyDock = true;
@@ -34,9 +34,9 @@ namespace Orders
         static float temptimer = XMLSupport::parse_float(vs_config->getVariable("physics", "docking_time", "10"));
         timer = temptimer;
     }
-    void DockingOps::SetParent(Unit *par)
+    void DockingOps::SetParent(Unit *parent)
     {
-        MoveTo::SetParent(par);
+        MoveTo::SetParent(parent);
         if (parent)
         {
             formerOwnerDoNotDereference = parent->owner;
@@ -45,8 +45,8 @@ namespace Orders
     }
     void DockingOps::Execute()
     {
-        Unit *utdw = docking.GetUnit();
-        if (parent == utdw || utdw == NULL)
+        Unit *unit_to_dock_with = docking.GetUnit();
+        if (parent == unit_to_dock_with || unit_to_dock_with == nullptr)
         {
             RestoreOldAI();
             Destroy();
@@ -55,7 +55,7 @@ namespace Orders
         switch (state)
         {
         case GETCLEARENCE:
-            if (!RequestClearence(utdw))
+            if (!RequestClearence(unit_to_dock_with))
             {
                 if (!keeptrying)
                 {
@@ -70,15 +70,19 @@ namespace Orders
                 //no break
             }
         case DOCKING:
-            if (DockToTarget(utdw))
+            if (DockToTarget(unit_to_dock_with))
+            {
                 state = DOCKED;
+            }
             break;
         case DOCKED:
-            if (PerformDockingOperations(utdw))
+            if (PerformDockingOperations(unit_to_dock_with))
+            {
                 state = UNDOCKING;
+            }
             break;
         case UNDOCKING:
-            if (Undock(utdw))
+            if (Undock(unit_to_dock_with))
             {
                 RestoreOldAI();
                 Destroy();
@@ -94,15 +98,17 @@ namespace Orders
         if (parent)
         {
             if (oldstate)
+            {
                 oldstate->Destroy();
-            oldstate = NULL;
+            }
+            oldstate = nullptr;
             if (formerOwnerDoNotDereference)
             {
                 parent->SetOwner((Unit *)formerOwnerDoNotDereference); //set owner will not deref
-                formerOwnerDoNotDereference = NULL;
+                formerOwnerDoNotDereference = nullptr;
             }
         }
-        docking.SetUnit(NULL);
+        docking.SetUnit(nullptr);
     }
     void DockingOps::RestoreOldAI()
     {
@@ -112,9 +118,9 @@ namespace Orders
             if (formerOwnerDoNotDereference)
             {
                 parent->SetOwner((Unit *)formerOwnerDoNotDereference);
-                formerOwnerDoNotDereference = NULL;
+                formerOwnerDoNotDereference = nullptr;
             }
-            oldstate = NULL;
+            oldstate = nullptr;
         }
     }
     int SelectDockPort(Unit *utdw, Unit *parent)
@@ -171,7 +177,7 @@ namespace Orders
             }
             else
             {
-                docking.SetUnit(NULL);
+                docking.SetUnit(nullptr);
                 state = GETCLEARENCE;
                 return false;
             }
@@ -262,5 +268,5 @@ namespace Orders
         timer -= SIMULATION_ATOM;
         return (len < 1) || done || timer < 0;
     }
-    DockingOps *DONOTUSEAI = NULL;
+    DockingOps *DONOTUSEAI = nullptr;
 } // namespace Orders

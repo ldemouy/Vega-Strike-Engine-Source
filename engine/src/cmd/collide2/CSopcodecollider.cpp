@@ -143,7 +143,7 @@ bool csOPCODECollider::rayCollide(const Ray &boltbeam, Vector &norm, float &dist
 	//rCollider.SetClosestHit(true);
 	collFace.mDistance = FLT_MAX;
 	bool retval = rCollider.Collide(boltbeam, *m_pCollisionModel);
-	rCollider.SetUserData(NULL);
+	rCollider.SetUserData(nullptr);
 	if (retval)
 	{
 		retval = collFace.mDistance != FLT_MAX;

@@ -81,7 +81,7 @@ static void UpgradeUnit(Unit *un, const std::string &upgrades)
         un->Unit::Upgrade(upgradee,
                           mountoffset,
                           subunitoffset,
-                          GetModeFromName(upgrade.c_str()), true, percent, NULL);
+                          GetModeFromName(upgrade.c_str()), true, percent, nullptr);
     }
 }
 
@@ -400,7 +400,7 @@ static void AddSubUnits(Unit *thus, Unit::XML &xml, const std::string &subunits,
         QVector Q = (*i).Q;
         QVector R = (*i).R;
         double restricted = (*i).restricted;
-        xml.units.push_back(UnitFactory::createUnit(filename.c_str(), true, faction, modification, NULL)); //I set here the fg arg to NULL
+        xml.units.push_back(UnitFactory::createUnit(filename.c_str(), true, faction, modification, nullptr)); //I set here the fg arg to nullptr
         if (xml.units.back()->name == "LOAD_FAILED")
         {
             xml.units.back()->limits.yaw = 0;
@@ -418,7 +418,7 @@ static void AddSubUnits(Unit *thus, Unit::XML &xml, const std::string &subunits,
         xml.units.back()->limits.structurelimits = R.Cast();
         xml.units.back()->limits.limitmin = restricted;
         xml.units.back()->name = filename;
-        if (xml.units.back()->pImage->unitwriter != NULL)
+        if (xml.units.back()->pImage->unitwriter != nullptr)
             xml.units.back()->pImage->unitwriter->setName(filename);
         CheckAccessory(xml.units.back()); //turns on the ceerazy rotation for the turr
     }
@@ -796,12 +796,12 @@ void Unit::LoadRow(CSVRow &row, string modification, string *netxml)
     xml.randomstartseconds = 0;
     xml.calculated_role = false;
     xml.damageiterator = 0;
-    xml.shieldmesh = NULL;
-    xml.rapidmesh = NULL;
+    xml.shieldmesh = nullptr;
+    xml.rapidmesh = nullptr;
     xml.hasColTree = true;
     xml.unitlevel = 0;
     xml.unitscale = 1;
-    xml.data = xml.shieldmesh = xml.rapidmesh = NULL; //was uninitialized memory
+    xml.data = xml.shieldmesh = xml.rapidmesh = nullptr; //was uninitialized memory
     string tmpstr;
     csvRow = row[0];
     DEF_OPTIMIZER(FaceCamera);
@@ -1090,7 +1090,7 @@ void Unit::LoadRow(CSVRow &row, string modification, string *netxml)
     AddSubUnits(this, xml, OPTIM_GET(row, table, Sub_Units), faction, modification);
 
     meshdata = xml.meshes;
-    meshdata.push_back(NULL);
+    meshdata.push_back(nullptr);
     corner_min = Vector(FLT_MAX, FLT_MAX, FLT_MAX);
     corner_max = Vector(-FLT_MAX, -FLT_MAX, -FLT_MAX);
     calculate_extent(false);
@@ -1460,7 +1460,7 @@ void Unit::LoadRow(CSVRow &row, string modification, string *netxml)
         static int shieldstacks = XMLSupport::parse_int(vs_config->getVariable("graphics", "shield_detail", "16"));
         static std::string shieldtex = vs_config->getVariable("graphics", "shield_texture", "shield.bmp");
         static std::string shieldtechnique = vs_config->getVariable("graphics", "shield_technique", "");
-        meshdata.back() = new SphereMesh(rSize(), shieldstacks, shieldstacks, shieldtex.c_str(), shieldtechnique, NULL, false, ONE, ONE);
+        meshdata.back() = new SphereMesh(rSize(), shieldstacks, shieldstacks, shieldtex.c_str(), shieldtechnique, nullptr, false, ONE, ONE);
     }
     meshdata.back()->EnableSpecialFX();
     //Begin the Pow-w-w-war Zone Collide Tree Generation
@@ -1472,7 +1472,7 @@ void Unit::LoadRow(CSVRow &row, string modification, string *netxml)
         this->colTrees = collideTrees::Get(collideTreeHash);
         if (this->colTrees)
             this->colTrees->Inc();
-        csOPCODECollider *colShield = NULL;
+        csOPCODECollider *colShield = nullptr;
         string tmpname = row[0]; //key
         if (!this->colTrees)
         {
@@ -1491,17 +1491,17 @@ void Unit::LoadRow(CSVRow &row, string modification, string *netxml)
             if (xml.rapidmesh_str.length())
                 addRapidMesh(&xml, xml.rapidmesh_str.c_str(), xml.unitscale, faction, getFlightgroup());
             else
-                xml.rapidmesh = NULL;
+                xml.rapidmesh = nullptr;
             polies.clear();
             if (xml.rapidmesh)
                 xml.rapidmesh->GetPolys(polies);
-            csOPCODECollider *csrc = NULL;
+            csOPCODECollider *csrc = nullptr;
             if (xml.hasColTree)
             {
                 csrc = getCollideTree(Vector(1, 1, 1),
                                       xml.rapidmesh
                                           ? &polies
-                                          : NULL);
+                                          : nullptr);
             }
             this->colTrees = new collideTrees(collideTreeHash,
                                               csrc,
@@ -1521,7 +1521,7 @@ void Unit::LoadRow(CSVRow &row, string modification, string *netxml)
             if (xml.rapidmesh)
             {
                 delete xml.rapidmesh;
-                xml.rapidmesh = NULL;
+                xml.rapidmesh = nullptr;
             }
         }
     }
@@ -1583,7 +1583,7 @@ void Unit::WriteUnit(const char *modifications)
     {
         if (pImage->unitwriter)
             pImage->unitwriter->Write(modifications);
-        for (un_iter ui = getSubUnits(); (*ui) != NULL; ++ui)
+        for (un_iter ui = getSubUnits(); (*ui) != nullptr; ++ui)
             (*ui)->WriteUnit(modifications);
     }
 }
@@ -1681,7 +1681,7 @@ string Unit::WriteUnitString()
                         for (; k < subunits.size(); ++k)
                             subunits[k].filename = "destroyed_blank";
                         k = 0;
-                        for (un_iter su = this->getSubUnits(); (subun = (*su)) != NULL; ++su, ++k)
+                        for (un_iter su = this->getSubUnits(); (subun = (*su)) != nullptr; ++su, ++k)
                         {
                             unsigned int j = k;
                             for (; j < subunits.size(); ++j)
@@ -1865,7 +1865,7 @@ string Unit::WriteUnitString()
     {
         if (pImage->unitwriter)
             ret = pImage->unitwriter->WriteString();
-        for (un_iter ui = getSubUnits(); (*ui) != NULL; ++ui)
+        for (un_iter ui = getSubUnits(); (*ui) != nullptr; ++ui)
             ret = ret + ((*ui)->WriteUnitString());
     }
     return ret;

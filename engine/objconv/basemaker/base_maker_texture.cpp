@@ -41,19 +41,19 @@ static inline bool readPng( FILE *fp, Texture::FileData *data, Texture::TextureT
  *               return;
  *       }*/
     //The previous check could only be false if the image was modified after being opened (such as on *nix systems).  In that case, worse things will happen anyways.
-    png_ptr = png_create_read_struct( PNG_LIBPNG_VER_STRING, NULL,
+    png_ptr = png_create_read_struct( PNG_LIBPNG_VER_STRING, nullptr,
                                       (png_error_ptr) png_cexcept_error,
-                                      (png_error_ptr) NULL );
-    if (png_ptr == NULL)
+                                      (png_error_ptr) nullptr );
+    if (png_ptr == nullptr)
         return false;
     info_ptr = png_create_info_struct( png_ptr );
-    if (info_ptr == NULL) {
-        png_destroy_read_struct( &png_ptr, (png_infopp) NULL, (png_infopp) NULL );
+    if (info_ptr == nullptr) {
+        png_destroy_read_struct( &png_ptr, (png_infopp) nullptr, (png_infopp) nullptr );
         return false;
     }
     if ( setjmp( png_jmpbuf( png_ptr ) ) ) {
         /* Free all of the memory associated with the png_ptr and info_ptr */
-        png_destroy_read_struct( &png_ptr, &info_ptr, (png_infopp) NULL );
+        png_destroy_read_struct( &png_ptr, &info_ptr, (png_infopp) nullptr );
         /* If we get here, we had a problem reading the file */
         return false;
     }
@@ -71,8 +71,8 @@ static inline bool readPng( FILE *fp, Texture::FileData *data, Texture::TextureT
                   &data->bpp,
                   &ctype,
                   &interlace_type,
-                  NULL,
-                  NULL );
+                  nullptr,
+                  nullptr );
 # if __BYTE_ORDER != __BIG_ENDIAN
     if (data->bpp == 16)
         png_set_swap( png_ptr );
@@ -92,8 +92,8 @@ static inline bool readPng( FILE *fp, Texture::FileData *data, Texture::TextureT
                   &data->bpp,
                   &ctype,
                   &interlace_type,
-                  NULL,
-                  NULL );
+                  nullptr,
+                  nullptr );
     row_pointers = (unsigned char**) malloc( sizeof (unsigned char*)*data->height );
     int numchan = 1;
     if (ctype&PNG_COLOR_MASK_COLOR)
@@ -107,7 +107,7 @@ static inline bool readPng( FILE *fp, Texture::FileData *data, Texture::TextureT
     for (unsigned int i = 0; i < data->height; i++)
         row_pointers[i] = &image[i*stride*data->width];
     png_read_image( png_ptr, row_pointers );
-    //png_read_image(png_ptr, info_ptr, PNG_TRANSFORM_EXPAND , NULL);
+    //png_read_image(png_ptr, info_ptr, PNG_TRANSFORM_EXPAND , nullptr);
     //row_pointers = png_get_rows(png_ptr, info_ptr);
     switch (ctype)
     {
@@ -142,7 +142,7 @@ static inline bool readPng( FILE *fp, Texture::FileData *data, Texture::TextureT
     free( row_pointers );
     //png_infop end_info;
     png_read_end( png_ptr, info_ptr );
-    png_destroy_read_struct( &png_ptr, &info_ptr, NULL );
+    png_destroy_read_struct( &png_ptr, &info_ptr, nullptr );
 #ifdef PNGDEBUG
     printf( "Decompressing Done.\n" );
 #endif
@@ -172,14 +172,14 @@ static inline bool readJpg( FILE *fp, Texture::FileData *data, Texture::TextureT
     data->bpp = 8;
     jpeg_decompress_struct cinfo;
     my_error_mgr jerr;
-    JSAMPARRAY   row_pointers = NULL;   //Output row buffer
+    JSAMPARRAY   row_pointers = nullptr;   //Output row buffer
     cinfo.err = jpeg_std_error( &jerr.pub );
     jerr.pub.error_exit = my_error_exit;
     if ( setjmp( jerr.setjmp_buffer ) ) {
         //If we get here, the JPEG code has signaled an error.
         //We need to clean up the JPEG object, close the input file, and return.
         jpeg_destroy_decompress( &cinfo );
-        data->data = NULL;
+        data->data = nullptr;
         return false;
     }
     jpeg_create_decompress( &cinfo );

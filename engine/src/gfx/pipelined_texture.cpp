@@ -31,23 +31,23 @@ PipelinedTexture::PipelinedTexture(unsigned int width, unsigned int height, unsi
     mode = _24BITRGBA;
     data = new unsigned char[4 * width * height];
     stage = 0;
-    original = NULL;
+    original = nullptr;
     refcount = 0;
     texture_target = TEXTURE2D;
     image_target = TEXTURE_2D;
-    GFXCreateTexture(sizeX, sizeY, (mode == _24BITRGBA) ? RGBA32 : ((mode == _8BIT) ? PALETTE8 : RGB32), &name, NULL,
+    GFXCreateTexture(sizeX, sizeY, (mode == _24BITRGBA) ? RGBA32 : ((mode == _8BIT) ? PALETTE8 : RGB32), &name, nullptr,
                      (stage == 1) ? 0 : 1);
     GFXCreateTexture(sizeX,
                      sizeY,
                      (mode == _24BITRGBA) ? RGBA32 : ((mode == _8BIT) ? PALETTE8 : RGB32),
                      &this->current,
-                     NULL,
+                     nullptr,
                      (stage == 1) ? 0 : 1);
     GFXCreateTexture(sizeX,
                      sizeY,
                      (mode == _24BITRGBA) ? RGBA32 : ((mode == _8BIT) ? PALETTE8 : RGB32),
                      &this->last,
-                     NULL,
+                     nullptr,
                      (stage == 1) ? 0 : 1);
     if (current)
         GFXTransferTexture(current, this->current, sizeX, sizeY,
@@ -80,7 +80,7 @@ void PipelinedTexture::Swap()
     if (clone)
     {
         clone--;
-        GFXCreateTexture(sizeX, sizeY, (mode == _24BITRGBA) ? RGBA32 : ((mode == _8BIT) ? PALETTE8 : RGB32), &name, NULL,
+        GFXCreateTexture(sizeX, sizeY, (mode == _24BITRGBA) ? RGBA32 : ((mode == _8BIT) ? PALETTE8 : RGB32), &name, nullptr,
                          (stage == 1) ? 0 : 1);
     }
 }
@@ -95,7 +95,7 @@ Texture *PipelinedTexture::Clone()
     int bpp = (mode == _24BITRGBA) ? 4 : ((mode == _8BIT) ? 1 : 3);
     retval->data = new unsigned char[sizeX * sizeY * bpp];
     memcpy(retval->data, data, bpp * sizeof(unsigned char) * sizeX * sizeY);
-    GFXCreateTexture(sizeX, sizeY, (mode == _24BITRGBA) ? RGBA32 : ((mode == _8BIT) ? PALETTE8 : RGB32), &name, NULL,
+    GFXCreateTexture(sizeX, sizeY, (mode == _24BITRGBA) ? RGBA32 : ((mode == _8BIT) ? PALETTE8 : RGB32), &name, nullptr,
                      (stage == 1) ? 0 : 1, BILINEAR, TEXTURE2D);
     GFXTransferTexture(retval->data,
                        name,

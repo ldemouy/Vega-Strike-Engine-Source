@@ -56,7 +56,7 @@ string getdatadir()
 {
     string datadir;
     char tmppwd[65536];
-    if (NULL == getcwd(tmppwd, 32768))
+    if (nullptr == getcwd(tmppwd, 32768))
         tmppwd[0] = '\0';
     unsigned int i = 0;
     for (; i < (sizeof(datadirs) / sizeof(datadirs[0])); i++)

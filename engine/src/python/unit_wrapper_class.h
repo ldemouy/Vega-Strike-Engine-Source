@@ -1,6 +1,6 @@
 using std::string;
 //WARNING: Macro City ahead.  Please skip this section if you don't like macros.
-static const char *error = "\nERROR: NULL Unit used in Python script; returning default value...";
+static const char *error = "\nERROR: nullptr Unit used in Python script; returning default value...";
 #define CHECKME \
     }           \
     Unit *me = GetUnit(); if (!me) {fprintf( stderr, "%s", error ); return

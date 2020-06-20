@@ -40,7 +40,7 @@ public:
 
 protected:
     /// constructor only to be called by UnitFactory
-    Nebula(const char *unitfile, bool SubU, int faction, Flightgroup *fg = NULL, int fg_snumber = 0);
+    Nebula(const char *unitfile, bool SubU, int faction, Flightgroup *fg = nullptr, int fg_snumber = 0);
 
     friend class UnitFactory;
     Nebula(std::vector<Mesh *> m, bool b, int i) : Unit(m, b, i) {}
@@ -53,7 +53,7 @@ public:
                                 const Matrix &transmat,
                                 const Vector &CumulativeVelocity,
                                 bool ResolveLast,
-                                UnitCollection *uc = NULL);
+                                UnitCollection *uc = nullptr);
 
     virtual void SetFogState() {}
 

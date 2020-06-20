@@ -86,12 +86,12 @@ namespace Audio
 
             if (test)
             {
-                if (ov_test_callbacks(&file, &vorbisFile, NULL, 0, callbacks))
+                if (ov_test_callbacks(&file, &vorbisFile, nullptr, 0, callbacks))
                     throw FileFormatException("File \"" + file.GetFilename() + "\"is not ogg vorbis");
             }
             else
             {
-                if (ov_open_callbacks(&file, &vorbisFile, NULL, 0, callbacks))
+                if (ov_open_callbacks(&file, &vorbisFile, nullptr, 0, callbacks))
                     throw FileFormatException("File \"" + file.GetFilename() + "\"is not ogg vorbis");
 
                 vorbis_info *info = ov_info(&vorbisFile, streamIndex);

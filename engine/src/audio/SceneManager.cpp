@@ -562,7 +562,7 @@ namespace Audio
 
                         // Check if it has a listener, notify in that case
                         std::shared_ptr<SourceListener> listener = nit->source->getSourceListener();
-                        if (listener.get() != NULL && listener->wantPlayEvents())
+                        if (listener.get() != nullptr && listener->wantPlayEvents())
                         {
                             listener->onEndOfStream(*nit->source);
                         }

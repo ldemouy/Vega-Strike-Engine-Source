@@ -24,7 +24,7 @@ static bool NoDockWithClear()
     return nodockwithclear;
 }
 
-VSRandom targrand(time(NULL));
+VSRandom targrand(time(nullptr));
 
 Unit *getAtmospheric(Unit *targ)
 {
@@ -32,7 +32,7 @@ Unit *getAtmospheric(Unit *targ)
     {
         Unit *un;
         for (un_iter i = _Universe->activeStarSystem()->getUnitList().createIterator();
-             (un = *i) != NULL;
+             (un = *i) != nullptr;
              ++i)
             if (un->isUnit() == PLANETPTR)
             {
@@ -41,7 +41,7 @@ Unit *getAtmospheric(Unit *targ)
                         return un;
             }
     }
-    return NULL;
+    return nullptr;
 }
 
 bool RequestClearence(Unit *parent, Unit *targ, unsigned char sex)
@@ -58,8 +58,8 @@ bool RequestClearence(Unit *parent, Unit *targ, unsigned char sex)
             parent->Target(targ);
         }
     }
-    CommunicationMessage c(parent, targ, NULL, sex);
-    c.SetCurrentState(c.fsm->GetRequestLandNode(), NULL, sex);
+    CommunicationMessage c(parent, targ, nullptr, sex);
+    c.SetCurrentState(c.fsm->GetRequestLandNode(), nullptr, sex);
     Order *o = targ->getAIState();
     if (o)
         o->Communicate(c);
@@ -94,7 +94,7 @@ bool CanFaceTarget(Unit *su, Unit *targ, const Matrix &matrix)
     }
     Unit *ssu;
     for (un_iter i = su->getSubUnits();
-         (ssu = *i) != NULL;
+         (ssu = *i) != nullptr;
          ++i)
         if (!CanFaceTarget(ssu, targ, su->cumulative_transformation_matrix))
             return false;
@@ -178,8 +178,8 @@ struct TurretBin
         for (vector<RangeSortedTurrets>::iterator uniter = turret.begin(); uniter != turret.end(); ++uniter)
         {
             bool foundfinal = false;
-            uniter->tur->Target(NULL);
-            uniter->tur->TargetTurret(NULL);
+            uniter->tur->Target(nullptr);
+            uniter->tur->TargetTurret(nullptr);
             if (finalChoice.t)
             {
                 if (finalChoice.range < uniter->gunrange && ROLES::getPriority(uniter->tur->attackPreference())[finalChoice.t->unitRole()] < 31)
@@ -231,7 +231,7 @@ void AssignTBin(Unit *su, vector<TurretBin> &tbin)
     {
         float ggspeed, ggrange, mmrange;
         Unit *ssu;
-        for (un_iter i = su->getSubUnits(); (ssu = *i) != NULL; ++i)
+        for (un_iter i = su->getSubUnits(); (ssu = *i) != nullptr; ++i)
         {
             ssu->getAverageGunSpeed(ggspeed, ggrange, mmrange);
             if (ggspeed > gspeed)
@@ -351,7 +351,7 @@ public:
         this->tbin = tbin;
         this->parent = un;
         this->parentparent = un->owner ? UniverseUtil::getUnitByPtr(un->owner, un, false) : 0;
-        mytarg = NULL;
+        mytarg = nullptr;
         double currad = 0;
         if (!is_null(un->location[Unit::UNIT_ONLY]))
             currad = un->location[Unit::UNIT_ONLY]->getKey();
@@ -476,7 +476,7 @@ void FireAt::ChooseTargets(int numtargs, bool force)
         return; //don't switch if switching too soon
 
     Unit *curtarg = parent->Target();
-    int hastarg = (curtarg == NULL) ? 0 : 1;
+    int hastarg = (curtarg == nullptr) ? 0 : 1;
     //Following code exists to limit the number of craft polling for a target in a given frame - this is an expensive operation, and needs to be spread out, or there will be pauses.
     static float simatom = XMLSupport::parse_float(vs_config->getVariable("general", "simulation_atom", "0.1"));
     if ((UniverseUtil::GetGameTime()) - targettimer >= simatom * .99)
@@ -500,21 +500,21 @@ void FireAt::ChooseTargets(int numtargs, bool force)
     if (curtarg)
         if (isJumpablePlanet(curtarg))
             return;
-    bool wasnull = (curtarg == NULL);
+    bool wasnull = (curtarg == nullptr);
     Flightgroup *fg = parent->getFlightgroup();
     lastchangedtarg = 0 + targrand.uniformInc(0, 1) * mintimetoswitch; //spread out next valid time to switch targets - helps to ease per-frame loads.
     if (fg)
     {
         if (!fg->directive.empty())
-            if (curtarg != NULL && (*fg->directive.begin()) == toupper(*fg->directive.begin()))
+            if (curtarg != nullptr && (*fg->directive.begin()) == toupper(*fg->directive.begin()))
                 return;
     }
     //not   allowed to switch targets
     numprocessed++;
     vector<TurretBin> tbin;
-    Unit *su = NULL;
+    Unit *su = nullptr;
     un_iter subun = parent->getSubUnits();
-    for (; (su = *subun) != NULL; ++subun)
+    for (; (su = *subun) != nullptr; ++subun)
     {
         static unsigned int inert = ROLES::getRole("INERT");
         static unsigned int pointdef = ROLES::getRole("POINTDEF");
@@ -528,7 +528,7 @@ void FireAt::ChooseTargets(int numtargs, bool force)
             }
             else
             {
-                Unit *ssu = NULL;
+                Unit *ssu = nullptr;
                 for (un_iter subturret = su->getSubUnits(); (ssu = (*subturret)); ++subturret)
                     AssignTBin(ssu, tbin);
             }
@@ -567,7 +567,7 @@ void FireAt::ChooseTargets(int numtargs, bool force)
                     unitLocator.action.ShouldTargetUnit(playa, UnitUtil::getDistance(parent, playa));
             }
             Unit *lead = UnitUtil::getFlightgroupLeader(parent);
-            if (lead != NULL && lead != parent && (lead = lead->Target()) != NULL)
+            if (lead != nullptr && lead != parent && (lead = lead->Target()) != nullptr)
                 unitLocator.action.ShouldTargetUnit(lead, UnitUtil::getDistance(parent, lead));
             Unit *threat = parent->Threat();
             if (threat)
@@ -578,7 +578,7 @@ void FireAt::ChooseTargets(int numtargs, bool force)
             gcounter = 0;
         }
     }
-    if (unitLocator.action.mytarg == NULL) //decided to rechoose or did not have initial target
+    if (unitLocator.action.mytarg == nullptr) //decided to rechoose or did not have initial target
         findObjects(
             _Universe->activeStarSystem()->collidemap[Unit::UNIT_ONLY], parent->location[Unit::UNIT_ONLY], &unitLocator);
     Unit *mytarg = unitLocator.action.mytarg;
@@ -755,7 +755,7 @@ void FireAt::PossiblySwitchTarget(bool unused)
         Flightgroup *fg;
         if ((fg = parent->getFlightgroup()))
             if (fg->directive.find(".") != string::npos)
-                ct = (parent->Target() == NULL);
+                ct = (parent->Target() == nullptr);
         if (ct)
             ChooseTarget();
     }

@@ -31,7 +31,7 @@ int aprintf(...)
 
 FILE *aopen(...)
 {
-    return NULL;
+    return nullptr;
 }
 
 #ifndef STANDALONE
@@ -1037,7 +1037,7 @@ vector<Mesh *> Mesh::LoadMeshes(VSFileSystem::VSFile &Inputfile,
         output.back()->numlods = output.back()->orig->numlods = meshes.back().num;
     }
     free(inmemfile);
-    inmemfile = NULL;
+    inmemfile = nullptr;
 #ifndef STANDALONE
     return output;
 #endif

@@ -129,7 +129,7 @@ void decode_dxt5_alpha(unsigned char *RESTRICT dst, unsigned char *RESTRICT src,
 
 void ddsDecompress(unsigned char *&RESTRICT buffer, unsigned char *&RESTRICT data, TEXTUREFORMAT internformat, int height, int width)
 {
-    unsigned char *pos_out = NULL, *pos_in = NULL;
+    unsigned char *pos_out = nullptr, *pos_in = nullptr;
     int bpp = 4;
     unsigned int sx, sy;
 

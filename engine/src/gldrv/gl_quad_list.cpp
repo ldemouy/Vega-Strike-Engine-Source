@@ -28,7 +28,7 @@
 
 GFXQuadList::GFXQuadList(GFXBOOL color) : numVertices(0), numQuads(0)
 {
-    data.vertices = NULL;
+    data.vertices = nullptr;
     Dirty = GFXFALSE;
     isColor = color;
 }

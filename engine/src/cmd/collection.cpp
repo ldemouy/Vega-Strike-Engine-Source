@@ -47,7 +47,7 @@ UnitCollection::UnitIterator::UnitIterator(UnitCollection *orig)
     col->reg(this);
     while (it != col->u.end())
     {
-        if ((*it) == NULL)
+        if ((*it) == nullptr)
             ++it;
         else
         {
@@ -103,7 +103,7 @@ void UnitCollection::UnitIterator::advance()
     ++it;
     while (it != col->u.end())
     {
-        if ((*it) == NULL)
+        if ((*it) == nullptr)
             ++it;
         else
         {
@@ -155,7 +155,7 @@ Unit *UnitCollection::ConstIterator::next()
     advance();
     if (col && it != col->u.end())
         return *it;
-    return NULL;
+    return nullptr;
 }
 
 inline void UnitCollection::ConstIterator::advance()
@@ -165,7 +165,7 @@ inline void UnitCollection::ConstIterator::advance()
     ++it;
     while (it != col->u.end())
     {
-        if ((*it) == NULL)
+        if ((*it) == nullptr)
             ++it;
         else
         {
@@ -232,7 +232,7 @@ void UnitCollection::prepend(Unit *unit)
 
 void UnitCollection::prepend(UnitIterator *it)
 {
-    Unit *tmp = NULL;
+    Unit *tmp = nullptr;
     if (!it)
         return;
     list<Unit *>::iterator tmpI = u.begin();
@@ -258,7 +258,7 @@ void UnitCollection::append(UnitIterator *it)
 {
     if (!it)
         return;
-    Unit *tmp = NULL;
+    Unit *tmp = nullptr;
     while ((tmp = **it))
     {
         tmp->Ref();
@@ -288,7 +288,7 @@ void UnitCollection::clear()
     for (list<Unit *>::iterator it = u.begin(); it != u.end(); ++it)
     {
         (*it)->UnRef();
-        (*it) = NULL;
+        (*it) = nullptr;
     }
     u.clear();
 }
@@ -299,10 +299,10 @@ void UnitCollection::destr()
         if (*it)
         {
             (*it)->UnRef();
-            (*it) = NULL;
+            (*it) = nullptr;
         }
     for (vector<un_iter *>::iterator t = activeIters.begin(); t != activeIters.end(); ++t)
-        (*t)->col = NULL;
+        (*t)->col = nullptr;
 }
 
 bool UnitCollection::contains(const Unit *unit) const
@@ -327,7 +327,7 @@ inline void UnitCollection::erase(list<Unit *>::iterator &it2)
     {
         removedIters.push_back(it2);
         (*it2)->UnRef();
-        (*it2) = NULL;
+        (*it2) = nullptr;
         ++it2;
         return;
     }
@@ -341,14 +341,14 @@ inline void UnitCollection::erase(list<Unit *>::iterator &it2)
             {
                 removedIters.push_back(it2);
                 (*it2)->UnRef();
-                (*it2) = NULL;
+                (*it2) = nullptr;
                 ++it2;
                 return;
             }
     //If we have 1 iterator, or none of the iterators are currently on the
     //requested node to be removed, then remove it right away.
     (*it2)->UnRef();
-    (*it2) = NULL;
+    (*it2) = nullptr;
     it2 = u.erase(it2);
 }
 

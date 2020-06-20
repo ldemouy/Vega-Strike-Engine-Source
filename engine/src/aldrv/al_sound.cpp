@@ -85,7 +85,7 @@ void blutLoadWAVMemory(ALbyte *memory, ALenum *format, ALvoid **data, ALsizei *s
     ALbyte *Stream;
 
     *format = AL_FORMAT_MONO16;
-    *data = NULL;
+    *data = nullptr;
     *size = 0;
     *freq = 22050;
     *loop = AL_FALSE;
@@ -130,7 +130,7 @@ void blutLoadWAVMemory(ALbyte *memory, ALenum *format, ALvoid **data, ALsizei *s
                     if (FmtHdr.Format == 0x0001)
                     {
                         *size = ChunkHdr.Size;
-                        if (*data == NULL)
+                        if (*data == nullptr)
                         {
                             *data = malloc(ChunkHdr.Size + 31);
                         }
@@ -345,7 +345,7 @@ static void ConvertFormat(vector<char> &ogg)
             callbacks.seek_func = &mem_seek;
             callbacks.close_func = &mem_close;
             callbacks.tell_func = &mem_tell;
-            if (ov_open_callbacks(&ff, &vf, NULL, 0, callbacks))
+            if (ov_open_callbacks(&ff, &vf, nullptr, 0, callbacks))
             {
                 ogg.clear();
             }
@@ -599,7 +599,7 @@ int32_t AUDCreateSoundWAV(const std::string &s, const bool music, const bool LOO
 #endif
     if ((game_options.Music && !music) || (game_options.Music && music))
     {
-        ALuint *wavbuf = NULL;
+        ALuint *wavbuf = nullptr;
         std::string hashname;
         if (!music)
         {
@@ -621,7 +621,7 @@ int32_t AUDCreateSoundWAV(const std::string &s, const bool music, const bool LOO
             printf("Sound %s restored with alBuffer %d\n", s.c_str(), *wavbuf);
 #endif
         }
-        if (wavbuf == NULL)
+        if (wavbuf == nullptr)
         {
             AUDSoundProperties info;
             if (!AUDLoadSoundFile(s.c_str(), &info))
@@ -666,7 +666,7 @@ int32_t AUDCreateSoundMP3(const std::string &s, const bool music, const bool LOO
         VSError error = f.OpenReadOnly(s.c_str(), SoundFile);
         bool shared = (error == Shared);
         std::string nam(s);
-        ALuint *mp3buf = NULL;
+        ALuint *mp3buf = nullptr;
         std::string hashname;
         if (!music)
         {
@@ -680,7 +680,7 @@ int32_t AUDCreateSoundMP3(const std::string &s, const bool music, const bool LOO
 #ifdef _WIN32
         return -1;
 #endif
-        if (mp3buf == NULL)
+        if (mp3buf == nullptr)
         {
             char *data = new char[f.Size()];
             f.Read(data, f.Size());

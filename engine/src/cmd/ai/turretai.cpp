@@ -35,7 +35,7 @@ void TurretAI::Execute()
             range = 1;
             mrange = 1; //not much
         }
-        for (un_iter i = parent->getSubUnits(); (gun = *i) != NULL; ++i)
+        for (un_iter i = parent->getSubUnits(); (gun = *i) != nullptr; ++i)
         {
             (*i)->getAverageGunSpeed(tspeed, trange, tmrange);
             if (trange > range)
@@ -66,7 +66,7 @@ void TurretAI::Execute()
             float dot = R.Dot(Pos.Cast());
             int neu = FactionUtil::GetNeutralFaction();
             int upg = FactionUtil::GetUpgradeFaction();
-            bool isplayerstarship = _Universe->isPlayerStarshipVoid(parent->owner) != NULL;
+            bool isplayerstarship = _Universe->isPlayerStarshipVoid(parent->owner) != nullptr;
 
             bool shouldfire =
                 ((mag - targ->rSize() - parent->rSize() < range && dot > dot_cutoff) && (isplayerstarship == false || targ->faction == upg || (isplayerstarship && (targ->getRelation((Unit *)parent->owner) < 0 /*now that it is a player, we know it's dereferencable*/
@@ -79,7 +79,7 @@ void TurretAI::Execute()
             hadFired = shouldfire;
         }
         if (targ->hull < 0)
-            parent->Target(NULL);
+            parent->Target(nullptr);
     }
     else if (hadFired && parent->GetNumMounts() > 0)
     {

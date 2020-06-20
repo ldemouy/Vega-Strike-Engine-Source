@@ -98,5 +98,5 @@ void Mission::BriefingUpdate() {}
 void Mission::DirectorBenchmark() {}
 varInst *Mission::call_briefing(missionNode *node, int mode)
 {
-    return NULL;
+    return nullptr;
 }

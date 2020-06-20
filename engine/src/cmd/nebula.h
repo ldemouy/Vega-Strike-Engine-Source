@@ -7,7 +7,7 @@ class GameNebula : public GameUnit<Nebula>
 {
 protected:
     /// constructor only to be called by UnitFactory
-    GameNebula(const char *unitfile, bool SubU, int faction, Flightgroup *fg = NULL, int fg_snumber = 0);
+    GameNebula(const char *unitfile, bool SubU, int faction, Flightgroup *fg = nullptr, int fg_snumber = 0);
 
     friend class UnitFactory;
 
@@ -19,7 +19,7 @@ public:
                                 const Matrix &transmat,
                                 const Vector &CumulativeVelocity,
                                 bool ResolveLast,
-                                UnitCollection *uc = NULL);
+                                UnitCollection *uc = nullptr);
     void SetFogState();
     void PutInsideCam(int);
 

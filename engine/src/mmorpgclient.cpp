@@ -50,12 +50,12 @@ void mmoc::connectTo(const char *address_in, const char *port_in)
     //sockaddr_in m_addr;
     char *address = (char *)address_in;
     char *port = (char *)port_in;
-    if (address == NULL)
+    if (address == nullptr)
     {
         CommandInterpretor->conoutf("Need a host at least, a host and port at most!");
         return;
     }
-    if (port == NULL)
+    if (port == nullptr)
         port = "5555";
     std::string test;
     test.append(address);
@@ -70,7 +70,7 @@ void mmoc::connectTo(const char *address_in, const char *port_in)
         return;
     }
     //hostent *server;  // Resolve name
-    //if ((server = gethostbyname(address)) == NULL) {
+    //if ((server = gethostbyname(address)) == nullptr) {
     //CommandInterpretor->conoutf("Error, couldn't find host");
     //strerror() will not work for gethostbyname() and hstrerror()
     //is supposedly obsolete
@@ -117,7 +117,7 @@ void mmoc::ParseRemoteInput(char *buf)
 {
     //{{{ Main parser
     //add  binary modes here.
-    if (buf != NULL)
+    if (buf != nullptr)
         start.append(buf);
     size_t teststart;
     if ((teststart = start.find("\n")) < std::string::npos)
@@ -195,10 +195,10 @@ void mmoc::ParseRemoteInput(char *buf)
     {
         size_t asdf;
         while ((asdf = start.find("\n")) < std::string::npos)
-            ParseRemoteInput(NULL);
+            ParseRemoteInput(nullptr);
         //if(start.size() > 0 ) {
         //start.append("\n\r");
-        //ParseRemoteInput(NULL);
+        //ParseRemoteInput(nullptr);
         //}
     }
 } //}}}

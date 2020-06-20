@@ -45,7 +45,7 @@
 
 varInst *Mission::call_omap(missionNode *node, int mode)
 {
-    varInst *viret = NULL;
+    varInst *viret = nullptr;
     if (mode == SCRIPT_PARSE)
     {
         string cmd = node->attr_value("name");
@@ -157,16 +157,16 @@ varInst *Mission::call_omap(missionNode *node, int mode)
         return viret;
     } //else (objects)
 
-    return NULL; //never reach
+    return nullptr; //never reach
 }
 
 omap_t *Mission::getOMapObject(missionNode *node, int mode, varInst *ovi)
 {
-    omap_t *my_object = NULL;
+    omap_t *my_object = nullptr;
     if (mode == SCRIPT_RUN)
     {
         my_object = (omap_t *)ovi->object;
-        if (my_object == NULL)
+        if (my_object == nullptr)
         {
             fatalError(node, mode, "omap: no object");
             assert(0);

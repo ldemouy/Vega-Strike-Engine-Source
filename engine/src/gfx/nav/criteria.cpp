@@ -68,13 +68,13 @@ void CriteriaRoot::replaceChild(CriteriaNode *child, CriteriaNode *replacement)
 
 CriteriaNode *CriteriaRoot::unhook()
 {
-    return NULL;
+    return nullptr;
 }
 
 CriteriaNode *CriteriaRoot::unhook(CriteriaNode *child)
 {
     assert(child == m_child);
-    m_child = NULL;
+    m_child = nullptr;
     return child;
 }
 
@@ -88,7 +88,7 @@ vector<CriteriaNode *> CriteriaRoot::getChildren() const
 
 CriteriaNode *CriteriaRoot::clone() const
 {
-    CriteriaNode *cloned_child = NULL;
+    CriteriaNode *cloned_child = nullptr;
     if (m_child)
         cloned_child = m_child->clone();
     CriteriaRoot *temp = new CriteriaRoot(cloned_child);
@@ -102,7 +102,7 @@ void CriteriaRoot::setChild(CriteriaNode *node)
         m_child->setParent(this);
 }
 
-CriteriaRoot::CriteriaRoot(CriteriaNode *child) : CriteriaParent(NULL), m_child(child)
+CriteriaRoot::CriteriaRoot(CriteriaNode *child) : CriteriaParent(nullptr), m_child(child)
 {
     if (m_child)
         m_child->setParent(this);
@@ -118,14 +118,14 @@ CriteriaRoot::~CriteriaRoot()
 
 bool CriteriaNot::isDestination(unsigned system) const
 {
-    assert(m_child != NULL);
+    assert(m_child != nullptr);
 
     return !(m_child->isDestination(system));
 }
 
 string CriteriaNot::getDescription() const
 {
-    assert(m_child != NULL);
+    assert(m_child != nullptr);
 
     string temp = "NOT(";
     temp += m_child->getDescription();
@@ -148,7 +148,7 @@ CriteriaNode *CriteriaNot::unhook()
 {
     m_child->setParent(getParent());
     getParent()->replaceChild(this, m_child);
-    m_child = NULL;
+    m_child = nullptr;
     return this;
 }
 
@@ -175,7 +175,7 @@ CriteriaNode *CriteriaNot::clone() const
 
 CriteriaNot::CriteriaNot(CriteriaNode *child) : CriteriaParent()
 {
-    assert(child != NULL);
+    assert(child != nullptr);
     setParent(child->getParent());
     m_child = child;
     if (child->getParent())
@@ -193,8 +193,8 @@ CriteriaNot::~CriteriaNot()
 
 CriteriaBinaryOperator::CriteriaBinaryOperator(CriteriaNode *child, CriteriaNode *newNode) : CriteriaParent(child->getParent())
 {
-    assert(child != NULL);
-    assert(newNode != NULL);
+    assert(child != nullptr);
+    assert(newNode != nullptr);
     m_left = child;
     m_right = newNode;
     if (child->getParent())
@@ -216,13 +216,13 @@ CriteriaNode *CriteriaBinaryOperator::unhook(CriteriaNode *child)
     {
         m_right->setParent(getParent());
         getParent()->replaceChild(this, m_right);
-        m_right = NULL;
+        m_right = nullptr;
     }
     else
     {
         m_left->setParent(getParent());
         getParent()->replaceChild(this, m_left);
-        m_left = NULL;
+        m_left = nullptr;
     }
     return this;
 }
@@ -258,16 +258,16 @@ void CriteriaBinaryOperator::replaceChild(CriteriaNode *child, CriteriaNode *rep
 
 bool CriteriaAnd::isDestination(unsigned system) const
 {
-    assert(m_left != NULL);
-    assert(m_right != NULL);
+    assert(m_left != nullptr);
+    assert(m_right != nullptr);
 
     return m_left->isDestination(system) && m_right->isDestination(system);
 }
 
 string CriteriaAnd::getDescription() const
 {
-    assert(m_left != NULL);
-    assert(m_right != NULL);
+    assert(m_left != nullptr);
+    assert(m_right != nullptr);
 
     string temp = "(";
     temp += m_left->getDescription();
@@ -298,16 +298,16 @@ CriteriaNode *CriteriaAnd::clone() const
 
 bool CriteriaOr::isDestination(unsigned system) const
 {
-    assert(m_left != NULL);
-    assert(m_right != NULL);
+    assert(m_left != nullptr);
+    assert(m_right != nullptr);
 
     return m_left->isDestination(system) || m_right->isDestination(system);
 }
 
 string CriteriaOr::getDescription() const
 {
-    assert(m_left != NULL);
-    assert(m_right != NULL);
+    assert(m_left != nullptr);
+    assert(m_right != nullptr);
 
     string temp = "(";
     temp += m_left->getDescription();
@@ -387,7 +387,7 @@ string CriteriaContains::getText() const
 
 CriteriaNode *CriteriaContains::clone() const
 {
-    return new CriteriaContains(m_value, NULL);
+    return new CriteriaContains(m_value, nullptr);
 }
 
 /////////////////////////////////////////////////////////////////
@@ -417,7 +417,7 @@ string CriteriaOwnedBy::getText() const
 
 CriteriaNode *CriteriaOwnedBy::clone() const
 {
-    return new CriteriaOwnedBy(m_value, NULL);
+    return new CriteriaOwnedBy(m_value, nullptr);
 }
 
 /////////////////////////////////////////////////////////////////
@@ -448,5 +448,5 @@ string CriteriaSector::getText() const
 
 CriteriaNode *CriteriaSector::clone() const
 {
-    return new CriteriaSector(m_value, NULL);
+    return new CriteriaSector(m_value, nullptr);
 }

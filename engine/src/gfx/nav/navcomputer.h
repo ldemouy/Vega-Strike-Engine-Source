@@ -43,7 +43,7 @@ public:
         LIST = 0,                          //
         EDIT,                              //
         DISPLAY_MODE_COUNT,                //Number of display modes.
-        NULL_DISPLAY = DISPLAY_MODE_COUNT, //No display.
+        nullptr_DISPLAY = DISPLAY_MODE_COUNT, //No display.
     };
 
     enum SelectorMode
@@ -52,7 +52,7 @@ public:
         CRITERIA,                            //
         CHAIN,                               //
         SELECTOR_MODE_COUNT,                 //Number of display modes.
-        NULL_SELECTOR = SELECTOR_MODE_COUNT, //No display.
+        nullptr_SELECTOR = SELECTOR_MODE_COUNT, //No display.
     };
 
     //Set up the window and get everything ready.
@@ -143,7 +143,7 @@ protected:
     void loadCriteriaLister();
     void loadCriteriaPickerCell(SimplePicker *picker, ValuedPickerCell<CriteriaNode *> *parent, CriteriaNode *node);
     void loadAbsoluteButton();
-    bool setCurrentNode(PathNode *source = NULL);
+    bool setCurrentNode(PathNode *source = nullptr);
     void updateDescription();
     void updateNodeDescription();
 

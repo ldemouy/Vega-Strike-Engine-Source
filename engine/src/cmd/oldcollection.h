@@ -36,11 +36,11 @@ private:
     } * u;
     ///Destroys the list until init is called. Functions will segfault.
     void destr();
-    ///Initializes the list so that there are 2 empty nodes (u and u->next)  NULL unit terminates this list.
+    ///Initializes the list so that there are 2 empty nodes (u and u->next)  nullptr unit terminates this list.
     void init()
     {
-        u = new UnitListNode(NULL);
-        u->next = new UnitListNode(NULL, new UnitListNode(NULL));
+        u = new UnitListNode(nullptr);
+        u->next = new UnitListNode(nullptr, new UnitListNode(nullptr));
     }
 
 public:
@@ -62,11 +62,11 @@ public:
     private:
         ///the position in the list
         UnitListNode *pos;
-        ///Finds the next unit (or NULL) that isn't Killed()
+        ///Finds the next unit (or nullptr) that isn't Killed()
         void GetNextValidUnit();
 
     public:
-        UnitIterator() : pos(NULL) {}
+        UnitIterator() : pos(nullptr) {}
         ///Creates this unit iterator
         UnitIterator(UnitListNode *start) : pos(start)
         {
@@ -80,12 +80,12 @@ public:
         }
         ~UnitIterator()
         {
-            pos = NULL;
+            pos = nullptr;
         }
 
         bool isDone() const
         {
-            return pos->next->unit == NULL;
+            return pos->next->unit == nullptr;
         }
         ///removes something after pos.  eg the first valid unit. or current()
         void remove();
@@ -97,7 +97,7 @@ public:
         }
         /// inserts after current
         void postinsert(Unit *unit);
-        ///returns the unit pos is pointing at or NULL if all dead or end of list.
+        ///returns the unit pos is pointing at or nullptr if all dead or end of list.
         Unit *current()
         {
             return pos->next->unit;
@@ -136,7 +136,7 @@ public:
         void GetNextValidUnit();
 
     public:
-        ConstIterator() : pos(NULL) {}
+        ConstIterator() : pos(nullptr) {}
         ConstIterator(const ConstIterator &orig) : pos(orig.pos) {}
         ConstIterator(const UnitListNode *start) : pos(start)
         {
@@ -149,7 +149,7 @@ public:
         }
         ~ConstIterator()
         {
-            pos = NULL;
+            pos = nullptr;
         }
         const Unit *next()
         {
@@ -162,7 +162,7 @@ public:
         }
         bool isDone() const
         {
-            return current() == NULL;
+            return current() == nullptr;
         }
         void advance()
         {
@@ -192,12 +192,12 @@ public:
         const UnitListNode *pos;
 
     public:
-        ConstFastIterator() : pos(NULL) {}
+        ConstFastIterator() : pos(nullptr) {}
         ConstFastIterator(const ConstFastIterator &orig) : pos(orig.pos) {}
         ConstFastIterator(const UnitListNode *start) : pos(start) {}
         ~ConstFastIterator()
         {
-            pos = NULL;
+            pos = nullptr;
         }
         const Unit *current() const
         {
@@ -229,7 +229,7 @@ public:
         }
         bool isDone() const
         {
-            return pos->next->unit == NULL;
+            return pos->next->unit == nullptr;
         }
 
     private:
@@ -251,12 +251,12 @@ public:
         }
         /// inserts after current
         void postinsert(Unit *unit);
-        FastIterator() : pos(NULL) {}
+        FastIterator() : pos(nullptr) {}
         FastIterator(const FastIterator &orig) : pos(orig.pos) {}
         FastIterator(UnitListNode *start) : pos(start) {}
         ~FastIterator()
         {
-            pos = NULL;
+            pos = nullptr;
         }
         Unit *current()
         {
@@ -288,7 +288,7 @@ public:
         }
         bool isDone() const
         {
-            return pos->next->unit == NULL;
+            return pos->next->unit == nullptr;
         }
 
     private:
@@ -302,7 +302,7 @@ public:
     //could be empty and this returns false...but usually correct...never has units when it returns true
     bool empty() const
     {
-        return u->next->unit == NULL;
+        return u->next->unit == nullptr;
     }
     UnitIterator createIterator()
     {
@@ -322,7 +322,7 @@ public:
     }
     void insert_unique(Unit *un)
     {
-        for (UnitListNode *i = u->next; i != NULL; i = i->next)
+        for (UnitListNode *i = u->next; i != nullptr; i = i->next)
             if (i->unit == un)
                 return;
         prepend(un);

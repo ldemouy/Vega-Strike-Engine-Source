@@ -141,7 +141,7 @@ public:
     //splits up input by line using strsep() (renamed for microsoft windows compatibility)
     bool execCommand(std::string *string, bool isDown);
     bool addMenu(menu *menu2add);
-    bool addMenuItem(mItem *mitem2add, menu * = NULL);
+    bool addMenuItem(mItem *mitem2add, menu * = nullptr);
     //the args added at addMenu are appended when the
     //menuitem is called
     bool callMenu(char *name, char *args, std::string &s2manip);

@@ -134,7 +134,7 @@ struct XMLnode
     vector<XMLnode> subnodes;
     XMLnode()
     {
-        up = NULL;
+        up = nullptr;
     }
     XMLnode(const std::string &val, XMLnode *newup)
     {

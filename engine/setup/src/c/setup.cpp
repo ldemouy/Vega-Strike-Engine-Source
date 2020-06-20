@@ -91,15 +91,15 @@ int WINAPI WinMain( HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int n
     char **argv  = &argv0;
     int    argc  = 0;
     strcpy( argv0, origpath );
-    GetModuleFileName( NULL, argv0, 65534 );
+    GetModuleFileName( nullptr, argv0, 65534 );
 #else
 int main( int argc, char *argv[] )
 {
 #endif
-    CONFIG.data_path = NULL;
-    CONFIG.config_file = NULL;
-    CONFIG.program_name = NULL;
-    CONFIG.temp_file = NULL;
+    CONFIG.data_path = nullptr;
+    CONFIG.config_file = nullptr;
+    CONFIG.program_name = nullptr;
+    CONFIG.temp_file = nullptr;
     
     bogus_str = getcwd( origpath, 65535 );
     origpath[65535] = 0;

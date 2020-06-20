@@ -45,17 +45,17 @@ enum XML_Content_Quant
 };
 
 /* If type == XML_CTYPE_EMPTY or XML_CTYPE_ANY, then quant will be
- *  XML_CQUANT_NONE, and the other fields will be zero or NULL.
+ *  XML_CQUANT_NONE, and the other fields will be zero or nullptr.
  *  If type == XML_CTYPE_MIXED, then quant will be NONE or REP and
  *  numchildren will contain number of elements that may be mixed in
  *  and children point to an array of XML_Content cells that will be
  *  all of XML_CTYPE_NAME type with no quantification.
  *
  *  If type == XML_CTYPE_NAME, then the name points to the name, and
- *  the numchildren field will be zero and children will be NULL. The
+ *  the numchildren field will be zero and children will be nullptr. The
  *  quant fields indicates any quantifiers placed on the name.
  *
- *  CHOICE and SEQ will have name NULL, the number of children in
+ *  CHOICE and SEQ will have name nullptr, the number of children in
  *  numchildren and children will point, recursively, to an array
  *  of XML_Content cells.
  *
@@ -88,10 +88,10 @@ void XMLPARSEAPI XML_SetElementDeclHandler( XML_Parser parser, XML_ElementDeclHa
  *  The Attlist declaration handler is called for *each* attribute. So
  *  a single Attlist declaration with multiple attributes declared will
  *  generate multiple calls to this handler. The "default" parameter
- *  may be NULL in the case of the "#IMPLIED" or "#REQUIRED" keyword.
+ *  may be nullptr in the case of the "#IMPLIED" or "#REQUIRED" keyword.
  *  The "isrequired" parameter will be true and the default value will
- *  be NULL in the case of "#REQUIRED". If "isrequired" is true and
- *  default is non-NULL, then this is a "#FIXED" default.
+ *  be nullptr in the case of "#REQUIRED". If "isrequired" is true and
+ *  default is non-nullptr, then this is a "#FIXED" default.
  */
 
 typedef void (*XML_AttlistDeclHandler)( void *userData,
@@ -143,8 +143,8 @@ XML_Parser XMLPARSEAPI XML_ParserCreate( const XML_Char *encoding );
 XML_Parser XMLPARSEAPI XML_ParserCreateNS( const XML_Char *encoding, XML_Char namespaceSeparator );
 
 /* Constructs a new parser using the memory management suit referred to
- *  by memsuite. If memsuite is NULL, then use the standard library memory
- *  suite. If namespaceSeparator is non-NULL it creates a parser with
+ *  by memsuite. If memsuite is nullptr, then use the standard library memory
+ *  suite. If namespaceSeparator is non-nullptr it creates a parser with
  *  namespace processing as described above. The character pointed at
  *  will serve as the namespace separator.
  *

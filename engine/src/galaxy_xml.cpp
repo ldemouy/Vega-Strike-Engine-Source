@@ -165,7 +165,7 @@ SGalaxy::~SGalaxy()
 {
     if (subheirarchy)
         delete subheirarchy;
-    subheirarchy = NULL;
+    subheirarchy = nullptr;
 }
 SGalaxy &SGalaxy::operator=(const SGalaxy &g)
 {
@@ -181,7 +181,7 @@ SGalaxy &SGalaxy::operator=(const SGalaxy &g)
     else if (subheirarchy)
     {
         delete subheirarchy;
-        subheirarchy = NULL;
+        subheirarchy = nullptr;
     }
     data = g.data;
     return *this;
@@ -194,7 +194,7 @@ SGalaxy::SGalaxy(const SGalaxy &g) : data(g.data)
     }
     else
     {
-        subheirarchy = NULL;
+        subheirarchy = nullptr;
     }
 }
 void SGalaxy::processSystem(const string &sys, const QVector &coords)
@@ -261,7 +261,7 @@ void SGalaxy::writeSector(VSFileSystem::VSFile &f, int32_t tabs, const string &s
 void SGalaxy::writeGalaxy(VSFile &f) const
 {
     f.Fprintf("<galaxy>\n<systems>\n");
-    writeSector(f, 1, "sector", NULL);
+    writeSector(f, 1, "sector", nullptr);
     f.Fprintf("</systems>\n");
     f.Fprintf("</galaxy>\n");
 }
@@ -274,7 +274,7 @@ void Galaxy::writeGalaxy(VSFile &f) const
     if (planet_types)
     {
         f.Fprintf("<planets>\n");
-        planet_types->writeSector(f, 1, "planet", NULL);
+        planet_types->writeSector(f, 1, "planet", nullptr);
         f.Fprintf("</planets>\n");
     }
     f.Fprintf("</galaxy>\n");
@@ -283,7 +283,7 @@ void Galaxy::writeGalaxy(VSFile &f) const
 SGalaxy::SGalaxy(const char *configfile)
 {
     using namespace VSFileSystem;
-    subheirarchy = NULL;
+    subheirarchy = nullptr;
     VSFile f;
     VSError err = f.OpenReadOnly(configfile, UniverseFile);
     if (err <= Ok)
@@ -291,7 +291,7 @@ SGalaxy::SGalaxy(const char *configfile)
         GalaxyXML::XML x;
         x.g = this;
 
-        XML_Parser parser = XML_ParserCreate(NULL);
+        XML_Parser parser = XML_ParserCreate(nullptr);
         XML_SetUserData(parser, &x);
         XML_SetElementHandler(parser, &GalaxyXML::beginElement, &GalaxyXML::endElement);
         XML_Parse(parser, (f.ReadFull()).c_str(), f.Size(), 1);
@@ -527,14 +527,14 @@ SGalaxy *Galaxy::getInitialPlanetTypes()
         SubHeirarchy::iterator iter = subheirarchy->find("<planets>");
         if (iter == subheirarchy->end())
         {
-            return NULL;
+            return nullptr;
         }
         else
         {
             return &(*iter).second;
         }
     }
-    return NULL;
+    return nullptr;
 }
 void Galaxy::setupPlanetTypeMaps()
 {

@@ -108,18 +108,18 @@ void GameUnit<UnitType>::Split(int level)
             {
                 PlaneNorm.Set(rand() - RAND_MAX / 2, rand() - RAND_MAX / 2, rand() - RAND_MAX / 2 + .5);
                 PlaneNorm.Normalize();
-                nw.push_back(NULL);
-                nw.push_back(NULL);
+                nw.push_back(nullptr);
+                nw.push_back(nullptr);
                 old[i]->Fork(nw[nw.size() - 2], nw.back(), PlaneNorm.i, PlaneNorm.j, PlaneNorm.k,
                              -PlaneNorm.Dot(old[i]->Position())); //splits somehow right down the middle.
                 delete old[i];
-                old[i] = NULL;
-                if (nw[nw.size() - 2] == NULL)
+                old[i] = nullptr;
+                if (nw[nw.size() - 2] == nullptr)
                 {
                     nw[nw.size() - 2] = nw.back();
                     nw.pop_back();
                 }
-                if (nw.back() == NULL)
+                if (nw.back() == nullptr)
                     nw.pop_back();
             }
             old = nw;
@@ -128,7 +128,7 @@ void GameUnit<UnitType>::Split(int level)
         for (size_t i = 0; i < old.size(); ++i)
             meshsizes.push_back(1);
     }
-    old.push_back(NULL); //push back shield
+    old.push_back(nullptr); //push back shield
     if (shield)
         delete shield;
     nm = old.size() - 1;
@@ -160,7 +160,7 @@ void GameUnit<UnitType>::Split(int level)
     }
     old.clear();
     this->meshdata.clear();
-    this->meshdata.push_back(NULL); //the shield
+    this->meshdata.push_back(nullptr); //the shield
     this->Mass *= game_options.debris_mass;
 }
 
@@ -246,7 +246,7 @@ extern void disableSubUnits(Unit *un);
 template <class UnitType>
 bool GameUnit<UnitType>::Explode(bool drawit, float timeit)
 {
-    if (this->pImage->pExplosion == NULL && this->pImage->timeexplode == 0)
+    if (this->pImage->pExplosion == nullptr && this->pImage->timeexplode == 0)
     {
         //no explosion in unit data file && explosions haven't started yet
 
@@ -274,11 +274,11 @@ bool GameUnit<UnitType>::Explode(bool drawit, float timeit)
         {
             _Universe->activeStarSystem()->AddMissileToQueue(new MissileEffect(this->Position(), this->MaxShieldVal(),
                                                                                0, this->ExplosionRadius() * game_options.explosion_damage_center,
-                                                                               this->ExplosionRadius() * game_options.explosion_damage_center * game_options.explosion_damage_edge, NULL));
+                                                                               this->ExplosionRadius() * game_options.explosion_damage_center * game_options.explosion_damage_edge, nullptr));
         }
         QVector exploc = this->cumulative_transformation.position;
         bool sub = this->isSubUnit();
-        Unit *un = NULL;
+        Unit *un = nullptr;
         if (!sub)
             if ((un = _Universe->AccessCockpit(0)->GetParent()))
             {
@@ -354,7 +354,7 @@ bool GameUnit<UnitType>::Explode(bool drawit, float timeit)
         if (this->pImage->pExplosion->Done() && timealldone)
         {
             delete this->pImage->pExplosion;
-            this->pImage->pExplosion = NULL;
+            this->pImage->pExplosion = nullptr;
         }
         if (drawit && this->pImage->pExplosion)
             this->pImage->pExplosion->Draw(); //puts on draw queue... please don't delete

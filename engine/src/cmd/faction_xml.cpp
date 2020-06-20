@@ -292,7 +292,7 @@ void Faction::LoadXML(const char *filename, char *xmlbuffer, int buflength)
     unitlevel = 0;
     VSFile f;
     VSError err;
-    if (buflength == 0 || xmlbuffer == NULL)
+    if (buflength == 0 || xmlbuffer == nullptr)
     {
         cout << "FactionXML:LoadXML " << filename << endl;
         err = f.OpenReadOnly(filename, UnknownFile);
@@ -302,10 +302,10 @@ void Faction::LoadXML(const char *filename, char *xmlbuffer, int buflength)
             assert(0);
         }
     }
-    XML_Parser parser = XML_ParserCreate(NULL);
-    XML_SetUserData(parser, NULL);
+    XML_Parser parser = XML_ParserCreate(nullptr);
+    XML_SetUserData(parser, nullptr);
     XML_SetElementHandler(parser, &Faction::beginElement, &Faction::endElement);
-    if (buflength != 0 && xmlbuffer != NULL)
+    if (buflength != 0 && xmlbuffer != nullptr)
         XML_Parse(parser, xmlbuffer, buflength, 1);
     else
         XML_Parse(parser, (f.ReadFull()).c_str(), f.Size(), 1);
@@ -374,7 +374,7 @@ void Faction::LoadXML(const char *filename, char *xmlbuffer, int buflength)
             }
         }
     }
-    char *munull = NULL;
+    char *munull = nullptr;
     cache.clear();
     FactionUtil::LoadSerializedFaction(munull);
 }

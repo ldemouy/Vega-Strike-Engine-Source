@@ -192,7 +192,7 @@ static size_t bogus_sizet; //added by chuck_starchaser to squash some warnings
 
 bool CPK3::CheckPK3(FILE *f)
 {
-    if (f == NULL)
+    if (f == nullptr)
         return false;
     TZipDirHeader dh;
 
@@ -288,7 +288,7 @@ bool CPK3::ExtractFile(const char *lp_name)
 bool CPK3::ExtractFile(const char *lp_name, const char *new_filename)
 {
     //open file tp write data
-    FILE *new_f = NULL;
+    FILE *new_f = nullptr;
     int size = -1;
 
     char *data_content = ExtractFile(lp_name, &size);
@@ -346,7 +346,7 @@ char *CPK3::ExtractFile(int index, int *file_size)
     if (!buffer)
     {
         cerr << "Unable to allocate memory, probably to low memory !!!" << endl;
-        return NULL;
+        return nullptr;
     }
     else
     {
@@ -379,14 +379,14 @@ char *CPK3::ExtractFile(const char *lpname, int *file_size)
     }
     //if the file isn't in the archive
     if (index == -1)
-        return (NULL);
+        return (nullptr);
     int flength = GetFileLen(index);
 
     buffer = new char[flength];
     if (!buffer)
     {
         printf("Unable to allocate memory, probably to low memory !!!\n");
-        return NULL;
+        return nullptr;
     }
     else
     {
@@ -424,7 +424,7 @@ void CPK3::PrintFileContent()
 
 void CPK3::GetFilename(int i, char *pszDest) const
 {
-    if (pszDest != NULL)
+    if (pszDest != nullptr)
     {
         if (i < 0 || i >= m_nEntries)
         {
@@ -448,11 +448,11 @@ int CPK3::GetFileLen(int i) const
 
 bool CPK3::ReadFile(int i, void *pBuf)
 {
-    if (pBuf == NULL || i < 0 || i >= m_nEntries)
+    if (pBuf == nullptr || i < 0 || i >= m_nEntries)
     {
         cerr << "PK3ERROR : ";
-        if (pBuf == NULL)
-            cerr << " pBuf is NULL !!!" << endl;
+        if (pBuf == nullptr)
+            cerr << " pBuf is nullptr !!!" << endl;
         else if (i < 0)
             cerr << " Bad index < 0 !!!" << endl;
         else if (i >= m_nEntries)

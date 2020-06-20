@@ -173,7 +173,7 @@ namespace UniverseUtil
         else if (!curSplash && !GetSplashScreen())
         {
             static std::vector<std::string> s = ParseDestinations(game_options.splash_screen);
-            int snum = time(NULL) % s.size();
+            int snum = time(nullptr) % s.size();
             curSplash = new Animation(s[snum].c_str(), 0);
         }
         SetStarSystemLoading(true);

@@ -94,9 +94,9 @@ public:
         STARGET = 2,
         SSELF = 4
     };
-    ///The default constructor setting everything to NULL and no dependency on order
+    ///The default constructor setting everything to nullptr and no dependency on order
     Order()
-        : parent(NULL),
+        : parent(nullptr),
           type(0),
           subtype(0),
           done(false),
@@ -104,7 +104,7 @@ public:
               VSCONSTRUCT1('O')}
           ///The constructor that specifies what order dependencies this order has
           Order(int type, int subtype)
-        : parent(NULL),
+        : parent(nullptr),
           type(type),
           subtype(subtype),
           done(false),
@@ -160,16 +160,16 @@ public:
     virtual void ProcessCommMessage(class CommunicationMessage &c);
     ///responds (or does not) to certain messages in the message queue
     virtual void ProcessCommunicationMessages(float CommRepsonseTime, bool RemoveMessageProcessed);
-    /// return pointer to order or NULL if not found
+    /// return pointer to order or nullptr if not found
     Order *findOrder(Order *ord);
     /// erase that order from the list
     void eraseOrder(Order *ord);
     /// enqueue order as first order
     Order *EnqueueOrderFirst(Order *ord);
-    /// returns the orderlist (NULL for orders that haven't got any)
+    /// returns the orderlist (nullptr for orders that haven't got any)
     virtual olist_t *getOrderList()
     {
-        return NULL;
+        return nullptr;
     }
     virtual void AdjustRelationTo(Unit *un, float factor);
 

@@ -38,7 +38,7 @@
 
 #define MAX_RECENT_HISTORY "5"
 
-Music *muzak = NULL;
+Music *muzak = nullptr;
 int muzak_count = 0;
 int muzak_cross_index = 0;
 
@@ -67,7 +67,7 @@ Music::Music(Unit *parent) : random(false), p(parent), song(-1), thread_initiali
 {
     loopsleft = 0;
     socketw = socketr = -1;
-    music_load_info = NULL;
+    music_load_info = nullptr;
     music_loaded = false;
     music_loading = false;
     killthread = 0;
@@ -78,7 +78,7 @@ Music::Music(Unit *parent) : random(false), p(parent), song(-1), thread_initiali
 #endif
 
 #ifdef _WIN32
-    musicinfo_mutex = CreateMutex(NULL, TRUE, NULL);
+    musicinfo_mutex = CreateMutex(nullptr, TRUE, nullptr);
 #else //_WIN32
 #ifdef ERRORCHECK_MUTEX
     pthread_mutexattr_t checkme;
@@ -86,7 +86,7 @@ Music::Music(Unit *parent) : random(false), p(parent), song(-1), thread_initiali
     pthread_mutexattr_settype(&checkme, PTHREAD_MUTEX_ERRORCHECK);
     checkerr(pthread_mutex_init(&musicinfo_mutex, &checkme));
 #else  //ERRORCHECK_MUTEX
-    checkerr(pthread_mutex_init(&musicinfo_mutex, NULL));
+    checkerr(pthread_mutex_init(&musicinfo_mutex, nullptr));
 #endif //!ERRORCHECK_MUTEX
 
     //Lock it immediately, since the loader will want to wait for its first data upon creation.
@@ -229,7 +229,7 @@ int Music::SelectTracks(int layer)
             return whichsong;
         }
     }
-    if (_Universe && _Universe->activeStarSystem() != NULL && _Universe->numPlayers())
+    if (_Universe && _Universe->activeStarSystem() != nullptr && _Universe->numPlayers())
     {
         CompileRunPython(dj_script);
     }
@@ -282,7 +282,7 @@ namespace Muzak
             bool docacheme = cachable_songs.find(songname) != std::string::npos;
             if (foundcache == false && docacheme)
             {
-                me->music_load_info->wave = NULL;
+                me->music_load_info->wave = nullptr;
                 cachedSongs[songname] = *me->music_load_info;
                 wherecache = cachedSongs.find(songname);
             }
@@ -315,7 +315,7 @@ namespace Muzak
         }
 
         me->threadalive = 0;
-        return NULL;
+        return nullptr;
     }
 } // namespace Muzak
 
@@ -334,12 +334,12 @@ void Music::_LoadLastSongAsync()
 
     std::map<std::string, AUDSoundProperties>::iterator where = Muzak::cachedSongs.find(song);
     if (where != Muzak::cachedSongs.end())
-        if (where->second.wave != NULL)
+        if (where->second.wave != nullptr)
         {
             int source = AUDBufferSound(&where->second, true);
             AUDStreamingSound(source);
 
-            music_load_info->wave = NULL;
+            music_load_info->wave = nullptr;
             if (source != -1)
                 playingSource.push_back(source);
             if (playingSource.size() == 1)
@@ -396,7 +396,7 @@ void Music::Listen()
                     int source = AUDBufferSound(music_load_info, true);
                     if (freeWav)
                         free(music_load_info->wave);
-                    music_load_info->wave = NULL;
+                    music_load_info->wave = nullptr;
                     if (source != -1)
                         playingSource.push_back(source);
                 }
@@ -490,13 +490,13 @@ void Music::_GotoSong(std::string mus)
         if (!thread_initialized)
         {
 #ifdef _WIN32
-            a_thread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)Muzak::readerThread, (PVOID)this, 0, NULL);
+            a_thread = CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE)Muzak::readerThread, (PVOID)this, 0, nullptr);
             if (a_thread)
                 thread_initialized = true;
             else
                 fprintf(stderr, "Error creating music load thread: %d\n", GetLastError());
 #else
-            int thread_create_ret = pthread_create(&a_thread, NULL, Muzak::readerThread, this);
+            int thread_create_ret = pthread_create(&a_thread, nullptr, Muzak::readerThread, this);
             if (thread_create_ret == 0)
                 thread_initialized = true;
             else
@@ -561,7 +561,7 @@ void Music::_SkipRandSong(int whichlist, int layer)
 {
     if (!game_options.Music)
         return;
-    if (this != NULL)
+    if (this != nullptr)
     {
         if (whichlist != NOLIST && whichlist >= 0 && whichlist < (int)playlist.size())
         {
@@ -709,7 +709,7 @@ void Music::CleanupMuzak()
     {
         //Multithreading issues... don't care to waste time here waiting to get the lock back.
         //Let the OS clean up this mess!
-        muzak = NULL;
+        muzak = nullptr;
         muzak_count = 0;
     }
 }
@@ -718,7 +718,7 @@ void Music::MuzakCycle()
 {
     if (muzak)
     {
-        if (BaseInterface::CurrentBase != NULL)
+        if (BaseInterface::CurrentBase != nullptr)
         {
             if (!BaseInterface::CurrentBase->isDJEnabled())
             {

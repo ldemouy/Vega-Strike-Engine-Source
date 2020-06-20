@@ -44,7 +44,7 @@ namespace UnitUtil
             if (other_unit)
             {
                 Animation *ani = other_unit->pilot->getCommFace(other_unit, mood, sex);
-                if (NULL != ani)
+                if (nullptr != ani)
                     tmp->SetCommAnimation(ani, other_unit);
             }
         }
@@ -59,12 +59,12 @@ namespace UnitUtil
         {
             static Hashtable<std::string, Animation, 63> AniHashTable;
             Animation *vid = AniHashTable.Get(anim);
-            if (NULL == vid)
+            if (nullptr == vid)
             {
                 vid = new Animation(anim.c_str());
                 AniHashTable.Put(anim, vid);
             }
-            tmp->SetCommAnimation(vid, NULL);
+            tmp->SetCommAnimation(vid, nullptr);
             return true;
         }
         else

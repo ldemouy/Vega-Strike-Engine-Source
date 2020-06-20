@@ -95,7 +95,7 @@ public:
         LOSSLIST,
         MAXLIST
     };
-    Music(Unit *parent = NULL);
+    Music(Unit *parent = nullptr);
     int loopsleft;
     void Listen();
     ~Music();

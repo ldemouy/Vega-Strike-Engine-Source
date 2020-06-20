@@ -112,7 +112,7 @@ void BaseInterface::Room::Comp::EndXML( FILE *fp )
     begintag( fp, "Comp", 2 );
     Link::EndXML( fp );
     for (int i = 0; i < modes.size(); i++) {
-        char *mode = NULL;
+        char *mode = nullptr;
         switch (modes[i])
         {
         case BaseComputer::CARGO:

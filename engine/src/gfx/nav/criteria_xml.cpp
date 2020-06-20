@@ -64,7 +64,7 @@ std::set<std::string> CriteriaContains::getPlanetTypesFromXML(const char *filena
         printf("CriteriaContains: file not found %s\n", filename);
         return textures;
     }
-    XML_Parser parser = XML_ParserCreate(NULL);
+    XML_Parser parser = XML_ParserCreate(nullptr);
     XML_SetUserData(parser, &textures);
     XML_SetElementHandler(parser, &CriteriaContains::beginElement, &CriteriaContains::endElement);
     XML_Parse(parser, (f.ReadFull()).c_str(), f.Size(), 1);

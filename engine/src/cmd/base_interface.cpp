@@ -154,7 +154,7 @@ BaseInterface::Room::BaseVSSprite::BaseVSSprite(const std::string &spritefile, c
 
 BaseInterface::Room::BaseVSSprite::~BaseVSSprite()
 {
-    if (soundsource.get() != NULL)
+    if (soundsource.get() != nullptr)
         BaseUtil::DestroyVideoSoundStream(soundsource, soundscene);
     spr.ClearTimeSource();
 }
@@ -206,7 +206,7 @@ void BaseInterface::Room::BaseVSMovie::SetMovie(const std::string &moviefile)
     new (&spr) VSSprite(AnimatedTexture::CreateVideoTexture(moviefile), x, y, w, h, 0, 0, true);
     spr.SetRotation(rot);
 
-    if (soundsource.get() != NULL)
+    if (soundsource.get() != nullptr)
         BaseUtil::DestroyVideoSoundStream(soundsource, soundscene);
     soundscene = "video";
     playing = false;
@@ -242,7 +242,7 @@ void BaseInterface::Room::BaseVSSprite::Draw(BaseInterface *base)
     GFXAlphaTest(ALWAYS, 0);
 
     // Play the associated source if it isn't playing
-    if (soundsource.get() != NULL)
+    if (soundsource.get() != nullptr)
     {
         if (!soundsource->isPlaying())
             soundsource->startPlaying();
@@ -251,7 +251,7 @@ void BaseInterface::Room::BaseVSSprite::Draw(BaseInterface *base)
 
 void BaseInterface::Room::BaseVSMovie::Draw(BaseInterface *base)
 {
-    if (soundsource.get() == NULL)
+    if (soundsource.get() == nullptr)
     {
         // If it's not playing, mark as playing, and reset the sprite's animation
         // (it's not automatic without a time source)
@@ -279,7 +279,7 @@ void BaseInterface::Room::BaseVSMovie::Draw(BaseInterface *base)
 
     BaseInterface::Room::BaseVSSprite::Draw(base);
 
-    if (soundsource.get() == NULL)
+    if (soundsource.get() == nullptr)
     {
         // If there is no sound source, and the sprite is an animated sprite, and
         // it's finished, then we must invoke the callback
@@ -293,7 +293,7 @@ void BaseInterface::Room::BaseVSMovie::Draw(BaseInterface *base)
 
 bool BaseInterface::Room::BaseVSSprite::isPlaying() const
 {
-    return soundsource.get() != NULL && soundsource->isPlaying();
+    return soundsource.get() != nullptr && soundsource->isPlaying();
 }
 
 void BaseInterface::Room::BaseShip::Draw(BaseInterface *base)
@@ -655,10 +655,10 @@ void BaseInterface::Room::BaseTalk::Draw(BaseInterface *base)
                                                          base->rooms[base->curroom]->objs.end(),
                                                          this);
         if (ind != base->rooms[base->curroom]->objs.end())
-            *ind = NULL;
+            *ind = nullptr;
         std::vector<BaseTalk *>::iterator ind2 = std::find(active_talks.begin(), active_talks.end(), this);
         if (ind2 != active_talks.end())
-            *ind2 = NULL;
+            *ind2 = nullptr;
         base->othtext.SetText("");
         delete this;
         return; //do not do ANYTHING with 'this' after the previous statement...
@@ -686,7 +686,7 @@ int BaseInterface::Room::MouseOver(BaseInterface *base, float x, float y)
     return -1;
 }
 
-BaseInterface *BaseInterface::CurrentBase = NULL;
+BaseInterface *BaseInterface::CurrentBase = nullptr;
 
 bool RefreshGUI(void)
 {
@@ -768,7 +768,7 @@ void BaseInterface::Room::Click(BaseInterface *base, float x, float y, int butto
             else
                 return;
 #ifdef _WIN32
-            int ret = MessageBox(NULL, str, "Input", MB_OKCANCEL);
+            int ret = MessageBox(nullptr, str, "Input", MB_OKCANCEL);
 #else
             printf("\n%s\n", str);
             int ret = 1;
@@ -819,7 +819,7 @@ void BaseInterface::Room::Click(BaseInterface *base, float x, float y, int butto
                     default:
 #ifdef _WIN32
                         VSFileSystem::vs_close(fp);
-                        MessageBox(NULL, "warning: invalid basemaker option", "Error", MB_OK);
+                        MessageBox(nullptr, "warning: invalid basemaker option", "Error", MB_OK);
 #endif
                         printf("warning: invalid basemaker option: %d", rmtyp);
                         return;
@@ -1164,7 +1164,7 @@ double compute_light_dot(Unit *base, Unit *un)
     StarSystem *ss = base->getStarSystem();
     double ret = -1;
     Unit *st;
-    Unit *base_owner = NULL;
+    Unit *base_owner = nullptr;
     if (ss)
     {
         _Universe->pushActiveStarSystem(ss);
@@ -1189,7 +1189,7 @@ double compute_light_dot(Unit *base, Unit *un)
                 else
                 {
                     un_iter ui = ((Planet *)st)->satellites.createIterator();
-                    Unit *ownz = NULL;
+                    Unit *ownz = nullptr;
                     for (; (ownz = *ui); ++ui)
                         if (ownz == base)
                             base_owner = st;
@@ -1201,7 +1201,7 @@ double compute_light_dot(Unit *base, Unit *un)
     {
         return 1;
     }
-    if (base_owner == NULL || base->isUnit() == PLANETPTR)
+    if (base_owner == nullptr || base->isUnit() == PLANETPTR)
         return ret;
     else
         return compute_light_dot(base_owner, un);
@@ -1294,7 +1294,7 @@ void TerminateCurrentBase(void)
     if (BaseInterface::CurrentBase)
     {
         BaseInterface::CurrentBase->Terminate();
-        BaseInterface::CurrentBase = NULL;
+        BaseInterface::CurrentBase = nullptr;
     }
 }
 
@@ -1342,7 +1342,7 @@ void BaseInterface::Terminate()
             vec.push_back(string());
             saveStringList(cpt, mission_key, vec);
         }
-        BaseInterface::CurrentBase = NULL;
+        BaseInterface::CurrentBase = nullptr;
         restore_main_loop();
         delete this;
     }
@@ -1368,8 +1368,8 @@ void BaseInterface::Room::Launch::Click(BaseInterface *base, float x, float y, i
         if ((playa && bas) && (auto_undock || (playa->name == "return_to_cockpit")))
         {
             playa->UnDock(bas);
-            CommunicationMessage c(bas, playa, NULL, 0);
-            c.SetCurrentState(c.fsm->GetUnDockNode(), NULL, 0);
+            CommunicationMessage c(bas, playa, nullptr, 0);
+            c.SetCurrentState(c.fsm->GetUnDockNode(), nullptr, 0);
             if (playa->getAIState())
                 playa->getAIState()->Communicate(c);
             abletodock(5);
@@ -1421,8 +1421,8 @@ void BaseInterface::Room::Eject::Click(BaseInterface *base, float x, float y, in
                 playa->SetVelocity(bas->Velocity * velmul + randyVector(-.25, .25).Cast());
             }
             playa->UnDock(bas);
-            CommunicationMessage c(bas, playa, NULL, 0);
-            c.SetCurrentState(c.fsm->GetUnDockNode(), NULL, 0);
+            CommunicationMessage c(bas, playa, nullptr, 0);
+            c.SetCurrentState(c.fsm->GetUnDockNode(), nullptr, 0);
             if (playa->getAIState())
                 playa->getAIState()->Communicate(c);
             abletodock(5);
@@ -1451,7 +1451,7 @@ void BaseInterface::Room::Talk::Click(BaseInterface *base, float x, float y, int
         if (index >= 0)
         {
             delete base->rooms[curroom]->objs[index];
-            base->rooms[curroom]->objs[index] = NULL;
+            base->rooms[curroom]->objs[index] = nullptr;
             index = -1;
             base->othtext.SetText("");
         }
@@ -1562,10 +1562,10 @@ struct BaseColor
 static void AnimationDraw()
 {
 #ifdef RENDER_FROM_TEXTURE
-    static StreamTexture T(512, 256, NEAREST, NULL);
+    static StreamTexture T(512, 256, NEAREST, nullptr);
     BaseColor(*data)[512] = reinterpret_cast<BaseColor(*)[512]>(T.Map());
     bool counter = false;
-    srand(time(NULL));
+    srand(time(nullptr));
     for (int i = 0; i < 256; ++i)
         for (int j = 0; j < 512; ++j)
         {
@@ -1656,7 +1656,7 @@ void BaseInterface::Draw()
     Unit *base = baseun.GetUnit();
     if (un && (!base))
     {
-        VSFileSystem::vs_fprintf(stderr, "Error: Base NULL");
+        VSFileSystem::vs_fprintf(stderr, "Error: Base nullptr");
         mission->msgcenter->add("game", "all", "[Computer] Docking unit destroyed. Emergency launch initiated.");
         for (size_t i = 0; i < un->pImage->dockedunits.size(); i++)
             if (un->pImage->dockedunits[i]->uc.GetUnit() == base)

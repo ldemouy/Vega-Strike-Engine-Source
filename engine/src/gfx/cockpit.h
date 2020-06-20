@@ -45,14 +45,14 @@ struct soundArray
     soundContainer *ptr;
     soundArray()
     {
-        ptr = NULL;
+        ptr = nullptr;
     }
     void deallocate()
     {
-        if (ptr != NULL)
+        if (ptr != nullptr)
         {
             delete[] ptr;
-            ptr = NULL;
+            ptr = nullptr;
         }
     }
     void allocate(int siz)

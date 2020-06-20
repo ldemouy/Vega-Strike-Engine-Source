@@ -18,7 +18,7 @@
 
 using std::string;
 using std::vector;
-GFXVertexList *bolt_draw::boltmesh = NULL;
+GFXVertexList *bolt_draw::boltmesh = nullptr;
 bolt_draw::~bolt_draw()
 {
     unsigned int i;
@@ -110,7 +110,7 @@ void Bolt::Draw()
     GFXDisable(CULLFACE);
 
     GFXBlendMode(ONE, game_options.BlendGuns ? ONE : ZERO);
-    GFXTextureCoordGenMode(0, NO_GEN, NULL, NULL);
+    GFXTextureCoordGenMode(0, NO_GEN, nullptr, nullptr);
 
     GFXAlphaTest(GREATER, .1);
     vector<vector<Bolt>>::iterator i;
@@ -157,7 +157,7 @@ void Bolt::Draw()
         GFXDisable(DEPTHWRITE);
         GFXDisable(TEXTURE1);
         GFXEnable(TEXTURE0);
-        GFXTextureCoordGenMode(0, NO_GEN, NULL, NULL);
+        GFXTextureCoordGenMode(0, NO_GEN, nullptr, nullptr);
 
         BLENDFUNC bsrc, bdst;
         if (game_options.BlendGuns == true)

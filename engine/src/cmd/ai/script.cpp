@@ -879,7 +879,7 @@ void AIScript::LoadXML()
 #ifdef BIDBG
     VSFileSystem::vs_fprintf(stderr, "parscrea");
 #endif
-    XML_Parser parser = XML_ParserCreate(NULL);
+    XML_Parser parser = XML_ParserCreate(nullptr);
 #ifdef BIDBG
     VSFileSystem::vs_fprintf(stderr, "usdat %x", parser);
 #endif
@@ -953,7 +953,7 @@ void AIScript::Execute()
         fflush(stderr);
 #endif
         delete[] filename;
-        filename = NULL;
+        filename = nullptr;
 #ifdef ORDERDEBUG
         VSFileSystem::vs_fprintf(stderr, "fn");
         fflush(stderr);

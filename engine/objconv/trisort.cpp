@@ -150,7 +150,7 @@ char * findspace( char *line )
     while (iswhitespace( line[0] ) && line[0])
         line++;
     if (!line[0])
-        return NULL;
+        return nullptr;
     while (!iswhitespace( line[0] ) && line[0])
         line++;
     return line;

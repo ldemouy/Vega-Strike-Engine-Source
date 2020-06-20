@@ -60,7 +60,7 @@ static std::pair<bool, VSSprite *> cacheLookup(const char *file)
     }
     else
     {
-        return std::pair<bool, VSSprite *>(false, (VSSprite *)NULL);
+        return std::pair<bool, VSSprite *>(false, (VSSprite *)nullptr);
     }
 }
 
@@ -78,7 +78,7 @@ VSSprite::VSSprite(Texture *_surface, float _xcenter, float _ycenter, float _wid
 VSSprite::VSSprite(const VSSprite &source)
 {
     *this = source;
-    if (surface != NULL)
+    if (surface != nullptr)
     {
         surface = surface->Clone();
     }
@@ -90,7 +90,7 @@ VSSprite::VSSprite(const char *file, enum FILTER texturefilter, GFXBOOL force)
     xcenter = ycenter = 0;
     widtho2 = heighto2 = 0;
     rotation = 0;
-    surface = NULL;
+    surface = nullptr;
     maxs = maxt = 0;
     isAnimation = false;
 
@@ -102,7 +102,7 @@ VSSprite::VSSprite(const char *file, enum FILTER texturefilter, GFXBOOL force)
             if (lkup.second)
             {
                 *this = *lkup.second;
-                if (surface != NULL)
+                if (surface != nullptr)
                 {
                     surface = surface->Clone();
                 }
@@ -130,7 +130,7 @@ VSSprite::VSSprite(const char *file, enum FILTER texturefilter, GFXBOOL force)
 
         widtho2 /= 2;
         heighto2 /= -2;
-        surface = NULL;
+        surface = nullptr;
         if (g_game.use_sprites || force == GFXTRUE)
         {
             int32_t len = strlen(texture);
@@ -162,10 +162,10 @@ VSSprite::VSSprite(const char *file, enum FILTER texturefilter, GFXBOOL force)
             if (!surface->LoadSuccess())
             {
                 delete surface;
-                surface = NULL;
+                surface = nullptr;
                 VSSprite *newspr = new VSSprite();
                 *newspr = *this;
-                newspr->surface = NULL;
+                newspr->surface = nullptr;
                 cacheInsert(file, newspr);
             }
             else
@@ -203,7 +203,7 @@ void VSSprite::ReadTexture(VSFileSystem::VSFile *f)
 VSSprite::~VSSprite()
 {
     VSDESTRUCT2
-    if (surface != NULL)
+    if (surface != nullptr)
     {
         delete surface;
     }
@@ -271,7 +271,7 @@ void VSSprite::Draw()
             GFXToggleTexture((layer < numlayers), layer, surface->texture_target);
             if (layer < numlayers)
             {
-                GFXTextureCoordGenMode(layer, NO_GEN, NULL, NULL);
+                GFXTextureCoordGenMode(layer, NO_GEN, nullptr, nullptr);
             }
         }
         for (int32_t pass = 0; pass < numpasses; pass++)
@@ -401,5 +401,5 @@ void VSSprite::Reset()
 
 bool VSSprite::LoadSuccess() const
 {
-    return surface != NULL && surface->LoadSuccess();
+    return surface != nullptr && surface->LoadSuccess();
 }

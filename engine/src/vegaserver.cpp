@@ -47,7 +47,7 @@ void VSExit(int code)
 }
 
 // I dont think vegaserver makes use of this but it has to be defined.
-Unit *TheTopLevelUnit = NULL;
+Unit *TheTopLevelUnit = nullptr;
 
 int main(int argc, char **argv)
 {
@@ -60,7 +60,7 @@ int main(int argc, char **argv)
     //Stupid static variable somewhere, so need to initialize it twice.
     InitTime();
     setNewTime(0);
-    setNewTime(((double)time(NULL)) - VEGA_EPOCH);
+    setNewTime(((double)time(nullptr)) - VEGA_EPOCH);
     VSServer = new NetServer;
     //Fake forcefeedback
     forcefeedback = new ForceFeedback();

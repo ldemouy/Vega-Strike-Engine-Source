@@ -26,7 +26,7 @@ using Orders::MatchAngularVelocity;
     Vector FrameOfRef(0,                                                        \
                       0,                                                        \
                       0);                                                       \
-    if (match != NULL)                                                          \
+    if (match != nullptr)                                                          \
     {                                                                           \
         float dif1, dif2;                                                       \
         match->GetVelocityDifficultyMult(dif1);                                 \

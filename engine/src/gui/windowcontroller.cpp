@@ -64,7 +64,7 @@ bool WindowController::processWindowCommand(const EventCommandId &command, Contr
 }
 
 //CONSTRUCTOR
-WindowController::WindowController() : m_window(NULL), m_deleteOnWindowClose(true)
+WindowController::WindowController() : m_window(nullptr), m_deleteOnWindowClose(true)
 {
 }
 

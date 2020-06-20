@@ -33,7 +33,7 @@ using std::vector;
 using namespace XMLSupport;
 using namespace VSFileSystem;
 extern const vector<string> &ParseDestinations(const string &value);
-extern void bootstrap_draw(const string &message, Animation *SplashScreen = NULL);
+extern void bootstrap_draw(const string &message, Animation *SplashScreen = nullptr);
 extern void disableTerrainDraw(ContinuousTerrain *ct);
 
 AtmosphericFogMesh::AtmosphericFogMesh()
@@ -429,7 +429,7 @@ void parse_dual_alpha(const char *alpha, BLENDFUNC &blendSrc, BLENDFUNC &blendDs
 {
     blendSrc = ONE;
     blendDst = ZERO;
-    if (alpha == NULL)
+    if (alpha == nullptr)
     {
     }
     else if (alpha[0] == '\0')
@@ -601,7 +601,7 @@ void StarSystem::beginElement(const string &name, const AttributeList &attribute
         blendSrc = SRCALPHA;
         blendDst = INVSRCALPHA;
         Unit *p = (Unit *)xml->moons.back()->GetTopPlanet(xml->unitlevel - 1);
-        if (p != NULL)
+        if (p != nullptr)
         {
             if (p->isUnit() == PLANETPTR)
             {
@@ -665,7 +665,7 @@ void StarSystem::beginElement(const string &name, const AttributeList &attribute
                         break;
                     }
                 }
-                if (p != NULL && ConfigAllows(varname, varvalue))
+                if (p != nullptr && ConfigAllows(varname, varvalue))
                     ((Planet *)p)->AddRing(myfile, iradius, oradius, R, S, numslices, wrapx, wrapy, blendSrc, blendDst);
             }
         }
@@ -680,7 +680,7 @@ void StarSystem::beginElement(const string &name, const AttributeList &attribute
         blendSrc = SRCALPHA;
         blendDst = INVSRCALPHA;
         Unit *p = (Unit *)xml->moons.back()->GetTopPlanet(xml->unitlevel - 1);
-        if (p != NULL)
+        if (p != nullptr)
         {
             if (p->isUnit() == PLANETPTR)
             {
@@ -719,7 +719,7 @@ void StarSystem::beginElement(const string &name, const AttributeList &attribute
                         break;
                     }
                 }
-                if (p != NULL && ConfigAllows(varname, varvalue))
+                if (p != nullptr && ConfigAllows(varname, varvalue))
                     ((Planet *)p)->AddSpaceElevator(myfile, faction, direction);
             }
         }
@@ -816,7 +816,7 @@ void StarSystem::beginElement(const string &name, const AttributeList &attribute
         bool inside_out = false;
         int wrapy = 1;
         Unit *p = (Unit *)xml->moons.back()->GetTopPlanet(xml->unitlevel - 1);
-        if (p != NULL)
+        if (p != nullptr)
         {
             if (p->isUnit() == PLANETPTR)
             {
@@ -870,7 +870,7 @@ void StarSystem::beginElement(const string &name, const AttributeList &attribute
         blendDst = INVSRCALPHA;
         bool inside_out = false;
         Unit *p = (Unit *)xml->moons.back()->GetTopPlanet(xml->unitlevel - 1);
-        if (p != NULL)
+        if (p != nullptr)
         {
             if (p->isUnit() == PLANETPTR)
             {
@@ -1254,7 +1254,7 @@ void StarSystem::beginElement(const string &name, const AttributeList &attribute
                                                                 position, gravity, radius,
                                                                 filename, technique, unitname,
                                                                 blendSrc, blendDst, dest, xml->cursun.Cast() + xml->systemcentroid.Cast(),
-                                                                NULL, ourmat, curlights, faction != 0 ? faction : FactionUtil::GetFactionIndex(UniverseUtil::GetGalaxyFaction(truncatedfilename)),
+                                                                nullptr, ourmat, curlights, faction != 0 ? faction : FactionUtil::GetFactionIndex(UniverseUtil::GetGalaxyFaction(truncatedfilename)),
                                                                 fullname,
                                                                 insideout)));
 
@@ -1377,10 +1377,10 @@ void StarSystem::beginElement(const string &name, const AttributeList &attribute
         }
         if ((!xml->conditionStack.size() || xml->conditionStack.back()) && ConfigAllows(varname, varvalue) && ConfigCondition(condition))
         {
-            if (((elem == UNIT || elem == NEBULA || elem == ENHANCEMENT || elem == ASTEROID) || (xml->ct == NULL && xml->parentterrain == NULL)) && (xml->unitlevel > 2))
+            if (((elem == UNIT || elem == NEBULA || elem == ENHANCEMENT || elem == ASTEROID) || (xml->ct == nullptr && xml->parentterrain == nullptr)) && (xml->unitlevel > 2))
             {
                 assert(xml->moons.size() != 0);
-                Unit *un = NULL; //FIXME !!! un appears to never be allocated memory !!! "= NULL" added by chuck_starchaser
+                Unit *un = nullptr; //FIXME !!! un appears to never be allocated memory !!! "= nullptr" added by chuck_starchaser
                 Planet *plan = xml->moons.back()->GetTopPlanet(xml->unitlevel - 1);
                 if (elem == UNIT)
                 {
@@ -1422,7 +1422,7 @@ void StarSystem::beginElement(const string &name, const AttributeList &attribute
             }
             else
             {
-                if ((elem == BUILDING || elem == VEHICLE) && xml->ct == NULL && xml->parentterrain != NULL)
+                if ((elem == BUILDING || elem == VEHICLE) && xml->ct == nullptr && xml->parentterrain != nullptr)
                 {
                     Unit *b = UnitFactory::createBuilding(
                         xml->parentterrain, elem == VEHICLE, filename.c_str(), false, faction, string(""));
@@ -1435,7 +1435,7 @@ void StarSystem::beginElement(const string &name, const AttributeList &attribute
                         dest.clear();
                     }
                 }
-                else if ((elem == BUILDING || elem == VEHICLE) && xml->ct != NULL)
+                else if ((elem == BUILDING || elem == VEHICLE) && xml->ct != nullptr)
                 {
                     Unit *b = UnitFactory::createBuilding(
                         xml->ct, elem == VEHICLE, filename.c_str(), false, faction);
@@ -1484,7 +1484,7 @@ void StarSystem::beginElement(const string &name, const AttributeList &attribute
                         dest.clear();
                     }
                     xml->moons.back()->SetAI(new PlanetaryOrbit(xml->moons[xml->moons.size() - 1], velocity, position, R, S,
-                                                                xml->cursun.Cast() + xml->systemcentroid.Cast(), NULL));
+                                                                xml->cursun.Cast() + xml->systemcentroid.Cast(), nullptr));
 
                     xml->moons.back()->SetPosAndCumPos(R + S + xml->cursun.Cast() + xml->systemcentroid.Cast());
                     xml->moons.back()->SetOwner(getTopLevelOwner());
@@ -1519,7 +1519,7 @@ void StarSystem::endElement(const string &name)
         if (!game_options.usePlanetFog)
             break;
         Unit *p = (Unit *)xml->moons.back()->GetTopPlanet(xml->unitlevel);
-        if (p != NULL)
+        if (p != nullptr)
             if (p->isUnit() == PLANETPTR)
                 ((Planet *)p)->AddFog(xml->fog, xml->fogopticalillusion);
         break;
@@ -1529,10 +1529,10 @@ void StarSystem::endElement(const string &name)
         break;
     case CONTTERRAIN:
         --xml->unitlevel;
-        xml->ct = NULL;
+        xml->ct = nullptr;
         break;
     case TERRAIN:
-        xml->parentterrain = NULL;
+        xml->parentterrain = nullptr;
         --xml->unitlevel;
         break;
     case CONDITION:
@@ -1571,8 +1571,8 @@ void StarSystem::LoadXML(const char *filename, const Vector &centroid, const flo
     xml->scale = 1;
     xml->fade = autogenerated;
     xml->scale *= game_options.star_system_scale;
-    xml->parentterrain = NULL;
-    xml->ct = NULL;
+    xml->parentterrain = nullptr;
+    xml->ct = nullptr;
     xml->systemcentroid = centroid;
     xml->timeofyear = timeofyear;
     xml->starsp = GetStarSpreadScale();
@@ -1583,7 +1583,7 @@ void StarSystem::LoadXML(const char *filename, const Vector &centroid, const flo
     xml->backgroundDegamma = false;
     xml->reflectivity = game_options.reflectivity;
     xml->unitlevel = 0;
-    XML_Parser parser = XML_ParserCreate(NULL);
+    XML_Parser parser = XML_ParserCreate(nullptr);
     XML_SetUserData(parser, this);
     XML_SetElementHandler(parser, &StarSystem::beginElement, &StarSystem::endElement);
     {
@@ -1599,7 +1599,7 @@ void StarSystem::LoadXML(const char *filename, const Vector &centroid, const flo
     {
         if (xml->moons[i]->isUnit() == PLANETPTR)
         {
-            Unit *un = NULL;
+            Unit *un = nullptr;
             for (Planet::PlanetIterator iter((Planet *)xml->moons[i]); (un = *iter); iter.advance())
                 AddUnit(un);
         }

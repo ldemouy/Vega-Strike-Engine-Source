@@ -74,10 +74,10 @@ extern vs_options game_options;
 
 static Texture *tmpcockpittexture;
 Unit **fighters;
-Unit *carrier = NULL;
-Unit *fighter = NULL;
-Unit *fighter2 = NULL;
-Unit *midway = NULL;
+Unit *carrier = nullptr;
+Unit *fighter = nullptr;
+Unit *fighter2 = nullptr;
+Unit *midway = nullptr;
 GFXBOOL capture;
 GFXBOOL quit = GFXFALSE;
 bool _Slew = true;
@@ -92,9 +92,9 @@ int shiftup(int);
 string getUnitNameAndFgNoBase(Unit *target);
 ContinuousTerrain *myterrain;
 int numf = 0;
-CoordinateSelect *locSel = NULL;
-SphereMesh *bg2 = NULL;
-ClickList *shipList = NULL;
+CoordinateSelect *locSel = nullptr;
+SphereMesh *bg2 = nullptr;
+ClickList *shipList = nullptr;
 
 float SIMULATION_ATOM = 0.0f;
 float AUDIO_ATOM = 0.0f;
@@ -274,7 +274,7 @@ namespace CockpitKeys
             if (forcefeedback)
             {
                 delete forcefeedback;
-                forcefeedback = NULL;
+                forcefeedback = nullptr;
             }
             VSExit(0);
         }
@@ -526,8 +526,8 @@ namespace CockpitKeys
             string cockpit = "disabled-cockpit.cpt";
             if (_Universe->AccessCockpit()->GetParent())
                 cockpit = _Universe->AccessCockpit()->GetParent()->getCockpit();
-            Unit *u = NULL; //= NULL just to shut off a warning about its possibly being used uninitialized --chuck_starchaser
-            if ((_Universe->AccessCockpit()->GetParent() != NULL) && (_Universe->AccessCockpit()->GetParent()->name == "return_to_cockpit") && (_Universe->AccessCockpit()->GetParent()->owner != NULL) && (u = findUnitInStarsystem(_Universe->AccessCockpit()->GetParent()->owner)))
+            Unit *u = nullptr; //= nullptr just to shut off a warning about its possibly being used uninitialized --chuck_starchaser
+            if ((_Universe->AccessCockpit()->GetParent() != nullptr) && (_Universe->AccessCockpit()->GetParent()->name == "return_to_cockpit") && (_Universe->AccessCockpit()->GetParent()->owner != nullptr) && (u = findUnitInStarsystem(_Universe->AccessCockpit()->GetParent()->owner)))
                 cockpit = u->getCockpit();
             _Universe->AccessCockpit()->Init(cockpit.c_str(), ((tmp) && _Universe->AccessCockpit()->GetParent()) == false);
             tmp = (tmp + 1) % 2;
@@ -838,7 +838,7 @@ void createObjects(std::vector<std::string> &fighter0name,
 
     static Vector TerrainScale(game_options.xscale, game_options.yscale, game_options.zscale);
 
-    myterrain = NULL;
+    myterrain = nullptr;
     std::string stdstr = mission->getVariable("terrain", "");
     if (stdstr.length() > 0)
     {
@@ -887,7 +887,7 @@ void createObjects(std::vector<std::string> &fighter0name,
         strcpy(fightername, fullname.c_str());
         string ainame = fg->ainame;
         float fg_radius = 0.0;
-        Cockpit *cp = NULL;
+        Cockpit *cp = nullptr;
         for (int s = 0; s < fg->nr_ships; s++)
         {
             if (a >= mission->number_of_ships)
@@ -912,7 +912,7 @@ void createObjects(std::vector<std::string> &fighter0name,
             }
             tmptarget[a] = FactionUtil::GetFactionIndex(fg->faction); //that should not be in xml?
             int fg_terrain = -1;
-            if (fg_terrain == -1 || (fg_terrain == -2 && myterrain == NULL))
+            if (fg_terrain == -1 || (fg_terrain == -2 && myterrain == nullptr))
             {
                 string modifications("");
                 if (s == 0 && squadnum < (int)fighter0name.size())
@@ -934,7 +934,7 @@ void createObjects(std::vector<std::string> &fighter0name,
                             std::string srcsys = (*dat)[0];
                             Unit *grav;
                             for (un_iter ui = cp->activeStarSystem->gravitationalUnits().createIterator();
-                                 (grav = *ui) != NULL;
+                                 (grav = *ui) != nullptr;
                                  ++ui)
                             {
                                 size_t siz = grav->GetDestinations().size();
@@ -1049,7 +1049,7 @@ void createObjects(std::vector<std::string> &fighter0name,
 
 void AddUnitToSystem(const SavedUnits *su)
 {
-    Unit *un = NULL;
+    Unit *un = nullptr;
     switch (su->type)
     {
     case ENHANCEMENTPTR:

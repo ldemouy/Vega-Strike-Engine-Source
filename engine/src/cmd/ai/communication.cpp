@@ -336,7 +336,7 @@ float FSM::getDeltaRelation(int32_t prevstate, uint32_t current_state) const
 
 void CommunicationMessage::Init(Unit *send, Unit *recv)
 {
-    if (send == NULL)
+    if (send == nullptr)
     {
         return;
     }
@@ -512,7 +512,7 @@ uint32_t DoSpeech(Unit *unit, Unit *player_unit, const FSM::Node &node)
     uint32_t dummy = 0;
     string speech = node.GetMessage(dummy);
     string myname("[Static]");
-    if (unit != NULL)
+    if (unit != nullptr)
     {
         myname = unit->isUnit() == PLANETPTR ? unit->name : unit->getFullname();
         Flightgroup *flight_group = unit->getFlightgroup();
@@ -524,7 +524,7 @@ uint32_t DoSpeech(Unit *unit, Unit *player_unit, const FSM::Node &node)
         {
             myname = unit->name;
         }
-        if (player_unit != NULL)
+        if (player_unit != nullptr)
         {
             if (player_unit == unit)
             {
@@ -544,7 +544,7 @@ uint32_t DoSpeech(Unit *unit, Unit *player_unit, const FSM::Node &node)
 
 void LeadMe(Unit *unit, string directive, string speech, bool changetarget)
 {
-    if (unit != NULL)
+    if (unit != nullptr)
     {
         for (size_t i = 0; i < _Universe->numPlayers(); i++)
         {
@@ -574,7 +574,7 @@ void LeadMe(Unit *unit, string directive, string speech, bool changetarget)
             }
             if ((directive == ""))
             {
-                flight_group->target.SetUnit(NULL);
+                flight_group->target.SetUnit(nullptr);
             }
         }
     }

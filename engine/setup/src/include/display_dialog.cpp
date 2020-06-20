@@ -19,7 +19,7 @@ int getLength(char **list)
 {
   int count;
   for (count = 0;
-       list[0] != NULL;
+       list[0] != nullptr;
        list++,
       count++)
   {
@@ -129,7 +129,7 @@ void ShowMain()
   CURRENT = &GROUPS;
   do
   {
-    if (CURRENT->name == NULL)
+    if (CURRENT->name == nullptr)
     {
       continue;
     }
@@ -145,7 +145,7 @@ void ShowMain()
   count = 0;
   do
   {
-    if (CURRENT->name == NULL)
+    if (CURRENT->name == nullptr)
     {
       continue;
     }
@@ -156,7 +156,7 @@ void ShowMain()
     int i = 0;
     do
     {
-      if (CUR->name == NULL)
+      if (CUR->name == nullptr)
       {
         continue;
       }
@@ -172,7 +172,7 @@ void ShowMain()
     i = 0;
     do
     {
-      if (CUR->name == NULL)
+      if (CUR->name == nullptr)
       {
         continue;
       }
@@ -181,7 +181,7 @@ void ShowMain()
         continue;
       }
       group_options_list[count][i * 2] = GetInfo(CUR->name);
-      group_options_list[count][i * 2 + 1] = NULL;
+      group_options_list[count][i * 2 + 1] = nullptr;
       i++;
     } while ((CUR = CUR->next) > 0);
     count++;
@@ -203,7 +203,7 @@ void ShowMain()
     CURRENT = &GROUPS;
     do
     {
-      if (CURRENT->name == NULL)
+      if (CURRENT->name == nullptr)
       {
         continue;
       }
@@ -215,7 +215,7 @@ void ShowMain()
     int i = 0;
     do
     {
-      if (CUR->name == NULL)
+      if (CUR->name == nullptr)
       {
         continue;
       }
@@ -255,7 +255,7 @@ void ShowMain()
   endwin();
 #ifndef _WIN32
   if (fork() != 0)
-    execlp("/usr/bin/reset", "/usr/bin/reset", NULL);
+    execlp("/usr/bin/reset", "/usr/bin/reset", nullptr);
 #endif
   dlg_exit(0);
 }

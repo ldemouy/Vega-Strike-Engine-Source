@@ -26,7 +26,7 @@ void Order::Communicate(const CommunicationMessage &c)
     {
         un = (*ii)->sender.GetUnit();
         bool thisissender = (un == newC->sender.GetUnit());
-        if (un == NULL || thisissender)
+        if (un == nullptr || thisissender)
         {
             delete (*ii);
             if (thisissender)
@@ -64,15 +64,15 @@ void Order::ProcessCommunicationMessages(float AICommresponseTime, bool RemoveMe
             Unit *un = messagequeue.back()->sender.GetUnit();
             if (un)
             {
-                CommunicationMessage c(parent, un, NULL, 0);
+                CommunicationMessage c(parent, un, nullptr, 0);
                 if (parent->getRelation(un) >= 0 || (parent->getFlightgroup() && parent->getFlightgroup()->name == "Base"))
                 {
                     parent->RequestClearance(un);
-                    c.SetCurrentState(c.fsm->GetAbleToDockNode(), NULL, 0);
+                    c.SetCurrentState(c.fsm->GetAbleToDockNode(), nullptr, 0);
                 }
                 else
                 {
-                    c.SetCurrentState(c.fsm->GetUnAbleToDockNode(), NULL, 0);
+                    c.SetCurrentState(c.fsm->GetUnAbleToDockNode(), nullptr, 0);
                 }
                 Order *o = un->getAIState();
                 if (o)

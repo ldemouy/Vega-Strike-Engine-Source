@@ -24,7 +24,7 @@ void CG_Cloak::cgLoadMedia( string pathname, string filename )
     }
     this->vertexProgram = cgCreateProgramFromFile( this->shaderContext,
                                                    CG_SOURCE, mediafile.data(),
-                                                   this->vertexProfile, NULL, NULL );
+                                                   this->vertexProfile, nullptr, nullptr );
 
     cgGLLoadProgram( this->vertexProgram );
 

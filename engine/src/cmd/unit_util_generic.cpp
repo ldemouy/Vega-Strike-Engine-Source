@@ -492,7 +492,7 @@ namespace UnitUtil
     {
         if (!my_unit)
             return false;
-        if (my_unit->getFlightgroup() != NULL)
+        if (my_unit->getFlightgroup() != nullptr)
         {
             my_unit->getFlightgroup()->directive = inp;
             return true;
@@ -521,7 +521,7 @@ namespace UnitUtil
 
     void RecomputeUnitUpgrades(Unit *un)
     {
-        if (un == NULL)
+        if (un == nullptr)
             return;
         un->ReduceToTemplate();
         unsigned int i;
@@ -624,15 +624,15 @@ namespace UnitUtil
             return 0;
         unsigned int i;
         const Cargo *c = my_unit->GetCargo(mycarg, i);
-        if (c == NULL)
+        if (c == nullptr)
             return 0;
         return c->quantity;
     }
 
     bool JumpTo(Unit *unit, string system)
     {
-        if (unit != NULL)
-            return unit->getStarSystem()->JumpTo(unit, NULL, system);
+        if (unit != nullptr)
+            return unit->getStarSystem()->JumpTo(unit, nullptr, system);
         else
             return false;
     }
@@ -730,14 +730,14 @@ namespace UnitUtil
 
     float getDistance(const Unit *my_unit, const Unit *un)
     {
-        if (my_unit == NULL || un == NULL)
+        if (my_unit == nullptr || un == nullptr)
             return FLT_MAX;
         return (my_unit->Position() - un->Position()).Magnitude() - my_unit->rSize() - un->rSize();
     }
 
     float getSignificantDistance(const Unit *un, const Unit *sig)
     {
-        if (un == NULL || sig == NULL)
+        if (un == nullptr || sig == nullptr)
             return FLT_MAX;
         float dist = getDistance(un, sig);
 
@@ -826,7 +826,7 @@ namespace UnitUtil
             {
                 return (tmp);
             }
-        return (NULL);
+        return (nullptr);
     }
 
     void performDockingOperations(Unit *un, Unit *unitToDockWith, int actually_dock)
@@ -834,7 +834,7 @@ namespace UnitUtil
         if (un && unitToDockWith)
         {
             Order *ai = un->aistate;
-            un->aistate = NULL;
+            un->aistate = nullptr;
             un->PrimeOrders(new Orders::DockingOps(unitToDockWith, ai, actually_dock, true));
         }
     }

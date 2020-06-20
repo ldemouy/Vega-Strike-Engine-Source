@@ -254,7 +254,7 @@ Vector Planet::AddSpaceElevator(const std::string &name, const std::string &fact
                                                  scale,
                                                  FactionUtil::
                                                      GetFactionIndex(faction),
-                                                 NULL);
+                                                 nullptr);
 
     meshdata.push_back(shield);
     {
@@ -265,7 +265,7 @@ Vector Planet::AddSpaceElevator(const std::string &name, const std::string &fact
             ElevatorLoc.p.Set(dir.i * mx.i, dir.j * mx.j, dir.k * mx.k);
         else
             ElevatorLoc.p.Set(-dir.i * mn.i, -dir.j * mn.j, -dir.k * mn.k);
-        Unit *un = UnitFactory::createUnit(name.c_str(), true, FactionUtil::GetFactionIndex(faction), "", NULL);
+        Unit *un = UnitFactory::createUnit(name.c_str(), true, FactionUtil::GetFactionIndex(faction), "", nullptr);
         if (pImage->dockingports.back().GetPosition().MagnitudeSquared() < 10)
             pImage->dockingports.clear();
         pImage->dockingports.push_back(DockingPorts(ElevatorLoc.p, un->rSize() * 1.5, 0, DockingPorts::Type::INSIDE));
@@ -292,7 +292,7 @@ Planet *Planet::GetTopPlanet(int level)
         else
         {
             VSFileSystem::vs_fprintf(stderr, "Planets are unable to orbit around units");
-            return NULL;
+            return nullptr;
         }
     }
     else
@@ -332,7 +332,7 @@ Unit *Planet::beginElement(QVector x,
                            bool inside_out)
 {
     //this function is OBSOLETE
-    Unit *un = NULL;
+    Unit *un = nullptr;
     if (level > 2)
     {
         un_iter satiterator = satellites.createIterator();
@@ -350,7 +350,7 @@ Unit *Planet::beginElement(QVector x,
     {
         if (isunit == true)
         {
-            Unit *sat_unit = NULL;
+            Unit *sat_unit = nullptr;
             Flightgroup *fg = getStaticBaseFlightgroup(faction);
             satellites.prepend(sat_unit = UnitFactory::createUnit(filename.c_str(), false, faction, "", fg, fg->nr_ships - 1));
             sat_unit->setFullname(fullname);
@@ -380,7 +380,7 @@ Planet::Planet() : Unit(0), radius(0.0f), satellites()
     inside = false;
     //Not needed as Unit default constructor is called and already does Init
     //Init();
-    terraintrans = NULL;
+    terraintrans = nullptr;
     atmospheric = false;
     //Force shields to 0
     memset(&(this->shield), 0, sizeof(Unit::shield));
@@ -405,8 +405,8 @@ void Planet::InitPlanet(QVector x,
                         bool inside_out,
                         unsigned int lights_num)
 {
-    atmosphere = NULL;
-    terrain = NULL;
+    atmosphere = nullptr;
+    terrain = nullptr;
     static float bodyradius = XMLSupport::parse_float(vs_config->getVariable("graphics", "star_body_radius", ".33"));
     if (lights_num)
         radius *= bodyradius;
@@ -432,9 +432,9 @@ void Planet::InitPlanet(QVector x,
     hull = (4. / 3) * M_PI * radius * radius * radius * (notJumppoint ? densityOfRock : densityOfJumpPoint);
     this->Mass = (4. / 3) * M_PI * radius * radius * radius * (notJumppoint ? densityOfRock : (densityOfJumpPoint / 100000));
     SetAI(new PlanetaryOrbit(this, vely, pos, x, y, orbitcent, parent)); //behavior
-    terraintrans = NULL;
+    terraintrans = nullptr;
 
-    colTrees = NULL;
+    colTrees = nullptr;
     SetAngularVelocity(rotvel);
     // The docking port is 20% bigger than the planet
     static float planetdockportsize = XMLSupport::parse_float(vs_config->getVariable("physics", "planet_port_size", "1.2"));
@@ -508,7 +508,7 @@ Planet::Planet(QVector x,
                unsigned int lights_num)
 {
     inside = false;
-    terraintrans = NULL;
+    terraintrans = nullptr;
     atmospheric = false;
     this->InitPlanet(x, y, vely, rotvel,
                      pos,
@@ -539,7 +539,7 @@ Planet::Planet(QVector x,
     memset(&(this->shield), 0, sizeof(Unit::shield));
     this->shield.number = 2;
     if (meshdata.empty())
-        meshdata.push_back(NULL);
+        meshdata.push_back(nullptr);
 }
 
 string Planet::getHumanReadablePlanetType() const

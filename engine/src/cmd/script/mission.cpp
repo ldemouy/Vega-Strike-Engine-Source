@@ -69,10 +69,10 @@ void Mission::ConstructMission(const char *configfile, const std::string &script
 {
     player_autopilot = global_autopilot = AUTO_NORMAL;
     player_num = 0;
-    briefing = NULL;
-    director = NULL;
-    runtime.pymissions = NULL;
-    nextpythonmission = NULL;
+    briefing = nullptr;
+    director = nullptr;
+    runtime.pymissions = nullptr;
+    nextpythonmission = nullptr;
     if (script.length() > 0)
     {
         nextpythonmission = new char[script.length() + 2];
@@ -83,7 +83,7 @@ void Mission::ConstructMission(const char *configfile, const std::string &script
     easyDomFactory<missionNode> domf;
     top = domf.LoadXML(configfile);
     static bool dontpanic = false;
-    if (top == NULL && !dontpanic)
+    if (top == nullptr && !dontpanic)
     {
         cout << "Panic exit - mission file " << configfile << " not found" << endl;
         exit(0);
@@ -92,14 +92,14 @@ void Mission::ConstructMission(const char *configfile, const std::string &script
     {
         dontpanic = true;
     }
-    if (top == NULL)
+    if (top == nullptr)
         return;
 
-    variables = NULL;
-    origin_node = NULL;
+    variables = nullptr;
+    origin_node = nullptr;
 
 #ifndef VS_MIS_SEL
-    director = NULL;
+    director = nullptr;
     if (loadscripts)
     {
         initTagMap();
@@ -111,22 +111,22 @@ void Mission::ConstructMission(const char *configfile, const std::string &script
 }
 Unit *Mission::Objective::getOwner()
 {
-    Unit *Nawl = NULL;
+    Unit *Nawl = nullptr;
     if (Owner != Nawl)
     {
         Unit *ret = Owner.GetUnit();
-        if (ret == NULL)
+        if (ret == nullptr)
             objective = ""; //unit died
         return ret;
     }
     return Owner.GetUnit();
 }
-MessageCenter *Mission::msgcenter = NULL;
+MessageCenter *Mission::msgcenter = nullptr;
 void Mission::initMission(bool loadscripts)
 {
     if (!top)
         return;
-    if (msgcenter == NULL)
+    if (msgcenter == nullptr)
         msgcenter = new MessageCenter();
     checkMission(top, loadscripts);
     mission_name = getVariable("mission_name", "");
@@ -232,13 +232,13 @@ int Mission::getPlayerMissionNumber()
 Mission *Mission::getNthPlayerMission(int cp, int missionnum)
 {
     vector<Mission *> *active_missions = ::active_missions.Get();
-    Mission *activeMis = NULL;
+    Mission *activeMis = nullptr;
     if (missionnum >= 0)
     {
         int num = -1;
         vector<Mission *>::iterator pl = active_missions->begin();
         if (pl == active_missions->end())
-            return NULL;
+            return nullptr;
         for (; pl != active_missions->end(); ++pl)
         {
             if ((*pl)->player_num == (unsigned int)cp)
@@ -311,7 +311,7 @@ void Mission::terminateMission()
     }
     if (runtime.pymissions)
         runtime.pymissions->Destroy();
-    runtime.pymissions = NULL;
+    runtime.pymissions = nullptr;
 }
 
 /* *********************************************************** */
@@ -326,13 +326,13 @@ void Mission::doOrigin(easyDomNode *node)
 #ifndef VS_MIS_SEL
 void Mission::GetOrigin(QVector &pos, string &planetname)
 {
-    if (origin_node == NULL)
+    if (origin_node == nullptr)
     {
         pos.i = pos.j = pos.k = 0.0;
         planetname = string();
         return;
     }
-    bool ok = doPosition(origin_node, &pos.i, NULL);
+    bool ok = doPosition(origin_node, &pos.i, nullptr);
     if (!ok)
         pos.i = pos.j = pos.k = 0.0;
     planetname = origin_node->attr_value("planet");
@@ -356,7 +356,7 @@ void Mission::doSettings(easyDomNode *node)
 
 void Mission::doVariables(easyDomNode *node)
 {
-    if (variables != NULL)
+    if (variables != nullptr)
     {
         cout << "only one variable section allowed" << endl;
         return;
@@ -491,10 +491,10 @@ bool Mission::doPosition(easyDomNode *node, double pos[3], CreateFlightgroup *cf
         cout << "no valid position" << endl;
         return false;
     }
-    pos[0] = strtod(x.c_str(), NULL);
-    pos[1] = strtod(y.c_str(), NULL);
-    pos[2] = strtod(z.c_str(), NULL);
-    if (cf != NULL)
+    pos[0] = strtod(x.c_str(), nullptr);
+    pos[1] = strtod(y.c_str(), nullptr);
+    pos[2] = strtod(z.c_str(), nullptr);
+    if (cf != nullptr)
     {
         pos[0] += cf->fg->pos.i;
         pos[1] += cf->fg->pos.j;
@@ -511,7 +511,7 @@ Flightgroup *Mission::findFlightgroup(const string &offset_name, const string &f
     for (siter = flightgroups.begin(); siter != flightgroups.end(); siter++)
         if ((*siter)->name == offset_name && (fac.empty() || (*siter)->faction == fac))
             return *siter;
-    return NULL;
+    return nullptr;
 }
 
 /* *********************************************************** */

@@ -96,7 +96,7 @@ using std::string;
 *        std::vector<std::string *> *Commands_Typed_BrokenUp_At_Spaces
 *        bool is_the_Key_Pressed_Down_Or_Up(True for down, false for up)
 *        int first argument translated through atoi, or 0 if first word is not entered
-*        const char * first argument, if there is no first argument, it sends NULL
+*        const char * first argument, if there is no first argument, it sends nullptr
 *        const char *, const char * first two arguments, sends NULl if not defined
 *
 *        are enough.
@@ -117,13 +117,13 @@ using std::string;
 *
 *
 *        A note about const char * types. If the user doesn't sent input, it
-*        will pass NULL. So if you have two of them, and the user sends no
-*        input, it will send them both as NULL. If the user types one
-*        argument, the second one will be NULL, the first will be their argument.
-*        If your function needs an argument, and NULL is passed, you can safely
+*        will pass nullptr. So if you have two of them, and the user sends no
+*        input, it will send them both as nullptr. If the user types one
+*        argument, the second one will be nullptr, the first will be their argument.
+*        If your function needs an argument, and nullptr is passed, you can safely
 *        throw an error message, either an std::exception or a const char *
-*        so you can do: if(argument1 == NULL && argument2 == NULL) throw "I need at least one argument!";
-*                                else if(argument2 == NULL) do_something_with_argument1, or maybe throw an error
+*        so you can do: if(argument1 == nullptr && argument2 == nullptr) throw "I need at least one argument!";
+*                                else if(argument2 == nullptr) do_something_with_argument1, or maybe throw an error
 *                                else we_have_both_arg1_and_arg2
 *        const char *'s are the prefered method, std::exceptions get other error
 *        text appended to them, and is mostly for detecting bugs in the std library
@@ -235,13 +235,13 @@ using std::string;
  *               runServer() {
  *                       bool incfound = socketlayor->listen4new();
  *                       if(incfound) {
- *                               while(clients newclient(socketlayor->getANewOne() ) != NULL)
+ *                               while(clients newclient(socketlayor->getANewOne() ) != nullptr)
  *                               {
  *                                       myclients.push_back(newclient);
  *                               }
  *                       }
  *                       Packet *incomingpacket = socketlayor->listen();
- *                       if(incomingpacket != NULL) {
+ *                       if(incomingpacket != nullptr) {
  *                               std::string ConvertDataToString(incomingpacket->data);
  *                               std::string buffer;
  *                               for(unsigned int counter = 0; counter < CDTS.size(); counter++)
@@ -412,7 +412,7 @@ class HoldCommands //Hold the commands here{{{
         for (vector<procs>::iterator iter = cmds.begin(); iter < cmds.end(); iter++)
             if (in == (*(iter)).proc)
                 return &(*(iter));
-        return NULL;
+        return nullptr;
     }
 };
 
@@ -704,7 +704,7 @@ coms *commandI::findCommand(const char *comm, int &sock_in)
         transform(name.begin(), name.end(), name.begin(), static_cast<int (*)(int)>(tolower));
     //}}}
     //Start testing command names against the command entered {{{
-    coms *fuzzymatch = NULL;
+    coms *fuzzymatch = nullptr;
     vector<coms>::iterator iter;
     for (iter = findme->rc.begin(); iter < findme->rc.end(); iter++)
     {
@@ -752,7 +752,7 @@ coms *commandI::findCommand(const char *comm, int &sock_in)
                 {
                     if (name.size() == testCom.Name.size())
                         return &testCom;
-                    if (fuzzymatch == NULL)
+                    if (fuzzymatch == nullptr)
                         fuzzymatch = &testCom;
                 }
                 //}}}
@@ -788,14 +788,14 @@ coms *commandI::findCommand(const char *comm, int &sock_in)
                 }
                 //if it's an immortal command and we are an immortal simply don't return it.
                 if (returnit)
-                    if (fuzzymatch == NULL)
+                    if (fuzzymatch == nullptr)
                         fuzzymatch = &testCom;
                 //}}}
             }
         }
         //}}}
     }
-    if (fuzzymatch != NULL)
+    if (fuzzymatch != nullptr)
         return fuzzymatch;
     //}}}
     iter = findme->rc.begin();
@@ -803,7 +803,7 @@ coms *commandI::findCommand(const char *comm, int &sock_in)
         if ((*(iter)).Name.find("dummy") == 0)
             return &(*(iter));
     //shouldn't get here.
-    return NULL;
+    return nullptr;
 }
 
 /// }}}
@@ -862,7 +862,7 @@ bool commandI::execute(string *incommand, bool isDown, int sock_in)
                     lv = y.find("\n");
                 }
             }
-            char *name_out = NULL;
+            char *name_out = nullptr;
             if (l.size() > 0)
                 name_out = (char *)l.c_str();
             if (callMenu(name_out, (char *)y.c_str(), t))
@@ -1183,7 +1183,7 @@ string commandI::displaymenu()
 bool commandI::addMenuItem(mItem *mi, menu *menuin)
 {
     menu *menu2use;
-    if (menuin == NULL)
+    if (menuin == nullptr)
         menu2use = lastmenuadded;
     else
         menu2use = menu_in;
@@ -1202,7 +1202,7 @@ bool commandI::callMenu(char *name_in, char *args_in, string &d)
 {
     //if there is a menu operation return true;
     string name;
-    if (name_in != NULL)
+    if (name_in != nullptr)
         name.append(name_in);
     //bool freturnfalse = false; //force return false
     //{{{ if the name_in is the menu_in's escape charactor
@@ -1227,7 +1227,7 @@ bool commandI::callMenu(char *name_in, char *args_in, string &d)
                     }
                     else
                     {
-                        menu_in = NULL;
+                        menu_in = nullptr;
                         menumode = false;
                         return true;
                     }
@@ -1521,13 +1521,13 @@ void commandI::breakmenu()
     {
         menustack.pop_back();
     }
-    menu_in = NULL;
+    menu_in = nullptr;
     menumode = false;
 }
 
 //}}}
 
-commandI *CommandInterpretor = NULL;
+commandI *CommandInterpretor = nullptr;
 
 //{{{ Python object
 

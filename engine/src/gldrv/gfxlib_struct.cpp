@@ -201,11 +201,11 @@ void GFXVertexList::BeginDrawState(GFXBOOL lock)
 
         if (changed & HAS_COLOR)
         {
-            EnableArrays((GFXColorVertex *)NULL);
+            EnableArrays((GFXColorVertex *)nullptr);
         }
         else
         {
-            EnableArrays((GFXVertex *)NULL);
+            EnableArrays((GFXVertex *)nullptr);
         }
     }
     else
@@ -268,7 +268,7 @@ extern GLenum PolyLookup(POLYTYPE poly);
 void GFXVertexList::Draw(enum POLYTYPE poly, int numV)
 {
     INDEX index;
-    index.b = NULL;
+    index.b = nullptr;
     Draw(&poly, index, 1, &numV);
 }
 void GFXVertexList::Draw(enum POLYTYPE poly, int numV, unsigned char *index)
@@ -384,7 +384,7 @@ void GFXVertexList::Draw(enum POLYTYPE *mode, const INDEX index, const int numli
                     GFXBindElementBuffer(0);
 #endif
             }
-            if (glMultiDrawElements_p != NULL && numlists > 1)
+            if (glMultiDrawElements_p != nullptr && numlists > 1)
             {
                 static std::vector<bool> drawn;
                 static std::vector<const GLvoid *> glindices;
@@ -607,8 +607,8 @@ void GFXVertexList::UnMap()
             }
             GFXBindBuffer(vbo_data);
             (*glUnmapBufferARB_p)(GL_ARRAY_BUFFER_ARB);
-            data.colors = NULL;
-            data.vertices = NULL;
+            data.colors = nullptr;
+            data.vertices = nullptr;
         }
 
 #endif

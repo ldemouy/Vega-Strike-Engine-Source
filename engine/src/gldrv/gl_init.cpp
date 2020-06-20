@@ -165,7 +165,7 @@ CG_Cloak *cloak_cg = new CG_Cloak();
 /* CENTRY */
 int vsExtensionSupported(const char *extension)
 {
-    static const GLubyte *extensions = NULL;
+    static const GLubyte *extensions = nullptr;
     const GLubyte *start;
     GLubyte *where, *terminator;
 
@@ -200,18 +200,18 @@ int vsExtensionSupported(const char *extension)
 
 bool vsVendorMatch(const char *vendor)
 {
-    static const GLubyte *_glvendor = NULL;
+    static const GLubyte *_glvendor = nullptr;
 
-    if (_glvendor == NULL)
+    if (_glvendor == nullptr)
     {
         _glvendor = glGetString(GL_VENDOR);
-        if (_glvendor != NULL)
+        if (_glvendor != nullptr)
         {
             BOOST_LOG_TRIVIAL(info) << boost::format("OpenGL Vendor: %1%") % (const char *)_glvendor;
         }
     }
 
-    if (_glvendor != NULL)
+    if (_glvendor != nullptr)
     {
         // NOTE: Don't be fooled by substrings within words
         //      Should match whole-words ONLY
@@ -695,7 +695,7 @@ void GFXInit(int argc, char **argv)
             {
 #ifdef NV_CUBE_MAP
                 GFXToggleTexture(true, 1, CUBEMAP);
-                GFXTextureCoordGenMode(1, CUBE_MAP_GEN, NULL, NULL);
+                GFXTextureCoordGenMode(1, CUBE_MAP_GEN, nullptr, nullptr);
 #else
                 const float tempo[4] = {1, 0, 0, 0};
                 GFXToggleTexture(true, 1, TEXTURE2D);
@@ -757,7 +757,7 @@ void idle_loop(void)
 */
 void visible(int vis)
 {
-    glutIdleFunc(vis == GLUT_VISIBLE ? idle_loop : NULL);
+    glutIdleFunc(vis == GLUT_VISIBLE ? idle_loop : nullptr);
 }
 
 /*

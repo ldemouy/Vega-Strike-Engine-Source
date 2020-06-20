@@ -45,16 +45,16 @@ public:
 
     static Unit *createUnit();
 
-    static Unit *createUnit(const char *filename, bool SubUnit, int faction, std::string customizedUnit = string(""), Flightgroup *flightgroup = NULL, int fg_subnumber = 0, string *netxml = NULL);
+    static Unit *createUnit(const char *filename, bool SubUnit, int faction, std::string customizedUnit = string(""), Flightgroup *flightgroup = nullptr, int fg_subnumber = 0, string *netxml = nullptr);
 
-    static Unit *createServerSideUnit(const char *filename, bool SubUnit, int faction, std::string customizedUnit = string(""), Flightgroup *flightgroup = NULL, int fg_subnumber = 0);
+    static Unit *createServerSideUnit(const char *filename, bool SubUnit, int faction, std::string customizedUnit = string(""), Flightgroup *flightgroup = nullptr, int fg_subnumber = 0);
 
     static Unit *createUnit(std::vector<Mesh *> &meshes, bool Subunit, int faction);
 
     static Nebula *createNebula(const char *unitfile,
                                 bool SubU,
                                 int faction,
-                                Flightgroup *fg = NULL,
+                                Flightgroup *fg = nullptr,
                                 int fg_snumber = 0);
 
     static Missile *createMissile(const char *filename,
@@ -93,7 +93,7 @@ public:
     static Enhancement *createEnhancement(const char *filename,
                                           int faction,
                                           const string &modifications,
-                                          Flightgroup *flightgrp = NULL,
+                                          Flightgroup *flightgrp = nullptr,
                                           int fg_subnumber = 0);
 
     static Building *createBuilding(ContinuousTerrain *parent,
@@ -102,7 +102,7 @@ public:
                                     bool SubUnit,
                                     int faction,
                                     const std::string &unitModifications = std::string(""),
-                                    Flightgroup *fg = NULL);
+                                    Flightgroup *fg = nullptr);
 
     static Building *createBuilding(Terrain *parent,
                                     bool vehicle,
@@ -110,11 +110,11 @@ public:
                                     bool SubUnit,
                                     int faction,
                                     const std::string &unitModifications = std::string(""),
-                                    Flightgroup *fg = NULL);
+                                    Flightgroup *fg = nullptr);
 
     static Asteroid *createAsteroid(const char *filename,
                                     int faction,
-                                    Flightgroup *fg = NULL,
+                                    Flightgroup *fg = nullptr,
                                     int fg_snumber = 0,
                                     float difficulty = .01);
 

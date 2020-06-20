@@ -31,7 +31,7 @@ const GameMenu::WctlTableEntry WctlBase<GameMenu>::WctlCommandTable[] = {
     GameMenu::WctlTableEntry("ExitGame", "", &GameMenu::processExitGameButton),
     GameMenu::WctlTableEntry("JoinGame", "", &GameMenu::processJoinGameButton),
     GameMenu::WctlTableEntry("ReturnMainMenu", "", &GameMenu::processMainMenuButton),
-    GameMenu::WctlTableEntry("", "", NULL)};
+    GameMenu::WctlTableEntry("", "", nullptr)};
 
 GameMenu::GameMenu(bool firstTime) : m_firstTime(firstTime)
 {

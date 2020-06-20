@@ -14,10 +14,10 @@ char *LoadString(const char *filename)
 {
     FILE *fp = VSFileSystem::vs_open(filename, "r");
     if (!fp)
-        return NULL;
+        return nullptr;
     VSFileSystem::vs_fseek(fp, 0, SEEK_END);
     long len = VSFileSystem::vs_ftell(fp);
-    char *retval = NULL;
+    char *retval = nullptr;
     VSFileSystem::vs_fseek(fp, 0, SEEK_SET);
     if (len)
     {
@@ -84,10 +84,10 @@ void CompileRunPython(const std::string &filename)
         {
             PyObject *m, *d;
             static char main_str[16] = "__main__"; //by chuck_starchaser, to squash a warning
-            if ((m = PyImport_AddModule(main_str)) != NULL)
+            if ((m = PyImport_AddModule(main_str)) != nullptr)
             {
                 PyObject *localdict = PyDict_New();
-                if ((d = PyModule_GetDict(m)) != NULL)
+                if ((d = PyModule_GetDict(m)) != nullptr)
                 {
                     PyObject *exe = PyEval_EvalCode(
 #if (PY_VERSION_HEX >= 0x03020000)

@@ -33,8 +33,8 @@ void InitGraphics(void) {
 	gtk_window_set_default_size(GTK_WINDOW(window), 600, 400);
 	gtk_window_set_title(GTK_WINDOW(window), title);
 
-	gtk_signal_connect(GTK_OBJECT(window), "destroy", GTK_SIGNAL_FUNC(gtk_exit), NULL);
-	gtk_signal_connect(GTK_OBJECT(window), "delete_event", GTK_SIGNAL_FUNC(gtk_exit), NULL);
+	gtk_signal_connect(GTK_OBJECT(window), "destroy", GTK_SIGNAL_FUNC(gtk_exit), nullptr);
+	gtk_signal_connect(GTK_OBJECT(window), "delete_event", GTK_SIGNAL_FUNC(gtk_exit), nullptr);
 
 	gtk_container_set_border_width(GTK_CONTAINER(window), 0);
 
@@ -63,7 +63,7 @@ void InitGraphics(void) {
 void ShowMain(int run_vegastrike) {
 	GtkWidget *button;
 	/* A generic scrolled window */
-	scrolled_win = gtk_scrolled_window_new (NULL, NULL);
+	scrolled_win = gtk_scrolled_window_new (nullptr, nullptr);
 	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_win), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 	gtk_widget_set_usize (scrolled_win, 150, 200);
 	gtk_container_add (GTK_CONTAINER(main_hbox), scrolled_win);
@@ -91,7 +91,7 @@ void ShowMain(int run_vegastrike) {
 	AddMissionsToTree(DIR_MISSION, tree, 1);
 
 	button = gtk_button_new_with_label("Run Mission");
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", RunMission, NULL);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", RunMission, nullptr);
 	gtk_container_add(GTK_CONTAINER(main_vbox), button);
 	gtk_widget_show(button);
 }

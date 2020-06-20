@@ -71,7 +71,7 @@ public:
         typename cache_map::iterator i = unit_cache.find(k);
         if (i != unit_cache.end())
             return (*i).second;
-        return NULL;
+        return nullptr;
     }
     static Typ *setCachedMutable(const Key &k, Typ *un)
     {

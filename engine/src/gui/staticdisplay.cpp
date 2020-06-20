@@ -115,6 +115,6 @@ bool StaticDisplay::processMouseDown(const InputEvent &event)
 }
 
 //CONSTRUCTION
-StaticDisplay::StaticDisplay(void) : m_textMargins(Size(0.0, 0.0)), m_scrollPosition(0), m_layoutVersion(m_paintText.layoutVersion()), m_scroller(NULL)
+StaticDisplay::StaticDisplay(void) : m_textMargins(Size(0.0, 0.0)), m_scrollPosition(0), m_layoutVersion(m_paintText.layoutVersion()), m_scroller(nullptr)
 {
 }

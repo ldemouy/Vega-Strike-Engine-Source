@@ -63,7 +63,7 @@ double queryTime()
 
 #elif 1
     struct timeval tv;
-    (void) gettimeofday( &tv, NULL );
+    (void) gettimeofday( &tv, nullptr );
     double tmpnewtime = (double) tv.tv_sec+(double) tv.tv_usec*1.e-6;
     return tmpnewtime-firsttime;
 

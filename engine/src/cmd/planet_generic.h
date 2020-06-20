@@ -39,7 +39,7 @@ public:
                    const QVector &x_axis,
                    const QVector &y_axis,
                    const QVector &Centre,
-                   Unit *target = NULL);
+                   Unit *target = nullptr);
     ~PlanetaryOrbit();
     void Execute();
 };
@@ -171,16 +171,16 @@ public:
 
     virtual PlanetaryTransform *setTerrain(ContinuousTerrain *, float ratiox, int numwraps, float scaleatmos)
     {
-        return NULL;
+        return nullptr;
     }
     virtual ContinuousTerrain *getTerrain(PlanetaryTransform *&t)
     {
-        return NULL;
+        return nullptr;
     }
     virtual void setAtmosphere(Atmosphere *) {}
     virtual Atmosphere *getAtmosphere()
     {
-        return NULL;
+        return nullptr;
     }
     virtual void reactToCollision(Unit *smaller,
                                   const QVector &biglocation,
@@ -217,11 +217,11 @@ public:
         {
             if (!pos.isDone())
                 return *pos;
-            return NULL;
+            return nullptr;
         }
         void advance()
         {
-            if (current() != NULL)
+            if (current() != nullptr)
             {
                 Unit *cur = *pos;
                 if (cur->isUnit() == PLANETPTR)

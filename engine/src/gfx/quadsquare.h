@@ -36,7 +36,7 @@ struct TerrainTexture
     TerrainTexture()
     {
         scales = scalet = 1;
-        tex.filename = NULL;
+        tex.filename = nullptr;
         material = 0;
         reflect = false;
         blendSrc = ONE;

@@ -233,7 +233,7 @@ bool Animation::CalculateOrientation(Matrix &result)
                                hei,
                                (options & ani_close) ? HaloOffset : 0,
                                false,
-                               (options & ani_up) ? NULL : &local_transformation);
+                               (options & ani_up) ? nullptr : &local_transformation);
 
     /*
      *  Camera* TempCam = _Universe->AccessCamera();
@@ -273,7 +273,7 @@ void Animation::DrawNow(const Matrix &final_orientation)
         {
             GFXToggleTexture((lyr < numlayers), lyr);
             if (lyr < numlayers)
-                GFXTextureCoordGenMode(lyr, NO_GEN, NULL, NULL);
+                GFXTextureCoordGenMode(lyr, NO_GEN, nullptr, nullptr);
         }
         for (size_t pass = 0; pass < numpasses; pass++)
         {
@@ -359,7 +359,7 @@ void Animation::DrawAsVSSprite(VSSprite *spr)
         {
             GFXToggleTexture((lyr < numlayers), lyr);
             if (lyr < numlayers)
-                GFXTextureCoordGenMode(lyr, NO_GEN, NULL, NULL);
+                GFXTextureCoordGenMode(lyr, NO_GEN, nullptr, nullptr);
         }
         for (size_t pass = 0; pass < numpasses; pass++)
             if (SetupPass(pass, 0, src, dst))
@@ -449,7 +449,7 @@ void Animation::DrawNoTransform(bool cross, bool blendoption)
         {
             GFXToggleTexture((lyr < numlayers), lyr);
             if (lyr < numlayers)
-                GFXTextureCoordGenMode(lyr, NO_GEN, NULL, NULL);
+                GFXTextureCoordGenMode(lyr, NO_GEN, nullptr, nullptr);
         }
         for (size_t pass = 0; pass < numpasses; pass++)
             if (SetupPass(pass, 0, src, dst))

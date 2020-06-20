@@ -150,7 +150,7 @@ struct LineCollideStar
     LineCollide *lc;
     LineCollideStar()
     {
-        lc = NULL;
+        lc = nullptr;
     }
     bool operator==(const LineCollideStar &b) const
     {

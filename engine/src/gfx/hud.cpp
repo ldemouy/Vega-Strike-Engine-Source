@@ -82,10 +82,10 @@ void *getFont(bool forceinside = false, bool whichinside = false)
 {
     bool changed = false;
     std::string whichfont = getStringFont(changed, forceinside, whichinside);
-    static void *retval = NULL;
+    static void *retval = nullptr;
     if (changed)
-        retval = NULL;
-    if (retval == NULL)
+        retval = nullptr;
+    if (retval == nullptr)
     {
         if (whichfont == "helvetica10")
             retval = GLUT_BITMAP_HELVETICA_10;
@@ -302,7 +302,7 @@ int TextPlane::Draw(const string &newText, int offset, bool startlower, bool for
     if (!use_bit)
     {
         int numplayers = 1;
-        if (_Universe) //_Universe can be NULL during bootstrap.
+        if (_Universe) //_Universe can be nullptr during bootstrap.
             numplayers = (_Universe->numPlayers() > 3 ? _Universe->numPlayers() / 2
                                                       : _Universe->numPlayers());
         scalex = numplayers * myFontMetrics.i / std_wid;

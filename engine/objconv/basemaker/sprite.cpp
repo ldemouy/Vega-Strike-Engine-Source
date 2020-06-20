@@ -38,7 +38,7 @@
 # define M_PI_2 (1.57079632679489661923)
 #endif
 
-static float *mview = NULL;
+static float *mview = nullptr;
 static int    bogus_int; //added by chuck_starchaser to squash ignored returns warnings.
 
 VSSprite::VSSprite( const char *file, enum FILTER texturefilter, GFXBOOL force )
@@ -48,7 +48,7 @@ VSSprite::VSSprite( const char *file, enum FILTER texturefilter, GFXBOOL force )
     widtho2   = 0;
     heighto2  = 0;
     rotation  = 0;
-    surface   = NULL;
+    surface   = nullptr;
     maxs      = maxt = 0;
     bogus_int = chdir( "sprites" );
     FILE *f;
@@ -63,14 +63,14 @@ VSSprite::VSSprite( const char *file, enum FILTER texturefilter, GFXBOOL force )
 
         widtho2  /= 2;
         heighto2 /= -2;
-        surface   = NULL;
+        surface   = nullptr;
         if (texturea[0] == '0')
             surface = new Texture( texture );
         else
             surface = new Texture( texture );
         if (!surface) {
             delete surface;
-            surface = NULL;
+            surface = nullptr;
         }
         //Finally close file
         fclose( f );
@@ -98,7 +98,7 @@ void VSSprite::ReadTexture( FILE *f )
 
 VSSprite::~VSSprite()
 {
-    if (surface != NULL)
+    if (surface != nullptr)
         delete surface;
 }
 

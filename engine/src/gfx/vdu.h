@@ -44,7 +44,7 @@ private:
     void DrawVDUObjectives(Unit *parent);
     ///Draws a shield display in the VDU
     void DrawVDUShield(Unit *parent);
-    ///Draws the target display of Unit *target (only call with nonNULL)
+    ///Draws the target display of Unit *target (only call with nonnullptr)
     void DrawTarget(GameCockpit *parentcp, Unit *parent, Unit *target);
     ///Draws a list of cargo contents
     void DrawManifest(Unit *parent, Unit *target);

@@ -422,7 +422,7 @@ FaceTargetITTS::~FaceTargetITTS()
 void FaceTargetITTS::Execute()
 {
     Unit *target = parent->Target();
-    if (target == NULL)
+    if (target == nullptr)
     {
         done = finish;
         return;
@@ -450,7 +450,7 @@ FaceTarget::FaceTarget(bool fini, int accuracy) : ChangeHeading(QVector(0, 0, 1)
 void FaceTarget::Execute()
 {
     Unit *target = parent->Target();
-    if (target == NULL)
+    if (target == nullptr)
     {
         done = finish;
         return;
@@ -559,7 +559,7 @@ bool AutoLongHaul::InsideLandingPort(const Unit *obstacle) const
 void AutoLongHaul::Execute()
 {
     Unit *target = group.GetUnit();
-    if (target == NULL)
+    if (target == nullptr)
     {
         group.SetUnit(parent->Target());
         done = finish;
@@ -589,7 +589,7 @@ void AutoLongHaul::Execute()
     if ((parent->graphicOptions.WarpFieldStrength < enough_warp_for_cruise) && (parent->graphicOptions.RampCounter == 0))
     {
         //face target unless warp ramping is done and warp is less than some intolerable ammt
-        Unit *obstacle = NULL;
+        Unit *obstacle = nullptr;
         float maxmultiplier = CalculateNearestWarpUnit(parent, FLT_MAX, &obstacle, compensate_for_interdiction); //find the unit affecting our spec
         bool currently_inside_landing_zone = false;
         if (obstacle)
@@ -599,7 +599,7 @@ void AutoLongHaul::Execute()
             inside_landing_zone = currently_inside_landing_zone;
             MakeLinearVelocityOrder();
         }
-        if (obstacle != NULL && obstacle != target)
+        if (obstacle != nullptr && obstacle != target)
         {
             //if it exists and is not our destination
             QVector obstacledirection = (obstacle->LocalPosition() - myposition); //find vector from us to obstacle
@@ -731,7 +731,7 @@ FaceDirection::FaceDirection(float dist, bool fini, int accuracy) : ChangeHeadin
 void FaceDirection::Execute()
 {
     Unit *target = group.GetUnit();
-    if (target == NULL)
+    if (target == nullptr)
     {
         done = finish;
         return;
@@ -786,17 +786,17 @@ FormUp::~FormUp() {}
 
 void FormUpToOwner::SetParent(Unit *un)
 {
-    Unit *ownerDoNotDereference = NULL;
+    Unit *ownerDoNotDereference = nullptr;
     Unit *temp;
     for (un_iter i = _Universe->activeStarSystem()->getUnitList().createIterator();
-         (temp = *i) != NULL;
+         (temp = *i) != nullptr;
          ++i)
         if (temp == un->owner)
         {
             ownerDoNotDereference = temp;
             break;
         }
-    if (ownerDoNotDereference != NULL)
+    if (ownerDoNotDereference != nullptr)
         AttachSelfOrder(ownerDoNotDereference);
     MoveTo::SetParent(un);
 }

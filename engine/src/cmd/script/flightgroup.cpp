@@ -16,7 +16,7 @@ Flightgroup *Flightgroup::newFlightgroup(const std::string &name,
 {
     Flightgroup *fg = mis->findFlightgroup(name, faction);
     Flightgroup *fgtmp = fg;
-    if (fg == NULL)
+    if (fg == nullptr)
         fg = new Flightgroup;
     fg->Init(fgtmp, name, type, faction, order, num_ships, num_waves, mis);
     if (!logo_tex.empty())

@@ -51,7 +51,7 @@ void GFXSphereVertexList::EndDrawState(GFXBOOL lock)
 }
 GFXVertexList::VDAT *GFXSphereVertexList::BeginMutate(int offset)
 {
-    return NULL;
+    return nullptr;
 }
 void GFXSphereVertexList::EndMutate(int newsize)
 {
@@ -64,7 +64,7 @@ GFXSphereVertexList::GFXSphereVertexList(float radius, int detail, bool Insideou
     static vector<GFXVertexList *> vlists[4];
     int which = (Insideout ? 1 : 0) + (reverse_normals ? 2 : 0);
     while (detail >= static_cast<int>(vlists[which].size()))
-        vlists[which].insert(vlists[which].end(), 1 + detail - vlists[which].size(), NULL);
+        vlists[which].insert(vlists[which].end(), 1 + detail - vlists[which].size(), nullptr);
     if (vlists[which][detail] == 0)
     {
         int slices;

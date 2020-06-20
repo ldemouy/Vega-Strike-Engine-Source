@@ -284,13 +284,13 @@ struct UnitImages
     UnitImages()
     {
         VSCONSTRUCT1('i');
-        pHudImage = NULL;
-        pExplosion = NULL;
+        pHudImage = nullptr;
+        pExplosion = nullptr;
     }
     /*    {
 *       VSCONSTRUCT1( 'i' )
-*  //        pHudImage = NULL;
-*       pExplosion = NULL;
+*  //        pHudImage = nullptr;
+*       pExplosion = nullptr;
 *   }*/
     virtual ~UnitImages();
     /*    {

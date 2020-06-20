@@ -13,7 +13,7 @@
 #include "vsfilesystem.h"
 #include "pythonai.h"
 using namespace Orders;
-PythonAI *PythonAI::last_ai = NULL;
+PythonAI *PythonAI::last_ai = nullptr;
 PythonAI::PythonAI(PyObject *self_, float reaction_time, float aggressivity) : FireAt(reaction_time, aggressivity)
 {
     self = self_;
@@ -32,7 +32,7 @@ void PythonAI::default_Execute(FireAt &self_)
 PythonAI *PythonAI::LastAI()
 {
     PythonAI *myai = last_ai;
-    last_ai = NULL;
+    last_ai = nullptr;
     return myai;
 }
 PythonAI *PythonAI::Factory(const std::string &filename)

@@ -28,12 +28,12 @@ void Mesh::SelectCullFace(int whichdrawqueue) {}
 void Mesh::CreateLogos(struct MeshXML *, int faction, Flightgroup *fg) {}
 Texture *Mesh::TempGetTexture(struct MeshXML *, std::string filename, std::string factionname, GFXBOOL detail) const
 {
-    return NULL;
+    return nullptr;
 }
 
 Texture *Mesh::TempGetTexture(struct MeshXML *, int index, std::string factionname) const
 {
-    return NULL;
+    return nullptr;
 }
 const GFXMaterial &Mesh::GetMaterial() const
 {
@@ -49,7 +49,7 @@ Texture *createTexture(const char *filename,
                        unsigned char c = GFXFALSE,
                        int i = 65536)
 {
-    return NULL;
+    return nullptr;
 }
 Texture *createTexture(char const *ccc,
                        char const *cc,
@@ -62,11 +62,11 @@ Texture *createTexture(char const *ccc,
                        unsigned char c = GFXFALSE,
                        int i = 65536)
 {
-    return NULL;
+    return nullptr;
 }
 AnimatedTexture *createAnimatedTexture(char const *c, int i, enum FILTER f)
 {
-    return NULL;
+    return nullptr;
 }
 Logo *createLogo(int numberlogos,
                  Vector *center,
@@ -77,7 +77,7 @@ Logo *createLogo(int numberlogos,
                  Texture *Dec,
                  Vector *Ref)
 {
-    return NULL;
+    return nullptr;
 }
 
 extern Hashtable<std::string, std::vector<Mesh *>, MESH_HASTHABLE_SIZE> bfxmHashTable;

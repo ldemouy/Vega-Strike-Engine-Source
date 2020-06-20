@@ -109,7 +109,7 @@ Mesh *GetWarpMesh(int faction, warptrails *w)
 {
     using namespace VSFileSystem;
     while (faction >= static_cast<int>(w->factions.size()))
-        w->factions.push_back(NULL);
+        w->factions.push_back(nullptr);
     string fac = FactionUtil::GetFaction(faction);
     fac += "_warp.bfxm";
     VSError err;
@@ -117,9 +117,9 @@ Mesh *GetWarpMesh(int faction, warptrails *w)
     {
         fac = "neutral_warp.bfxm";
         if ((err = LookForFile(fac, MeshFile)) > Ok)
-            return NULL;
+            return nullptr;
     }
     if (!w->factions[faction])
-        w->factions[faction] = Mesh::LoadMesh(fac.c_str(), Vector(1, 1, 1), faction, NULL);
+        w->factions[faction] = Mesh::LoadMesh(fac.c_str(), Vector(1, 1, 1), faction, nullptr);
     return w->factions[faction];
 }

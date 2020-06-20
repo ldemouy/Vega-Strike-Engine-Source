@@ -34,10 +34,10 @@ GFXBOOL GFXLIGHTING = GFXFALSE;
 int _currentContext = 0;
 vector<vector<gfx_light>> _local_lights_dat;
 vector<GFXColor> _ambient_light;
-vector<gfx_light> *_llights = NULL;
+vector<gfx_light> *_llights = nullptr;
 
 //currently stored GL lights!
-OpenGLLights *GLLights = NULL; //{-1,-1,-1,-1,-1,-1,-1,-1};
+OpenGLLights *GLLights = nullptr; //{-1,-1,-1,-1,-1,-1,-1,-1};
 static stack<bool *> GlobalEffects;
 static stack<bool *> GlobalEffectsFreelist;
 static stack<GFXColor> GlobalEffectsAmbient;

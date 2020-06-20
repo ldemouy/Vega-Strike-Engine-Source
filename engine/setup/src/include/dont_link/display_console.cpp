@@ -35,7 +35,7 @@ void ShowMain(void)
 	cout << "___________________________________\n";
 	do
 	{
-		if (CURRENT->name == NULL)
+		if (CURRENT->name == nullptr)
 		{
 			continue;
 		}
@@ -81,7 +81,7 @@ void ShowChoices(int val)
 	CHOICE_CAT = 0;
 	do
 	{
-		if (CURRENT->name == NULL)
+		if (CURRENT->name == nullptr)
 		{
 			continue;
 		}
@@ -101,7 +101,7 @@ void ShowChoices(int val)
 	count = 1;
 	do
 	{
-		if (CUR->name == NULL)
+		if (CUR->name == nullptr)
 		{
 			continue;
 		}
@@ -157,7 +157,7 @@ void ShowChoices(int val)
 	CUR = &CATS;
 	do
 	{
-		if (CUR->name == NULL)
+		if (CUR->name == nullptr)
 		{
 			continue;
 		}

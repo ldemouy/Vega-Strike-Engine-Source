@@ -17,7 +17,7 @@ protected:
     Enhancement(const char *filename,
                 int faction,
                 const string &modifications,
-                Flightgroup *flightgrp = NULL,
+                Flightgroup *flightgrp = nullptr,
                 int fg_subnumber = 0) : Unit(filename, false, faction, modifications, flightgrp, fg_subnumber), filename(filename) {}
 
 public:

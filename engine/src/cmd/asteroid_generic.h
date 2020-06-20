@@ -14,7 +14,7 @@ public:
 protected:
 	/** Constructor that can only be called by the UnitFactory.
 		 */
-	Asteroid(const char *filename, int faction, Flightgroup *fg = NULL, int fg_snumber = 0, float difficulty = .01);
+	Asteroid(const char *filename, int faction, Flightgroup *fg = nullptr, int fg_snumber = 0, float difficulty = .01);
 
 	friend class UnitFactory;
 

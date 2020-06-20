@@ -71,15 +71,15 @@ VSImage::VSImage()
 
 void VSImage::Init()
 {
-    this->tt = NULL;
+    this->tt = nullptr;
     this->img_type = Unrecognized;
-    //this->tex->palette = NULL;
+    //this->tex->palette = nullptr;
     this->strip_16 = false;
 }
 
 void VSImage::Init(VSFile *f, textureTransform *t, bool strip, VSFile *f2)
 {
-    assert(f != NULL);
+    assert(f != nullptr);
 
     this->Init();
 
@@ -106,7 +106,7 @@ unsigned char *VSImage::ReadImage(VSFile *f, textureTransform *t, bool strip, VS
     {
         this->Init(f, t, strip, f2);
 
-        unsigned char *ret = NULL;
+        unsigned char *ret = nullptr;
         CheckFormat(img_file);
         switch (this->img_type)
         {
@@ -124,7 +124,7 @@ unsigned char *VSImage::ReadImage(VSFile *f, textureTransform *t, bool strip, VS
             break;
         default:
             BOOST_LOG_TRIVIAL(info) << img_file->GetFilename();
-            ret = NULL;
+            ret = nullptr;
         }
         return ret;
     }
@@ -132,7 +132,7 @@ unsigned char *VSImage::ReadImage(VSFile *f, textureTransform *t, bool strip, VS
     {
         //ReadXXX() already handles exceptions. But, if any exception remains unhandled,
         //this handler will perform a dirty abortion (reclaims no memory, but doesn't crash at least)
-        return NULL;
+        return nullptr;
     }
 }
 
@@ -252,13 +252,13 @@ static void png_cexcept_error(png_structp png_ptr, png_const_charp msg)
 
 unsigned char *VSImage::ReadPNG()
 {
-    png_bytepp row_pointers = NULL;
-    unsigned char *image = NULL;
+    png_bytepp row_pointers = nullptr;
+    unsigned char *image = nullptr;
 
     try
     {
-        TPngFileBuffer PngFileBuffer = {NULL, 0};
-        palette = NULL;
+        TPngFileBuffer PngFileBuffer = {nullptr, 0};
+        palette = nullptr;
         png_structp png_ptr;
         png_infop info_ptr;
         int interlace_type;
@@ -279,25 +279,25 @@ unsigned char *VSImage::ReadPNG()
             PngFileBuffer.Buffer = img_file->get_pk3_data();
             PngFileBuffer.Pos = 8;
         }
-        png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, (png_error_ptr)png_cexcept_error, (png_error_ptr)NULL);
-        if (png_ptr == NULL)
+        png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, (png_error_ptr)png_cexcept_error, (png_error_ptr)nullptr);
+        if (png_ptr == nullptr)
         {
-            BOOST_LOG_TRIVIAL(info) << "VSImage ERROR : PNG ptr == NULL !!!";
+            BOOST_LOG_TRIVIAL(info) << "VSImage ERROR : PNG ptr == nullptr !!!";
             BOOST_LOG_TRIVIAL(info) << img_file->GetFilename();
             throw(1);
         }
         info_ptr = png_create_info_struct(png_ptr);
-        if (info_ptr == NULL)
+        if (info_ptr == nullptr)
         {
-            png_destroy_read_struct(&png_ptr, (png_infopp)NULL, (png_infopp)NULL);
-            BOOST_LOG_TRIVIAL(info) << "VSImage ERROR : PNG info_ptr == NULL !!!";
+            png_destroy_read_struct(&png_ptr, (png_infopp)nullptr, (png_infopp)nullptr);
+            BOOST_LOG_TRIVIAL(info) << "VSImage ERROR : PNG info_ptr == nullptr !!!";
             BOOST_LOG_TRIVIAL(info) << img_file->GetFilename();
             throw(1);
         }
         if (setjmp(png_jmpbuf(png_ptr)))
         {
             /* Free all of the memory associated with the png_ptr and info_ptr */
-            png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
+            png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)nullptr);
             /* If we get here, we had a problem reading the file */
             BOOST_LOG_TRIVIAL(info) << "VSImage ERROR : problem reading file/buffer -> setjmp !!!";
             BOOST_LOG_TRIVIAL(info) << img_file->GetFilename();
@@ -323,8 +323,8 @@ unsigned char *VSImage::ReadPNG()
                      &this->img_depth,
                      &this->img_color_type,
                      &interlace_type,
-                     NULL,
-                     NULL);
+                     nullptr,
+                     nullptr);
         BOOST_LOG_TRIVIAL(trace) << format("1. Loading a PNG file: width = %1% , height = %2% , depth = %3% , img "
                                            "color = %4% , interlace = %5% ") %
                                         sizeX % sizeY % img_depth % img_color_type % interlace_type;
@@ -352,8 +352,8 @@ unsigned char *VSImage::ReadPNG()
                      &this->img_depth,
                      &this->img_color_type,
                      &interlace_type,
-                     NULL,
-                     NULL);
+                     nullptr,
+                     nullptr);
         BOOST_LOG_TRIVIAL(trace) << format("2. Loading a PNG file : width = %1% , height = %2% , depth = %3% , "
                                            "img_color = %4% , interlace = %5%") %
                                         sizeX % sizeY % img_depth % img_color_type % interlace_type;
@@ -385,18 +385,18 @@ unsigned char *VSImage::ReadPNG()
             BOOST_LOG_TRIVIAL(trace) << "4. Doing a transformation ";
             result = (*tt)(this->img_depth, this->img_color_type, this->sizeX, this->sizeY, row_pointers);
             free(image);
-            image = NULL;
+            image = nullptr;
         }
         else
         {
             result = image;
         }
         free(row_pointers);
-        row_pointers = NULL;
+        row_pointers = nullptr;
         png_read_end(png_ptr, info_ptr);
-        png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
-        png_ptr = NULL;
-        info_ptr = NULL;
+        png_destroy_read_struct(&png_ptr, &info_ptr, nullptr);
+        png_ptr = nullptr;
+        info_ptr = nullptr;
         BOOST_LOG_TRIVIAL(trace) << "Decompressing Done.";
         if (result)
             this->AllocatePalette();
@@ -406,11 +406,11 @@ unsigned char *VSImage::ReadPNG()
     {
         if (image)
             free(image);
-        image = NULL;
+        image = nullptr;
         if (row_pointers)
             free(row_pointers);
-        row_pointers = NULL;
-        return NULL;
+        row_pointers = nullptr;
+        return nullptr;
     }
 }
 
@@ -436,8 +436,8 @@ my_error_exit(j_common_ptr cinfo)
 
 unsigned char *VSImage::ReadJPEG()
 {
-    unsigned char *image = NULL;
-    JSAMPARRAY row_pointers = NULL; //Output row buffer
+    unsigned char *image = nullptr;
+    JSAMPARRAY row_pointers = nullptr; //Output row buffer
 
     try
     {
@@ -516,10 +516,10 @@ unsigned char *VSImage::ReadJPEG()
         {
             result = (*tt)(this->img_depth, this->img_color_type, this->sizeX, this->sizeY, row_pointers);
             free(image);
-            image = NULL;
+            image = nullptr;
         }
         free(row_pointers);
-        row_pointers = NULL;
+        row_pointers = nullptr;
         if (result)
             this->AllocatePalette();
         return result;
@@ -528,19 +528,19 @@ unsigned char *VSImage::ReadJPEG()
     {
         if (image)
             free(image);
-        image = NULL;
+        image = nullptr;
         if (row_pointers)
             free(row_pointers);
-        row_pointers = NULL;
-        return NULL;
+        row_pointers = nullptr;
+        return nullptr;
     }
 }
 
 unsigned char *VSImage::ReadBMP()
 {
-    unsigned char *data = NULL;
-    unsigned char *cdata = NULL;
-    unsigned char *adata = NULL;
+    unsigned char *data = nullptr;
+    unsigned char *cdata = nullptr;
+    unsigned char *adata = nullptr;
 
     try
     {
@@ -562,14 +562,14 @@ unsigned char *VSImage::ReadBMP()
         this->img_sides = SIDE_SINGLE;
         this->img_nmips = 0;
         /*
-         *  if (img_file2!=NULL)
+         *  if (img_file2!=nullptr)
          *  {
          *       img_file2->GoTo(SIZEOF_BITMAPFILEHEADER);
          *
          *         img_file2->Read(&info1,SIZEOF_BITMAPINFOHEADER);
          *         if (tex->sizeX != (unsigned int) le32_to_cpu(info1.biWidth)||tex->sizeY!=(unsigned int)le32_to_cpu(info1.biHeight))
          *         {
-         *             return NULL;
+         *             return nullptr;
          *         }
          *         RGBQUAD ptemp1;
          *         if (le16_to_cpu(info1.biBitCount) == 8)
@@ -590,13 +590,13 @@ unsigned char *VSImage::ReadBMP()
             unsigned int astride = ((sizeof(unsigned char) * this->sizeX) + 3) & ~3;     //BMP rows must be aligned to 32 bits
             unsigned int stride = (sizeof(unsigned char) * ncomp * this->sizeX);
             data = (unsigned char *)malloc(stride * this->sizeY);
-            if (data == NULL)
-                return NULL;
+            if (data == nullptr)
+                return nullptr;
             if (mode != _24BIT)
             {
                 cdata = (unsigned char *)malloc(cstride);
                 adata = (unsigned char *)malloc(astride);
-                if ((cdata == NULL) || (adata == NULL))
+                if ((cdata == nullptr) || (adata == nullptr))
                     throw("memory");
                 unsigned char *row = data + (this->sizeY - 1) * stride;
                 for (unsigned int i = 0; i < this->sizeY; i++, row -= stride)
@@ -613,9 +613,9 @@ unsigned char *VSImage::ReadBMP()
                     }
                 }
                 free(cdata);
-                cdata = NULL;
+                cdata = nullptr;
                 free(adata);
-                adata = NULL;
+                adata = nullptr;
             }
             else
             {
@@ -642,7 +642,7 @@ unsigned char *VSImage::ReadBMP()
         else if (le16_to_cpu(info.biBitCount) == 8)
         {
             mode = _8BIT;
-            data = NULL;
+            data = nullptr;
             data = (unsigned char *)malloc(sizeof(unsigned char) * sizeY * sizeX);
             this->palette = (unsigned char *)malloc(sizeof(unsigned char) * (256 * 4 + 1));
             memset(this->palette, 0, (256 * 4 + 1) * sizeof(unsigned char));
@@ -657,7 +657,7 @@ unsigned char *VSImage::ReadBMP()
                 paltemp += 4; //pal size
             }
             if (!data)
-                return NULL;
+                return nullptr;
             for (int i = sizeY - 1; i >= 0; i--)
                 for (unsigned int j = 0; j < sizeX; j++)
                     img_file->Read(data + j + i * sizeX, sizeof(unsigned char));
@@ -668,14 +668,14 @@ unsigned char *VSImage::ReadBMP()
     {
         if (cdata)
             free(cdata);
-        cdata = NULL;
+        cdata = nullptr;
         if (adata)
             free(adata);
-        adata = NULL;
+        adata = nullptr;
         if (data)
             free(data);
-        data = NULL;
-        return NULL;
+        data = nullptr;
+        return nullptr;
     };
 }
 
@@ -686,7 +686,7 @@ unsigned char *VSImage::ReadDDS()
     ddsHeader header;
     unsigned int type = GL_RGB;
     int blockSize = 16;
-    unsigned char *s = NULL;
+    unsigned char *s = nullptr;
     unsigned int inputSize = 0;
     int width = 0;
     int height = 0;
@@ -838,7 +838,7 @@ unsigned char *VSImage::ReadDDS()
     {
         if (s)
             free(s);
-        return NULL;
+        return nullptr;
     }
 }
 
@@ -918,7 +918,7 @@ VSError VSImage::WriteImage(VSFile *pf,
         BOOST_LOG_TRIVIAL(info) << img_file->GetFilename();
         return VSFileSystem::BadFormat;
     }
-    this->img_file = NULL;
+    this->img_file = nullptr;
     this->img_depth = 0;
     this->sizeX = 0;
     this->sizeY = 0;
@@ -928,13 +928,13 @@ VSError VSImage::WriteImage(VSFile *pf,
 
 VSError VSImage::WritePNG(unsigned char *data)
 {
-    png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, (png_voidp)NULL, NULL, NULL);
+    png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, (png_voidp)nullptr, nullptr, nullptr);
     if (!png_ptr)
         return BadFormat;
     png_infop info_ptr = png_create_info_struct(png_ptr);
     if (!info_ptr)
     {
-        png_destroy_write_struct(&png_ptr, (png_infopp)NULL);
+        png_destroy_write_struct(&png_ptr, (png_infopp)nullptr);
         return BadFormat;
     }
     if (setjmp(png_jmpbuf(png_ptr)))

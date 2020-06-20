@@ -342,7 +342,7 @@ const BaseComputer::WctlTableEntry WctlBase<BaseComputer>::WctlCommandTable[] = 
     BaseComputer::WctlTableEntry("NetworkDie", "", &BaseComputer::actionNetDie),
     BaseComputer::WctlTableEntry("DoneComputer", "", &BaseComputer::actionDone),
 
-    BaseComputer::WctlTableEntry("", "", NULL)};
+    BaseComputer::WctlTableEntry("", "", nullptr)};
 
 template <typename T>
 inline T mymin(T a, T b)
@@ -448,22 +448,22 @@ extern bool isWeapon(std::string name);
     ((((playerUnit)->what) != (empty)) && ((mode != 0) || (((playerUnit)->what) != ((blankUnit)->what))))
 
 //CONSTRUCTOR.
-BaseComputer::BaseComputer(Unit *player, Unit *base, const std::vector<DisplayMode> &modes) : m_displayModes(modes), m_player(player), m_base(base), m_currentDisplay(NULL_DISPLAY), m_selectedList(NULL), m_playingMuzak(false)
+BaseComputer::BaseComputer(Unit *player, Unit *base, const std::vector<DisplayMode> &modes) : m_displayModes(modes), m_player(player), m_base(base), m_currentDisplay(nullptr_DISPLAY), m_selectedList(nullptr), m_playingMuzak(false)
 {
     //Make sure we get this color loaded.
     //Initialize mode group controls array.
     for (int i = 0; i < DISPLAY_MODE_COUNT; i++)
-        m_modeGroups[i] = NULL;
+        m_modeGroups[i] = nullptr;
 }
 
 //Destructor.
 BaseComputer::~BaseComputer(void)
 {
-    m_player.SetUnit(NULL);
-    m_base.SetUnit(NULL);
+    m_player.SetUnit(nullptr);
+    m_base.SetUnit(nullptr);
     //Delete any group controls that the window doesn't "own".
     for (int i = 0; i < DISPLAY_MODE_COUNT; i++)
-        if (m_modeGroups[i] != NULL)
+        if (m_modeGroups[i] != nullptr)
             delete m_modeGroups[i];
     //If we are playing muzak, stop it.
     if (m_playingMuzak)
@@ -1402,7 +1402,7 @@ void BaseComputer::createControls(void)
 void BaseComputer::createModeButtons(void)
 {
     NewButton *originalButton = static_cast<NewButton *>(window()->findControlById("ModeButton"));
-    assert(originalButton != NULL);
+    assert(originalButton != nullptr);
     if (m_displayModes.size() > 1)
     {
         //Create a button for each display mode, copying the original button.
@@ -1434,7 +1434,7 @@ void BaseComputer::switchToControls(DisplayMode mode)
 {
     if (m_currentDisplay != mode)
     {
-        assert(m_modeGroups[mode] != NULL); //We should have controls for this mode.
+        assert(m_modeGroups[mode] != nullptr); //We should have controls for this mode.
         if (mode == CARGO)
             window()->setTexture("basecomputer_cargo.png");
         if (mode == MISSIONS)
@@ -1451,7 +1451,7 @@ void BaseComputer::switchToControls(DisplayMode mode)
             window()->setTexture("basecomputer_loadsave.png");
         if (mode == NETWORK)
             window()->setTexture("basecomputer_network.png");
-        if (m_currentDisplay != NULL_DISPLAY)
+        if (m_currentDisplay != nullptr_DISPLAY)
         {
             //Get the old controls out of the window.
             Control *oldControls = window()->findControlById(modeInfo[m_currentDisplay].groupId);
@@ -1470,7 +1470,7 @@ void BaseComputer::switchToControls(DisplayMode mode)
 
         window()->addControl(m_modeGroups[mode]);
         //Take this group out of our table because we don't own it anymore.
-        m_modeGroups[mode] = NULL;
+        m_modeGroups[mode] = nullptr;
     }
 }
 
@@ -1480,7 +1480,7 @@ bool BaseComputer::changeToCargoMode(const EventCommandId &command, Control *con
     if (m_currentDisplay != CARGO)
         switchToControls(CARGO);
     loadCargoControls();
-    updateTransactionControlsForSelection(NULL);
+    updateTransactionControlsForSelection(nullptr);
     return true;
 }
 
@@ -1533,7 +1533,7 @@ void BaseComputer::run(void)
 {
     //Simulate clicking the leftmost mode button.
     //We don't actually use the button because there isn't a button if there's only one mode.
-    processWindowCommand(modeInfo[m_displayModes[0]].command, NULL);
+    processWindowCommand(modeInfo[m_displayModes[0]].command, nullptr);
 
     WindowController::run();
 }
@@ -1577,7 +1577,7 @@ void BaseComputer::recalcTitle()
     }
     //Set the string in the base title control.
     StaticDisplay *baseTitleDisplay = static_cast<StaticDisplay *>(window()->findControlById("BaseInfoTitle"));
-    assert(baseTitleDisplay != NULL);
+    assert(baseTitleDisplay != nullptr);
     baseTitleDisplay->setText(baseTitle);
 
     //Generic player title for display
@@ -1643,7 +1643,7 @@ void BaseComputer::recalcTitle()
     }
     //Set the string in the player title control.
     StaticDisplay *playerTitleDisplay = static_cast<StaticDisplay *>(window()->findControlById("PlayerInfoTitle"));
-    assert(playerTitleDisplay != NULL);
+    assert(playerTitleDisplay != nullptr);
     playerTitleDisplay->setText(playerTitle);
 }
 
@@ -1654,7 +1654,7 @@ bool BaseComputer::scrollToItem(Picker *picker, const Cargo &item, bool select, 
     PickerCells *cells = picker->cells();
     if (!cells)
         return false;
-    PickerCell *categoryCell = NULL; //Need this if we can't find the item.
+    PickerCell *categoryCell = nullptr; //Need this if we can't find the item.
 
     //Walk through the category list(s).
     std::string category = getDisplayCategory(item);
@@ -1697,7 +1697,7 @@ bool BaseComputer::scrollToItem(Picker *picker, const Cargo &item, bool select, 
         }
     }
     //We have the parent category, now we need the child itself.
-    assert(cells != NULL);
+    assert(cells != nullptr);
     PickerCell *cell = cells->cellWithId(item.content);
     picker->setMustRecalc();
     if (!cell)
@@ -1720,14 +1720,14 @@ bool BaseComputer::scrollToItem(Picker *picker, const Cargo &item, bool select, 
         if (i == count)
             i--;
         cell = cells->cellAt(i);
-        assert(cell != NULL);
+        assert(cell != nullptr);
         //Drop through to get cell handled.
     }
     if (select)
     {
         picker->selectCell(cell, true);
         //This may not be a selectable cell.
-        return picker->selectedCell() != NULL;
+        return picker->selectedCell() != nullptr;
     }
     else
     {
@@ -1749,20 +1749,20 @@ void BaseComputer::hideCommitControls(void)
     NewButton *commitButton = static_cast<NewButton *>(window()->findControlById("Commit"));
     commitButton->setHidden(true);
     NewButton *commit10Button = static_cast<NewButton *>(window()->findControlById("Commit10"));
-    if (commit10Button != NULL)
+    if (commit10Button != nullptr)
         commit10Button->setHidden(true);
     NewButton *commitAllButton = static_cast<NewButton *>(window()->findControlById("CommitAll"));
-    if (commitAllButton != NULL)
+    if (commitAllButton != nullptr)
         commitAllButton->setHidden(true);
     NewButton *commitFixButton = static_cast<NewButton *>(window()->findControlById("CommitFix"));
-    if (commitFixButton != NULL)
+    if (commitFixButton != nullptr)
         commitFixButton->setHidden(true);
     //The price and "max" displays.
     StaticDisplay *totalPrice = static_cast<StaticDisplay *>(window()->findControlById("TotalPrice"));
-    if (totalPrice != NULL)
+    if (totalPrice != nullptr)
         totalPrice->setText("");
     StaticDisplay *maxForPlayer = static_cast<StaticDisplay *>(window()->findControlById("MaxQuantity"));
-    if (maxForPlayer != NULL)
+    if (maxForPlayer != nullptr)
         maxForPlayer->setText("");
 }
 
@@ -1773,21 +1773,21 @@ void BaseComputer::configureCargoCommitControls(const Cargo &item, TransactionTy
     {
         //"Buy 1" button.
         NewButton *commitButton = static_cast<NewButton *>(window()->findControlById("Commit"));
-        assert(commitButton != NULL);
+        assert(commitButton != nullptr);
         commitButton->setHidden(false);
         commitButton->setLabel("Buy 1");
         commitButton->setCommand("BuyCargo");
 
         //"Buy 10" button.
         NewButton *commit10Button = static_cast<NewButton *>(window()->findControlById("Commit10"));
-        assert(commit10Button != NULL);
+        assert(commit10Button != nullptr);
         commit10Button->setHidden(false);
         commit10Button->setLabel("Buy 10");
         commit10Button->setCommand("Buy10Cargo");
 
         //"Buy All" button.
         NewButton *commitAllButton = static_cast<NewButton *>(window()->findControlById("CommitAll"));
-        assert(commitAllButton != NULL);
+        assert(commitAllButton != nullptr);
         commitAllButton->setHidden(false);
         commitAllButton->setLabel("Buy");
         commitAllButton->setCommand("BuyAllCargo");
@@ -1799,12 +1799,12 @@ void BaseComputer::configureCargoCommitControls(const Cargo &item, TransactionTy
         char tempString[2048];
         sprintf(tempString, "Total: #b#%.2f#-b", totalPrice);
         StaticDisplay *totalDisplay = static_cast<StaticDisplay *>(window()->findControlById("TotalPrice"));
-        assert(totalDisplay != NULL);
+        assert(totalDisplay != nullptr);
         totalDisplay->setText(tempString);
 
         //Limit if we have one.
         StaticDisplay *maxForPlayer = static_cast<StaticDisplay *>(window()->findControlById("MaxQuantity"));
-        assert(maxForPlayer != NULL);
+        assert(maxForPlayer != nullptr);
         if (maxQuantity >= item.quantity)
         {
             //No limits, so let's not mention anything.
@@ -1823,21 +1823,21 @@ void BaseComputer::configureCargoCommitControls(const Cargo &item, TransactionTy
 
         //"Sell" button.
         NewButton *commitButton = static_cast<NewButton *>(window()->findControlById("Commit"));
-        assert(commitButton != NULL);
+        assert(commitButton != nullptr);
         commitButton->setHidden(false);
         commitButton->setLabel(item.mission ? "Dump 1" : "Sell 1");
         commitButton->setCommand("SellCargo");
 
         //"Sell 10" button.
         NewButton *commit10Button = static_cast<NewButton *>(window()->findControlById("Commit10"));
-        assert(commit10Button != NULL);
+        assert(commit10Button != nullptr);
         commit10Button->setHidden(false);
         commit10Button->setLabel(item.mission ? "Dump 10" : "Sell 10");
         commit10Button->setCommand("Sell10Cargo");
 
         //"Sell All" button.
         NewButton *commitAllButton = static_cast<NewButton *>(window()->findControlById("CommitAll"));
-        assert(commitAllButton != NULL);
+        assert(commitAllButton != nullptr);
         commitAllButton->setHidden(false);
         commitAllButton->setLabel(item.mission ? "Dump" : "Sell");
         commitAllButton->setCommand("SellAllCargo");
@@ -1847,12 +1847,12 @@ void BaseComputer::configureCargoCommitControls(const Cargo &item, TransactionTy
         char tempString[2048];
         sprintf(tempString, "Total: #b#%.2f#-b", totalPrice);
         StaticDisplay *totalDisplay = static_cast<StaticDisplay *>(window()->findControlById("TotalPrice"));
-        assert(totalDisplay != NULL);
+        assert(totalDisplay != nullptr);
         totalDisplay->setText(tempString);
 
         //No limit.
         StaticDisplay *maxForPlayer = static_cast<StaticDisplay *>(window()->findControlById("MaxQuantity"));
-        assert(maxForPlayer != NULL);
+        assert(maxForPlayer != nullptr);
         maxForPlayer->setText("");
     }
 }
@@ -1865,13 +1865,13 @@ bool BaseComputer::configureUpgradeCommitControls(const Cargo &item, Transaction
     {
         //base inventory
         NewButton *commitButton = static_cast<NewButton *>(window()->findControlById("Commit"));
-        assert(commitButton != NULL);
+        assert(commitButton != nullptr);
         commitButton->setHidden(false);
         commitButton->setLabel("Buy");
         commitButton->setCommand("BuyUpgrade");
 
         NewButton *commitFixButton = static_cast<NewButton *>(window()->findControlById("CommitFix"));
-        assert(commitButton != NULL);
+        assert(commitButton != nullptr);
         commitFixButton->setHidden(true);
         commitFixButton->setLabel("Fix");
         commitFixButton->setCommand("FixUpgrade");
@@ -1880,7 +1880,7 @@ bool BaseComputer::configureUpgradeCommitControls(const Cargo &item, Transaction
     {
         //Sell Upgrade - Local Inventory
         NewButton *commitButton = static_cast<NewButton *>(window()->findControlById("Commit"));
-        assert(commitButton != NULL);
+        assert(commitButton != nullptr);
         if (m_player.GetUnit())
         {
             bool CanDoSell = true;
@@ -1929,7 +1929,7 @@ bool BaseComputer::configureUpgradeCommitControls(const Cargo &item, Transaction
                                                              item.content, item.category, false),
                                 m_base.GetUnit()->PriceCargo(item.content)) <= _Universe->AccessCockpit()->credits)
                 {
-                    assert(commitFixButton != NULL);
+                    assert(commitFixButton != nullptr);
                     if (commitFixButton)
                     {
                         commitFixButton->setHidden(false);
@@ -1952,21 +1952,21 @@ void BaseComputer::updateTransactionControlsForSelection(TransactionList *tlist)
 {
     //Get the controls we need.
     NewButton *commitButton = static_cast<NewButton *>(window()->findControlById("Commit"));
-    assert(commitButton != NULL);
+    assert(commitButton != nullptr);
     StaticDisplay *desc = static_cast<StaticDisplay *>(window()->findControlById("Description"));
     std::string descriptiontexture;
-    assert(desc != NULL);
+    assert(desc != nullptr);
     if (!tlist)
     {
         //We have no selection.  Turn off UI that commits a transaction.
-        m_selectedList = NULL;
+        m_selectedList = nullptr;
         hideCommitControls();
         desc->setText("");
         //Make sure there is no selection.
         if (m_transList1.picker)
-            m_transList1.picker->selectCell(NULL);
+            m_transList1.picker->selectCell(nullptr);
         if (m_transList2.picker)
-            m_transList2.picker->selectCell(NULL);
+            m_transList2.picker->selectCell(nullptr);
         return;
     }
     //We have a selection of some sort.
@@ -1977,11 +1977,11 @@ void BaseComputer::updateTransactionControlsForSelection(TransactionList *tlist)
     //Clear selection from other list.
     TransactionList &otherList = ((&m_transList1 == m_selectedList) ? m_transList2 : m_transList1);
     if (otherList.picker)
-        otherList.picker->selectCell(NULL);
+        otherList.picker->selectCell(nullptr);
     //They selected a cell that has a description.
     //The selected item.
     const PickerCell *cell = tlist->picker->selectedCell();
-    assert(cell != NULL);
+    assert(cell != nullptr);
     Cargo &item = tlist->masterList[cell->tag()].cargo;
     bool damaged_mode = false;
     if (!isTransactionOK(item, tlist->transaction))
@@ -2009,7 +2009,7 @@ void BaseComputer::updateTransactionControlsForSelection(TransactionList *tlist)
             {
                 //note can only sell it if you can afford to ship it over here.
                 NewButton *commit10Button = static_cast<NewButton *>(window()->findControlById("Commit10"));
-                assert(commit10Button != NULL);
+                assert(commit10Button != nullptr);
                 commit10Button->setHidden(false);
                 commit10Button->setLabel("Sell");
                 commit10Button->setCommand("SellShip");
@@ -2232,7 +2232,7 @@ void BaseComputer::updateTransactionControlsForSelection(TransactionList *tlist)
 //Something in a Picker was selected.
 bool BaseComputer::pickerChangedSelection(const EventCommandId &command, Control *control)
 {
-    assert(control != NULL);
+    assert(control != nullptr);
     Picker *picker = static_cast<Picker *>(control);
     PickerCell *cell = picker->selectedCell();
 
@@ -2252,13 +2252,13 @@ bool BaseComputer::pickerChangedSelection(const EventCommandId &command, Control
             }
             else
             {
-                updateTransactionControlsForSelection(NULL);
+                updateTransactionControlsForSelection(nullptr);
             }
         }
         else if (cell->tag() == CATEGORY_TAG)
         {
             //They just selected a category.  Clear the selection no matter what.
-            updateTransactionControlsForSelection(NULL);
+            updateTransactionControlsForSelection(nullptr);
         }
         else
         {
@@ -2456,7 +2456,7 @@ SimplePickerCell *BaseComputer::createCategoryCell(SimplePickerCells &cells,
     }
     if (category.size() == 0)
         //No category at all.
-        return NULL;
+        return nullptr;
     //Create or reuse a cell for the first part of the category.
     const string::size_type loc = category.find(CATEGORY_SEP);
     const string currentCategory = category.substr(0, loc);
@@ -2509,7 +2509,7 @@ void BaseComputer::loadListPicker(TransactionList &tlist,
 
     //Iterate through the list and load the picker from it.
     string currentCategory = "--ILLEGAL CATEGORY--"; //Current category we are adding cells to.
-    SimplePickerCell *parentCell = NULL;             //Place to add new items.  NULL = Add to picker.
+    SimplePickerCell *parentCell = nullptr;             //Place to add new items.  nullptr = Add to picker.
     for (size_t i = 0; i < tlist.masterList.size(); i++)
     {
         Cargo &item = tlist.masterList[i].cargo;
@@ -2611,13 +2611,13 @@ void BaseComputer::loadCargoControls(void)
     }
     loadMasterList(m_base.GetUnit(), vector<string>(), donttakethis, true, m_transList1); //Anything but a mission.
     SimplePicker *basePicker = static_cast<SimplePicker *>(window()->findControlById("BaseCargo"));
-    assert(basePicker != NULL);
+    assert(basePicker != nullptr);
     loadListPicker(m_transList1, *basePicker, BUY_CARGO);
 
     //Set up the player's transaction list.
     loadMasterList(m_player.GetUnit(), vector<string>(), donttakethis, true, m_transList2); //Anything but a mission.
     SimplePicker *inventoryPicker = static_cast<SimplePicker *>(window()->findControlById("PlayerCargo"));
-    assert(inventoryPicker != NULL);
+    assert(inventoryPicker != nullptr);
     loadListPicker(m_transList2, *inventoryPicker, SELL_CARGO);
 
     //Make the title right.
@@ -2683,7 +2683,7 @@ void BaseComputer::loadMasterList(Unit *un,
 //Return a pointer to the selected item in the picker with the selection.
 Cargo *BaseComputer::selectedItem(void)
 {
-    Cargo *result = NULL;
+    Cargo *result = nullptr;
     if (m_selectedList)
     {
         assert(m_selectedList->picker);
@@ -2698,7 +2698,7 @@ Cargo *BaseComputer::selectedItem(void)
 void BaseComputer::updateTransactionControls(const Cargo &item, bool skipFirstCategory)
 {
     //Go reselect the item.
-    if (m_selectedList == NULL)
+    if (m_selectedList == nullptr)
         return;
     const bool success = scrollToItem(m_selectedList->picker, item, true, skipFirstCategory);
     //And scroll to that item in the other picker, too.
@@ -2711,7 +2711,7 @@ void BaseComputer::updateTransactionControls(const Cargo &item, bool skipFirstCa
         updateTransactionControlsForSelection(m_selectedList);
     else
         //Didn't find item.  Clear the selection.
-        updateTransactionControlsForSelection(NULL);
+        updateTransactionControlsForSelection(nullptr);
 }
 
 //The max number of a particular item this player can buy.  Limits by price, cargo space, etc.
@@ -2753,7 +2753,7 @@ void BaseComputer::refresh()
             m_transList1.picker->saveOpenCategories(list1save);
         if (m_transList2.picker)
             m_transList2.picker->saveOpenCategories(list2save);
-        processWindowCommand(modeInfo[m_currentDisplay].command, NULL);
+        processWindowCommand(modeInfo[m_currentDisplay].command, nullptr);
         if (m_transList1.picker)
             m_transList1.picker->restoreOpenCategories(list1save);
         if (m_transList2.picker)
@@ -2879,13 +2879,13 @@ bool BaseComputer::changeToNewsMode(const EventCommandId &command, Control *cont
 //The selection in the News picker changed.
 bool BaseComputer::newsPickerChangedSelection(const EventCommandId &command, Control *control)
 {
-    assert(control != NULL);
+    assert(control != nullptr);
     Picker *picker = static_cast<Picker *>(control);
     PickerCell *cell = picker->selectedCell();
 
     StaticDisplay *desc = static_cast<StaticDisplay *>(window()->findControlById("Description"));
-    assert(desc != NULL);
-    if (cell == NULL)
+    assert(desc != nullptr);
+    if (cell == nullptr)
         //No selection.  Clear desc.  (Not sure how this can happen, but it's easy to cover.)
         desc->setText("");
     else
@@ -2905,14 +2905,14 @@ static std::string GarnerInfoFromSaveGame(const string &filename)
 //The selection in the News picker changed.
 bool BaseComputer::loadSavePickerChangedSelection(const EventCommandId &command, Control *control)
 {
-    assert(control != NULL);
+    assert(control != nullptr);
     Picker *picker = static_cast<Picker *>(control);
     PickerCell *cell = picker->selectedCell();
 
     StaticDisplay *desc = static_cast<StaticDisplay *>(window()->findControlById("Description"));
     StaticDisplay *inputbox = static_cast<StaticDisplay *>(window()->findControlById("InputText"));
-    assert(desc != NULL);
-    if (cell == NULL)
+    assert(desc != nullptr);
+    if (cell == nullptr)
     {
         //No selection.  Clear desc.  (Not sure how this can happen, but it's easy to cover.)
         desc->setText("");
@@ -2920,7 +2920,7 @@ bool BaseComputer::loadSavePickerChangedSelection(const EventCommandId &command,
     else
     {
         desc->setText(GarnerInfoFromSaveGame(cell->text()));
-        if (inputbox != NULL)
+        if (inputbox != nullptr)
             inputbox->setText(cell->text());
     }
     return true;
@@ -2930,7 +2930,7 @@ bool BaseComputer::loadSavePickerChangedSelection(const EventCommandId &command,
 void BaseComputer::loadNewsControls(void)
 {
     SimplePicker *picker = static_cast<SimplePicker *>(window()->findControlById("NewsPicker"));
-    assert(picker != NULL);
+    assert(picker != nullptr);
     picker->clear();
 
     //Load the picker.
@@ -2961,7 +2961,7 @@ void BaseComputer::loadNewsControls(void)
     }
     //Make sure the description is empty.
     StaticDisplay *desc = static_cast<StaticDisplay *>(window()->findControlById("Description"));
-    assert(desc != NULL);
+    assert(desc != nullptr);
     desc->setText("");
 
     //Make the title right.
@@ -3013,7 +3013,7 @@ typedef int (*scancompare)(const void *v1, const void *v2);
 void BaseComputer::loadLoadSaveControls(void)
 {
     SimplePicker *picker = static_cast<SimplePicker *>(window()->findControlById("LoadSavePicker"));
-    assert(picker != NULL);
+    assert(picker != nullptr);
     picker->clear();
 
     //Get news from save game.
@@ -3028,7 +3028,7 @@ void BaseComputer::loadLoadSaveControls(void)
     }
     //Make sure the description is empty.
     StaticDisplay *desc = static_cast<StaticDisplay *>(window()->findControlById("Description"));
-    assert(desc != NULL);
+    assert(desc != nullptr);
     desc->setText("");
 
     //Make the title right.
@@ -3041,7 +3041,7 @@ bool BaseComputer::changeToMissionsMode(const EventCommandId &command, Control *
     if (m_currentDisplay != MISSIONS)
         switchToControls(MISSIONS);
     loadMissionsControls();
-    updateTransactionControlsForSelection(NULL);
+    updateTransactionControlsForSelection(nullptr);
     return true;
 }
 
@@ -3141,7 +3141,7 @@ void BaseComputer::loadMissionsControls(void)
     //Load up the list of missions.
     loadMissionsMasterList(m_transList1);
     SimplePicker *picker = static_cast<SimplePicker *>(window()->findControlById("Missions"));
-    assert(picker != NULL);
+    assert(picker != nullptr);
     loadListPicker(m_transList1, *picker, ACCEPT_MISSION);
 
     //Make the title right.
@@ -3160,7 +3160,7 @@ bool BaseComputer::acceptMission(const EventCommandId &command, Control *control
     {
         //Better reload the UI -- we shouldn't have gotten here.
         loadMissionsControls();
-        updateTransactionControlsForSelection(NULL);
+        updateTransactionControlsForSelection(nullptr);
         return true;
     }
     if (item->GetCategory().find("Active_Missions") != string::npos)
@@ -3257,7 +3257,7 @@ void BaseComputer::loadBuyUpgradeControls(void)
 
     //Load the upgrade picker from the master tlist.
     SimplePicker *basePicker = static_cast<SimplePicker *>(window()->findControlById("BaseUpgrades"));
-    assert(basePicker != NULL);
+    assert(basePicker != nullptr);
     loadListPicker(tlist, *basePicker, BUY_UPGRADE, true);
 
     //Fix the Basic Repair color.
@@ -3312,7 +3312,7 @@ void BaseComputer::loadSellUpgradeControls(void)
 
     //Load the upgrade picker form the master list.
     SimplePicker *basePicker = static_cast<SimplePicker *>(window()->findControlById("PlayerUpgrades"));
-    assert(basePicker != NULL);
+    assert(basePicker != nullptr);
     loadListPicker(tlist, *basePicker, SELL_UPGRADE, true);
 }
 
@@ -3326,7 +3326,7 @@ bool BaseComputer::changeToUpgradeMode(const EventCommandId &command, Control *c
     if (m_currentDisplay != UPGRADE)
         switchToControls(UPGRADE);
     loadUpgradeControls();
-    updateTransactionControlsForSelection(NULL);
+    updateTransactionControlsForSelection(nullptr);
     return true;
 }
 
@@ -3355,7 +3355,7 @@ static void BasicRepair(Unit *parent)
 class BaseComputer::UpgradeOperation : public ModalDialogCallback
 {
 protected:
-    UpgradeOperation(BaseComputer &p) : m_parent(p), m_newPart(NULL), m_part(), m_selectedMount(0), m_selectedTurret(0), m_selectedItem(){};
+    UpgradeOperation(BaseComputer &p) : m_parent(p), m_newPart(nullptr), m_part(), m_selectedMount(0), m_selectedTurret(0), m_selectedItem(){};
     virtual ~UpgradeOperation(void) {}
 
     bool commonInit(void);             //Initialization.
@@ -3388,7 +3388,7 @@ class BaseComputer::BuyUpgradeOperation : public BaseComputer::UpgradeOperation
 public:
     void start(void); //Start the operation.
 
-    BuyUpgradeOperation(BaseComputer &p) : UpgradeOperation(p), m_theTemplate(NULL), m_addMultMode(0){};
+    BuyUpgradeOperation(BaseComputer &p) : UpgradeOperation(p), m_theTemplate(nullptr), m_addMultMode(0){};
 
 protected:
     virtual bool checkTransaction(void);    //Check, and verify user wants transaction.
@@ -3407,7 +3407,7 @@ class BaseComputer::SellUpgradeOperation : public BaseComputer::UpgradeOperation
 public:
     void start(void); //Start the operation.
 
-    SellUpgradeOperation(BaseComputer &p) : UpgradeOperation(p), m_downgradeLimiter(NULL){};
+    SellUpgradeOperation(BaseComputer &p) : UpgradeOperation(p), m_downgradeLimiter(nullptr){};
 
 protected:
     virtual bool checkTransaction(void);    //Check, and verify user wants transaction.
@@ -3476,7 +3476,7 @@ void BaseComputer::UpgradeOperation::showTurretPicker(void)
         return;
     }
     vector<string> mounts;
-    for (un_iter unitIter = playerUnit->getSubUnits(); *unitIter != NULL; unitIter++)
+    for (un_iter unitIter = playerUnit->getSubUnits(); *unitIter != nullptr; unitIter++)
         mounts.push_back((*unitIter)->name);
     showListQuestion("Select turret mount for your turret:", mounts, this, GOT_TURRET_ID);
 }
@@ -3502,7 +3502,7 @@ bool BaseComputer::UpgradeOperation::gotSelectedMount(int index)
         else
         {
             //Is a turret.
-            if (*playerUnit->getSubUnits() != NULL)
+            if (*playerUnit->getSubUnits() != nullptr)
             {
                 //Need to get selected turret.
                 showTurretPicker();
@@ -3600,12 +3600,12 @@ bool UpgradeOperationMountDialog::processWindowCommand(const EventCommandId &com
 {
     if (command == "Picker::NewSelection")
     {
-        assert(control != NULL);
+        assert(control != nullptr);
         Picker *picker = static_cast<Picker *>(control);
         PickerCell *cell = picker->selectedCell();
         if (cell && cell->tag() == 0)
             //An "unselectable" cell was selected.  Turn the selection back off.
-            picker->selectCell(NULL);
+            picker->selectCell(nullptr);
         return true;
     }
     //Only thing we care about is the selection changing.
@@ -3634,7 +3634,7 @@ void BaseComputer::BuyUpgradeOperation::selectMount(void)
 
     //Fill the dialog picker with the mount points.
     SimplePicker *picker = static_cast<SimplePicker *>(dialog->window()->findControlById("Picker"));
-    assert(picker != NULL);
+    assert(picker != nullptr);
     for (int i = 0; i < playerUnit->GetNumMounts(); i++)
     {
         //Mount is selectable if we can upgrade with the new part using that mount.
@@ -3853,7 +3853,7 @@ void BaseComputer::SellUpgradeOperation::selectMount(void)
 
     //Fill the dialog picker with the mount points.
     SimplePicker *picker = static_cast<SimplePicker *>(dialog->window()->findControlById("Picker"));
-    assert(picker != NULL);
+    assert(picker != nullptr);
     int mount = -1; //The mount if there was only one.
     int selectableCount = 0;
     for (int i = 0; i < playerUnit->GetNumMounts(); i++)
@@ -3983,10 +3983,10 @@ bool BaseComputer::buyUpgrade(const EventCommandId &command, Control *control)
             if (playerUnit)
             {
                 BasicRepair(playerUnit);
-                if (m_selectedList == NULL)
+                if (m_selectedList == nullptr)
                     return true;
                 refresh();
-                m_transList1.picker->selectCell(NULL); //Turn off selection.
+                m_transList1.picker->selectCell(nullptr); //Turn off selection.
             }
             return true;
         }
@@ -4049,7 +4049,7 @@ bool BaseComputer::fixUpgrade(const EventCommandId &command, Control *control)
     Unit *baseUnit = m_base.GetUnit();
     if (baseUnit && playerUnit && item)
     {
-        float *credits = NULL;
+        float *credits = nullptr;
         Cockpit *cp = _Universe->isPlayerStarship(playerUnit);
         if (cp)
             credits = &(cp->credits);
@@ -4067,7 +4067,7 @@ bool BaseComputer::changeToShipDealerMode(const EventCommandId &command, Control
     if (m_currentDisplay != SHIP_DEALER)
         switchToControls(SHIP_DEALER);
     loadShipDealerControls();
-    updateTransactionControlsForSelection(NULL);
+    updateTransactionControlsForSelection(nullptr);
     return true;
 }
 
@@ -4082,7 +4082,7 @@ Cargo CreateCargoForOwnerStarship(const Cockpit *cockpit, const Unit *base, int 
     string locationSystemName = cockpit->GetUnitSystemName(i);
     string locationBaseName = cockpit->GetUnitBaseName(i);
     string destinationSystemName = _Universe->activeStarSystem()->getFileName();
-    string destinationBaseName = (base != NULL) ? Cockpit::MakeBaseName(base) : "";
+    string destinationBaseName = (base != nullptr) ? Cockpit::MakeBaseName(base) : "";
 
     bool needsJumpTransport = (locationSystemName != destinationSystemName);
     bool needsInsysTransport = (locationBaseName != destinationBaseName);
@@ -4149,7 +4149,7 @@ void SwapInNewShipName(Cockpit *cockpit, Unit *base, const std::string &newFileN
         size_t putpos = (swappingShipsIndex >= 0) ? swappingShipsIndex : cockpit->GetNumUnits();
         cockpit->GetUnitFileName(putpos) = parent->name;
         cockpit->GetUnitSystemName(putpos) = _Universe->activeStarSystem()->getFileName();
-        cockpit->GetUnitBaseName(putpos) = (base != NULL) ? Cockpit::MakeBaseName(base) : string("");
+        cockpit->GetUnitBaseName(putpos) = (base != nullptr) ? Cockpit::MakeBaseName(base) : string("");
         if (swappingShipsIndex != -1)
         {
             for (size_t i = 1, n = cockpit->GetNumUnits(); i < n; ++i)
@@ -4480,7 +4480,7 @@ string buildCargoDescription(const Cargo &item, BaseComputer &computer, float pr
 
     string desc;
 
-    if (trackBestPrices && computer.m_base.GetUnit() != NULL)
+    if (trackBestPrices && computer.m_base.GetUnit() != nullptr)
     {
         int cp = _Universe->whichPlayerStarship(computer.m_player.GetUnit());
         vector<string> highest, lowest;
@@ -4533,7 +4533,7 @@ void BaseComputer::loadShipDealerControls(void)
         (*it).cargo.description = "";
     //Load the picker from the master list.
     SimplePicker *basePicker = static_cast<SimplePicker *>(window()->findControlById("Ships"));
-    assert(basePicker != NULL);
+    assert(basePicker != nullptr);
     loadListPicker(m_transList1, *basePicker, BUY_SHIP, true);
 
     //Make the title right.
@@ -4545,7 +4545,7 @@ bool sellShip(Unit *baseUnit, Unit *playerUnit, std::string shipname, BaseComput
     Cockpit *cockpit = _Universe->isPlayerStarship(playerUnit);
     unsigned int tempInt = 1;
     Cargo *shipCargo = baseUnit->GetCargo(shipname, tempInt);
-    if (shipCargo == NULL)
+    if (shipCargo == nullptr)
         shipCargo = UniverseUtil::GetMasterPartList()->GetCargo(shipname, tempInt);
     if (shipCargo)
     {
@@ -4571,7 +4571,7 @@ bool sellShip(Unit *baseUnit, Unit *playerUnit, std::string shipname, BaseComput
         if (bcomputer)
         {
             bcomputer->loadShipDealerControls();
-            bcomputer->updateTransactionControlsForSelection(NULL);
+            bcomputer->updateTransactionControlsForSelection(nullptr);
         }
         return true;
     }
@@ -4598,7 +4598,7 @@ bool buyShip(Unit *baseUnit,
 {
     unsigned int tempInt; //Not used.
     Cargo *shipCargo = baseUnit->GetCargo(content, tempInt);
-    if (shipCargo == NULL && force_base_inventory)
+    if (shipCargo == nullptr && force_base_inventory)
         shipCargo = UniverseUtil::GetMasterPartList()->GetCargo(content, tempInt);
     Cargo myFleetShipCargo;
     int swappingShipsIndex = -1;
@@ -4610,7 +4610,7 @@ bool buyShip(Unit *baseUnit,
         if (shipCargo->GetContent().empty())
         {
             //Something happened -- can't find ship by name.
-            shipCargo = NULL;
+            shipCargo = nullptr;
             swappingShipsIndex = -1;
         }
     }
@@ -4629,7 +4629,7 @@ bool buyShip(Unit *baseUnit,
 
             Flightgroup *flightGroup = playerUnit->getFlightgroup();
             int fgsNumber = 0;
-            if (flightGroup != NULL)
+            if (flightGroup != nullptr)
             {
                 fgsNumber = flightGroup->nr_ships;
                 flightGroup->nr_ships++;
@@ -4693,7 +4693,7 @@ bool buyShip(Unit *baseUnit,
                                                           playerUnit->curr_physical_state.position); //absolutely NO NO NO modifications...you got this baby clean off the slate
 
                     //We now put the player in space.
-                    SwitchUnits(NULL, newPart);
+                    SwitchUnits(nullptr, newPart);
                     playerUnit->UnDock(baseUnit);
                     if (bcomputer)
                         bcomputer->m_player.SetUnit(newPart);
@@ -4708,7 +4708,7 @@ bool buyShip(Unit *baseUnit,
                                                                       "true"));
                     if (persistent_missions_across_ship_switch)
                         _Universe->AccessCockpit()->savegame->LoadSavedMissions();
-                    newPart = NULL;
+                    newPart = nullptr;
                     playerUnit->Kill();
                     if (bcomputer)
                         bcomputer->window()->close();
@@ -4716,7 +4716,7 @@ bool buyShip(Unit *baseUnit,
                 }
             }
             newPart->Kill();
-            newPart = NULL;
+            newPart = nullptr;
         }
     }
     return false;
@@ -4741,7 +4741,7 @@ bool BaseComputer::changeToInfoMode(const EventCommandId &command, Control *cont
     {
         switchToControls(INFO);
         //Initialize description with player info.
-        window()->sendCommand("ShowPlayerInfo", NULL);
+        window()->sendCommand("ShowPlayerInfo", nullptr);
         recalcTitle();
     }
     return true;
@@ -4853,7 +4853,7 @@ bool BaseComputer::showPlayerInfo(const EventCommandId &command, Control *contro
     text += "#n##b#Total Kills: " + XMLSupport::tostring(totkills) + "#-b#";
     //Put this in the description.
     StaticDisplay *desc = static_cast<StaticDisplay *>(window()->findControlById("Description"));
-    assert(desc != NULL);
+    assert(desc != nullptr);
     desc->setText(text);
 
     return true;
@@ -6109,7 +6109,7 @@ void showUnitStats(Unit *playerUnit, string &text, int subunitlevel, int mode, C
         //handle SubUnits
         Unit *sub;
         int i = 1;
-        for (un_iter ki = playerUnit->getSubUnits(); (sub = *ki) != NULL; ++ki, ++i)
+        for (un_iter ki = playerUnit->getSubUnits(); (sub = *ki) != nullptr; ++ki, ++i)
         {
             if (i == 1)
                 text += "#n##n##c0:1:.5#" + prefix + "[SUB UNITS]#-c";
@@ -6196,7 +6196,7 @@ bool BaseComputer::showShipStats(const EventCommandId &command, Control *control
         //Put this in the description.
     }
     StaticDisplay *desc = static_cast<StaticDisplay *>(window()->findControlById("Description"));
-    assert(desc != NULL);
+    assert(desc != nullptr);
     desc->setText(text);
 
     return true;

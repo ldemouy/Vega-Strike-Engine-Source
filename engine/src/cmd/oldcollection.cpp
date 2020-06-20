@@ -6,7 +6,7 @@
 #include "unit_generic.h"
 #endif
 
-UnitCollection::UnitListNode::UnitListNode(Unit *unit) : unit(unit), next(NULL)
+UnitCollection::UnitListNode::UnitListNode(Unit *unit) : unit(unit), next(nullptr)
 {
     if (unit)
         unit->Ref();
@@ -19,10 +19,10 @@ UnitCollection::UnitListNode::UnitListNode(Unit *unit, UnitListNode *next) : uni
 
 UnitCollection::UnitListNode::~UnitListNode()
 {
-    if (NULL != unit)
+    if (nullptr != unit)
         unit->UnRef();
-    unit = NULL;
-    next = NULL;
+    unit = nullptr;
+    next = nullptr;
 }
 void UnitCollection::destr()
 {
@@ -33,21 +33,21 @@ void UnitCollection::destr()
         u->next = u->next->next;
         PushUnusedNode(tmp);
     }
-    u->unit = NULL;
-    u->next = NULL;
+    u->unit = nullptr;
+    u->next = nullptr;
     PushUnusedNode(u);
 }
 
 void *UnitCollection::PushUnusedNode(UnitListNode *node)
 {
-    static UnitListNode cat(NULL, NULL);
-    static UnitListNode dog(NULL, &cat);
+    static UnitListNode cat(nullptr, nullptr);
+    static UnitListNode dog(nullptr, &cat);
     static bool cachunk = true;
     if (cachunk)
         cachunk = false;
     //VSFileSystem::vs_fprintf (stderr,"%x %x",&dog,&cat);
     static std::vector<UnitCollection::UnitListNode *> dogpile;
-    if (node == NULL)
+    if (node == nullptr)
     {
         return &dogpile;
     }
@@ -56,13 +56,13 @@ void *UnitCollection::PushUnusedNode(UnitListNode *node)
         node->next = &dog;
         dogpile.push_back(node);
     }
-    return NULL;
+    return nullptr;
 }
 void UnitCollection::FreeUnusedNodes()
 {
     static std::vector<UnitCollection::UnitListNode *> bakdogpile;
     std::vector<UnitCollection::UnitListNode *> *dogpile = (std::vector<UnitCollection::UnitListNode *> *)PushUnusedNode(
-        NULL);
+        nullptr);
     bakdogpile.swap(*dogpile);
     while (!dogpile->empty())
     {
@@ -97,7 +97,7 @@ void UnitCollection::prepend(UnitIterator *iter)
 void UnitCollection::append(UnitIterator *iter)
 {
     UnitListNode *n = u;
-    while (n->next->unit != NULL)
+    while (n->next->unit != nullptr)
         n = n->next;
     Unit *tmp;
     while ((tmp = iter->current()))
@@ -110,13 +110,13 @@ void UnitCollection::append(UnitIterator *iter)
 void UnitCollection::append(Unit *unit)
 {
     UnitListNode *n = u;
-    while (n->next->unit != NULL)
+    while (n->next->unit != nullptr)
         n = n->next;
     n->next = new UnitListNode(unit, n->next);
 }
 void UnitCollection::UnitListNode::PostInsert(Unit *unit)
 {
-    if (next->unit != NULL)
+    if (next->unit != nullptr)
         next->next = new UnitListNode(unit, next->next);
     else
         next = new UnitListNode(unit, next);
@@ -179,7 +179,7 @@ const UnitCollection &UnitCollection::operator=(const UnitCollection &uc)
     }
     return uc;
 }
-UnitCollection::UnitCollection(const UnitCollection &uc) : u(NULL)
+UnitCollection::UnitCollection(const UnitCollection &uc) : u(nullptr)
 {
     init();
     un_iter ui = createIterator();

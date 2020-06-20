@@ -32,7 +32,7 @@ void quadsquare::EnableEdgeVertex(int index, bool IncrementCount, const quadcorn
     for (;;)
     {
         int ci = pcd->ChildIndex;
-        if (pcd->Parent == NULL || pcd->Parent->Square == NULL)
+        if (pcd->Parent == nullptr || pcd->Parent->Square == nullptr)
             //Neighbor doesn't exist (it's outside the tree), so there's no alias vertex to enable.
             return;
         p = pcd->Parent->Square;
@@ -401,7 +401,7 @@ void quadsquare::UpdateAux(const quadcornerdata &cd,
         if (s)
             s->EnabledFlags &= ~2;
     }
-    if (EnabledFlags == 0 && cd.Parent != NULL && BoxTest(cd.xorg, cd.zorg, (half << 1), MinY, MaxY, CenterError, ViewerLocation) == false)
+    if (EnabledFlags == 0 && cd.Parent != nullptr && BoxTest(cd.xorg, cd.zorg, (half << 1), MinY, MaxY, CenterError, ViewerLocation) == false)
         //Disable ourself.
         cd.Parent->Square->NotifyChildDisable(*cd.Parent, cd.ChildIndex); //nb: possibly deletes 'this'.
 }

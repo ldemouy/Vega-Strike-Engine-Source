@@ -130,19 +130,19 @@ varInst *Mission::doObjectVar(missionNode *node, int mode)
 varInst *Mission::lookupLocalVariable(missionNode *asknode)
 {
     contextStack *cstack = runtime.cur_thread->exec_stack.back();
-    varInst *defnode = NULL;
+    varInst *defnode = nullptr;
     //slow search/name lookup
-    for (unsigned int i = 0; i < cstack->contexts.size() && defnode == NULL; i++)
+    for (unsigned int i = 0; i < cstack->contexts.size() && defnode == nullptr; i++)
     {
         scriptContext *context = cstack->contexts[i];
         varInstMap *map = context->varinsts;
         defnode = (*map)[asknode->script.name];
-        if (defnode != NULL)
+        if (defnode != nullptr)
             debug(5, defnode->defvar_node, SCRIPT_RUN, "FOUND local variable defined in that node");
     }
 #if 0
     //fast index lookup
-    varInst *defnode2 = NULL;
+    varInst *defnode2 = nullptr;
     if (asknode->script.context_id == -1 || asknode->script.varId == -1)
         printf( "ERROR: no local variable with fast lookup\n" );
     scriptContext *context = cstack->contexts[asknode->script.context_id];
@@ -151,8 +151,8 @@ varInst *Mission::lookupLocalVariable(missionNode *asknode)
     if (defnode2 != defnode)
         printf( "ERROR: wrong local variable lookup\n" );
 #endif
-    if (defnode == NULL)
-        return NULL;
+    if (defnode == nullptr)
+        return nullptr;
     return defnode;
 }
 
@@ -162,11 +162,11 @@ varInst *Mission::lookupModuleVariable(string mname, missionNode *asknode)
 {
     //only when runtime
     missionNode *module_node = runtime.modules[mname];
-    if (module_node == NULL)
+    if (module_node == nullptr)
     {
         fatalError(asknode, SCRIPT_RUN, "no such module named " + mname);
         assert(0);
-        return NULL;
+        return nullptr;
     }
     vector<easyDomNode *>::const_iterator siter;
     for (siter = module_node->subnodes.begin(); siter != module_node->subnodes.end(); siter++)
@@ -182,7 +182,7 @@ varInst *Mission::lookupModuleVariable(string mname, missionNode *asknode)
             return varnode->script.varinst;
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 /* *********************************************************** */
@@ -193,7 +193,7 @@ varInst *Mission::lookupClassVariable(string modulename, string varname, unsigne
     string mname = module->script.name;
     if (classid == 0)
         //no class instance
-        return NULL;
+        return nullptr;
     if (classid >= module->script.classvars.size())
     {
         fatalError(module, SCRIPT_RUN, "illegal classvar nr.");
@@ -213,7 +213,7 @@ varInst *Mission::lookupClassVariable(missionNode *asknode)
     string varname = asknode->script.name;
     if (classid == 0)
         //no class instance
-        return NULL;
+        return nullptr;
     if (classid >= module->script.classvars.size())
     {
         fatalError(asknode, SCRIPT_RUN, "illegal classvar nr.");
@@ -242,8 +242,8 @@ varInst *Mission::lookupModuleVariable(missionNode *asknode)
 varInst *Mission::lookupGlobalVariable(missionNode *asknode)
 {
     missionNode *varnode = runtime.global_variables[asknode->script.name];
-    if (varnode == NULL)
-        return NULL;
+    if (varnode == nullptr)
+        return nullptr;
     return varnode->script.varinst;
 }
 
@@ -279,21 +279,21 @@ varInst *Mission::doVariable(missionNode *node, int mode)
     if (mode == SCRIPT_RUN)
     {
         varInst *var = lookupLocalVariable(node);
-        if (var == NULL)
+        if (var == nullptr)
         {
             var = lookupClassVariable(node);
-            if (var != NULL)
+            if (var != nullptr)
             {
             }
-            if (var == NULL)
+            if (var == nullptr)
             {
                 //search in module namespace
                 var = lookupModuleVariable(node);
-                if (var == NULL)
+                if (var == nullptr)
                 {
                     //search in global namespace
                     var = lookupGlobalVariable(node);
-                    if (var == NULL)
+                    if (var == nullptr)
                     {
                         fatalError(node, mode, "did not find variable");
                         assert(0);
@@ -313,10 +313,10 @@ varInst *Mission::doVariable(missionNode *node, int mode)
             assert(0);
         }
         varInst *vi = searchScopestack(node->script.name);
-        if (vi == NULL)
+        if (vi == nullptr)
         {
             missionNode *global_var = runtime.global_variables[node->script.name];
-            if (global_var == NULL)
+            if (global_var == nullptr)
             {
                 fatalError(node, mode, "no variable " + node->script.name + " found on the scopestack (dovariable)");
                 assert(0);
@@ -375,14 +375,14 @@ void Mission::doDefVar(missionNode *node, int mode, bool global_var)
 
     node->script.vartype = vartypeFromString(type);
 
-    missionNode *scope = NULL;
+    missionNode *scope = nullptr;
     int scope_id = -1;
     if (global_var == false)
     {
         scope = scope_stack.back();
         scope_id = scope_stack.size() - 1;
     }
-    varInst *vi = NULL;
+    varInst *vi = nullptr;
     if (global_var)
         vi = newVarInst(VI_GLOBAL);
     else if (scope->tag == DTAG_MODULE)
@@ -400,7 +400,7 @@ void Mission::doDefVar(missionNode *node, int mode, bool global_var)
             debug(4, node, mode, "setting init for " + node->script.name);
             if (vi->type == VAR_FLOAT)
             {
-                vi->float_val = strtod(value.c_str(), NULL);
+                vi->float_val = strtod(value.c_str(), nullptr);
             }
             else if (vi->type == VAR_INT)
             {
@@ -504,10 +504,10 @@ void Mission::doSetVar(missionNode *node, int mode)
     if (mode == SCRIPT_PARSE)
     {
         varInst *vi = searchScopestack(node->script.name);
-        if (vi == NULL)
+        if (vi == nullptr)
         {
             missionNode *global_var = runtime.global_variables[node->script.name];
-            if (global_var == NULL)
+            if (global_var == nullptr)
             {
                 fatalError(node, mode, "no variable " + node->script.name + " found on the scopestack (setvar)");
                 assert(0);
@@ -523,7 +523,7 @@ void Mission::doSetVar(missionNode *node, int mode)
     if (mode == SCRIPT_RUN)
     {
         varInst *var_inst = doVariable(node, mode); //lookup variable instance
-        if (var_inst == NULL)
+        if (var_inst == nullptr)
         {
             fatalError(node, mode, "variable lookup failed for " + node->script.name);
             printRuntime();
@@ -641,7 +641,7 @@ void Mission::assignVariable(varInst *v1, varInst *v2)
 {
     if (v1->type != v2->type && v1->type != VAR_ANY)
     {
-        fatalError(NULL, SCRIPT_RUN, "wrong types in assignvariable");
+        fatalError(nullptr, SCRIPT_RUN, "wrong types in assignvariable");
         saveVarInst(v1, cout);
         saveVarInst(v2, cout);
         assert(0);
@@ -659,7 +659,7 @@ void Mission::assignVariable(varInst *v1, varInst *v2)
         }
         else if (v1->objectname != v2->objectname)
         {
-            fatalError(NULL, SCRIPT_RUN, "wrong object types in assignment (" + v1->objectname + " , " + v2->objectname);
+            fatalError(nullptr, SCRIPT_RUN, "wrong object types in assignment (" + v1->objectname + " , " + v2->objectname);
             assert(0);
         }
     }
@@ -696,7 +696,7 @@ var_type Mission::vartypeFromString(string type)
     }
     else
     {
-        fatalError(NULL, SCRIPT_PARSE, "unknown var type " + type);
+        fatalError(nullptr, SCRIPT_PARSE, "unknown var type " + type);
         vartype = VAR_FAILURE;
     }
     return vartype;
@@ -711,7 +711,7 @@ void Mission::saveVariables(const ostream &out) {}
 void Mission::saveVarInst(varInst *vi, ostream &aa_out)
 {
     char buffer[100];
-    if (vi == NULL)
+    if (vi == nullptr)
     {
     }
     else

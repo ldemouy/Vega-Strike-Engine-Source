@@ -74,14 +74,14 @@ string varToString(varInst *vi)
 void Mission::doCall_toxml(string module, varInst *ovi)
 {
     if (module == "_olist")
-        call_olist_toxml(NULL, SCRIPT_RUN, ovi);
+        call_olist_toxml(nullptr, SCRIPT_RUN, ovi);
     else if (module == "_unit")
-        call_unit_toxml(NULL, SCRIPT_RUN, ovi);
+        call_unit_toxml(nullptr, SCRIPT_RUN, ovi);
 }
 
 varInst *Mission::doCall(missionNode *node, int mode, string module, string method)
 {
-    varInst *vi = NULL;
+    varInst *vi = nullptr;
     callback_module_type module_id = node->script.callback_module_id;
     if (module_id == CMT_UNIT)
     {
@@ -279,8 +279,8 @@ varInst *Mission::doCall(missionNode *node, int mode)
         //does not work yet
         string object = node->attr_value("object");
         assert(0);
-        varInst *ovi = NULL;
-        if (ovi == NULL)
+        varInst *ovi = nullptr;
+        if (ovi == nullptr)
         {
             fatalError(node, mode, "no object found with name " + object);
             assert(0);
@@ -299,9 +299,9 @@ varInst *Mission::doCall(missionNode *node, int mode)
         module = "_" + module;
     }
     string method = node->script.name;
-    varInst *vi = NULL;
+    varInst *vi = nullptr;
     vi = doCall(node, mode, module, method);
-    if (vi == NULL)
+    if (vi == nullptr)
     {
         fatalError(node, mode, "no such callback named " + module + "." + node->script.name);
         assert(0);
@@ -314,7 +314,7 @@ varInst *Mission::call_isNull(missionNode *node, int mode)
     varInst *ovi = getObjectArg(node, mode);
     varInst *viret = newVarInst(VI_TEMP);
     viret->type = VAR_BOOL;
-    viret->bool_val = (ovi->object == NULL);
+    viret->bool_val = (ovi->object == nullptr);
     deleteVarInst(ovi);
     return viret;
 }
@@ -322,7 +322,7 @@ varInst *Mission::call_isNull(missionNode *node, int mode)
 varInst *Mission::call_setNull(missionNode *node, int mode)
 {
     varInst *ovi = getObjectArg(node, mode);
-    ovi->object = NULL;
+    ovi->object = nullptr;
     varInst *viret = newVarInst(VI_TEMP);
     viret->type = VAR_VOID;
     deleteVarInst(ovi);
@@ -420,7 +420,7 @@ varInst *Mission::callGetSystemFile(missionNode *node, int mode, StarSystem *ss)
     if (mode == SCRIPT_RUN)
     {
         deleteVarInst(vi);
-        if (ss == NULL)
+        if (ss == nullptr)
             ss = _Universe->activeStarSystem();
         string sysname = ss->getFileName();
         vi = call_string_new(node, mode, sysname);
@@ -828,7 +828,7 @@ int Mission::getIntArg(missionNode *node, int mode, int arg_nr)
 
 Unit *Mission::getUnitArg(missionNode *node, int mode, int arg_nr)
 {
-    Unit *ret = NULL;
+    Unit *ret = nullptr;
 
     missionNode *unit_node = getArgument(node, mode, arg_nr);
     varInst *unit_vi = checkObjectExpr(unit_node, mode);
@@ -841,7 +841,7 @@ Unit *Mission::getUnitArg(missionNode *node, int mode, int arg_nr)
         else
         {
             printf("Error: Unit died prematurely\n");
-            return NULL; //never reach
+            return nullptr; //never reach
         }
     }
     deleteVarInst(unit_vi);

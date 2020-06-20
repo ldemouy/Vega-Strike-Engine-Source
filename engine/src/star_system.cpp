@@ -46,7 +46,7 @@ GameStarSystem::GameStarSystem(const char *filename, const Vector &centr, const 
 {
     no_collision_time = 0; //(int)(1+2.000/SIMULATION_ATOM);
     ///adds to jumping table;
-    name = NULL;
+    name = nullptr;
     _Universe->pushActiveStarSystem(this);
     GFXCreateLightContext(lightcontext);
     bolts = new bolt_draw;
@@ -102,7 +102,7 @@ void GameStarSystem::activateLightMap(int stage)
     GFXTextureEnv(stage, GFXADDTEXTURE);
 #ifdef NV_CUBE_MAP
     GFXToggleTexture(true, stage, CUBEMAP);
-    GFXTextureCoordGenMode(stage, CUBE_MAP_GEN, NULL, NULL);
+    GFXTextureCoordGenMode(stage, CUBE_MAP_GEN, nullptr, nullptr);
 #else
     const float tempo[4] = {1, 0, 0, 0};
     GFXToggleTexture(true, stage, TEXTURE2D);
@@ -172,8 +172,8 @@ public:
     Unit *parenttarget;
     UnitDrawer()
     {
-        parent = NULL;
-        parenttarget = NULL;
+        parent = nullptr;
+        parenttarget = nullptr;
     }
     bool acquire(Unit *unit, float distance)
     {
@@ -198,9 +198,9 @@ public:
     bool draw(Unit *unit)
     {
         if (parent == unit || (parent && parent->isSubUnit() && parent->owner == unit))
-            parent = NULL;
+            parent = nullptr;
         if (parenttarget == unit || (parenttarget && parenttarget->isSubUnit() && parenttarget->owner == unit))
-            parenttarget = NULL;
+            parenttarget = nullptr;
         float backup = SIMULATION_ATOM;
         unsigned int cur_sim_frame = _Universe->activeStarSystem()->getCurrentSimFrame();
         interpolation_blend_factor = calc_blend_factor(saved_interpolation_blend_factor,
@@ -233,7 +233,7 @@ void GameStarSystem::Draw(bool DrawCockpit)
     for (unsigned int i = 0; i < contterrains.size(); ++i)
         contterrains[i]->AdjustTerrain(this);
     Unit *par;
-    if ((par = _Universe->AccessCockpit()->GetParent()) == NULL)
+    if ((par = _Universe->AccessCockpit()->GetParent()) == nullptr)
     {
         _Universe->AccessCamera()->UpdateGFX(GFXTRUE);
     }
@@ -257,7 +257,7 @@ void GameStarSystem::Draw(bool DrawCockpit)
         cam_setup_phase = true;
 
         Unit *saveparent = _Universe->AccessCockpit()->GetSaveParent();
-        Unit *targ = NULL;
+        Unit *targ = nullptr;
         if (saveparent)
             targ = saveparent->Target();
         //Array containing the two interesting units, so as not to have to copy-paste code
@@ -302,7 +302,7 @@ void GameStarSystem::Draw(bool DrawCockpit)
     UnitWithinRangeOfPosition<UnitDrawer> drawer(game_options.precull_dist, 0, key_iterator);
     //Need to draw really big stuff (i.e. planets, deathstars, and other mind-bogglingly big things that shouldn't be culled despited extreme distance
     Unit *unit;
-    if ((drawer.action.parent = _Universe->AccessCockpit()->GetParent()) != NULL)
+    if ((drawer.action.parent = _Universe->AccessCockpit()->GetParent()) != nullptr)
         drawer.action.parenttarget = drawer.action.parent->Target();
     for (un_iter iter = this->GravitationalUnits.createIterator(); (unit = *iter); ++iter)
     {
@@ -325,7 +325,7 @@ void GameStarSystem::Draw(bool DrawCockpit)
         UnitCollection::UnitIterator iter = physics_buffer[sim_counter].createIterator();
         float  backup = SIMULATION_ATOM;
         unsigned int cur_sim_frame = _Universe->activeStarSystem()->getCurrentSimFrame();
-        while ( ( unit = iter.current() ) != NULL ) {
+        while ( ( unit = iter.current() ) != nullptr ) {
             interpolation_blend_factor = calc_blend_factor( saved_interpolation_blend_factor,
                                                             unit->sim_atom_multiplier,
                                                             unit->cur_sim_queue_slot,
@@ -422,7 +422,7 @@ void NebulaUpdate(StarSystem *ss)
         {
             if (neb->getFade() <= 0)
                 //Update physics should set this
-                _Universe->AccessCamera()->SetNebula(NULL);
+                _Universe->AccessCamera()->SetNebula(nullptr);
         }
     }
 }

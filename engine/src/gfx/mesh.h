@@ -349,7 +349,7 @@ public:
               float nebdist = 0,
               unsigned char damage = 0,
               bool renormalize_normals = false,
-              const MeshFX *mfx = NULL);                                                                          //short fix
+              const MeshFX *mfx = nullptr);                                                                          //short fix
                                                                                                                   ///Draws lod pixels wide, mesh at Transformation NOW. If centered, then will center on camera and disable cull
     void DrawNow(float lod, bool centered, const Matrix &m = identity_matrix, int cloak = -1, float nebdist = 0); //short fix
                                                                                                                   ///Will draw all undrawn meshes of this type

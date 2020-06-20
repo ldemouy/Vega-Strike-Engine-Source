@@ -205,7 +205,7 @@ void Python::test()
      *
      *  PyObject* Py_CompileString(char *str, char *filename, int start)
      *  Return value: New reference.
-     *  Parse and compile the Python source code in str, returning the resulting code object. The start token is given by start; this can be used to constrain the code which can be compiled and should be Py_eval_input, Py_file_input, or Py_single_input. The filename specified by filename is used to construct the code object and may appear in tracebacks or SyntaxError exception messages. This returns NULL if the code cannot be parsed or compiled.
+     *  Parse and compile the Python source code in str, returning the resulting code object. The start token is given by start; this can be used to constrain the code which can be compiled and should be Py_eval_input, Py_file_input, or Py_single_input. The filename specified by filename is used to construct the code object and may appear in tracebacks or SyntaxError exception messages. This returns nullptr if the code cannot be parsed or compiled.
      *
      *  This would be the preferred mode of operation for AI scripts
      */
@@ -218,16 +218,16 @@ void Python::test()
     changehome( true );
     FILE *fp1 = VSFileSystem::OpenFile( "config.py", "r" );
     returnfromhome();
-    if (fp1 == NULL)
+    if (fp1 == nullptr)
         fp1 = fp;
-    if (fp1 != NULL) {
+    if (fp1 != nullptr) {
         PyRun_SimpleFile( fp, "config.py" );
         VSFileSystem::Close( fp1 );
     }
 #endif
     //char buffer[128];
     //PythonIOString::buffer << endl << '\0';
-    //vs_config->setVariable("data","test","NULL");
+    //vs_config->setVariable("data","test","nullptr");
     //VSFileSystem::vs_fprintf(stdout, "%s", vs_config->getVariable("data","test", string()).c_str());
     //VSFileSystem::vs_fprintf(stdout, "output %s\n", PythonIOString::buffer.str());
     fflush(stderr);

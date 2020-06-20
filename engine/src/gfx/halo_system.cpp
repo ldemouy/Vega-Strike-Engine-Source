@@ -108,7 +108,7 @@ unsigned int HaloSystem::AddHalo(const char *filename,
     halo.push_back(Halo());
     halo.back().trans = trans;
     halo.back().size = Vector(size.i * game_options.engine_radii_scale, size.j * game_options.engine_radii_scale, size.k * game_options.engine_length_scale);
-    halo.back().mesh = Mesh::LoadMesh((string(filename)).c_str(), Vector(1, 1, 1), neutralfac, NULL);
+    halo.back().mesh = Mesh::LoadMesh((string(filename)).c_str(), Vector(1, 1, 1), neutralfac, nullptr);
     halo.back().activation = activation_accel * game_options.game_speed;
     halo.back().oscale = 0;
     halo.back().sparkle_accum = 0;

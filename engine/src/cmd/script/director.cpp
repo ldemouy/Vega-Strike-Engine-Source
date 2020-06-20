@@ -94,7 +94,7 @@ void Mission::DirectorLoop()
 }
 void Mission::DirectorEnd()
 {
-    if (director == NULL)
+    if (director == nullptr)
         return;
     RunDirectorScript("endgame");
 }
@@ -102,7 +102,7 @@ void Mission::DirectorEnd()
 void Mission::DirectorShipDestroyed(Unit *unit)
 {
     Flightgroup *fg = unit->getFlightgroup();
-    if (fg == NULL)
+    if (fg == nullptr)
     {
         printf("ship destroyed-no flightgroup\n");
         return;
@@ -135,9 +135,9 @@ void Mission::DirectorShipDestroyed(Unit *unit)
             fg->nr_waves_left -= 1;
             fg->nr_ships_left = fg->nr_ships;
 
-            Order *order = NULL;
-            order = unit->getAIState() ? unit->getAIState()->findOrderList() : NULL;
-            fg->orderlist = NULL;
+            Order *order = nullptr;
+            order = unit->getAIState() ? unit->getAIState()->findOrderList() : nullptr;
+            fg->orderlist = nullptr;
             if (order)
             {
                 fg->orderlist = order->getOrderList();
@@ -160,7 +160,7 @@ void Mission::DirectorShipDestroyed(Unit *unit)
 
 bool Mission::BriefingInProgress()
 {
-    return briefing != NULL;
+    return briefing != nullptr;
 }
 void Mission::BriefingStart()
 {
@@ -198,7 +198,7 @@ class TextPlane *Mission::BriefingRender()
         briefing->Render();
         return &briefing->tp;
     }
-    return NULL;
+    return nullptr;
 }
 
 void Mission::BriefingEnd()
@@ -208,7 +208,7 @@ void Mission::BriefingEnd()
         if (runtime.pymissions)
             runtime.pymissions->callFunction("endbriefing");
         delete briefing;
-        briefing = NULL;
+        briefing = nullptr;
     }
 }
 

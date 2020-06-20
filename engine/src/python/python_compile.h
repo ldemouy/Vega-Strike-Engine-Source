@@ -53,7 +53,7 @@ public:
         case MYDOUBLE:
             return PyFloat_FromDouble(objectd);
         }
-        return NULL;
+        return nullptr;
     }
 };
 

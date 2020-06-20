@@ -45,10 +45,10 @@ std::string HOMESUBDIR= ".vegastrike";
 char * prog_arg=0;
 #ifdef _WIN32
 std::string ParentDir () {
-  static char * final=NULL;
+  static char * final=nullptr;
   std::string mypwd;
-  if (final==NULL) {
-    if (prog_arg!=NULL) {
+  if (final==nullptr) {
+    if (prog_arg!=nullptr) {
       // We need to set the path back 2 to make everything ok.
       char *parentdir;
       int pathlen=strlen(prog_arg);
@@ -113,7 +113,7 @@ GdkWindow * Help (const char *title, const char *text) {
     window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
     gtk_window_set_default_size(GTK_WINDOW(window), 300,0);
     gtk_window_set_title(GTK_WINDOW(window), title);
-    gtk_signal_connect(GTK_OBJECT(window), "delete_event", GTK_SIGNAL_FUNC(win_close), NULL);
+    gtk_signal_connect(GTK_OBJECT(window), "delete_event", GTK_SIGNAL_FUNC(win_close), nullptr);
     GtkWidget *label = gtk_label_new(text);
     gtk_container_add (GTK_CONTAINER (window), label);
     gtk_widget_show (label);
@@ -174,10 +174,10 @@ DWORD WINAPI DrawStartupDialog(LPVOID lpParameter) {
 	stupod *s= (stupod*)lpParameter;
         progress=false;
         Help ("Please wait while vegastrike loads...","Please wait while vegastrike loads...");
-		int pid=spawnl(P_WAIT,"./vegastrike","./vegastrike",s->num?s->num:(std::string("\"")+s->my_mission+"\"").c_str(),s->num?(std::string("\"")+s->my_mission+"\"").c_str():NULL,NULL);
+		int pid=spawnl(P_WAIT,"./vegastrike","./vegastrike",s->num?s->num:(std::string("\"")+s->my_mission+"\"").c_str(),s->num?(std::string("\"")+s->my_mission+"\"").c_str():nullptr,nullptr);
 		if (pid==-1) {
 			if (chdir("bin")==0) {
-				spawnl(P_WAIT,"./vegastrike","./vegastrike",s->num?s->num:(std::string("\"")+s->my_mission+"\"").c_str(),s->num?(std::string("\"")+s->my_mission+"\"").c_str():NULL,NULL);
+				spawnl(P_WAIT,"./vegastrike","./vegastrike",s->num?s->num:(std::string("\"")+s->my_mission+"\"").c_str(),s->num?(std::string("\"")+s->my_mission+"\"").c_str():nullptr,nullptr);
 				chdir("..");
 			}
 		}
@@ -220,10 +220,10 @@ void launch_mission () {
    fflush (stdout);
 #ifndef _WIN32
    changeToData();
-   execlp ("vegastrike","/usr/local/bin/vegastrike",num,my_mission.c_str(),NULL);   
+   execlp ("vegastrike","/usr/local/bin/vegastrike",num,my_mission.c_str(),nullptr);   
 #else
    DWORD id;
-   HANDLE hThr=CreateThread(NULL,0,DrawStartupDialog,(void *)new stupod (strdup (my_mission.c_str()),strdup (num)),0,&id);
+   HANDLE hThr=CreateThread(nullptr,0,DrawStartupDialog,(void *)new stupod (strdup (my_mission.c_str()),strdup (num)),0,&id);
 #endif
   } else {
 
@@ -232,10 +232,10 @@ void launch_mission () {
 #ifndef _WIN32
 
    changeToData();
-   execlp ("vegastrike","/usr/local/bin/vegastrike",my_mission.c_str(),NULL);   
+   execlp ("vegastrike","/usr/local/bin/vegastrike",my_mission.c_str(),nullptr);   
 #else
    DWORD id;
-   HANDLE hThr=CreateThread(NULL,0,DrawStartupDialog,(void *)new stupod (strdup (my_mission.c_str()),NULL),0,&id);
+   HANDLE hThr=CreateThread(nullptr,0,DrawStartupDialog,(void *)new stupod (strdup (my_mission.c_str()),nullptr),0,&id);
 #endif
   }
 }
@@ -243,7 +243,7 @@ using std::string;
 void file_mission_sel (GtkWidget *w, GtkFileSelection *fs) {
   std::string tmp = gtk_file_selection_get_filename (GTK_FILE_SELECTION (fs));
   FILE * fp =(fopen (tmp.c_str(),"r"));
-  if (fp!=NULL) {
+  if (fp!=nullptr) {
     fclose (fp);
 	int where=tmp.find ("/mission/");
 	if (where==string::npos) {
@@ -324,10 +324,10 @@ void hello( GtkWidget *widget, gpointer   data ) {
 		char pwd [65535];
 		getcwd(pwd,65533);
 		pwd[65533]=pwd[65534]='\0';
-		int pid=spawnl(P_NOWAIT,"./Setup.exe",(std::string(pwd)+"/Setup.exe").c_str(),NULL);
+		int pid=spawnl(P_NOWAIT,"./Setup.exe",(std::string(pwd)+"/Setup.exe").c_str(),nullptr);
 		if (pid==-1) {
 			if (chdir("bin")==0) {
-				spawnl(P_NOWAIT,"./Setup.exe",(std::string(pwd)+"/bin/Setup.exe").c_str(),NULL);
+				spawnl(P_NOWAIT,"./Setup.exe",(std::string(pwd)+"/bin/Setup.exe").c_str(),nullptr);
 				chdir("..");
 			}
 		}
@@ -335,7 +335,7 @@ void hello( GtkWidget *widget, gpointer   data ) {
 #else
 		pid=fork();
 		if (pid==-1) {
-			execlp("vegasettings","vegasettings",NULL);
+			execlp("vegasettings","vegasettings",nullptr);
 			return;
 		}
 #endif
@@ -359,7 +359,7 @@ typedef char FileNameCharType [65535];
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nShowCmd) {
 	FileNameCharType argvc;
 	FileNameCharType *argv= &argvc;
-	GetModuleFileName(NULL, argvc, 65534);
+	GetModuleFileName(nullptr, argvc, 65534);
 	int argc=0;
 #else
 int main( int   argc,
@@ -402,14 +402,14 @@ int main( int   argc,
       * by the window manager, usually by the "close" option, or on the
       * titlebar), we ask it to call the delete_event () function
       * as defined above. The data passed to the callback
-      * function is NULL and is ignored in the callback function. */
-    gtk_signal_connect(GTK_OBJECT(window), "destroy", GTK_SIGNAL_FUNC(gtk_exit), NULL);
-    gtk_signal_connect(GTK_OBJECT(window), "delete_event", GTK_SIGNAL_FUNC(gtk_exit), NULL);
+      * function is nullptr and is ignored in the callback function. */
+    gtk_signal_connect(GTK_OBJECT(window), "destroy", GTK_SIGNAL_FUNC(gtk_exit), nullptr);
+    gtk_signal_connect(GTK_OBJECT(window), "delete_event", GTK_SIGNAL_FUNC(gtk_exit), nullptr);
     for (int i=0;i<NUM_TITLES;i++) {
         button = gtk_button_new_with_label (titles[i]);
          
          /* When the button receives the "clicked" signal, it will call the
-          * function hello() passing it NULL as its argument.  The hello()
+          * function hello() passing it nullptr as its argument.  The hello()
           * function is defined above. */
         gtk_signal_connect (GTK_OBJECT (button), "clicked",
                              GTK_SIGNAL_FUNC (hello), (void*)i);
@@ -500,7 +500,7 @@ void delfile_conf ( GtkWidget        *w,
 		GtkWidget *cancel=gtk_button_new_with_label("Cancel");
 		gtk_signal_connect(GTK_OBJECT(ok), "clicked", GTK_SIGNAL_FUNC(delfile), GTK_OBJECT(fs));
 		gtk_signal_connect(GTK_OBJECT(cancel), "clicked", GTK_SIGNAL_FUNC(fileop_destroy), GTK_OBJECT(fs));
-		gtk_signal_connect(GTK_OBJECT(window), "delete_event", GTK_SIGNAL_FUNC(win_close), NULL);
+		gtk_signal_connect(GTK_OBJECT(window), "delete_event", GTK_SIGNAL_FUNC(win_close), nullptr);
 		GtkWidget *label = gtk_label_new(remstr);
 //		gtk_container_add (GTK_CONTAINER (window), label);
 		gtk_box_pack_start(GTK_BOX(vbox),label, TRUE, TRUE, 5);
@@ -582,7 +582,7 @@ void renfile_conf ( GtkWidget        *w,
 		newdum->entrywin=entry;
 		gtk_signal_connect(GTK_OBJECT(ok), "clicked", GTK_SIGNAL_FUNC(renfile), newdum);
 		gtk_signal_connect(GTK_OBJECT(cancel), "clicked", GTK_SIGNAL_FUNC(fileop_destroy_dumb), newdum);
-		gtk_signal_connect(GTK_OBJECT(window), "delete_event", GTK_SIGNAL_FUNC(win_close), NULL);
+		gtk_signal_connect(GTK_OBJECT(window), "delete_event", GTK_SIGNAL_FUNC(win_close), nullptr);
 		GtkWidget *label = gtk_label_new(remstr);
 //		gtk_container_add (GTK_CONTAINER (window), label);
 		gtk_box_pack_start(GTK_BOX(vbox),label, TRUE, TRUE, 5);
@@ -699,7 +699,7 @@ void copyfile_conf ( GtkWidget        *w,
 		newdum->entrywin=entry;
 		gtk_signal_connect(GTK_OBJECT(ok), "clicked", GTK_SIGNAL_FUNC(copyfile), newdum);
 		gtk_signal_connect(GTK_OBJECT(cancel), "clicked", GTK_SIGNAL_FUNC(fileop_destroy_dumb), newdum);
-		gtk_signal_connect(GTK_OBJECT(window), "delete_event", GTK_SIGNAL_FUNC(win_close), NULL);
+		gtk_signal_connect(GTK_OBJECT(window), "delete_event", GTK_SIGNAL_FUNC(win_close), nullptr);
 		GtkWidget *label = gtk_label_new(remstr);
 //		gtk_container_add (GTK_CONTAINER (window), label);
 		gtk_box_pack_start(GTK_BOX(vbox),label, TRUE, TRUE, 5);
@@ -775,7 +775,7 @@ void copynormal_conf ( GtkWidget        *w,
 		newdum->entrywin=entry;
 		gtk_signal_connect(GTK_OBJECT(ok), "clicked", GTK_SIGNAL_FUNC(copynormal), newdum);
 		gtk_signal_connect(GTK_OBJECT(cancel), "clicked", GTK_SIGNAL_FUNC(fileop_destroy_dumb), newdum);
-		gtk_signal_connect(GTK_OBJECT(window), "delete_event", GTK_SIGNAL_FUNC(win_close), NULL);
+		gtk_signal_connect(GTK_OBJECT(window), "delete_event", GTK_SIGNAL_FUNC(win_close), nullptr);
 		GtkWidget *label = gtk_label_new(remstr);
 //		gtk_container_add (GTK_CONTAINER (window), label);
 		gtk_box_pack_start(GTK_BOX(vbox),label, TRUE, TRUE, 5);

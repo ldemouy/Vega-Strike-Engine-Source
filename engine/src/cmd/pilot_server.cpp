@@ -15,7 +15,7 @@ Pilot::Pilot(int faction)
 
     this->reaction_time = reaction;
     this->faction = faction;
-    comm_face = NULL;
+    comm_face = nullptr;
     gender = 0;
 }
 
@@ -38,7 +38,7 @@ float Pilot::adjustSpecificRelationship(Unit *parent, void *aggressor, float fac
             factor *= slowrel;
         }
         (*i).second += factor;
-        if (rel + factor < 0 && parent->Target() == NULL && parent->aistate)
+        if (rel + factor < 0 && parent->Target() == nullptr && parent->aistate)
             parent->aistate->ChooseTarget();
     }
     else
@@ -51,7 +51,7 @@ float Pilot::adjustSpecificRelationship(Unit *parent, void *aggressor, float fac
             factor *= slowrel;
         }
         (*i).second += factor;
-        if ((*i).second < lessrel && parent->Target() == NULL && parent->aistate)
+        if ((*i).second < lessrel && parent->Target() == nullptr && parent->aistate)
             parent->aistate->ChooseTarget();
     }
     return (*i).second;
@@ -155,7 +155,7 @@ Animation *Pilot::getCommFace(Unit *parent, float mood, unsigned char &sex)
     vector<Animation *> *ani = getCommFaces(sex);
     //this #ifndef hack below by chuck_starchaser, to get around missing faction_util.o in vegaserver make list
     if (ani->size() == 0)
-        return NULL;
+        return nullptr;
     mood += .1;
     mood *= (ani->size()) / .2;
     unsigned int index = (unsigned int)roundclamp(floor(mood));

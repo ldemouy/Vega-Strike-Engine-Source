@@ -95,7 +95,7 @@ namespace Radar
     {
         assert(player);
 
-        return (player->GetNebula() != NULL);
+        return (player->GetNebula() != nullptr);
     }
 
     bool Sensor::InRange(const Track &track) const
@@ -109,9 +109,9 @@ namespace Radar
     {
     public:
         CollectRadarTracks()
-            : sensor(NULL),
-              player(NULL),
-              collection(NULL)
+            : sensor(nullptr),
+              player(nullptr),
+              collection(nullptr)
         {
         }
 
@@ -143,7 +143,7 @@ namespace Radar
                 if (!player->InRange(target, dummy, isCurrentTarget && untarget_out_cone, true, true))
                 {
                     if (isCurrentTarget)
-                        player->Target(NULL);
+                        player->Target(nullptr);
                     return true;
                 }
                 if (!isCurrentTarget &&
@@ -159,8 +159,8 @@ namespace Radar
                 }
                 if (target->isPlanet() == PLANETPTR && target->radial_size > 0)
                 {
-                    const Unit *sub = NULL;
-                    for (un_kiter i = target->viewSubUnits(); (sub = *i) != NULL; ++i)
+                    const Unit *sub = nullptr;
+                    for (un_kiter i = target->viewSubUnits(); (sub = *i) != nullptr; ++i)
                     {
                         if (target->rSize() > minblipsize)
                         {
@@ -205,7 +205,7 @@ namespace Radar
             const Unit *gravUnit;
             bool foundtarget = false;
             for (un_kiter i = _Universe->activeStarSystem()->gravitationalUnits().constIterator();
-                 (gravUnit = *i) != NULL;
+                 (gravUnit = *i) != nullptr;
                  ++i)
             {
                 unitLocator.action.acquire(gravUnit, UnitUtil::getDistance(player, gravUnit));

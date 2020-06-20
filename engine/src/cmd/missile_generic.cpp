@@ -30,7 +30,7 @@ void StarSystem::UpdateMissiles()
         { //we can avoid this iterated check for kinetic projectiles even if they "discharge" on hit
             Unit *un;
             for (un_iter ui = getUnitList().createIterator();
-                 NULL != (un = (*ui));
+                 nullptr != (un = (*ui));
                  ++ui)
             {
                 enum clsptr type = un->isUnit();
@@ -154,7 +154,7 @@ void Missile::Discharge()
     {
         Unit *targ = Unit::Target();
         VSFileSystem::vs_dprintf(1, "Missile discharged (target %s)\n",
-                                 (targ != NULL) ? targ->name.get().c_str() : "NULL");
+                                 (targ != nullptr) ? targ->name.get().c_str() : "nullptr");
         _Universe->activeStarSystem()->AddMissileToQueue(
             new MissileEffect(Position(), damage, phasedamage,
                               radial_effect, radial_multiplier, owner));
@@ -165,7 +165,7 @@ void Missile::Discharge()
 void Missile::Kill(bool erase)
 {
     Unit *targ = Unit::Target();
-    VSFileSystem::vs_dprintf(1, "Missile killed (target %s)\n", (targ != NULL) ? targ->name.get().c_str() : "NULL");
+    VSFileSystem::vs_dprintf(1, "Missile killed (target %s)\n", (targ != nullptr) ? targ->name.get().c_str() : "nullptr");
     Discharge();
     Unit::Kill(erase);
 }
@@ -194,11 +194,11 @@ void Missile::reactToCollision(Unit *smaller,
 
 Unit *getNearestTarget(Unit *me)
 {
-    return NULL; //THIS FUNCTION IS TOO SLOW__AND ECM SHOULD WORK DIFFERENTLY ANYHOW...WILL SAVE FIXING IT FOR LATER
+    return nullptr; //THIS FUNCTION IS TOO SLOW__AND ECM SHOULD WORK DIFFERENTLY ANYHOW...WILL SAVE FIXING IT FOR LATER
 
     QVector pos(me->Position());
-    Unit *un = NULL;
-    Unit *targ = NULL;
+    Unit *un = nullptr;
+    Unit *targ = nullptr;
     double minrange = FLT_MAX;
     for (un_iter i = _Universe->activeStarSystem()->getUnitList().createIterator();
          (un = (*i));
@@ -213,7 +213,7 @@ Unit *getNearestTarget(Unit *me)
         if (UnitUtil::getFactionRelation(me, un) >= 0)
             continue;
         double temp = (un->Position() - pos).Magnitude() - un->rSize();
-        if (targ == NULL)
+        if (targ == nullptr)
         {
             targ = un;
             minrange = temp;
@@ -223,7 +223,7 @@ Unit *getNearestTarget(Unit *me)
             targ = un;
         }
     }
-    if (targ == NULL)
+    if (targ == nullptr)
     {
         for (un_iter i = _Universe->activeStarSystem()->getUnitList().createIterator();
              (un = (*i));
@@ -251,7 +251,7 @@ void Missile::UpdatePhysics2(const Transformation &trans,
         had_target = true;
         if (targ->hull < 0)
         {
-            targ = NULL;
+            targ = nullptr;
         }
         else
         {
@@ -259,7 +259,7 @@ void Missile::UpdatePhysics2(const Transformation &trans,
             size_t missile_hash = ((size_t)this) / 16383;
             if ((int)(missile_hash % max_ecm) < UnitUtil::getECM(targ))
             {
-                Target(NULL); //go wild
+                Target(nullptr); //go wild
             }
             else if (hull > 0)
             {
@@ -268,10 +268,10 @@ void Missile::UpdatePhysics2(const Transformation &trans,
                 un_iter i = targ->getSubUnits();
 
                 Unit *su;
-                for (; (su = *i) != NULL; ++i)
+                for (; (su = *i) != nullptr; ++i)
                     if (su->attackPreference() == pointdef)
                     {
-                        if (su->Target() == NULL)
+                        if (su->Target() == nullptr)
                         {
                             float speed, range, mrange;
                             su->getAverageGunSpeed(speed, range, mrange);
@@ -292,8 +292,8 @@ void Missile::UpdatePhysics2(const Transformation &trans,
         else
             retarget = 0;
     }
-    if (retarget && targ == NULL)
-        Target(NULL); //BROKEN
+    if (retarget && targ == nullptr)
+        Target(nullptr); //BROKEN
     if (had_target && !(Unit::Target()))
     {
         static float max_lost_target_live_time =
@@ -303,7 +303,7 @@ void Missile::UpdatePhysics2(const Transformation &trans,
     }
     Unit::UpdatePhysics2(trans, old_physical_state, accel, difficulty, transmat, CumulativeVelocity, ResolveLast, uc);
     this->time -= SIMULATION_ATOM;
-    if (NULL != targ && !discharged)
+    if (nullptr != targ && !discharged)
     {
         QVector endpos = Position();
         QVector startpos = endpos - (SIMULATION_ATOM * GetVelocity());

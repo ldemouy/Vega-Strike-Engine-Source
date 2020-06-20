@@ -63,7 +63,7 @@ bool ModalDialog::processWindowCommand(const EventCommandId &command, Control *c
 }
 
 //CONSTRUCTOR
-ModalDialog::ModalDialog() : m_callbackId(), m_callback(NULL), m_result(0)
+ModalDialog::ModalDialog() : m_callbackId(), m_callback(nullptr), m_result(0)
 {
 }
 
@@ -242,7 +242,7 @@ void QuestionDialog::init(const std::string &title)
     initControls();
 
     StaticDisplay *titleControl = static_cast<StaticDisplay *>(window()->findControlById("Title"));
-    assert(titleControl != NULL);
+    assert(titleControl != nullptr);
     std::string fixedTitle;
     std::string::size_type lastpos = 0, pos;
     for (pos = title.find('\n'); pos != std::string::npos; pos = title.find('\n', lastpos))
@@ -343,7 +343,7 @@ bool ListQuestionDialog::processWindowCommand(const EventCommandId &command, Con
     {
         //The OK button was clicked.
         Picker *picker = static_cast<Picker *>(window()->findControlById("Picker"));
-        assert(picker != NULL);
+        assert(picker != nullptr);
         m_result = picker->selectedItem();
         if (m_result >= 0)
         {
@@ -383,7 +383,7 @@ void showListQuestion(const std::string &title,
 
     //Fill the picker with the choices supplied by the caller.
     SimplePicker *picker = dialog->getPicker();
-    assert(picker != NULL);
+    assert(picker != nullptr);
     for (size_t i = 0; i < options.size(); i++)
         picker->addCell(new SimplePickerCell(options[i]));
     dialog->run();

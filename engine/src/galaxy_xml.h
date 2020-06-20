@@ -25,7 +25,7 @@ namespace GalaxyXML
     public:
         SGalaxy()
         {
-            subheirarchy = NULL;
+            subheirarchy = nullptr;
         }
         SGalaxy(const char *configfile);
         SGalaxy(const SGalaxy &g);
@@ -108,8 +108,8 @@ namespace GalaxyXML
         bool setPlanetVariable(const string &planet, const string &name, const string &value);
         Galaxy()
         {
-            subheirarchy = NULL;
-            planet_types = NULL;
+            subheirarchy = nullptr;
+            planet_types = nullptr;
         }
         Galaxy(const char *configfile);
         Galaxy(const SGalaxy &g);

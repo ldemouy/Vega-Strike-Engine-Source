@@ -141,7 +141,7 @@ void ScoreKill(Cockpit *cp, Unit *un, Unit *killedUnit)
     }
     int upgrades = FactionUtil::GetUpgradeFaction();
     int planets = FactionUtil::GetPlanetFaction();
-    if (cp != NULL)
+    if (cp != nullptr)
     {
         vector<float> *killlist = &cp->savegame->getMissionData(string("kills"));
         while (killlist->size() <= FactionUtil::GetNumFactions())
@@ -154,7 +154,7 @@ void ScoreKill(Cockpit *cp, Unit *un, Unit *killedUnit)
     {
         int whichcp = rand() % _Universe->numPlayers();
         Unit *whichrecv = _Universe->AccessCockpit(whichcp)->GetParent();
-        if (whichrecv != NULL)
+        if (whichrecv != nullptr)
         {
             if (UnitUtil::getUnitSystemFile(whichrecv) == UnitUtil::getUnitSystemFile(un))
             {
@@ -332,7 +332,7 @@ void DealPossibleJumpDamage(Unit *un)
                         GFXColor(((float)(rand() % 100)) / 100,
                                  ((float)(rand() % 100)) / 100,
                                  ((float)(rand() % 100)) / 100),
-                        NULL);
+                        nullptr);
         un->SetCurPosition(un->LocalPosition() + (((float)rand()) / RAND_MAX) * dam * un->GetVelocity().Cast());
     }
 }

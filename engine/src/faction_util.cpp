@@ -113,7 +113,7 @@ std::vector<Animation *> *FactionUtil::GetRandCommAnimation(int32_t faction, Uni
     else
     {
         sex = 0;
-        return NULL;
+        return nullptr;
     }
 }
 
@@ -128,7 +128,7 @@ Animation *FactionUtil::GetRandExplosionAnimation(int32_t whichfaction, std::str
             return factions[whichfaction]->explosion[whichexp].get();
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 void FactionUtil::LoadFactionPlaylists()

@@ -81,7 +81,7 @@ void Mission::doModule(missionNode *node, int mode)
                 fatalError(node, mode, "you have to give a module name");
                 assert(0);
             }
-            if (runtime.modules[name] != NULL)
+            if (runtime.modules[name] != nullptr)
             {
                 fatalError(node, mode, "there can only be one module with name " + name);
                 assert(0);
@@ -166,7 +166,7 @@ void Mission::removeContextStack()
 {
     contextStack *cstack = runtime.cur_thread->exec_stack.back();
     runtime.cur_thread->exec_stack.pop_back();
-    if (cstack->return_value != NULL)
+    if (cstack->return_value != nullptr)
         deleteVarInst(cstack->return_value, true);
     delete cstack;
 }
@@ -175,7 +175,7 @@ void Mission::addContextStack(missionNode *node)
 {
     contextStack *cstack = new contextStack;
 
-    cstack->return_value = NULL;
+    cstack->return_value = nullptr;
 
     runtime.cur_thread->exec_stack.push_back(cstack);
 }
@@ -250,7 +250,7 @@ varInst *Mission::doScript(missionNode *node, int mode, varInstMap *varmap)
     if (mode == SCRIPT_PARSE && parsemode == PARSE_DECL)
     {
         node->script.nr_arguments = 0;
-        node->script.argument_node = NULL;
+        node->script.argument_node = nullptr;
     }
     for (siter = node->subnodes.begin(); siter != node->subnodes.end() && !have_return(mode); siter++)
     {
@@ -281,7 +281,7 @@ varInst *Mission::doScript(missionNode *node, int mode, varInstMap *varmap)
         removeContext();
         contextStack *cstack = runtime.cur_thread->exec_stack.back();
         varInst *vi = cstack->return_value;
-        if (vi != NULL)
+        if (vi != nullptr)
         {
             if (node->script.vartype != vi->type)
             {
@@ -294,7 +294,7 @@ varInst *Mission::doScript(missionNode *node, int mode, varInstMap *varmap)
             fatalError(node, mode, "no return set from doScript");
             assert(0);
         }
-        varInst *viret = NULL;
+        varInst *viret = nullptr;
         if (vi)
         {
             viret = newVarInst(VI_TEMP);
@@ -308,7 +308,7 @@ varInst *Mission::doScript(missionNode *node, int mode, varInstMap *varmap)
     else
     {
         scope_stack.pop_back();
-        return NULL;
+        return nullptr;
     }
 }
 
@@ -358,7 +358,7 @@ void Mission::doArguments(missionNode *node, int mode, varInstMap *varmap)
                 varInst *vi = doVariable(defnode, mode);
 
                 varInst *call_vi = (*varmap)[defnode->script.name];
-                if (call_vi == NULL)
+                if (call_vi == nullptr)
                 {
                     fatalError(node, mode, "argument var " + node->script.name + " no found in varmap");
                     assert(0);
@@ -491,8 +491,8 @@ varInst *Mission::doExec(missionNode *node, int mode)
         node->script.name = name;
 
         string use_modstr = node->attr_value("module");
-        missionNode *module = NULL;
-        missionNode *script = NULL;
+        missionNode *module = nullptr;
+        missionNode *script = nullptr;
         if (!use_modstr.empty())
         {
             module = runtime.modules[use_modstr];
@@ -501,13 +501,13 @@ varInst *Mission::doExec(missionNode *node, int mode)
         {
             module = current_module;
         }
-        if (module == NULL)
+        if (module == nullptr)
         {
             fatalError(node, mode, "module " + use_modstr + " not found");
             assert(0);
         }
         script = module->script.scripts[name];
-        if (script == NULL)
+        if (script == nullptr)
         {
             fatalError(node, mode, "script " + name + " not found in module " + use_modstr);
             assert(0);
@@ -519,7 +519,7 @@ varInst *Mission::doExec(missionNode *node, int mode)
     missionNode *arg_node = node->script.exec_node->script.argument_node;
 
     int nr_arguments;
-    if (arg_node == NULL)
+    if (arg_node == nullptr)
         nr_arguments = 0;
     else
         nr_arguments = arg_node->script.nr_arguments;
@@ -531,7 +531,7 @@ varInst *Mission::doExec(missionNode *node, int mode)
         fatalError(node, mode, buffer);
         assert(0);
     }
-    varInstMap *varmap = NULL;
+    varInstMap *varmap = nullptr;
     if (nr_arguments > 0)
     {
         varmap = new varInstMap;
@@ -623,27 +623,27 @@ varInst *Mission::newVarInst(scope_type scopetype)
 
 void Mission::deleteVarInst(varInst *vi, bool del_local)
 {
-    if (vi == NULL)
+    if (vi == nullptr)
         return;
     if (vi->scopetype == VI_GLOBAL || vi->scopetype == VI_MODULE || vi->scopetype == VI_CLASSVAR)
     {
-        debug(12, NULL, 0, "reqested to delete global/module vi\n");
+        debug(12, nullptr, 0, "reqested to delete global/module vi\n");
     }
     else if (vi->scopetype == VI_ERROR)
     {
-        debug(2, NULL, 0, "reqested to delete vi_error\n");
+        debug(2, nullptr, 0, "reqested to delete vi_error\n");
     }
     else if (del_local == false && vi->scopetype == VI_IN_OBJECT)
     {
-        //debug(2,NULL,0,"reqested to delete vi in object\n");
+        //debug(2,nullptr,0,"reqested to delete vi in object\n");
     }
     else if (vi->scopetype == VI_CONST)
     {
-        debug(12, NULL, 0, "reqested to delete const vi\n");
+        debug(12, nullptr, 0, "reqested to delete const vi\n");
     }
     else if (del_local == false && vi->scopetype == VI_LOCAL)
     {
-        debug(12, NULL, 0, "reqested to delete local vi\n");
+        debug(12, nullptr, 0, "reqested to delete local vi\n");
     }
     else
     {
@@ -658,8 +658,8 @@ void Mission::deleteVarMap(varInstMap *vmap)
     for (iter = vmap->begin(); iter != vmap->end(); iter++)
     {
         varInst *vi = (*iter).second;
-        if (vi == NULL)
-            debug(12, NULL, 0, "NULLVAR " + (*iter).first + "\n");
+        if (vi == nullptr)
+            debug(12, nullptr, 0, "nullptrVAR " + (*iter).first + "\n");
         else
             deleteVarInst(vi, true);
     }
@@ -668,16 +668,16 @@ void Mission::deleteVarMap(varInstMap *vmap)
 unsigned int Mission::createClassInstance(string modulename)
 {
     missionNode *module_node = runtime.modules[modulename];
-    if (module_node == NULL)
+    if (module_node == nullptr)
     {
-        fatalError(NULL, SCRIPT_RUN, "module " + modulename + " not found");
+        fatalError(nullptr, SCRIPT_RUN, "module " + modulename + " not found");
         assert(0);
     }
     module_node->script.classinst_counter++;
 
     char buf[200];
     sprintf(buf, "class counter for module %s : %d\n", modulename.c_str(), module_node->script.classinst_counter);
-    debug(1, NULL, 0, buf);
+    debug(1, nullptr, 0, buf);
 
     varInstMap *cvmap = new varInstMap();
 
@@ -703,9 +703,9 @@ unsigned int Mission::createClassInstance(string modulename)
 void Mission::destroyClassInstance(string modulename, unsigned int classid)
 {
     missionNode *module = runtime.modules[modulename];
-    if (module == NULL)
+    if (module == nullptr)
     {
-        fatalError(NULL, SCRIPT_RUN, "module " + modulename + " not found");
+        fatalError(nullptr, SCRIPT_RUN, "module " + modulename + " not found");
         assert(0);
     }
     if (classid >= module->script.classvars.size())
@@ -718,5 +718,5 @@ void Mission::destroyClassInstance(string modulename, unsigned int classid)
 
     deleteVarMap(cvmap);
 
-    module->script.classvars[classid] = NULL;
+    module->script.classvars[classid] = nullptr;
 }

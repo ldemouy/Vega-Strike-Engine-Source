@@ -351,7 +351,7 @@ public:
 
     /**
      * Retrieves the sound associated to the given event.
-     * Returns NULL if no sound has been associated
+     * Returns nullptr if no sound has been associated
      */
     SoundContainer *GetSoundForEvent(EVENTID eventId) const;
 
@@ -366,7 +366,7 @@ public:
     ///Accesses the current navigationsystem
     virtual NavigationSystem *AccessNavSystem()
     {
-        return NULL;
+        return nullptr;
     }
     virtual std::string GetNavSelectedSystem()
     {
@@ -376,13 +376,13 @@ public:
     ///Accesses the current camera
     virtual Camera *AccessCamera()
     {
-        return NULL;
+        return nullptr;
     }
 
     ///Returns the passed in cam
     virtual Camera *AccessCamera(int)
     {
-        return NULL;
+        return nullptr;
     }
 
     ///Changes current camera to selected camera

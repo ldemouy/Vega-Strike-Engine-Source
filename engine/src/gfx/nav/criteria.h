@@ -50,7 +50,7 @@ public:
     virtual std::vector<CriteriaNode *> getChildren() const = 0;
 
     virtual CriteriaNode *clone() const = 0;
-    CriteriaNode(CriteriaParent *parent = NULL) : m_parent(parent) {}
+    CriteriaNode(CriteriaParent *parent = nullptr) : m_parent(parent) {}
     virtual ~CriteriaNode() {}
 
     void setParent(CriteriaParent *parent)
@@ -74,7 +74,7 @@ public:
     virtual CriteriaNode *unhook(CriteriaNode *child) = 0;
 
     virtual CriteriaNode *clone() const = 0;
-    CriteriaParent(CriteriaParent *parent = NULL) : CriteriaNode(parent) {}
+    CriteriaParent(CriteriaParent *parent = nullptr) : CriteriaNode(parent) {}
     virtual ~CriteriaParent() {}
 
     virtual void replaceChild(CriteriaNode *child, CriteriaNode *replacement) = 0;
@@ -100,7 +100,7 @@ public:
     void setChild(CriteriaNode *node);
 
     virtual CriteriaNode *clone() const;
-    CriteriaRoot(CriteriaNode *child = NULL);
+    CriteriaRoot(CriteriaNode *child = nullptr);
     virtual ~CriteriaRoot();
 
     virtual void replaceChild(CriteriaNode *child, CriteriaNode *replacement);
@@ -207,7 +207,7 @@ public:
     virtual std::string getText() const;
 
     virtual CriteriaNode *clone() const;
-    CriteriaContains(std::string value, CriteriaParent *parent = NULL) : CriteriaLeaf(parent, value) {}
+    CriteriaContains(std::string value, CriteriaParent *parent = nullptr) : CriteriaLeaf(parent, value) {}
     virtual ~CriteriaContains() {}
 
 private:
@@ -226,7 +226,7 @@ public:
     virtual std::string getText() const;
 
     virtual CriteriaNode *clone() const;
-    CriteriaOwnedBy(std::string value, CriteriaParent *parent = NULL) : CriteriaLeaf(parent, value) {}
+    CriteriaOwnedBy(std::string value, CriteriaParent *parent = nullptr) : CriteriaLeaf(parent, value) {}
     virtual ~CriteriaOwnedBy() {}
 };
 
@@ -240,7 +240,7 @@ public:
     virtual std::string getText() const;
 
     virtual CriteriaNode *clone() const;
-    CriteriaSector(std::string value, CriteriaParent *parent = NULL) : CriteriaLeaf(parent, value) {}
+    CriteriaSector(std::string value, CriteriaParent *parent = nullptr) : CriteriaLeaf(parent, value) {}
     virtual ~CriteriaSector() {}
 };
 

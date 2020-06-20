@@ -63,8 +63,8 @@ NavigationSystem::NavigationSystem()
     pathman        = new PathManager();
     navcomp        = new NavComputer( this );
     for (int i = 0; i < NAVTOTALMESHCOUNT; i++)
-        mesh[i] = NULL;
-    factioncolours = NULL;
+        mesh[i] = nullptr;
+    factioncolours = nullptr;
 }
 
 NavigationSystem::~NavigationSystem()
@@ -176,7 +176,7 @@ void NavigationSystem::Setup()
         whattodraw = 0;
     else
         whattodraw = (1|2);
-    currentselection = NULL;
+    currentselection = nullptr;
     factioncolours   = new GFXColor[FactionUtil::GetNumFactions()];
     unselectedalpha  = 1.0;
 
@@ -287,7 +287,7 @@ void NavigationSystem::Setup()
 
         unsetbit( whattodraw, 4 );
         for (int i = 0; i < NAVTOTALMESHCOUNT; i++)
-            mesh[i] = NULL;
+            mesh[i] = nullptr;
         vs_fprintf( stderr, "ERROR: Map mesh file not found!!! Using default: blank mesh.\n" );
         //end DUMMY VARS
     }
@@ -360,7 +360,7 @@ void NavigationSystem::Draw()
 {
     if ( !CheckDraw() )
         return;
-    if (_Universe->AccessCockpit()->GetParent() == NULL)
+    if (_Universe->AccessCockpit()->GetParent() == nullptr)
         return;
     
     //DRAW THE SCREEN MODEL
@@ -850,7 +850,7 @@ void NavigationSystem::SetDraw( bool n )
 void NavigationSystem::ClearPriorities()
 {
     unsetbit( buttonstates, 1 );
-    currentselection = NULL;
+    currentselection = nullptr;
 //rx = 1.0;		//	resetting rotations is up to hitting the 2d/3d button
 //ry = 1.0;
 //rz = 0.0;
@@ -976,25 +976,25 @@ void NavigationSystem::setDestinationSystemIndex( unsigned newSystemIndex )
 
 std::string NavigationSystem::getCurrentSystem()
 {
-    if ( factioncolours == NULL || focusedsystemindex >= systemIter.size() )
+    if ( factioncolours == nullptr || focusedsystemindex >= systemIter.size() )
         return _Universe->activeStarSystem()->getFileName();
     return systemIter[currentsystemindex].GetName();
 }
 std::string NavigationSystem::getSelectedSystem()
 {
-    if ( factioncolours == NULL || focusedsystemindex >= systemIter.size() )
+    if ( factioncolours == nullptr || focusedsystemindex >= systemIter.size() )
         return _Universe->activeStarSystem()->getFileName();
     return systemIter[systemselectionindex].GetName();
 }
 std::string NavigationSystem::getDestinationSystem()
 {
-    if ( factioncolours == NULL || focusedsystemindex >= systemIter.size() )
+    if ( factioncolours == nullptr || focusedsystemindex >= systemIter.size() )
         return _Universe->activeStarSystem()->getFileName();
     return systemIter[destinationsystemindex].GetName();
 }
 std::string NavigationSystem::getFocusedSystem()
 {
-    if ( factioncolours == NULL || focusedsystemindex >= systemIter.size() )
+    if ( factioncolours == nullptr || focusedsystemindex >= systemIter.size() )
         return _Universe->activeStarSystem()->getFileName();
     return systemIter[focusedsystemindex].GetName();
 }
@@ -1065,7 +1065,7 @@ void NavigationSystem::DrawButton( float &x1, float &x2, float &y1, float &y2, i
     }
     //!!! DEPRESS !!!
     if ( (inrange == 1) && (mouse_wentdown[0] == 1) ) {
-        currentselection = NULL;                //any new button depression means no depression on map, no selection made
+        currentselection = nullptr;                //any new button depression means no depression on map, no selection made
 
         //******************************************************
         //**                 DEPRESS FUNCTION                 **	DEPRESS ALL

@@ -42,7 +42,7 @@ Logo::Logo(int numberlogos,
 {
     offset = 0;
     refcount = -1;
-    draw_queue = NULL;
+    draw_queue = nullptr;
 
     numlogos = numberlogos;
     GFXVertex *vertices = new GFXVertex[numlogos * 4];
@@ -103,7 +103,7 @@ void Logo::SetDecal(Texture *decal)
     Decal = decal;
     //Check which draw_queue to use:
     Logo *l;
-    if ((l = decalHash.Get(decal->name)) != NULL)
+    if ((l = decalHash.Get(decal->name)) != nullptr)
     {
         draw_queue = l->draw_queue;
         owner_of_draw_queue = l;
@@ -122,14 +122,14 @@ void Logo::SetDecal(Texture *decal)
 
 /*Logo::Logo(int numberlogos,  Vector* center,Vector* normal, float* size, float* rotation, float* offset,char *tex, char *alp)
  *  {
- *       Decal = NULL;
+ *       Decal = nullptr;
  *       Decal = new Texture (tex,alp);
  *       if (Decal)
  *       {
  *               if (!Decal->Data)
  *               {
  *                       delete Decal;
- *                       Decal = new Texture (tex,NULL);
+ *                       Decal = new Texture (tex,nullptr);
  *               }
  *       }
  *
@@ -186,9 +186,9 @@ Logo::~Logo()
 {
     if (owner_of_draw_queue != this)
         delete vlist;
-    //if(LogoCorner!=NULL)
+    //if(LogoCorner!=nullptr)
     //delete [] LogoCorner;
-    if (owner_of_draw_queue != NULL)
+    if (owner_of_draw_queue != nullptr)
     {
         if (owner_of_draw_queue != this)
             owner_of_draw_queue->refcount--;

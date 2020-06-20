@@ -102,25 +102,25 @@ namespace XMLDOM
             return mTagName;
         }
 
-        /** Returns the element containing this element, if any - NULL otherwise */
+        /** Returns the element containing this element, if any - nullptr otherwise */
         const XMLElement *getParent() const
         {
             return mParent;
         }
 
-        /** Returns the element containing this element, if any - NULL otherwise */
+        /** Returns the element containing this element, if any - nullptr otherwise */
         XMLElement *getParent()
         {
             return mParent;
         }
 
-        /** Returns the element containing this element, if any - NULL otherwise */
+        /** Returns the element containing this element, if any - nullptr otherwise */
         const XMLDocument *getDocument() const
         {
             return mDocument;
         }
 
-        /** Returns the element containing this element, if any - NULL otherwise */
+        /** Returns the element containing this element, if any - nullptr otherwise */
         XMLDocument *getDocument()
         {
             return mDocument;
@@ -157,28 +157,28 @@ namespace XMLDOM
             return mChildren.size();
         }
 
-        /** Returns a read-only pointer to the specified children, or NULL if idx is out of range */
+        /** Returns a read-only pointer to the specified children, or nullptr if idx is out of range */
         const XMLElement *getChild(unsigned int idx) const
         {
             return (idx < mChildren.size()) ? mChildren[idx] : 0;
         }
 
-        /** Returns a pointer to the specified children, or NULL if idx is out of range */
+        /** Returns a pointer to the specified children, or nullptr if idx is out of range */
         XMLElement *getChild(unsigned int idx)
         {
             return (idx < mChildren.size()) ? mChildren[idx] : 0;
         }
 
-        /** Returns a read-only pointer to the specified children, or NULL if id isn't found */
+        /** Returns a read-only pointer to the specified children, or nullptr if id isn't found */
         const XMLElement *getChildById(const std::string &id) const;
 
-        /** Returns a pointer to the specified children, or NULL if id isn't found */
+        /** Returns a pointer to the specified children, or nullptr if id isn't found */
         XMLElement *getChildById(const std::string &id);
 
-        /** Returns a read-only pointer to the specified children, or NULL if name isn't found */
+        /** Returns a read-only pointer to the specified children, or nullptr if name isn't found */
         const XMLElement *getChildByName(const std::string &name) const;
 
-        /** Returns a pointer to the specified children, or NULL if name isn't found */
+        /** Returns a pointer to the specified children, or nullptr if name isn't found */
         XMLElement *getChildByName(const std::string &name);
 
         /** Returns the "id" attribute's value - much quicker than getAttribute() */
@@ -195,7 +195,7 @@ namespace XMLDOM
             return (mNameAttribute == mAttributes.end()) ? empty : mNameAttribute->second;
         }
 
-        /** Returns a read-only pointer to the specified children, or NULL if id isn't found
+        /** Returns a read-only pointer to the specified children, or nullptr if id isn't found
      *  @remarks
      *   Hierarchical IDs are tree-like IDs which sometimes are able to resolve ambiguities.
      *   They're specified like file paths: <name1>/<name2>/<name3> involves searching for
@@ -205,7 +205,7 @@ namespace XMLDOM
      */
         const XMLElement *getChildByHierarchicalId(const std::string &id) const;
 
-        /** Returns a pointer to the specified children, or NULL if id isn't found
+        /** Returns a pointer to the specified children, or nullptr if id isn't found
      *  @remarks
      *   Hierarchical IDs are tree-like IDs which sometimes are able to resolve ambiguities.
      *   They're specified like file paths: <name1>/<name2>/<name3> involves searching for
@@ -215,12 +215,12 @@ namespace XMLDOM
      */
         XMLElement *getChildByHierarchicalId(const std::string &id);
 
-        /** Returns a read-only pointer to the specified children, or NULL if id isn't found
+        /** Returns a read-only pointer to the specified children, or nullptr if id isn't found
      *  @see getChildByHierarchicalId
      */
         const XMLElement *getChildByHierarchicalName(const std::string &name) const;
 
-        /** Returns a pointer to the specified children, or NULL if id isn't found
+        /** Returns a pointer to the specified children, or nullptr if id isn't found
      *  @see getChildByHierarchicalId
      */
         XMLElement *getChildByHierarchicalName(const std::string &name);
@@ -518,14 +518,14 @@ namespace XMLDOM
      *   Have in mind that until close() is called, or the parser is destroyed,
      *   it will own 'doc' (and hence 'elem') - which means it will delete it
      *   if destroyed.
-     *  @param encoding If NULL, the default character encoding (UTF8). If not,
+     *  @param encoding If nullptr, the default character encoding (UTF8). If not,
      *   the name of another encoding. Note, though, that handling of different
      *   encodings is not yet supported - this is a placeholder for future enhancement,
-     *   and as such should always be set to NULL, until the day custom encodings
+     *   and as such should always be set to nullptr, until the day custom encodings
      *   are handled.
-     *  @param doc If NULL, a new document will be created. If not, parsed elements will
+     *  @param doc If nullptr, a new document will be created. If not, parsed elements will
      *   be added to the specified document.
-     *  @param elem If NULL, parsed elements will be added to the document's root element
+     *  @param elem If nullptr, parsed elements will be added to the document's root element
      *   (either the automatically generated document, or the specified document). If not,
      *   they will be added as child elements of the specified element.
      *   Be certain to pass an element within doc... otherwise, results will be undefined.

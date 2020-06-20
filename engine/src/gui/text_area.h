@@ -104,12 +104,12 @@ public:
     } //DoMultiline(1) to enable multi-line entries
     void Refresh(void);
     void RenderText(void);
-    void AddTextItem(const char *name, const char *description, const char *parent_name = NULL, const GFXColor col = GFXColor(1, 1, 1, 1));
+    void AddTextItem(const char *name, const char *description, const char *parent_name = nullptr, const GFXColor col = GFXColor(1, 1, 1, 1));
     void ChangeTextItem(const char *name, const char *description, bool wrap = false);
     void ChangeTextItemColor(const char *name, const GFXColor &col);
     void SetText(const char *text); //Sets the text. Enables Multiline and disables highlighting
     void ClearList(void);
-    //Returns the char of the currently selected item. NULL if nothing is selected
+    //Returns the char of the currently selected item. nullptr if nothing is selected
     char *GetSelectedItemName(void);
     char *GetSelectedItemDesc(void);
     void SortList(void);
@@ -218,7 +218,7 @@ class TextAreaItem
 {
 public:
     //TextAreaItem(void);
-    //parent_class is NULL for the master TextAreaItem
+    //parent_class is nullptr for the master TextAreaItem
     TextAreaItem(const char *new_name = "blank", const char *desc = "", TextAreaItem *parent_class = 0);
     ~TextAreaItem(void);
 

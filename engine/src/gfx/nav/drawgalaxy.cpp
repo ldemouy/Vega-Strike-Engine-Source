@@ -198,7 +198,7 @@ public:
     {
     }
     systemdrawnode()
-        : size(SYSTEM_DEFAULT_SIZE), x(0), y(0), index(0), source(), moused(false), color('v'), race(GrayColor), screenoccupation(NULL)
+        : size(SYSTEM_DEFAULT_SIZE), x(0), y(0), index(0), source(), moused(false), color('v'), race(GrayColor), screenoccupation(nullptr)
     {
     }
     void draw(bool mouseover = false, bool willclick = false)
@@ -455,7 +455,7 @@ bool NavigationSystem::CachedSystemIterator::done() const
 }
 
 static NavigationSystem::CachedSystemIterator::SystemInfo nullPair("-", QVector(0, 0, 0),
-                                                                   std::vector<std::string>(), NULL);
+                                                                   std::vector<std::string>(), nullptr);
 
 NavigationSystem::CachedSystemIterator::SystemInfo &NavigationSystem::CachedSystemIterator::operator[](unsigned pos)
 {

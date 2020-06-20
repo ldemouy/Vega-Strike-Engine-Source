@@ -22,24 +22,24 @@ static int NSGetExecutablePathOnTenOneAndEarlierOnly(char *execPath, size_t *exe
     char absolutePath[MAXPATHLEN];
     size_t absolutePathSize;
 
-    assert(execPath != NULL);
-    assert(execPathSize != NULL);
+    assert(execPath != nullptr);
+    assert(execPathSize != nullptr);
 
     cursor = (char **)(*(_NSGetArgv()) + *(_NSGetArgc()));
-    //There should be a NULL after the argv array.
+    //There should be a nullptr after the argv array.
     //If not, error out.
     if (*cursor != 0)
         err = -1;
     if (err == 0)
     {
-        //Skip past the NULL after the argv array.
+        //Skip past the nullptr after the argv array.
 
         cursor += 1;
         //Now, skip over the entire kernel-supplied environment,
-        //which is an array of char * terminated by a NULL.
+        //which is an array of char * terminated by a nullptr.
         while (*cursor != 0)
             cursor += 1;
-        //Skip over the NULL terminating the environment.
+        //Skip over the nullptr terminating the environment.
 
         cursor += 1;
 
@@ -53,7 +53,7 @@ static int NSGetExecutablePathOnTenOneAndEarlierOnly(char *execPath, size_t *exe
         //the real implementation of _NSGetExecutablePath
         //uses getcwd and can return a path with symbolic links
         //etc in it.
-        if (realpath(possiblyRelativePath, absolutePath) == NULL)
+        if (realpath(possiblyRelativePath, absolutePath) == nullptr)
             err = -1;
     }
     //Now copy the path out into the client's buffer, returning

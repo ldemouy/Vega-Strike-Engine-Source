@@ -134,7 +134,7 @@ namespace Orders
         Unit *player = GetParent();
         Unit *station = target.GetUnit();
         // Exit if either the ship or the station has been destroyed
-        if (player == NULL || station == NULL)
+        if (player == nullptr || station == nullptr)
         {
             done = true;
         }

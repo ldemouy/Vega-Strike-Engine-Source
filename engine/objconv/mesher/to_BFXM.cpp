@@ -892,7 +892,7 @@ XML LoadXML( const char *filename, float32bit unitscale )
     }
     XML xml;
     xml.scale = unitscale;
-    XML_Parser parser = XML_ParserCreate( NULL );
+    XML_Parser parser = XML_ParserCreate( nullptr );
     XML_SetUserData( parser, &xml );
     XML_SetElementHandler( parser, &beginElement, &endElement );
     do {

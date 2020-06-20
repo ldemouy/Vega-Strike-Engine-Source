@@ -219,7 +219,7 @@ static AIEvents::ElemAttrMap *getProperScript(Unit *me, Unit *targ, bool interru
 
 static float aggressivity = 2.01;
 static int32_t randomtemp;
-AggressiveAI::AggressiveAI(const char *filename, Unit *target) : FireAt(), logic(getProperScript(NULL, NULL, "default", randomtemp = rand()))
+AggressiveAI::AggressiveAI(const char *filename, Unit *target) : FireAt(), logic(getProperScript(nullptr, nullptr, "default", randomtemp = rand()))
 {
     currentpriority = 0;
     last_jump_time = 0;
@@ -237,7 +237,7 @@ AggressiveAI::AggressiveAI(const char *filename, Unit *target) : FireAt(), logic
         static float defagg = XMLSupport::parse_float(vs_config->getVariable("unit", "aggressivity", "2"));
         aggressivity = defagg;
     }
-    if (target != NULL)
+    if (target != nullptr)
     {
         AttachOrder(target);
     }
@@ -515,10 +515,10 @@ bool AggressiveAI::ProcessLogicItem(const AIEvents::AIEvresult &item)
         break;
     }
     case FACING:
-        return queryType(Order::FACING) == NULL;
+        return queryType(Order::FACING) == nullptr;
 
     case MOVEMENT:
-        return queryType(Order::MOVEMENT) == NULL;
+        return queryType(Order::MOVEMENT) == nullptr;
 
     case RANDOMIZ:
         value = ((float)rand()) / RAND_MAX;
@@ -593,8 +593,8 @@ bool AggressiveAI::ProcessLogic(AIEvents::ElemAttrMap &logi, bool inter)
 
 Unit *GetThreat(Unit *parent, Unit *leader)
 {
-    Unit *th = NULL;
-    Unit *un = NULL;
+    Unit *th = nullptr;
+    Unit *un = nullptr;
     bool targetted = false;
     float mindist = FLT_MAX;
     for (un_iter ui = _Universe->activeStarSystem()->getUnitList().createIterator();
@@ -617,7 +617,7 @@ Unit *GetThreat(Unit *parent, Unit *leader)
 bool AggressiveAI::ProcessCurrentFgDirective(Flightgroup *fg)
 {
     bool retval = false;
-    if (fg != NULL)
+    if (fg != nullptr)
     {
         Unit *leader = fg->leader.GetUnit();
         if (last_directive.empty())
@@ -649,14 +649,14 @@ bool AggressiveAI::ProcessCurrentFgDirective(Flightgroup *fg)
                     }
                     if ((!isJumpablePlanet(targ)) && attacking == false)
                     {
-                        parent->Target(NULL);
+                        parent->Target(nullptr);
                     }
                 }
             }
             else
             {
-                CommunicationMessage c(parent, leader, NULL, 0);
-                c.SetCurrentState(c.fsm->GetNoNode(), NULL, 0);
+                CommunicationMessage c(parent, leader, nullptr, 0);
+                c.SetCurrentState(c.fsm->GetNoNode(), nullptr, 0);
                 Order *lo = leader->getAIState();
                 if (lo)
                 {
@@ -678,8 +678,8 @@ bool AggressiveAI::ProcessCurrentFgDirective(Flightgroup *fg)
                 {
                     if (targ->InCorrectStarSystem(_Universe->activeStarSystem()))
                     {
-                        CommunicationMessage c(parent, leader, NULL, 0);
-                        c.SetCurrentState(c.fsm->GetNoNode(), NULL, 0);
+                        CommunicationMessage c(parent, leader, nullptr, 0);
+                        c.SetCurrentState(c.fsm->GetNoNode(), nullptr, 0);
                         if (parent->InRange(targ, true, false))
                         {
                             if (targ != parent->Target())
@@ -695,7 +695,7 @@ bool AggressiveAI::ProcessCurrentFgDirective(Flightgroup *fg)
                                 //get in front of me
                                 parent->TurretFAW();
 
-                                c.SetCurrentState(c.fsm->GetYesNode(), NULL, 0);
+                                c.SetCurrentState(c.fsm->GetYesNode(), nullptr, 0);
                                 Order *ord = new Orders::MatchLinearVelocity(parent->ClampVelocity(Vector(0,
                                                                                                           0,
                                                                                                           0),
@@ -713,12 +713,12 @@ bool AggressiveAI::ProcessCurrentFgDirective(Flightgroup *fg)
                                 Order *ord = new Orders::FaceTarget(false, 3);
                                 ord->SetParent(parent);
                                 ReplaceOrder(ord);
-                                c.SetCurrentState(c.fsm->GetYesNode(), NULL, 0);
+                                c.SetCurrentState(c.fsm->GetYesNode(), nullptr, 0);
                             }
                         }
                         else
                         {
-                            c.SetCurrentState(c.fsm->GetNoNode(), NULL, 0);
+                            c.SetCurrentState(c.fsm->GetNoNode(), nullptr, 0);
                         }
                         if (fg->directive != last_directive)
                         {
@@ -735,21 +735,21 @@ bool AggressiveAI::ProcessCurrentFgDirective(Flightgroup *fg)
             else if (fg->directive.find("a") != string::npos || fg->directive.find("A") != string::npos)
             {
                 Unit *targ = fg->leader.GetUnit();
-                targ = targ != NULL ? targ->Target() : NULL;
+                targ = targ != nullptr ? targ->Target() : nullptr;
                 if (targ)
                 {
                     if (targ->InCorrectStarSystem(_Universe->activeStarSystem()))
                     {
-                        CommunicationMessage c(parent, leader, NULL, 0);
+                        CommunicationMessage c(parent, leader, nullptr, 0);
                         if (parent->InRange(targ, true, false))
                         {
                             parent->Target(targ);
                             parent->TargetTurret(targ);
-                            c.SetCurrentState(c.fsm->GetYesNode(), NULL, 0);
+                            c.SetCurrentState(c.fsm->GetYesNode(), nullptr, 0);
                         }
                         else
                         {
-                            c.SetCurrentState(c.fsm->GetNoNode(), NULL, 0);
+                            c.SetCurrentState(c.fsm->GetNoNode(), nullptr, 0);
                         }
                         if (fg->directive != last_directive)
                         {
@@ -764,7 +764,7 @@ bool AggressiveAI::ProcessCurrentFgDirective(Flightgroup *fg)
             }
             else if (fg->directive.find("f") != string::npos || fg->directive.find("F") != string::npos)
             {
-                if (leader != NULL)
+                if (leader != nullptr)
                 {
                     if (leader->InCorrectStarSystem(_Universe->activeStarSystem()))
                     {
@@ -772,8 +772,8 @@ bool AggressiveAI::ProcessCurrentFgDirective(Flightgroup *fg)
                         if (fg->directive != last_directive || (!last_time_insys))
                         {
                             last_time_insys = true;
-                            CommunicationMessage c(parent, leader, NULL, 0);
-                            c.SetCurrentState(c.fsm->GetYesNode(), NULL, 0);
+                            CommunicationMessage c(parent, leader, nullptr, 0);
+                            c.SetCurrentState(c.fsm->GetYesNode(), nullptr, 0);
                             Order *o = leader->getAIState();
                             if (o)
                             {
@@ -858,7 +858,7 @@ bool AggressiveAI::ProcessCurrentFgDirective(Flightgroup *fg)
             //IAmDave - ...dock at target command end.
             else if (fg->directive.find("l") != string::npos || fg->directive.find("L") != string::npos)
             {
-                if (leader != NULL)
+                if (leader != nullptr)
                 {
                     if (leader->InCorrectStarSystem(_Universe->activeStarSystem()))
                     {
@@ -866,9 +866,9 @@ bool AggressiveAI::ProcessCurrentFgDirective(Flightgroup *fg)
                         if (fg->directive != last_directive || (!last_time_insys))
                         {
                             last_time_insys = true;
-                            CommunicationMessage c(parent, leader, NULL, 0);
+                            CommunicationMessage c(parent, leader, nullptr, 0);
                             //this order is only valid for cargo wingmen, other wingmen will not comply
-                            c.SetCurrentState(c.fsm->GetYesNode(), NULL, 0);
+                            c.SetCurrentState(c.fsm->GetYesNode(), nullptr, 0);
                             Order *o = leader->getAIState();
                             if (o)
                                 o->Communicate(c);
@@ -1007,7 +1007,7 @@ bool AggressiveAI::ProcessCurrentFgDirective(Flightgroup *fg)
                                                                              true, false, true);
                                 ord->SetParent(parent);
                                 ReplaceOrder(ord);
-                                if (parent->Target() != NULL)
+                                if (parent->Target() != nullptr)
                                 {
                                     ord = new Orders::FaceTarget(false, 3);
                                 }
@@ -1043,7 +1043,7 @@ bool AggressiveAI::ProcessCurrentFgDirective(Flightgroup *fg)
             else if (fg->directive.find("e") != string::npos || fg->directive.find("E") != string::npos)
             {
                 static QVector LeaderPosition = QVector(0, 0, 0);
-                if (LeaderPosition.Magnitude() > 0 || leader != NULL)
+                if (LeaderPosition.Magnitude() > 0 || leader != nullptr)
                 {
                     if (LeaderPosition.Magnitude() > 0 || leader->InCorrectStarSystem(_Universe->activeStarSystem()))
                     {
@@ -1055,9 +1055,9 @@ bool AggressiveAI::ProcessCurrentFgDirective(Flightgroup *fg)
                         if (fg->directive != last_directive || (!last_time_insys))
                         {
                             last_time_insys = true;
-                            CommunicationMessage c(parent, leader, NULL, 0);
+                            CommunicationMessage c(parent, leader, nullptr, 0);
                             //this order is only valid for cargo wingmen, other wingmen will not comply
-                            c.SetCurrentState(c.fsm->GetYesNode(), NULL, 0);
+                            c.SetCurrentState(c.fsm->GetYesNode(), nullptr, 0);
                             static float turn_leader = XMLSupport::parse_float(vs_config->getVariable("AI",
                                                                                                       "Targetting",
                                                                                                       "TurnLeaderDist",
@@ -1166,7 +1166,7 @@ bool AggressiveAI::ProcessCurrentFgDirective(Flightgroup *fg)
                             else
                             {
                                 parent->owner = parent;
-                                c.SetCurrentState(c.fsm->GetNoNode(), NULL, 0);
+                                c.SetCurrentState(c.fsm->GetNoNode(), nullptr, 0);
                                 Flightgroup *leave = new Flightgroup();
                                 leave->directive = "b";
                                 parent->SetFg(leave, 1);
@@ -1190,19 +1190,19 @@ bool AggressiveAI::ProcessCurrentFgDirective(Flightgroup *fg)
                 {
                     if (leader->InCorrectStarSystem(_Universe->activeStarSystem()))
                     {
-                        Unit *th = NULL;
+                        Unit *th = nullptr;
                         if ((th = leader->Threat()))
                         {
-                            CommunicationMessage c(parent, leader, NULL, 0);
+                            CommunicationMessage c(parent, leader, nullptr, 0);
                             if (parent->InRange(th, true, false))
                             {
                                 parent->Target(th);
                                 parent->TargetTurret(th);
-                                c.SetCurrentState(c.fsm->GetYesNode(), NULL, 0);
+                                c.SetCurrentState(c.fsm->GetYesNode(), nullptr, 0);
                             }
                             else
                             {
-                                c.SetCurrentState(c.fsm->GetNoNode(), NULL, 0);
+                                c.SetCurrentState(c.fsm->GetNoNode(), nullptr, 0);
                             }
                             Order *oo = leader->getAIState();
                             if (oo)
@@ -1213,12 +1213,12 @@ bool AggressiveAI::ProcessCurrentFgDirective(Flightgroup *fg)
                         else
                         {
                             th = GetThreat(parent, leader);
-                            CommunicationMessage c(parent, leader, NULL, 0);
+                            CommunicationMessage c(parent, leader, nullptr, 0);
                             if (th)
                             {
                                 if (parent->InRange(th, true, false))
                                 {
-                                    c.SetCurrentState(c.fsm->GetYesNode(), NULL, 0);
+                                    c.SetCurrentState(c.fsm->GetYesNode(), nullptr, 0);
                                     parent->Target(th);
                                     parent->TargetTurret(th);
                                     //if I am the capship, go into defensive mode.
@@ -1235,7 +1235,7 @@ bool AggressiveAI::ProcessCurrentFgDirective(Flightgroup *fg)
                                                                             true, false, true);
                                         ord->SetParent(parent);
                                         ReplaceOrder(ord);
-                                        if (parent->Target() != NULL)
+                                        if (parent->Target() != nullptr)
                                         {
                                             ord = new Orders::FaceTarget(false, 3);
                                             ord->SetParent(parent);
@@ -1249,7 +1249,7 @@ bool AggressiveAI::ProcessCurrentFgDirective(Flightgroup *fg)
                             }
                             else
                             {
-                                c.SetCurrentState(c.fsm->GetNoNode(), NULL, 0);
+                                c.SetCurrentState(c.fsm->GetNoNode(), nullptr, 0);
                             }
                             Order *loo = leader->getAIState();
                             if (loo)
@@ -1267,21 +1267,21 @@ bool AggressiveAI::ProcessCurrentFgDirective(Flightgroup *fg)
                 {
                     if (leader->InCorrectStarSystem(_Universe->activeStarSystem()))
                     {
-                        Unit *th = NULL;
+                        Unit *th = nullptr;
                         Unit *targ = fg->target.GetUnit();
                         if (targ && (th = targ->Threat()))
                         {
-                            CommunicationMessage c(parent, leader, NULL, 0);
+                            CommunicationMessage c(parent, leader, nullptr, 0);
                             if (parent->InRange(th, true, false))
                             {
                                 parent->Target(th);
                                 parent->TargetTurret(th);
-                                c.SetCurrentState(c.fsm->GetYesNode(), NULL, 0);
+                                c.SetCurrentState(c.fsm->GetYesNode(), nullptr, 0);
                                 fg->directive = "";
                             }
                             else
                             {
-                                c.SetCurrentState(c.fsm->GetNoNode(), NULL, 0);
+                                c.SetCurrentState(c.fsm->GetNoNode(), nullptr, 0);
                             }
                             Order *oo = leader->getAIState();
                             if (oo)
@@ -1292,12 +1292,12 @@ bool AggressiveAI::ProcessCurrentFgDirective(Flightgroup *fg)
                         else
                         {
                             th = GetThreat(parent, targ);
-                            CommunicationMessage c(parent, leader, NULL, 0);
+                            CommunicationMessage c(parent, leader, nullptr, 0);
                             if (th)
                             {
                                 if (parent->InRange(th, true, false))
                                 {
-                                    c.SetCurrentState(c.fsm->GetYesNode(), NULL, 0);
+                                    c.SetCurrentState(c.fsm->GetYesNode(), nullptr, 0);
                                     if (th != parent->Target())
                                     {
                                         callme = true;
@@ -1317,7 +1317,7 @@ bool AggressiveAI::ProcessCurrentFgDirective(Flightgroup *fg)
                                                                             true, false, true);
                                         ord->SetParent(parent);
                                         ReplaceOrder(ord);
-                                        if (parent->Target() != NULL)
+                                        if (parent->Target() != nullptr)
                                         {
                                             ord = new Orders::FaceTarget(false, 3);
                                             ord->SetParent(parent);
@@ -1327,12 +1327,12 @@ bool AggressiveAI::ProcessCurrentFgDirective(Flightgroup *fg)
                                 }
                                 else
                                 {
-                                    c.SetCurrentState(c.fsm->GetNoNode(), NULL, 0);
+                                    c.SetCurrentState(c.fsm->GetNoNode(), nullptr, 0);
                                 }
                             }
                             else
                             {
-                                c.SetCurrentState(c.fsm->GetNoNode(), NULL, 0);
+                                c.SetCurrentState(c.fsm->GetNoNode(), nullptr, 0);
                             }
                             Order *loo = leader->getAIState();
                             if (loo || callme)
@@ -1365,13 +1365,13 @@ void AggressiveAI::ReCommandWing(Flightgroup *fg)
                                                                                          "TargetCommandierTime",
                                                                                          "100"));
     static bool verbose_debug = XMLSupport::parse_bool(vs_config->getVariable("data", "verbose_debug", "false"));
-    if (fg != NULL)
+    if (fg != nullptr)
     {
         Unit *lead;
         if (overridable(fg->directive))
         {
             //computer won't override capital orders
-            if (NULL != (lead = fg->leader.GetUnit()))
+            if (nullptr != (lead = fg->leader.GetUnit()))
             {
                 if (float(rand()) / RAND_MAX < SIMULATION_ATOM / time_to_recommand_wing)
                 {
@@ -1400,7 +1400,7 @@ static Unit *GetRandomNav(vector<UnitContainer> navs[3], unsigned int randnum)
     size_t total_size = navs[0].size() + navs[1].size() + navs[2].size();
     if (total_size == 0)
     {
-        return NULL;
+        return nullptr;
     }
     randnum %= total_size;
     if (randnum >= navs[0].size())
@@ -1426,12 +1426,12 @@ static Unit *ChooseNavPoint(Unit *parent, Unit **otherdest, float *lurk_on_arriv
     *lurk_on_arrival = 0;
     if (script.length() > 0)
     {
-        Unit *ret = NULL;
+        Unit *ret = nullptr;
         UniverseUtil::setScratchUnit(parent);
         CompileRunPython(script);
         ret = UniverseUtil::getScratchUnit();
-        UniverseUtil::setScratchUnit(NULL);
-        if (ret != NULL && ret != parent)
+        UniverseUtil::setScratchUnit(nullptr);
+        if (ret != nullptr && ret != parent)
         {
             return ret;
         }
@@ -1590,7 +1590,7 @@ static Unit *ChooseNavPoint(Unit *parent, Unit **otherdest, float *lurk_on_arriv
             return stats->navs[whichlist][firstRand].GetUnit();
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 static Unit *ChooseNearNavPoint(Unit *parent, Unit *suggestion, QVector location, float locradius)
@@ -1599,7 +1599,7 @@ static Unit *ChooseNearNavPoint(Unit *parent, Unit *suggestion, QVector location
     {
         return suggestion;
     }
-    Unit *candidate = NULL;
+    Unit *candidate = nullptr;
     float dist = FLT_MAX;
     Unit *un;
     NearestNavOrCapshipLocator nnl;
@@ -1609,13 +1609,13 @@ static Unit *ChooseNearNavPoint(Unit *parent, Unit *suggestion, QVector location
     return nnl.retval.unit;
     //DEAD CODE
     for (un_iter i = _Universe->activeStarSystem()->getUnitList().createIterator();
-         (un = *i) != NULL;
+         (un = *i) != nullptr;
          ++i)
     {
         if (UnitUtil::isSignificant(un) && un != parent)
         {
             float newdist = (location - un->Position()).Magnitude() - un->rSize() - locradius;
-            if (candidate == NULL || newdist <= dist)
+            if (candidate == nullptr || newdist <= dist)
             {
                 candidate = un;
                 dist = newdist;
@@ -1702,7 +1702,7 @@ static void GoTo(AggressiveAI *ai,
                  const QVector &nav,
                  float creationtime,
                  bool boonies = false,
-                 Unit *destUnit = NULL)
+                 Unit *destUnit = nullptr)
 {
     static bool can_afterburn = XMLSupport::parse_bool(vs_config->getVariable("AI", "afterburn_to_no_enemies", "true"));
     Order *mt = new FlyTo(nav, can_afterburn, true, creationtime, boonies ? 16 : 6, destUnit);
@@ -1721,7 +1721,7 @@ void AggressiveAI::ExecuteNoEnemies()
     static float randspacingfactor = XMLSupport::parse_float(vs_config->getVariable("AI", "randomspacingfactor", "4"));
     if (nav.i == 0 && nav.j == 0 && nav.k == 0)
     {
-        Unit *otherdest = NULL;
+        Unit *otherdest = nullptr;
         Unit *dest = ChooseNavPoint(parent, &otherdest, &this->lurk_on_arrival);
         if (dest)
         {
@@ -1801,7 +1801,7 @@ void AggressiveAI::ExecuteNoEnemies()
                 else if (dest->GetDestinations().size() == 0 && false == UnitUtil::isCapitalShip(parent) && UnitUtil::isDockableUnit(dest))
                 {
                     Order *ai = parent->aistate;
-                    parent->aistate = NULL;
+                    parent->aistate = nullptr;
                     parent->PrimeOrders(new Orders::DockingOps(dest, ai, true, false));
                 }
                 else
@@ -1935,7 +1935,7 @@ void AggressiveAI::Execute()
                     }
                     else
                     {
-                        parent->Target(NULL);
+                        parent->Target(nullptr);
                     }
                 }
                 else if (parent->GetJumpStatus().drive < 0)
@@ -1964,7 +1964,7 @@ void AggressiveAI::Execute()
                 currentpriority = -FLT_MAX;
             }
         }
-        if (queryAny(Order::FACING | Order::MOVEMENT) == NULL)
+        if (queryAny(Order::FACING | Order::MOVEMENT) == nullptr)
         {
             if (isjumpable)
             {
@@ -2009,7 +2009,7 @@ void AggressiveAI::Execute()
                     }
                 }
             }
-            else if (queryAny(Order::MOVEMENT) == NULL)
+            else if (queryAny(Order::MOVEMENT) == nullptr)
             {
                 ExecuteNoEnemies();
             }

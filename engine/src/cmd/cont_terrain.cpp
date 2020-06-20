@@ -35,9 +35,9 @@ ContinuousTerrain::ContinuousTerrain(const char *filename, const Vector &Scales,
         int i;
         for (i = 0; i < numcontterr; i++)
         {
-            data[i] = NULL;
-            md[i].mesh = NULL;
-            md[i].collider = NULL;
+            data[i] = nullptr;
+            md[i].mesh = nullptr;
+            md[i].collider = nullptr;
             char tmp[512];
             VSFileSystem::vs_fscanf(fp, "%511s", tmp);
             tmp[511] = '\0';
@@ -48,7 +48,7 @@ ContinuousTerrain::ContinuousTerrain(const char *filename, const Vector &Scales,
                     tmp[k] = '\0';
 
                     vector<mesh_polygon> polies;
-                    md[i].mesh = Mesh::LoadMesh(tmp, Vector(1, 1, 1), 0, NULL);
+                    md[i].mesh = Mesh::LoadMesh(tmp, Vector(1, 1, 1), 0, nullptr);
                     sscanf(tmp + i + 1, "%f,%f", &sizeX, &sizeZ);
                     md[i].mesh->GetPolys(polies);
                     sizeX = md[i].mesh->corner_max().i - md[i].mesh->corner_min().i;
@@ -71,7 +71,7 @@ ContinuousTerrain::ContinuousTerrain(const char *filename, const Vector &Scales,
                     up = &sideparityodd;
                 else if (i % 2)
                     up = &upparityodd;
-                if (md[i * width + j].mesh == NULL)
+                if (md[i * width + j].mesh == nullptr)
                     data[i * width + j] = new Terrain(filenames[i * width + j].c_str(), this->Scales, tmass, 0, up);
             }
         location = new QVector[numcontterr];
@@ -113,10 +113,10 @@ ContinuousTerrain::ContinuousTerrain(const char *filename, const Vector &Scales,
     {
         numcontterr = 0;
         width = 0;
-        dirty = NULL;
-        location = NULL;
-        data = NULL;
-        md = NULL;
+        dirty = nullptr;
+        location = nullptr;
+        data = nullptr;
+        md = nullptr;
     }
 }
 
@@ -238,7 +238,7 @@ void ContinuousTerrain::Draw()
             float d = GFXSphereInFrustum(TransformedPosition,
                                          md[i].mesh->rSize());
             if (d)
-                md[i].mesh->Draw(1000, md[i].mat, d, -1, (_Universe->AccessCamera()->GetNebula() != NULL) ? -1 : 0);
+                md[i].mesh->Draw(1000, md[i].mat, d, -1, (_Universe->AccessCamera()->GetNebula() != nullptr) ? -1 : 0);
         }
     }
 }
@@ -364,7 +364,7 @@ void ContinuousTerrain::Collide(Unit *un, Matrix t)
             {
                 static float mass = 1000;
                 un->ApplyForce(bigNormal * .4 * un->GetMass() * fabs(bigNormal.Dot((un->GetVelocity() / SIMULATION_ATOM))));
-                un->ApplyDamage(un->Position().Cast() - bigNormal * un->rSize(), -bigNormal, .5 * fabs(bigNormal.Dot(un->GetVelocity())) * mass * SIMULATION_ATOM, un, GFXColor(1, 1, 1, 1), NULL);
+                un->ApplyDamage(un->Position().Cast() - bigNormal * un->rSize(), -bigNormal, .5 * fabs(bigNormal.Dot(un->GetVelocity())) * mass * SIMULATION_ATOM, un, GFXColor(1, 1, 1, 1), nullptr);
             }
         }
     }

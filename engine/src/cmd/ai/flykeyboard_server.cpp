@@ -5,7 +5,7 @@ FlyByKeyboard::FlyByKeyboard(unsigned int whichplayer) : FlyByWire(), axis_key(0
 {
     this->last_jumped = 0;
     this->whichplayer = whichplayer;
-    autopilot = NULL;
+    autopilot = nullptr;
     inauto = false;
     joy_mode = 0;
 }
@@ -17,7 +17,7 @@ void FlyByKeyboard::Execute(bool resetangvelocity)
     if (queryType(FACING | MOVEMENT))
     {
         Order::Execute();
-        if (queryType(FACING | MOVEMENT) == NULL)
+        if (queryType(FACING | MOVEMENT) == nullptr)
             FlyByKeyboard::inauto = false;
         done = false;
     }

@@ -79,30 +79,30 @@ void Mesh::InitUnit()
     numlods = 1;
     alphatest = 0;
     lodsize = FLT_MAX;
-    forcelogos = NULL;
-    squadlogos = NULL;
+    forcelogos = nullptr;
+    squadlogos = nullptr;
     local_pos = Vector(0, 0, 0);
     blendSrc = ONE;
     blendDst = ZERO;
-    vlist = NULL;
+    vlist = nullptr;
     mn = Vector(0, 0, 0);
     mx = Vector(0, 0, 0);
     radialSize = 0;
     if (Decal.empty())
-        Decal.push_back(NULL);
+        Decal.push_back(nullptr);
 
     //texturename[0] = -1;
     numforcelogo = numsquadlogo = 0;
     myMatNum = 0; //default material!
     //scale = Vector(1.0,1.0,1.0);
     refcount = 1; //FIXME VEGASTRIKE  THIS _WAS_ zero...NOW ONE
-    orig = NULL;
+    orig = nullptr;
 
     envMapAndLit = 0x3;
     setEnvMap(GFXTRUE);
     setLighting(GFXTRUE);
-    detailTexture = NULL;
-    draw_queue = NULL;
+    detailTexture = nullptr;
+    draw_queue = nullptr;
     will_be_drawn = GFXFALSE;
     draw_sequence = 0;
 
@@ -143,7 +143,7 @@ extern Hashtable<std::string, std::vector<Mesh *>, MESH_HASTHABLE_SIZE> bfxmHash
 Mesh::Mesh(const Mesh &m)
 {
     fprintf(stderr, "UNTESTED MESH COPY CONSTRUCTOR");
-    this->orig = NULL;
+    this->orig = nullptr;
     this->hash_name = m.hash_name;
     InitUnit();
     Mesh *oldmesh = meshHashTable.Get(hash_name);
@@ -164,7 +164,7 @@ Mesh::Mesh(const Mesh &m)
                 oldmesh = (*vec)[0];
         }
     }
-    if (LoadExistant(oldmesh->orig != NULL ? oldmesh->orig : oldmesh))
+    if (LoadExistant(oldmesh->orig != nullptr ? oldmesh->orig : oldmesh))
         return;
 }
 
@@ -211,7 +211,7 @@ Mesh::Mesh(std::string filename, const Vector &scale, int faction, Flightgroup *
             {
                 Mesh *tmp = this->orig;
                 tmp->orig = this;
-                this->orig = NULL;
+                this->orig = nullptr;
                 refcount = 2;
                 delete[] tmp;
             }
@@ -232,7 +232,7 @@ Mesh::Mesh(const char *filename,
            const vector<string> &textureOverride) : hash_name(filename)
 {
     this->convex = false;
-    this->orig = NULL;
+    this->orig = nullptr;
     InitUnit();
     Mesh *oldmesh;
     if (LoadExistant(filename, scale, faction))
@@ -272,12 +272,12 @@ Mesh::Mesh(const char *filename,
         meshHashTable.Put(hash_name, oldmesh);
         //oldmesh[0]=*this;
         *oldmesh = *this;
-        oldmesh->orig = NULL;
+        oldmesh->orig = nullptr;
         oldmesh->refcount++;
     }
     else
     {
-        this->orig = NULL;
+        this->orig = nullptr;
     }
 }
 

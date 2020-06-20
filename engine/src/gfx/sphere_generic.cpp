@@ -111,13 +111,13 @@ void SphereMesh::InitSphere(float radius,
     radialSize = radius; //MAKE SURE FRUSTUM CLIPPING IS DONE CORRECTLY!!!!!
     mn = Vector(-radialSize, -radialSize, -radialSize);
     mx = Vector(radialSize, radialSize, radialSize);
-    vector<MeshDrawContext> *odq = NULL;
+    vector<MeshDrawContext> *odq = nullptr;
     for (int l = 0; l < numspheres; l++)
     {
         draw_queue = new vector<MeshDrawContext>[NUM_ZBUF_SEQ + 1];
         if (subclass || rho_max != M_PI || rho_min != 0.0 || theta_min != 0.0 || theta_max != 2 * M_PI)
             odq = draw_queue;
-        vlist = NULL;
+        vlist = nullptr;
         if (subclass)
         {
             if (stacks > 12)
@@ -211,12 +211,12 @@ void SphereMesh::InitSphere(float radius,
         string inputtex = texture;
         unsigned int count = 0;
         if (Decal.empty())
-            Decal.push_back(NULL);
+            Decal.push_back(nullptr);
         while (inputtex.length())
         {
             string thistex = truncateByPipe(inputtex);
             while (Decal.size() <= count)
-                Decal.push_back(NULL);
+                Decal.push_back(nullptr);
             if (thistex.find(".ani") != string::npos)
             {
                 Decal[count] = createAnimatedTexture(thistex.c_str(), 0, mipmap);
@@ -244,7 +244,7 @@ void SphereMesh::InitSphere(float radius,
             draw_sequence = 0;
         Mesh *oldorig = orig;
         refcount = 1;
-        orig = NULL;
+        orig = nullptr;
         if (l >= 1)
         {
             lodsize = (numspheres + 1 - l) * pixelscalesize;
@@ -313,7 +313,7 @@ CityLights::CityLights(float radius,
                slices,
                texture,
                "",
-               NULL,
+               nullptr,
                insideout,
                a,
                b,

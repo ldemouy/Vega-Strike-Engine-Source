@@ -30,8 +30,8 @@ public:
         unsigned int   height;
         FileData() : bpp( 8 )
             , color_type( COLOR_TYPE_UNKNOWN )
-            , data( NULL )
-            , palette( NULL )
+            , data( nullptr )
+            , palette( nullptr )
             , width( 0 )
             , height( 0 ) {}
     };

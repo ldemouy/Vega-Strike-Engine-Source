@@ -24,7 +24,7 @@ namespace Audio
 {
 
     OpenALSimpleSound::OpenALSimpleSound(const std::string &name, VSFileSystem::VSFileType type) : SimpleSound(name, type, false),
-                                                                                                   bufferHandle(AL_NULL_BUFFER)
+                                                                                                   bufferHandle(AL_nullptr_BUFFER)
     {
     }
 
@@ -175,13 +175,13 @@ namespace Audio
 
     void OpenALSimpleSound::unloadImpl()
     {
-        if (bufferHandle == AL_NULL_BUFFER)
+        if (bufferHandle == AL_nullptr_BUFFER)
         {
             return;
         }
 
         alDeleteBuffers(1, &bufferHandle);
-        bufferHandle = AL_NULL_BUFFER;
+        bufferHandle = AL_nullptr_BUFFER;
     }
 
 }; // namespace Audio

@@ -112,7 +112,7 @@ namespace VSFileSystem
         {
             char pwd[8192];
             pwd[0] = '\0';
-            if (NULL != getcwd(pwd, 8191))
+            if (nullptr != getcwd(pwd, 8191))
             {
                 pwd[8191] = '\0';
                 vegastrike_cwd = pwd;
@@ -427,7 +427,7 @@ namespace VSFileSystem
         }
         return fp;
 
-        return NULL;
+        return nullptr;
     }
 
     size_t vs_read(void *ptr, size_t size, size_t nmemb, FILE *fp)
@@ -534,9 +534,9 @@ namespace VSFileSystem
         char szPath[MAX_PATH];
 
         // Get My Documents path the MS way
-        if (SUCCEEDED(SHGetFolderPathA(NULL,
+        if (SUCCEEDED(SHGetFolderPathA(nullptr,
                                        CSIDL_PERSONAL,
-                                       NULL,
+                                       nullptr,
                                        0,
                                        szPath)))
             userdir = string(szPath);
@@ -560,7 +560,7 @@ namespace VSFileSystem
     void InitHomeDirectory()
     {
         //Setup home directory
-        char *chome_path = NULL;
+        char *chome_path = nullptr;
         struct passwd *pwent;
         pwent = getpwuid(getuid());
         chome_path = pwent->pw_dir;
@@ -619,7 +619,7 @@ namespace VSFileSystem
             if (FileExists((*vsit), config_file) >= 0)
             {
                 cerr << "Found data in " << (*vsit) << endl;
-                if (NULL != getcwd(tmppath, 16384))
+                if (nullptr != getcwd(tmppath, 16384))
                 {
                     if ((*vsit).substr(0, 1) == ".")
                         datadir = string(tmppath) + "/" + (*vsit);
@@ -636,7 +636,7 @@ namespace VSFileSystem
                     cerr << "Error changing to datadir" << endl;
                     exit(1);
                 }
-                if (NULL != getcwd(tmppath, 16384))
+                if (nullptr != getcwd(tmppath, 16384))
                 {
                     datadir = string(tmppath);
                 }
@@ -1482,10 +1482,10 @@ namespace VSFileSystem
 
     void VSFile::private_init()
     {
-        fp = NULL;
+        fp = nullptr;
         size = 0;
-        pk3_file = NULL;
-        pk3_extracted_file = NULL;
+        pk3_file = nullptr;
+        pk3_extracted_file = nullptr;
         offset = 0;
         valid = false;
         file_type = alt_type = UnknownFile;
@@ -1527,7 +1527,7 @@ namespace VSFileSystem
         if (fp)
         {
             fclose(fp);
-            this->fp = NULL;
+            this->fp = nullptr;
         }
         if (pk3_extracted_file)
             delete[] pk3_extracted_file;
@@ -1631,7 +1631,7 @@ namespace VSFileSystem
                     }
                     else
                     {
-                        if ((this->fp = fopen(filestr.c_str(), "rb")) == NULL)
+                        if ((this->fp = fopen(filestr.c_str(), "rb")) == nullptr)
                         {
                             cerr << "!!! SERIOUS ERROR : failed to open Unknown file " << filestr << " - this should not happen" << endl;
                             VSExit(1);
@@ -1797,7 +1797,7 @@ namespace VSFileSystem
         size_t nbread = 0;
         if (!UseVolumes[this->alt_type] || this->volume_type == VSFSNone)
         {
-            assert(fp != NULL);
+            assert(fp != nullptr);
             nbread = fread(ptr, 1, length, this->fp);
         }
         else
@@ -2059,7 +2059,7 @@ int VSFile::Fscanf( const char *format, ... )
             if (!UseVolumes[alt_type] || this->volume_type == VSFSNone || file_mode != ReadOnly)
             {
                 struct stat st;
-                if ((fp != NULL) && fstat(fileno(fp), &st) == 0)
+                if ((fp != nullptr) && fstat(fileno(fp), &st) == 0)
                     return this->size = st.st_size;
                 return -1;
             }
@@ -2149,7 +2149,7 @@ int VSFile::Fscanf( const char *format, ... )
         if (this->file_type >= ZoneBuffer && this->file_type != UnknownFile && this->pk3_extracted_file)
         {
             delete this->pk3_extracted_file;
-            this->pk3_extracted_file = NULL;
+            this->pk3_extracted_file = nullptr;
             return;
         }
         if (this->valid && this->file_mode == ReadOnly && (file_type == UnitFile || file_type == AnimFile || file_type == VSSpriteFile || file_type == CockpitFile))
@@ -2169,7 +2169,7 @@ int VSFile::Fscanf( const char *format, ... )
         if (!UseVolumes[file_type] || this->volume_type == VSFSNone || file_mode != ReadOnly)
         {
             fclose(this->fp);
-            this->fp = NULL;
+            this->fp = nullptr;
         }
         else
         {
@@ -2180,7 +2180,7 @@ int VSFile::Fscanf( const char *format, ... )
             {
                 if (pk3_extracted_file)
                     delete[] pk3_extracted_file;
-                pk3_extracted_file = NULL;
+                pk3_extracted_file = nullptr;
             }
         }
         this->size = -1;

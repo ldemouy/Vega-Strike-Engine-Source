@@ -41,7 +41,7 @@ void ReplaceOrd(Order *aisc, Unit *un, Order *ord)
     ord->SetParent(un);
     aisc->ReplaceOrder(ord);
 }
-static Order *lastOrder = NULL;
+static Order *lastOrder = nullptr;
 void FireAt::AddReplaceLastOrder(bool replace)
 {
     if (lastOrder)
@@ -50,7 +50,7 @@ void FireAt::AddReplaceLastOrder(bool replace)
             ReplaceOrd(this, parent, lastOrder);
         else
             AddOrd(this, parent, lastOrder);
-        lastOrder = NULL;
+        lastOrder = nullptr;
     }
 }
 void FireAt::ExecuteLastScriptFor(float time)
@@ -210,7 +210,7 @@ void BarrelRoll(Order *aisc, Unit *un)
 
 static void EvadeWavy(Order *aisc, Unit *un, bool updown, bool ab)
 {
-    EvadeLeftRightC *broll = NULL;
+    EvadeLeftRightC *broll = nullptr;
     broll = new EvadeLeftRightC(updown);
     AddOrd(aisc, un, broll);
     bool afterburn = ab && useAfterburner();

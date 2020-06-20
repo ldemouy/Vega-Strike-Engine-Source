@@ -224,7 +224,7 @@ void Unit::SetPosition(const QVector &pos)
 
 float Unit::DealDamageToHull(const Vector &pnt, float Damage)
 {
-    float *nullvar = NULL; //short fix
+    float *nullvar = nullptr; //short fix
     return DealDamageToHullReturnArmor(pnt, Damage, nullvar);
 }
 
@@ -302,7 +302,7 @@ bool Unit::InRange(const Unit *target, double &mm, bool cone, bool cap, bool loc
     if (((mm - rSize() - target->rSize()) > computer.radar.maxrange) || target->rSize() < computer.radar.mintargetsize)
     {
         Flightgroup *fg = target->getFlightgroup();
-        if ((target->rSize() < capship_size || (!cap)) && (fg == NULL ? true : fg->name != "Base"))
+        if ((target->rSize() < capship_size || (!cap)) && (fg == nullptr ? true : fg->name != "Base"))
             return target->isUnit() == PLANETPTR;
     }
     return true;
@@ -608,7 +608,7 @@ void Unit::reactToCollision(Unit *smalle,
                 XMLSupport::parse_float(vs_config->getVariable("physics", "collision_avoidance_hack_distance", "10000"));
             static float front_collision_hack_distance =
                 XMLSupport::parse_float(vs_config->getVariable("physics", "front_collision_avoidance_hack_distance", "200000"));
-            if (thcp == NULL && smcp == NULL)
+            if (thcp == nullptr && smcp == nullptr)
             {
                 if (smallmag > collision_hack_distance + this->rSize() && thismag > collision_hack_distance)
                 {
@@ -641,11 +641,11 @@ void Unit::reactToCollision(Unit *smalle,
         {
             if (faction != upgradefac)
             {
-                smalle->ApplyDamage(biglocation.Cast(), bignormal, small_damage, smalle, GFXColor(1, 1, 1, 2), this->owner != NULL ? this->owner : this);
+                smalle->ApplyDamage(biglocation.Cast(), bignormal, small_damage, smalle, GFXColor(1, 1, 1, 2), this->owner != nullptr ? this->owner : this);
             }
             if (smalle->faction != upgradefac)
             {
-                this->ApplyDamage(smalllocation.Cast(), smallnormal, large_damage, this, GFXColor(1, 1, 1, 2), smalle->owner != NULL ? smalle->owner : smalle);
+                this->ApplyDamage(smalllocation.Cast(), smallnormal, large_damage, this, GFXColor(1, 1, 1, 2), smalle->owner != nullptr ? smalle->owner : smalle);
             }
         }
     }
@@ -701,14 +701,14 @@ static Hashtable<long, Unit, 2095> deletedUn;
 int deathofvs = 1;
 void CheckUnit(Unit *un)
 {
-    if (deletedUn.Get((long)un) != NULL)
+    if (deletedUn.Get((long)un) != nullptr)
         while (deathofvs)
             printf("%ld died", (long)un);
 }
 
 void UncheckUnit(Unit *un)
 {
-    if (deletedUn.Get((long)un) != NULL)
+    if (deletedUn.Get((long)un) != nullptr)
         deletedUn.Delete((long)un);
 }
 
@@ -776,8 +776,8 @@ Unit::Unit(int /*dummy*/) : cumulative_transformation_matrix(identity_matrix)
     ZeroAll();
     pImage = (new UnitImages<void>);
     sound = new UnitSounds;
-    aistate = NULL;
-    pImage->cockpit_damage = NULL;
+    aistate = nullptr;
+    pImage->cockpit_damage = nullptr;
     pilot = new Pilot(FactionUtil::GetNeutralFaction());
     Init();
 }
@@ -787,8 +787,8 @@ Unit::Unit() : cumulative_transformation_matrix(identity_matrix)
     ZeroAll();
     pImage = (new UnitImages<void>);
     sound = new UnitSounds;
-    aistate = NULL;
-    pImage->cockpit_damage = NULL;
+    aistate = nullptr;
+    pImage->cockpit_damage = nullptr;
     pilot = new Pilot(FactionUtil::GetNeutralFaction());
     Init();
 }
@@ -799,8 +799,8 @@ Unit::Unit(std::vector<Mesh *> &meshes, bool SubU, int fact) : cumulative_transf
     pImage = (new UnitImages<void>);
     sound = new UnitSounds;
     pilot = new Pilot(fact);
-    aistate = NULL;
-    pImage->cockpit_damage = NULL;
+    aistate = nullptr;
+    pImage->cockpit_damage = nullptr;
     Init();
     hull = 1000;
     maxhull = 100000;
@@ -808,7 +808,7 @@ Unit::Unit(std::vector<Mesh *> &meshes, bool SubU, int fact) : cumulative_transf
     graphicOptions.SubUnit = SubU;
     meshdata = meshes;
     meshes.clear();
-    meshdata.push_back(NULL);
+    meshdata.push_back(nullptr);
     calculate_extent(false);
     pilot->SetComm(this);
 }
@@ -826,8 +826,8 @@ Unit::Unit(const char *filename,
     pImage = (new UnitImages<void>);
     sound = new UnitSounds;
     pilot = new Pilot(faction);
-    aistate = NULL;
-    pImage->cockpit_damage = NULL;
+    aistate = nullptr;
+    pImage->cockpit_damage = nullptr;
     Init(filename, SubU, faction, unitModifications, flightgrp, fg_subnumber, netxml);
     pilot->SetComm(this);
 }
@@ -837,7 +837,7 @@ Unit::~Unit()
     if (pMeshAnimation)
     {
         delete pMeshAnimation;
-        pMeshAnimation = NULL;
+        pMeshAnimation = nullptr;
     }
 
     free(pImage->cockpit_damage);
@@ -881,7 +881,7 @@ Unit::~Unit()
 #ifndef NO_MOUNT_STAR
     for (vector<Mount *>::iterator jj = mounts.begin(); jj != mounts.end(); ++jj)
         //Free all mounts elements
-        if ((*jj) != NULL)
+        if ((*jj) != nullptr)
             delete (*jj);
 #endif
     mounts.clear();
@@ -897,7 +897,7 @@ Unit::~Unit()
 
 void Unit::ZeroAll()
 {
-    sound = NULL;
+    sound = nullptr;
     ucref = 0;
     SavedAccel.i = 0;
     SavedAccel.j = 0;
@@ -909,14 +909,14 @@ void Unit::ZeroAll()
     damages = Damages::NO_DAMAGE;
     //SubUnits has a constructor
     attack_preference = unit_role = 0;
-    nebula = NULL;
-    activeStarSystem = NULL;
+    nebula = nullptr;
+    activeStarSystem = nullptr;
     //computer has a constructor
     //jump needs fixing
     selected = false;
     //scanner needs fixing
-    xml = NULL;
-    owner = NULL;
+    xml = nullptr;
+    owner = nullptr;
     //prev_physical_state has a constructor
     //curr_physical_state has a constructor
     //cumulative_transformation_matrix has a constructor
@@ -942,7 +942,7 @@ void Unit::ZeroAll()
     Velocity.i = 0;
     Velocity.j = 0;
     Velocity.k = 0;
-    pImage = NULL;
+    pImage = nullptr;
     Mass = 0;
     shieldtight = 0; //this can be used to differentiate whether this is a capship or a fighter?
     fuel = 0;
@@ -972,16 +972,16 @@ void Unit::ZeroAll()
     maxwarpenergy = 0;
     warpenergy = 0;
     //target_fgid has a constructor
-    aistate = NULL;
+    aistate = nullptr;
     //CollideInfo has a constructor
-    colTrees = NULL;
+    colTrees = nullptr;
     docked = NOT_DOCKED;
     faction = 0;
-    flightgroup = NULL;
+    flightgroup = nullptr;
     flightgroup_subnumber = 0;
     setTractorability(tractorImmune);
 
-    pMeshAnimation = NULL;
+    pMeshAnimation = nullptr;
 }
 
 void Unit::Init()
@@ -1010,8 +1010,8 @@ void Unit::Init()
     static float capsize = XMLSupport::parse_float(vs_config->getVariable("physics", "capship_size", "500"));
 
     capship_size = capsize;
-    activeStarSystem = NULL;
-    xml = NULL;
+    activeStarSystem = nullptr;
+    xml = nullptr;
     docked = NOT_DOCKED;
     graphicOptions.SubUnit = 0;
     jump.energy = 100;
@@ -1023,7 +1023,7 @@ void Unit::Init()
     graphicOptions.FaceCamera = false;
     jump.drive = -2; //disabled
     afterburnenergy = 0;
-    nebula = NULL;
+    nebula = nullptr;
     limits.structurelimits = Vector(0, 0, 1);
     limits.limitmin = -1;
     cloaking = -1;
@@ -1036,7 +1036,7 @@ void Unit::Init()
     pImage->UpgradeVolume = 0;
     this->HeatSink = 0;
 
-    pImage->unitwriter = NULL;
+    pImage->unitwriter = nullptr;
     cloakmin = pImage->cloakglass ? 1 : 0;
     pImage->equipment_volume = 0;
     pImage->HiddenCargoVolume = 0;
@@ -1059,13 +1059,13 @@ void Unit::Init()
     pImage->LifeSupportFunctionality = 1.0f;
     pImage->LifeSupportFunctionalityMax = 1.0f;
 
-    pImage->pHudImage = NULL;
+    pImage->pHudImage = nullptr;
 
     //Freedom for the masses!!!!  //you'll have to justify why setting to this is better.
-    owner = NULL;
+    owner = nullptr;
     faction = 0;
     resolveforces = true;
-    colTrees = NULL;
+    colTrees = nullptr;
     invisible = DEFAULTVIS;
     corner_min.Set(FLT_MAX, FLT_MAX, FLT_MAX);
     corner_max.Set(-FLT_MAX, -FLT_MAX, -FLT_MAX);
@@ -1102,11 +1102,11 @@ void Unit::Init()
     shield.number =
         0;
 
-    pImage->pExplosion = NULL;
+    pImage->pExplosion = nullptr;
     pImage->timeexplode = 0;
     killed = false;
     ucref = 0;
-    aistate = NULL;
+    aistate = nullptr;
     Identity(cumulative_transformation_matrix);
     cumulative_transformation = identity_transformation;
     curr_physical_state = prev_physical_state = identity_transformation;
@@ -1141,8 +1141,8 @@ void Unit::Init()
     limits.forward = 2;
     limits.afterburn = 5;
     limits.retro = 2;
-    VelocityReference(NULL);
-    computer.threat.SetUnit(NULL);
+    VelocityReference(nullptr);
+    computer.threat.SetUnit(nullptr);
     computer.threatlevel = 0;
     computer.slide_start = computer.slide_end = 0;
     computer.set_speed = 0;
@@ -1164,7 +1164,7 @@ void Unit::Init()
     computer.radar.capability = Computer::RADARLIM::Capability::IFF_NONE;
     computer.ecmactive = true;
 
-    flightgroup = NULL;
+    flightgroup = nullptr;
     flightgroup_subnumber = 0;
     //No cockpit reference here
     if (!pImage->cockpit_damage)
@@ -1214,7 +1214,7 @@ void Unit::Init(const char *filename,
     VSFile unitTab;
     VSError taberr = Unspecified;
     bool foundFile = false;
-    if (netxml == NULL)
+    if (netxml == nullptr)
     {
         if (unitModifications.length() != 0)
         {
@@ -1250,7 +1250,7 @@ void Unit::Init(const char *filename,
     if (netxml)
         unitTables.push_back(new CSVTable(*netxml, unitTables.back()->rootdir));
     //If save was not succesfull we try to open the unit file itself
-    if (netxml == NULL)
+    if (netxml == nullptr)
     {
         if (filename[0])
         {
@@ -1301,7 +1301,7 @@ void Unit::Init(const char *filename,
             std::cout << boost::format("Unit file %1% not found") % filename << std::endl;
         }
         meshdata.clear();
-        meshdata.push_back(NULL);
+        meshdata.push_back(nullptr);
         this->fullname = filename;
         this->name = string("LOAD_FAILED");
         calculate_extent(false);
@@ -1340,7 +1340,7 @@ void Unit::Init(const char *filename,
     }
     else
     {
-        if (netxml == NULL)
+        if (netxml == nullptr)
             Unit::LoadXML(f, unitModifications.c_str());
         else
             Unit::LoadXML(f, "", netxml);
@@ -1362,7 +1362,7 @@ void Unit::Init(const char *filename,
     else
     {
         delete pMeshAnimation;
-        pMeshAnimation = NULL;
+        pMeshAnimation = nullptr;
     }
 }
 
@@ -1370,7 +1370,7 @@ vector<Mesh *> Unit::StealMeshes()
 {
     vector<Mesh *> ret;
 
-    Mesh *shield = meshdata.empty() ? NULL : meshdata.back();
+    Mesh *shield = meshdata.empty() ? nullptr : meshdata.back();
     for (unsigned int i = 0; i <= nummesh(); ++i)
         ret.push_back(meshdata[i]);
     meshdata.clear();
@@ -1555,12 +1555,12 @@ void Unit::Fire(unsigned int weapon_type_bitmask, bool listen_to_owner)
             //If in non-networking mode and mount fire has been accepted or if on server side
 
             //If we are on server or if the weapon has been accepted for fire we fire
-            if (i->Fire(this, owner == NULL ? this : owner, mis, listen_to_owner))
+            if (i->Fire(this, owner == nullptr ? this : owner, mis, listen_to_owner))
             {
                 //We could only refresh energy on server side or in non-networking mode, on client side it is done with
                 //info the server sends with ack for fire
                 //FOR NOW WE TRUST THE CLIENT SINCE THE SERVER CAN REFUSE A FIRE
-                //if( Network==NULL || SERVER)
+                //if( Network==nullptr || SERVER)
                 if (i->type->type == weapon_info::BEAM)
                 {
                     if (i->ref.gun)
@@ -1597,7 +1597,7 @@ void Unit::Fire(unsigned int weapon_type_bitmask, bool listen_to_owner)
 
 const string Unit::getFgID()
 {
-    if (flightgroup != NULL)
+    if (flightgroup != nullptr)
     {
         char buffer[32];
         sprintf(buffer, "-%d", flightgroup_subnumber);
@@ -1612,7 +1612,7 @@ const string Unit::getFgID()
 void Unit::SetFaction(int faction)
 {
     this->faction = faction;
-    for (un_iter ui = getSubUnits(); (*ui) != NULL; ++ui)
+    for (un_iter ui = getSubUnits(); (*ui) != nullptr; ++ui)
         (*ui)->SetFaction(faction);
 }
 
@@ -1841,7 +1841,7 @@ void Unit::Threaten(Unit *targ, float danger)
     if (!targ)
     {
         computer.threatlevel = danger;
-        computer.threat.SetUnit(NULL);
+        computer.threat.SetUnit(nullptr);
     }
     else if (targ->owner != this && this->owner != targ && danger > PARANOIA && danger > computer.threatlevel)
     {
@@ -1868,7 +1868,7 @@ void Unit::Deselect()
 void disableSubUnits(Unit *uhn)
 {
     Unit *un;
-    for (un_iter i = uhn->getSubUnits(); (un = *i) != NULL; ++i)
+    for (un_iter i = uhn->getSubUnits(); (un = *i) != nullptr; ++i)
         disableSubUnits(un);
     for (unsigned int j = 0; j < uhn->mounts.size(); ++j)
         DestroyMount(&uhn->mounts[j]);
@@ -2006,7 +2006,7 @@ void Unit::PrimeOrders()
     if (aistate)
     {
         aistate->Destroy();
-        aistate = NULL;
+        aistate = nullptr;
     }
     aistate = new Order; //get 'er ready for enqueueing
     aistate->SetParent(this);
@@ -2017,7 +2017,7 @@ void Unit::PrimeOrdersLaunched()
     if (aistate)
     {
         aistate->Destroy();
-        aistate = NULL;
+        aistate = nullptr;
     }
     Vector vec(0, 0, 10000);
     aistate = new ExecuteFor(new Orders::MatchVelocity(this->ClampVelocity(vec, true), Vector(0, 0, 0), true, true,
@@ -2117,9 +2117,9 @@ void Unit::ReTargetFg(int which_target)
     UnitCollection *unitlist = ssystem->getUnitList();
     un_iter   uiter = unitlist->createIterator();
 
-    GameUnit *found_target   = NULL;
+    GameUnit *found_target   = nullptr;
     int found_attackers = 1000;
-    for (GameUnit *other_unit = NULL; other_unit = *uiter; ++uiter) {
+    for (GameUnit *other_unit = nullptr; other_unit = *uiter; ++uiter) {
         string other_fgid = other_unit->getFgID();
         if ( other_unit->matchesFg( target_fgid[which_target] ) ) {
             //the other unit matches our primary target
@@ -2133,13 +2133,13 @@ void Unit::ReTargetFg(int which_target)
             }
         }
     }
-    if (found_target == NULL) {
+    if (found_target == nullptr) {
         //we haven't found a target yet, search again
         if (which_target <= 1)
             ReTargetFg( which_target+1 );
         else
             //we can't find any target
-            setTarget( NULL );
+            setTarget( nullptr );
     }
 #endif
 }
@@ -2342,7 +2342,7 @@ void Unit::UpdatePhysics(const Transformation &trans,
     }
     //Only on server or non-networking
     //Do it everywhere -- "interpolation" for client-side.
-    //if( SERVER || Network==NULL)
+    //if( SERVER || Network==nullptr)
     RegenShields();
     if (lastframe)
     {
@@ -2353,7 +2353,7 @@ void Unit::UpdatePhysics(const Transformation &trans,
         if (planet)
         {
             if (!planet->dirty)
-                SetPlanetOrbitData(NULL);
+                SetPlanetOrbitData(nullptr);
             else
                 planet->pps = planet->cps;
         }
@@ -2509,7 +2509,7 @@ void Unit::UpdatePhysics(const Transformation &trans,
             if (mounts[i].ref.gun)
             {
                 Unit *autotarg =
-                    ((mounts[i].size & weapon_info::AUTOTRACKING) && (mounts[i].time_to_lock <= 0) && TargetTracked()) ? target : NULL;
+                    ((mounts[i].size & weapon_info::AUTOTRACKING) && (mounts[i].time_to_lock <= 0) && TargetTracked()) ? target : nullptr;
                 float trackingcone = computer.radar.trackingcone;
                 if (CloseEnoughToAutotrack(this, target, trackingcone))
                 {
@@ -2555,7 +2555,7 @@ void Unit::UpdatePhysics(const Transformation &trans,
                 hint[locind] =
                     (!is_null(superunit->location[locind])) ? superunit->location[locind] : _Universe->activeStarSystem()->collidemap[locind]->begin();
             if (!mounts[i].PhysicsAlignedFire(this, t1, m1, cumulative_velocity,
-                                              (!isSubUnit() || owner == NULL) ? this : owner, target, autotrack,
+                                              (!isSubUnit() || owner == nullptr) ? this : owner, target, autotrack,
                                               trackingcone,
                                               hint))
             {
@@ -2600,19 +2600,19 @@ void Unit::UpdatePhysics(const Transformation &trans,
         if (direct)
         {
             Cockpit *cp = _Universe->isPlayerStarship(this);
-            if (NULL != cp)
+            if (nullptr != cp)
             {
                 std::string sys = cp->GetNavSelectedSystem();
                 if (!sys.empty())
                 {
                     jumpDirect = true;
-                    _Universe->activeStarSystem()->JumpTo(this, NULL, sys, true, true);
+                    _Universe->activeStarSystem()->JumpTo(this, nullptr, sys, true, true);
                 }
             }
         }
         if (!jumpDirect)
         {
-            _Universe->activeStarSystem()->JumpTo(this, NULL,
+            _Universe->activeStarSystem()->JumpTo(this, nullptr,
                                                   NearestSystem(_Universe->activeStarSystem()->getFileName(),
                                                                 curr_physical_state.position),
                                                   true, true);
@@ -2625,7 +2625,7 @@ void Unit::UpdatePhysics(const Transformation &trans,
     //Really kill the unit only in non-networking or on server side
     if (hull < 0)
     {
-        dead &= (pImage->pExplosion == NULL);
+        dead &= (pImage->pExplosion == nullptr);
         if (dead)
             Kill();
     }
@@ -2719,7 +2719,7 @@ void Unit::UpdateSubunitPhysics(Unit *subunit,
     subunit->cloaking = (unsigned int)cloaking;
     if (hull < 0)
     {
-        subunit->Target(NULL);
+        subunit->Target(nullptr);
         UnFire(); //don't want to go off shooting while your body's splitting everywhere
     }
 }
@@ -2743,7 +2743,7 @@ float CalculateNearestWarpUnit(const Unit *thus, float minmultiplier, Unit **nea
     static float def_inv_interdiction = 1. / XMLSupport::parse_float(vs_config->getVariable("physics", "default_interdiction",
                                                                                             ".125"));
     Unit *planet;
-    Unit *testthis = NULL;
+    Unit *testthis = nullptr;
     {
         NearestUnitLocator locatespec;
         findObjects(_Universe->activeStarSystem()->collidemap[Unit::UNIT_ONLY], thus->location[Unit::UNIT_ONLY], &locatespec);
@@ -2755,10 +2755,10 @@ float CalculateNearestWarpUnit(const Unit *thus, float minmultiplier, Unit **nea
     {
         if (!planet || !planet->Killed())
         {
-            if (planet == NULL)
+            if (planet == nullptr)
             {
                 planet = testthis;
-                testthis = NULL;
+                testthis = nullptr;
             }
             if (planet == thus)
                 continue;
@@ -2827,7 +2827,7 @@ float Unit::GetMaxWarpFieldStrength(float rampmult) const
     static float warpMaxEfVel = XMLSupport::parse_float(vs_config->getVariable("physics", "warpMaxEfVel", "2960881320"));
     //inverse fractional effect of ship vs real big object
     float minmultiplier = warpMultiplierMax * graphicOptions.MaxWarpMultiplier;
-    Unit *nearest_unit = NULL;
+    Unit *nearest_unit = nullptr;
     minmultiplier = CalculateNearestWarpUnit(this, minmultiplier, &nearest_unit, true);
     float minWarp = warpMultiplierMin * graphicOptions.MinWarpMultiplier;
     float maxWarp = warpMultiplierMax * graphicOptions.MaxWarpMultiplier;
@@ -3033,9 +3033,9 @@ bool Unit::AutoPilotToErrorMessage(const Unit *target,
         return false; //we can't auto here;
     }
     StarSystem *ss = activeStarSystem;
-    if (ss == NULL)
+    if (ss == nullptr)
         ss = _Universe->activeStarSystem();
-    Unit *un = NULL;
+    Unit *un = nullptr;
     QVector start(Position());
     QVector end(RealPosition(target));
     float totallength = (start - end).Magnitude();
@@ -3087,7 +3087,7 @@ bool Unit::AutoPilotToErrorMessage(const Unit *target,
         if (Guaranteed == Mission::AUTO_NORMAL && CloakVisible() > .5)
         {
             bool ignore_friendlies = true;
-            for (un_iter i = ss->getUnitList().createIterator(); (un = *i) != NULL; ++i)
+            for (un_iter i = ss->getUnitList().createIterator(); (un = *i) != nullptr; ++i)
             {
                 static bool canflythruplanets =
                     XMLSupport::parse_bool(vs_config->getVariable("physics", "can_auto_through_planets", "true"));
@@ -3127,7 +3127,7 @@ bool Unit::AutoPilotToErrorMessage(const Unit *target,
     {
         //just make sure we aren't in an asteroid field
         Unit *un;
-        for (un_iter i = ss->getUnitList().createIterator(); (un = *i) != NULL; ++i)
+        for (un_iter i = ss->getUnitList().createIterator(); (un = *i) != nullptr; ++i)
             if (UnitUtil::isAsteroid(un))
             {
                 static float minasteroiddistance =
@@ -3218,15 +3218,15 @@ bool Unit::AutoPilotToErrorMessage(const Unit *target,
         if (!nowhere)
             SetCurPosition(sep);
         Cockpit *cp;
-        if ((cp = _Universe->isPlayerStarship(this)) != NULL)
+        if ((cp = _Universe->isPlayerStarship(this)) != nullptr)
         {
             std::string followermessage;
-            if (getFlightgroup() != NULL)
+            if (getFlightgroup() != nullptr)
             {
-                Unit *other = NULL;
+                Unit *other = nullptr;
                 if (recursive_level > 0)
                 {
-                    for (un_iter ui = ss->getUnitList().createIterator(); NULL != (other = *ui); ++ui)
+                    for (un_iter ui = ss->getUnitList().createIterator(); nullptr != (other = *ui); ++ui)
                     {
                         Flightgroup *ff = other->getFlightgroup();
                         bool leadah = (ff == getFlightgroup());
@@ -3243,7 +3243,7 @@ bool Unit::AutoPilotToErrorMessage(const Unit *target,
                                                                followermessage,
                                                                recursive_level - 1);
                                 if (leadah)
-                                    if (NULL == _Universe->isPlayerStarship(other))
+                                    if (nullptr == _Universe->isPlayerStarship(other))
                                         other->SetPosition(AutoSafeEntrancePoint(LocalPosition(), other->rSize() * 1.5, other));
                             }
                         }
@@ -3295,7 +3295,7 @@ bool Unit::jumpReactToCollision(Unit *smalle)
 {
     static bool ai_jump_cheat = XMLSupport::parse_bool(vs_config->getVariable("AI", "jump_without_energy", "false"));
     static bool nojumpinSPEC = XMLSupport::parse_bool(vs_config->getVariable("physics", "noSPECJUMP", "true"));
-    bool SPEC_interference = (NULL != _Universe->isPlayerStarship(smalle)) ? smalle->graphicOptions.InWarp && nojumpinSPEC : (NULL != _Universe->isPlayerStarship(this)) ? graphicOptions.InWarp && nojumpinSPEC : false;
+    bool SPEC_interference = (nullptr != _Universe->isPlayerStarship(smalle)) ? smalle->graphicOptions.InWarp && nojumpinSPEC : (nullptr != _Universe->isPlayerStarship(this)) ? graphicOptions.InWarp && nojumpinSPEC : false;
     //only allow big with small
     if (!GetDestinations().empty())
     {
@@ -3308,7 +3308,7 @@ bool Unit::jumpReactToCollision(Unit *smalle)
         if ((!SPEC_interference && (smalle->GetJumpStatus().drive >= 0 && //we have power
                                     (smalle->warpenergy >= smalle->GetJumpStatus().energy
                                      //or we're being cheap
-                                     || (ai_jump_cheat && cp == NULL)))) ||
+                                     || (ai_jump_cheat && cp == nullptr)))) ||
             pImage->forcejump)
         {
             //or the jump is being forced?
@@ -3330,7 +3330,7 @@ bool Unit::jumpReactToCollision(Unit *smalle)
             TurnJumpOKLightOn(this, cp);
         else
             return false;
-        if ((!SPEC_interference && (GetJumpStatus().drive >= 0 && (warpenergy >= GetJumpStatus().energy || (ai_jump_cheat && cp == NULL)))) || smalle->pImage->forcejump)
+        if ((!SPEC_interference && (GetJumpStatus().drive >= 0 && (warpenergy >= GetJumpStatus().energy || (ai_jump_cheat && cp == nullptr)))) || smalle->pImage->forcejump)
         {
             warpenergy -= GetJumpStatus().energy;
             DeactivateJumpDrive();
@@ -3350,7 +3350,7 @@ Cockpit *Unit::GetVelocityDifficultyMult(float &difficulty) const
 {
     difficulty = 1;
     Cockpit *player_cockpit = _Universe->isPlayerStarship(this);
-    if ((player_cockpit) == NULL)
+    if ((player_cockpit) == nullptr)
     {
         static float exp = XMLSupport::parse_float(vs_config->getVariable("physics", "difficulty_speed_exponent", ".2"));
         difficulty = pow(g_game.difficulty, exp);
@@ -3546,12 +3546,12 @@ void Unit::ClearMounts()
         {
             //hope we're not killin' em twice...they don't go in gunqueue
             delete mounts[j].ref.gun;
-            mounts[j].ref.gun = NULL;
+            mounts[j].ref.gun = nullptr;
         }
     }
     mounts.clear();
     Unit *su;
-    for (un_iter i = getSubUnits(); (su = *i) != NULL; ++i)
+    for (un_iter i = getSubUnits(); (su = *i) != nullptr; ++i)
         su->ClearMounts();
 }
 
@@ -3760,10 +3760,10 @@ float WARPENERGYMULTIPLIER(Unit *un)
         XMLSupport::parse_float(vs_config->getVariable("physics", "warp_energy_multiplier", "0.12"));
     static float playerwarpenergymultiplier =
         XMLSupport::parse_float(vs_config->getVariable("physics", "warp_energy_player_multiplier", ".12"));
-    bool player = _Universe->isPlayerStarship(un) != NULL;
+    bool player = _Universe->isPlayerStarship(un) != nullptr;
     Flightgroup *fg = un->getFlightgroup();
     if (fg && !player)
-        player = _Universe->isPlayerStarship(fg->leader.GetUnit()) != NULL;
+        player = _Universe->isPlayerStarship(fg->leader.GetUnit()) != nullptr;
     return player ? playerwarpenergymultiplier : warpenergymultiplier;
 }
 
@@ -3913,7 +3913,7 @@ void Unit::RegenShields()
             rec = 0;
             velocity_discharge = true;
         }
-        if (GetNebula() != NULL)
+        if (GetNebula() != nullptr)
         {
             static float nebshields =
                 XMLSupport::parse_float(vs_config->getVariable("physics", "nebula_shield_recharge", ".5"));
@@ -4289,7 +4289,7 @@ float Unit::ApplyLocalDamage(const Vector &pnt,
 {
     static float nebshields = XMLSupport::parse_float(vs_config->getVariable("physics", "nebula_shield_recharge", ".5"));
     Cockpit *cpt;
-    if ((cpt = _Universe->isPlayerStarship(this)) != NULL)
+    if ((cpt = _Universe->isPlayerStarship(this)) != nullptr)
     {
         if (color.a != 2)
         {
@@ -4321,7 +4321,7 @@ float Unit::ApplyLocalDamage(const Vector &pnt,
     //Percentage returned by DealDamageToShield
     float spercentage = 0;
     //If not a nebula or if shields recharge in nebula => WE COMPUTE SHIELDS DAMAGE AND APPLY
-    if (GetNebula() == NULL || (nebshields > 0))
+    if (GetNebula() == nullptr || (nebshields > 0))
     {
         float origabsamt = absamt;
         spercentage = DealDamageToShield(pnt, absamt);
@@ -4333,7 +4333,7 @@ float Unit::ApplyLocalDamage(const Vector &pnt,
             //calculate percentage
             if (cpt)
                 cpt->Shake(amt, 0);
-            if (GetNebula() == NULL)
+            if (GetNebula() == nullptr)
                 LightShields(pnt, normal, spercentage, color);
         }
     }
@@ -4360,15 +4360,15 @@ void Unit::ApplyNetDamage(Vector &pnt, Vector &normal, float amt, float ppercent
 {
     static float nebshields = XMLSupport::parse_float(vs_config->getVariable("physics", "nebula_shield_recharge", ".5"));
     Cockpit *cpt;
-    if ((cpt = _Universe->isPlayerStarship(this)) != NULL)
+    if ((cpt = _Universe->isPlayerStarship(this)) != nullptr)
     {
     }
-    if (GetNebula() == NULL || nebshields > 0)
+    if (GetNebula() == nullptr || nebshields > 0)
     {
         //shields are up
         if (meshdata.back() && spercentage > 0 && amt == 0)
         {
-            if (GetNebula() == NULL)
+            if (GetNebula() == nullptr)
                 meshdata.back()->AddDamageFX(pnt, shieldtight ? shieldtight * normal : Vector(0, 0, 0), spercentage, color);
             if (cpt)
                 cpt->Shake(amt, 0);
@@ -4393,10 +4393,10 @@ void Unit::ApplyNetDamage(Vector &pnt, Vector &normal, float amt, float ppercent
 Unit *findUnitInStarsystem(const void *unitDoNotDereference)
 {
     Unit *un;
-    for (un_iter i = _Universe->activeStarSystem()->getUnitList().createIterator(); (un = *i) != NULL; ++i)
+    for (un_iter i = _Universe->activeStarSystem()->getUnitList().createIterator(); (un = *i) != nullptr; ++i)
         if (un == reinterpret_cast<const Unit *>(unitDoNotDereference))
             return un;
-    return NULL;
+    return nullptr;
 }
 
 extern void ScoreKill(Cockpit *cp, Unit *killer, Unit *killedUnit);
@@ -4429,8 +4429,8 @@ void Unit::ApplyDamage(const Vector &pnt,
         for (int i = 0; i < howmany; ++i)
         {
             //now we can dereference it because we checked it against the parent
-            CommunicationMessage c(reinterpret_cast<Unit *>(ownerDoNotDereference), this, NULL, 0);
-            c.SetCurrentState(c.fsm->GetHitNode(), NULL, 0);
+            CommunicationMessage c(reinterpret_cast<Unit *>(ownerDoNotDereference), this, nullptr, 0);
+            c.SetCurrentState(c.fsm->GetHitNode(), nullptr, 0);
             if (this->getAIState())
                 this->getAIState()->Communicate(c);
         }
@@ -4454,21 +4454,21 @@ void Unit::ApplyDamage(const Vector &pnt,
             else
             {
                 Unit *tmp;
-                if ((tmp = findUnitInStarsystem(ownerDoNotDereference)) != NULL)
+                if ((tmp = findUnitInStarsystem(ownerDoNotDereference)) != nullptr)
                 {
-                    if ((NULL != (cp = _Universe->isPlayerStarshipVoid(tmp->owner))) && (cp->GetParent() != NULL))
+                    if ((nullptr != (cp = _Universe->isPlayerStarshipVoid(tmp->owner))) && (cp->GetParent() != nullptr))
                         ScoreKill(cp, cp->GetParent(), this);
                     else
-                        ScoreKill(NULL, tmp, this);
+                        ScoreKill(nullptr, tmp, this);
                 }
             }
         }
     }
     else if (hullpercent >= hull_percent_for_comm && ((float)GetHullPercent()) < hull_percent_for_comm && (cp || _Universe->isPlayerStarship(this)))
     {
-        Unit *computerai = NULL;
-        Unit *player = NULL;
-        if (cp == NULL)
+        Unit *computerai = nullptr;
+        Unit *player = nullptr;
+        if (cp == nullptr)
         {
             computerai = findUnitInStarsystem(ownerDoNotDereference);
             player = this;
@@ -4476,7 +4476,7 @@ void Unit::ApplyDamage(const Vector &pnt,
         else
         {
             computerai = this;
-            //cp != NULL
+            //cp != nullptr
             player = cp->GetParent();
         }
         if (computerai && player && computerai->getAIState() && player->getAIState() && computerai->isUnit() == UNITPTR && player->isUnit() == UNITPTR)
@@ -4552,7 +4552,7 @@ void Unit::DamageRandSys(float dam, const Vector &vec, float randnum, float degr
         else if (randnum >= .5)
         {
             //THIS IS NOT YET SUPPORTED IN NETWORKING
-            computer.target = NULL; //set the target to NULL
+            computer.target = nullptr; //set the target to nullptr
         }
         else if (randnum >= .4)
         {
@@ -4822,7 +4822,7 @@ void Unit::Kill(bool erasefromsave, bool quitting)
 {
     if (this->colTrees)
         this->colTrees->Dec(); //might delete
-    this->colTrees = NULL;
+    this->colTrees = nullptr;
     if (this->sound->engine != -1)
     {
         AUDStopPlaying(this->sound->engine);
@@ -4869,7 +4869,7 @@ void Unit::Kill(bool erasefromsave, bool quitting)
         for (i = 0; i < pImage->dockedunits.size(); ++i)
         {
             Unit *un;
-            if (NULL != (un = pImage->dockedunits[i]->uc.GetUnit()))
+            if (nullptr != (un = pImage->dockedunits[i]->uc.GetUnit()))
                 dockedun.push_back(un);
         }
         while (!dockedun.empty())
@@ -4885,18 +4885,18 @@ void Unit::Kill(bool erasefromsave, bool quitting)
     //eraticate everything. naturally (see previous line) we won't erraticate beams erraticated above
     if (!isSubUnit())
         RemoveFromSystem();
-    computer.target.SetUnit(NULL);
+    computer.target.SetUnit(nullptr);
 
     //God I can't believe this next line cost me 1 GIG of memory until I added it
-    computer.threat.SetUnit(NULL);
-    computer.velocity_ref.SetUnit(NULL);
+    computer.threat.SetUnit(nullptr);
+    computer.velocity_ref.SetUnit(nullptr);
     computer.force_velocity_ref = true;
     if (aistate)
     {
         aistate->ClearMessages();
         aistate->Destroy();
     }
-    aistate = NULL;
+    aistate = nullptr;
 
     // The following we don't want to do twice
     killed = true;
@@ -4915,7 +4915,7 @@ void Unit::Kill(bool erasefromsave, bool quitting)
         Unitdeletequeue.push_back(this);
         if (flightgroup)
             if (flightgroup->leader.GetUnit() == this)
-                flightgroup->leader.SetUnit(NULL);
+                flightgroup->leader.SetUnit(nullptr);
 
         //#ifdef DESTRUCTDEBUG
         //        BOOST_LOG_TRIVIAL(trace) << boost::format("%s 0x%x - %d") % name.get().c_str() % this % Unitdeletequeue.size();
@@ -5180,7 +5180,7 @@ const Unit *makeFinalBlankUpgrade(string name, int faction)
     if (!lim)
         lim = UnitConstCache::setCachedConst(StringIntKey(limiternam, faction), makeBlankUpgrade(limiternam, faction));
     if (lim->name == LOAD_FAILED)
-        lim = NULL;
+        lim = nullptr;
     return lim;
 }
 
@@ -5198,7 +5198,7 @@ const Unit *makeTemplateUpgrade(string name, int faction)
                                            UnitFactory::createUnit(limiternam.c_str(), true, faction));
     }
     if (lim->name == LOAD_FAILED)
-        lim = NULL;
+        lim = nullptr;
     return lim;
 }
 
@@ -5331,7 +5331,7 @@ float Unit::DealDamageToHullReturnArmor(const Vector &pnt, float damage, float *
                             if (0 == downgrade->GetNumMounts() && downgrade->SubUnits.empty())
                             {
                                 double percentage = 0;
-                                this->Downgrade(downgrade, 0, 0, percentage, NULL);
+                                this->Downgrade(downgrade, 0, 0, percentage, nullptr);
                             }
                         }
                     }
@@ -5401,7 +5401,7 @@ float Unit::DealDamageToHullReturnArmor(const Vector &pnt, float damage, float *
             {
                 static bool player_autoeject =
                     XMLSupport::parse_bool(vs_config->getVariable("physics", "player_autoeject", "true"));
-                if (faction != neutralfac && faction != upgradesfac && (player_autoeject || NULL == _Universe->isPlayerStarship(this)))
+                if (faction != neutralfac && faction != upgradesfac && (player_autoeject || nullptr == _Universe->isPlayerStarship(this)))
                     EjectCargo((unsigned int)-1);
             }
         }
@@ -5443,7 +5443,7 @@ bool withinShield(const ShieldFacing &facing, float theta, float rho)
 float Unit::DealDamageToShield(const Vector &pnt, float &damage)
 {
     float percent = 0;
-    float *targ = NULL; //short fix
+    float *targ = nullptr; //short fix
     float theta = atan2(pnt.i, pnt.k);
     float rho = atan(pnt.j / sqrt(pnt.k * pnt.k + pnt.i * pnt.i));
     //ONLY APPLY DAMAGES IN NON-NETWORKING OR ON SERVER SIDE
@@ -5481,7 +5481,7 @@ bool Unit::ShieldUp(const Vector &pnt) const
 {
     const int shieldmin = 5;
     static float nebshields = XMLSupport::parse_float(vs_config->getVariable("physics", "nebula_shield_recharge", ".5"));
-    if (nebula != NULL || nebshields > 0)
+    if (nebula != nullptr || nebshields > 0)
         return false;
     switch (shield.number)
     {
@@ -5556,7 +5556,7 @@ void Unit::TargetTurret(Unit *targ)
     if (!SubUnits.empty())
     {
         Unit *su;
-        bool inrange = (targ != NULL) ? InRange(targ) : true;
+        bool inrange = (targ != nullptr) ? InRange(targ) : true;
         if (inrange)
         {
             for (un_iter iter = getSubUnits(); (su = *iter); ++iter)
@@ -5578,7 +5578,7 @@ void WarpPursuit(Unit *un, StarSystem *sourcess, std::string destination)
         float ttime =
             (SystemLocation(sourcess->getFileName()) - SystemLocation(destination)).Magnitude() * seconds_per_parsec;
         un->jump.delay += float_to_int(ttime);
-        sourcess->JumpTo(un, NULL, destination, true, true);
+        sourcess->JumpTo(un, nullptr, destination, true, true);
         un->jump.delay -= float_to_int(ttime);
     }
 }
@@ -5595,7 +5595,7 @@ bool Unit::TargetLocked(const Unit *checktarget) const
 {
     if (!computer.radar.locked)
         return false;
-    return (checktarget == NULL) || (computer.target == checktarget);
+    return (checktarget == nullptr) || (computer.target == checktarget);
 }
 
 bool Unit::TargetTracked(const Unit *checktarget)
@@ -5605,7 +5605,7 @@ bool Unit::TargetTracked(const Unit *checktarget)
     bool we_do_track = computer.radar.trackingactive && (!_Universe->isPlayerStarship(this) || TargetLocked() || !must_lock_to_autotrack);
     if (!we_do_track)
         return false;
-    if (checktarget == NULL)
+    if (checktarget == nullptr)
         return true;
     if (computer.target != checktarget)
         return false;
@@ -5619,14 +5619,14 @@ void Unit::Target(Unit *targ)
     if (targ == this)
         return;
 
-    if (!(activeStarSystem == NULL || activeStarSystem == _Universe->activeStarSystem()))
+    if (!(activeStarSystem == nullptr || activeStarSystem == _Universe->activeStarSystem()))
     {
-        computer.target.SetUnit(NULL);
+        computer.target.SetUnit(nullptr);
         return;
     }
     if (targ)
     {
-        if (targ->activeStarSystem == _Universe->activeStarSystem() || targ->activeStarSystem == NULL)
+        if (targ->activeStarSystem == _Universe->activeStarSystem() || targ->activeStarSystem == nullptr)
         {
             if (targ != Unit::Target())
             {
@@ -5643,7 +5643,7 @@ void Unit::Target(Unit *targ)
             {
                 bool found = false;
                 Unit *u;
-                for (un_iter i = _Universe->activeStarSystem()->getUnitList().createIterator(); (u = *i) != NULL; ++i)
+                for (un_iter i = _Universe->activeStarSystem()->getUnitList().createIterator(); (u = *i) != nullptr; ++i)
                     if (!u->GetDestinations().empty())
                     {
                         if (std::find(u->GetDestinations().begin(), u->GetDestinations().end(),
@@ -5659,13 +5659,13 @@ void Unit::Target(Unit *targ)
             }
             else
             {
-                computer.target.SetUnit(NULL);
+                computer.target.SetUnit(nullptr);
             }
         }
     }
     else
     {
-        computer.target.SetUnit(NULL);
+        computer.target.SetUnit(nullptr);
     }
 }
 
@@ -5737,8 +5737,8 @@ void Unit::UnFire()
 {
     if (this->GetNumMounts() == 0)
     {
-        Unit *tur = NULL;
-        for (un_iter i = this->getSubUnits(); (tur = *i) != NULL; ++i)
+        Unit *tur = nullptr;
+        for (un_iter i = this->getSubUnits(); (tur = *i) != nullptr; ++i)
             tur->UnFire();
     }
     else
@@ -5823,8 +5823,8 @@ public:
     {
         if (un->mounts.size() == 0)
         {
-            Unit *tur = NULL;
-            for (un_iter i = un->getSubUnits(); (tur = *i) != NULL; ++i)
+            Unit *tur = nullptr;
+            for (un_iter i = un->getSubUnits(); (tur = *i) != nullptr; ++i)
                 ToggleWeaponSet(tur, missile);
             return;
         }
@@ -6132,7 +6132,7 @@ void Unit::FreeDockingPort(unsigned int i)
         docked &= (~DOCKING_UNITS);
     unsigned int whichdock = pImage->dockedunits[i]->whichdock;
     pImage->dockingports[whichdock].Occupy(false);
-    pImage->dockedunits[i]->uc.SetUnit(NULL);
+    pImage->dockedunits[i]->uc.SetUnit(nullptr);
     delete pImage->dockedunits[i];
     pImage->dockedunits.erase(pImage->dockedunits.begin() + i);
 }
@@ -6168,7 +6168,7 @@ void Unit::PerformDockingOperations()
     for (unsigned int i = 0; i < pImage->dockedunits.size(); ++i)
     {
         Unit *un;
-        if ((un = pImage->dockedunits[i]->uc.GetUnit()) == NULL)
+        if ((un = pImage->dockedunits[i]->uc.GetUnit()) == nullptr)
         {
             FreeDockingPort(i);
             i--;
@@ -6375,7 +6375,7 @@ bool Unit::isDocked(const Unit *d) const
     for (unsigned int i = 0; i < pImage->dockedunits.size(); ++i)
     {
         Unit *un;
-        if ((un = pImage->dockedunits[i]->uc.GetUnit()) != NULL)
+        if ((un = pImage->dockedunits[i]->uc.GetUnit()) != nullptr)
             if (un == d)
                 return true;
     }
@@ -6393,7 +6393,7 @@ bool Unit::UnDock(Unit *utdw)
         if (this->faction == utdw->faction)
             this->owner = utdw;
         else
-            this->owner = NULL;
+            this->owner = nullptr;
     }
     BOOST_LOG_TRIVIAL(trace) << "Asking to undock";
     for (i = 0; i < utdw->pImage->dockedunits.size(); ++i)
@@ -6403,7 +6403,7 @@ bool Unit::UnDock(Unit *utdw)
             i--;
             SetVisible(true);
             docked &= (~(DOCKED_INSIDE | DOCKED));
-            pImage->DockedTo.SetUnit(NULL);
+            pImage->DockedTo.SetUnit(nullptr);
             Velocity = utdw->Velocity;
             static float launch_speed = XMLSupport::parse_float(vs_config->getVariable("physics", "launch_speed", "-1"));
             static bool auto_turn_towards =
@@ -6830,7 +6830,7 @@ bool Unit::UpgradeMounts(const Unit *up,
                                         */
                                         const Unit *weapon = getUnitFromUpgradeName(weaponname);
 
-                                        if (weapon == NULL || weapon->name == LOAD_FAILED)
+                                        if (weapon == nullptr || weapon->name == LOAD_FAILED)
                                         {
                                             // this should not happen
                                             VSFileSystem::vs_dprintf(1, "UpgradeMount(): FAILED to obtain weapon: %s\n", weaponname.c_str());
@@ -7005,12 +7005,12 @@ bool Unit::UpgradeSubUnitsWithFactory(const Unit *up, int subunitoffset, bool to
     Unit *giveAway;
 
     giveAway = *ui;
-    if (giveAway == NULL)
+    if (giveAway == nullptr)
         return true;
     bool hasAnyTurrets = false;
     turSize = getTurretSize(giveAway->name);
     //begin goign through other unit's turrets
-    for (upturrets = up->viewSubUnits(); ((*upturrets) != NULL) && ((*ui) != NULL); ++ui, ++upturrets)
+    for (upturrets = up->viewSubUnits(); ((*upturrets) != nullptr) && ((*ui) != nullptr); ++ui, ++upturrets)
     {
         hasAnyTurrets = true;
         const Unit *addtome;
@@ -7066,7 +7066,7 @@ bool Unit::UpgradeSubUnitsWithFactory(const Unit *up, int subunitoffset, bool to
                     un->limits.lateral = un->limits.retro = un->limits.forward = un->limits.afterburn = 0.0;
 
                     un->name = turSize + "_blank";
-                    if (un->pImage->unitwriter != NULL)
+                    if (un->pImage->unitwriter != nullptr)
                         un->pImage->unitwriter->setName(un->name);
                     un->SetRecursiveOwner(this);
                 }
@@ -7075,7 +7075,7 @@ bool Unit::UpgradeSubUnitsWithFactory(const Unit *up, int subunitoffset, bool to
     }
     if (!found)
         return !hasAnyTurrets;
-    if ((*upturrets) != NULL)
+    if ((*upturrets) != nullptr)
         return false;
     return cancompletefully;
 }
@@ -7142,7 +7142,7 @@ bool Unit::canDowngrade(const Unit *downgradeor,
                         bool gen_downgrade_list)
 {
     return UpAndDownGrade(downgradeor,
-                          NULL,
+                          nullptr,
                           mountoffset,
                           subunitoffset,
                           false,
@@ -7163,7 +7163,7 @@ bool Unit::Downgrade(const Unit *downgradeor,
                      bool gen_downgrade_list)
 {
     return UpAndDownGrade(downgradeor,
-                          NULL,
+                          nullptr,
                           mountoffset,
                           subunitoffset,
                           true,
@@ -7224,7 +7224,7 @@ double Unit::Upgrade(const std::string &file, int mountoffset, int subunitoffset
     char *unitdir = GetUnitDir(this->name.get().c_str());
     string templnam = string(unitdir) + ".template";
     const Unit *templ = UnitConstCache::getCachedConst(StringIntKey(templnam, this->faction));
-    if (templ == NULL)
+    if (templ == nullptr)
     {
         templ =
             UnitConstCache::setCachedConst(StringIntKey(templnam,
@@ -7239,7 +7239,7 @@ double Unit::Upgrade(const std::string &file, int mountoffset, int subunitoffset
         {
             if (!this->Unit::Upgrade(up, mountoffset + i, subunitoffset + i,
                                      GetModeFromName(file.c_str()), force, percentage,
-                                     ((templ->name == "LOAD_FAILED") ? NULL : templ),
+                                     ((templ->name == "LOAD_FAILED") ? nullptr : templ),
                                      false, false))
                 percentage = 0;
             if (!loop_through_mounts || (i + 1 >= this->GetNumMounts()) || percentage > 0)
@@ -7358,12 +7358,12 @@ static bool cell_has_recursive_data(const string &name, unsigned int fac, const 
                 resultdoub,                                                                                       \
                 my,                                                                                               \
                 oth,                                                                                              \
-                (templ != NULL) ? temp : 0,                                                                       \
+                (templ != nullptr) ? temp : 0,                                                                    \
                 Adder, Comparer, noth, noth,                                                                      \
                 Percenter, temppercent,                                                                           \
                 forcetransaction,                                                                                 \
-                templ != NULL,                                                                                    \
-                (downgradelimit != NULL) ? dgradelimer : dgradelimerdefault,                                      \
+                templ != nullptr,                                                                                 \
+                (downgradelimit != nullptr) ? dgradelimer : dgradelimerdefault,                                   \
                 AGreaterB,                                                                                        \
                 clamp,                                                                                            \
                 force_change_on_nothing));                                                                        \
@@ -7478,22 +7478,22 @@ bool Unit::UpAndDownGrade(const Unit *up,
         {
             Adder = &MultUp;
             Percenter = &computeMultPercent;
-            tmax_speed = XMLSupport::parse_float(speedStarHandler(XMLType(&tmax_speed), NULL));
-            tmax_ab_speed = XMLSupport::parse_float(speedStarHandler(XMLType(&tmax_ab_speed), NULL));
-            tmax_yaw_right = XMLSupport::parse_float(angleStarHandler(XMLType(&tmax_yaw_right), NULL));
-            tmax_yaw_left = XMLSupport::parse_float(angleStarHandler(XMLType(&tmax_yaw_left), NULL));
-            tmax_pitch_up = XMLSupport::parse_float(angleStarHandler(XMLType(&tmax_pitch_up), NULL));
-            tmax_pitch_down = XMLSupport::parse_float(angleStarHandler(XMLType(&tmax_pitch_down), NULL));
-            tmax_roll_right = XMLSupport::parse_float(angleStarHandler(XMLType(&tmax_roll_right), NULL));
-            tmax_roll_left = XMLSupport::parse_float(angleStarHandler(XMLType(&tmax_roll_left), NULL));
-            tlimits_yaw = XMLSupport::parse_float(angleStarHandler(XMLType(&tlimits_yaw), NULL));
-            tlimits_pitch = XMLSupport::parse_float(angleStarHandler(XMLType(&tlimits_pitch), NULL));
-            tlimits_roll = XMLSupport::parse_float(angleStarHandler(XMLType(&tlimits_roll), NULL));
-            tlimits_forward = XMLSupport::parse_float(accelStarHandler(XMLType(&tlimits_forward), NULL));
-            tlimits_retro = XMLSupport::parse_float(accelStarHandler(XMLType(&tlimits_retro), NULL));
-            tlimits_lateral = XMLSupport::parse_float(accelStarHandler(XMLType(&tlimits_lateral), NULL));
-            tlimits_vertical = XMLSupport::parse_float(accelStarHandler(XMLType(&tlimits_vertical), NULL));
-            tlimits_afterburn = XMLSupport::parse_float(accelStarHandler(XMLType(&tlimits_afterburn), NULL));
+            tmax_speed = XMLSupport::parse_float(speedStarHandler(XMLType(&tmax_speed), nullptr));
+            tmax_ab_speed = XMLSupport::parse_float(speedStarHandler(XMLType(&tmax_ab_speed), nullptr));
+            tmax_yaw_right = XMLSupport::parse_float(angleStarHandler(XMLType(&tmax_yaw_right), nullptr));
+            tmax_yaw_left = XMLSupport::parse_float(angleStarHandler(XMLType(&tmax_yaw_left), nullptr));
+            tmax_pitch_up = XMLSupport::parse_float(angleStarHandler(XMLType(&tmax_pitch_up), nullptr));
+            tmax_pitch_down = XMLSupport::parse_float(angleStarHandler(XMLType(&tmax_pitch_down), nullptr));
+            tmax_roll_right = XMLSupport::parse_float(angleStarHandler(XMLType(&tmax_roll_right), nullptr));
+            tmax_roll_left = XMLSupport::parse_float(angleStarHandler(XMLType(&tmax_roll_left), nullptr));
+            tlimits_yaw = XMLSupport::parse_float(angleStarHandler(XMLType(&tlimits_yaw), nullptr));
+            tlimits_pitch = XMLSupport::parse_float(angleStarHandler(XMLType(&tlimits_pitch), nullptr));
+            tlimits_roll = XMLSupport::parse_float(angleStarHandler(XMLType(&tlimits_roll), nullptr));
+            tlimits_forward = XMLSupport::parse_float(accelStarHandler(XMLType(&tlimits_forward), nullptr));
+            tlimits_retro = XMLSupport::parse_float(accelStarHandler(XMLType(&tlimits_retro), nullptr));
+            tlimits_lateral = XMLSupport::parse_float(accelStarHandler(XMLType(&tlimits_lateral), nullptr));
+            tlimits_vertical = XMLSupport::parse_float(accelStarHandler(XMLType(&tlimits_vertical), nullptr));
+            tlimits_afterburn = XMLSupport::parse_float(accelStarHandler(XMLType(&tlimits_afterburn), nullptr));
         }
         else
         {
@@ -7505,7 +7505,7 @@ bool Unit::UpAndDownGrade(const Unit *up,
     double resultdoub;
     int retval = 0; //"= 0" added by chuck_starchaser to shut off a warning about its possibly being used uninitialized
     double temppercent;
-    static Unit *blankship = NULL;
+    static Unit *blankship = nullptr;
     static bool initblankship = false;
     if (!initblankship)
     {
@@ -7814,7 +7814,7 @@ bool Unit::UpAndDownGrade(const Unit *up,
     {
         double myleak = 100 - shield.leak;
         double upleak = 100 - up->shield.leak;
-        double templeak = 100 - (templ != NULL ? templ->shield.leak : 0);
+        double templeak = 100 - (templ != nullptr ? templ->shield.leak : 0);
         bool ccf = cancompletefully;
         STDUPGRADE_SPECIFY_DEFAULTS(myleak, upleak, templeak, 0, 100, 100, false, shield.leak);
         if (touchme && myleak <= 100 && myleak >= 0)
@@ -7865,7 +7865,7 @@ bool Unit::UpAndDownGrade(const Unit *up,
         {
             double myleak = 1 - computer.radar.maxcone;
             double upleak = 1 - up->computer.radar.maxcone;
-            double templeak = 1 - (templ != NULL ? templ->computer.radar.maxcone : -1);
+            double templeak = 1 - (templ != nullptr ? templ->computer.radar.maxcone : -1);
             STDUPGRADE_SPECIFY_DEFAULTS(myleak, upleak, templeak, 0, 0, 0, false, computer.radar.maxcone);
             if (touchme)
                 computer.radar.maxcone = 1 - myleak;
@@ -7874,7 +7874,7 @@ bool Unit::UpAndDownGrade(const Unit *up,
         {
             double myleak = 1 - computer.radar.lockcone;
             double upleak = 1 - up->computer.radar.lockcone;
-            double templeak = 1 - (templ != NULL ? templ->computer.radar.lockcone : -1);
+            double templeak = 1 - (templ != nullptr ? templ->computer.radar.lockcone : -1);
             if (templeak == 1 - lc)
                 templeak = 2;
             if (!csv_cell_null_check || force_change_on_nothing || cell_has_recursive_data(upgrade_name, up->faction, "Lock_Cone"))
@@ -7888,7 +7888,7 @@ bool Unit::UpAndDownGrade(const Unit *up,
         {
             double myleak = 1 - computer.radar.trackingcone;
             double upleak = 1 - up->computer.radar.trackingcone;
-            double templeak = 1 - (templ != NULL ? templ->computer.radar.trackingcone : -1);
+            double templeak = 1 - (templ != nullptr ? templ->computer.radar.trackingcone : -1);
             if (templeak == 1 - tc)
                 templeak = 2;
             if (!csv_cell_null_check || force_change_on_nothing || cell_has_recursive_data(upgrade_name, up->faction, "Tracking_Cone"))
@@ -8033,7 +8033,7 @@ bool Unit::ReduceToTemplate()
     double pct = 0;
     if (temprate && temprate->name != string("LOAD_FAILED"))
     {
-        success = Upgrade(temprate, -1, -1, 0, true, pct, NULL, true);
+        success = Upgrade(temprate, -1, -1, 0, true, pct, nullptr, true);
         if (pct > 0)
             success = true;
     }
@@ -8092,7 +8092,7 @@ int Unit::RepairUpgrade()
     double pct = 0;
     if (temprate && temprate->name != string("LOAD_FAILED"))
     {
-        success = Upgrade(temprate, -1, -1, 0, false, pct, NULL, false) ? 1 : 0;
+        success = Upgrade(temprate, -1, -1, 0, false, pct, nullptr, false) ? 1 : 0;
         if (pct > 0)
             success = 1;
     }
@@ -8203,10 +8203,10 @@ float RepairPrice(float operational, float price)
 
 extern bool isWeapon(std::string name);
 
-//item must be non-null... but baseUnit or credits may be NULL.
+//item must be non-null... but baseUnit or credits may be nullptr.
 bool Unit::RepairUpgradeCargo(Cargo *item, Unit *baseUnit, float *credits)
 {
-    assert((item != NULL) | !"Unit::RepairUpgradeCargo got a null item."); //added by chuck_starchaser
+    assert((item != nullptr) | !"Unit::RepairUpgradeCargo got a null item."); //added by chuck_starchaser
     double itemPrice = baseUnit ? baseUnit->PriceCargo(item->content) : item->price;
     if (isWeapon(item->category))
     {
@@ -8317,8 +8317,8 @@ extern double ComputeMinDowngradePercent();
 
 vector<CargoColor> &Unit::FilterDowngradeList(vector<CargoColor> &mylist, bool downgrade)
 {
-    const Unit *templ = NULL;
-    const Unit *downgradelimit = NULL;
+    const Unit *templ = nullptr;
+    const Unit *downgradelimit = nullptr;
     static bool staticrem =
         XMLSupport::parse_bool(vs_config->getVariable("general", "remove_impossible_downgrades", "true"));
     static float MyPercentMin = ComputeMinDowngradePercent();
@@ -8358,7 +8358,7 @@ vector<CargoColor> &Unit::FilterDowngradeList(vector<CargoColor> &mylist, bool d
                 if (!downgrade)
                 {
                     templ = UnitConstCache::getCachedConst(StringIntKey(templnam, faction));
-                    if (templ == NULL)
+                    if (templ == nullptr)
                     {
                         templ =
                             UnitConstCache::setCachedConst(StringIntKey(templnam,
@@ -8366,12 +8366,12 @@ vector<CargoColor> &Unit::FilterDowngradeList(vector<CargoColor> &mylist, bool d
                                                            UnitFactory::createUnit(templnam.c_str(), true, this->faction));
                     }
                     if (templ->name == std::string("LOAD_FAILED"))
-                        templ = NULL;
+                        templ = nullptr;
                 }
                 else
                 {
                     downgradelimit = UnitConstCache::getCachedConst(StringIntKey(limiternam, faction));
-                    if (downgradelimit == NULL)
+                    if (downgradelimit == nullptr)
                     {
                         downgradelimit = UnitConstCache::setCachedConst(StringIntKey(limiternam,
                                                                                      faction),
@@ -8379,13 +8379,13 @@ vector<CargoColor> &Unit::FilterDowngradeList(vector<CargoColor> &mylist, bool d
                                                                                                 this->faction));
                     }
                     if (downgradelimit->name == std::string("LOAD_FAILED"))
-                        downgradelimit = NULL;
+                        downgradelimit = nullptr;
                 }
                 free(unitdir);
                 for (int m = 0; m < maxmountcheck; ++m)
                 {
                     int s = 0;
-                    for (un_iter ui = getSubUnits(); s == 0 || ((*ui) != NULL); ++ui, ++s)
+                    for (un_iter ui = getSubUnits(); s == 0 || ((*ui) != nullptr); ++ui, ++s)
                     {
                         double percent = 1;
                         if (downgrade)
@@ -8404,7 +8404,7 @@ vector<CargoColor> &Unit::FilterDowngradeList(vector<CargoColor> &mylist, bool d
                             removethis = false;
                             break;
                         }
-                        if (*ui == NULL)
+                        if (*ui == nullptr)
                             break;
                     }
                 }
@@ -8450,7 +8450,7 @@ vector<CargoColor> &Unit::FilterUpgradeList(vector<CargoColor> &mylist)
 
 bool Unit::IsBase() const
 {
-    return ((flightgroup != NULL) && (flightgroup->name == "Base"));
+    return ((flightgroup != nullptr) && (flightgroup->name == "Base"));
 }
 
 inline float uniformrand(float min, float max)
@@ -8487,7 +8487,7 @@ extern int SelectDockPort(Unit *, Unit *parent);
 //is UINT_MAX -3   which is 65532 for 32bit machines.
 void Unit::EjectCargo(unsigned int index)
 {
-    Cargo *tmp = NULL;
+    Cargo *tmp = nullptr;
     Cargo ejectedPilot;
     Cargo dockedPilot;
     string name;
@@ -8495,13 +8495,13 @@ void Unit::EjectCargo(unsigned int index)
     //if (index==((unsigned int)-1)) { is ejecting normally
     //if (index==((unsigned int)-2)) { is ejecting for eject-dock
 
-    Cockpit *cp = NULL;
+    Cockpit *cp = nullptr;
     if (index == (UINT_MAX - 1))
     {
         int pilotnum = _Universe->CurrentCockpit();
         //this calls the unit's existence, by the way.
         name = "return_to_cockpit";
-        if (NULL != (cp = _Universe->isPlayerStarship(this)))
+        if (nullptr != (cp = _Universe->isPlayerStarship(this)))
         {
             isplayer = true;
             string playernum = string("player") + ((pilotnum == 0) ? string("") : XMLSupport::tostring(pilotnum));
@@ -8516,7 +8516,7 @@ void Unit::EjectCargo(unsigned int index)
     {
         int pilotnum = _Universe->CurrentCockpit();
         name = "Pilot";
-        if (NULL != (cp = _Universe->isPlayerStarship(this)))
+        if (nullptr != (cp = _Universe->isPlayerStarship(this)))
         {
             string playernum = string("player") + ((pilotnum == 0) ? string("") : XMLSupport::tostring(pilotnum));
             isplayer = true;
@@ -8542,7 +8542,7 @@ void Unit::EjectCargo(unsigned int index)
         if (tmp->quantity > 0)
         {
             const int sslen = strlen("starships");
-            Unit *cargo = NULL;
+            Unit *cargo = nullptr;
             if (tmp->GetCategory().length() >= (unsigned int)sslen)
             {
                 if ((!tmp->mission) && memcmp(tmp->GetCategory().c_str(), "starships", sslen) == 0)
@@ -8553,13 +8553,13 @@ void Unit::EjectCargo(unsigned int index)
                         ans = ans.substr(0, blank);
                     Flightgroup *fg = this->getFlightgroup();
                     int fgsnumber = 0;
-                    if (fg != NULL)
+                    if (fg != nullptr)
                     {
                         fgsnumber = fg->nr_ships;
                         ++(fg->nr_ships);
                         ++(fg->nr_ships_left);
                     }
-                    cargo = UnitFactory::createUnit(ans.c_str(), false, faction, "", fg, fgsnumber, NULL);
+                    cargo = UnitFactory::createUnit(ans.c_str(), false, faction, "", fg, fgsnumber, nullptr);
                     cargo->PrimeOrders();
                     cargo->SetAI(new Orders::AggressiveAI("default.agg.xml"));
                     cargo->SetTurretAI();
@@ -8587,18 +8587,18 @@ void Unit::EjectCargo(unsigned int index)
                     {
                         Flightgroup *fg = this->getFlightgroup();
                         int fgsnumber = 0;
-                        if (fg != NULL)
+                        if (fg != nullptr)
                         {
                             fgsnumber = fg->nr_ships;
                             ++(fg->nr_ships);
                             ++(fg->nr_ships_left);
                         }
-                        cargo = UnitFactory::createUnit("eject", false, faction, "", fg, fgsnumber, NULL);
+                        cargo = UnitFactory::createUnit("eject", false, faction, "", fg, fgsnumber, nullptr);
                     }
                     else
                     {
                         int fac = FactionUtil::GetUpgradeFaction();
-                        cargo = UnitFactory::createUnit("eject", false, fac, "", NULL, 0, NULL);
+                        cargo = UnitFactory::createUnit("eject", false, fac, "", nullptr, 0, nullptr);
                     }
                     if (owner)
                         cargo->owner = owner;
@@ -8621,13 +8621,13 @@ void Unit::EjectCargo(unsigned int index)
                     {
                         Flightgroup *fg = this->getFlightgroup();
                         int fgsnumber = 0;
-                        if (fg != NULL)
+                        if (fg != nullptr)
                         {
                             fgsnumber = fg->nr_ships;
                             ++(fg->nr_ships);
                             ++(fg->nr_ships_left);
                         }
-                        cargo = UnitFactory::createUnit("return_to_cockpit", false, faction, "", fg, fgsnumber, NULL);
+                        cargo = UnitFactory::createUnit("return_to_cockpit", false, faction, "", fg, fgsnumber, nullptr);
                         if (owner)
                             cargo->owner = owner;
                         else
@@ -8640,7 +8640,7 @@ void Unit::EjectCargo(unsigned int index)
                             XMLSupport::parse_float(vs_config->getVariable("physics", "eject_live_time", "0"));
                         if (cargotime == 0.0)
                         {
-                            cargo = UnitFactory::createUnit("eject", false, fac, "", NULL, 0, NULL);
+                            cargo = UnitFactory::createUnit("eject", false, fac, "", nullptr, 0, nullptr);
                         }
                         else
                         {
@@ -8656,7 +8656,7 @@ void Unit::EjectCargo(unsigned int index)
                     }
                     arot = erot;
                     cargo->PrimeOrders();
-                    cargo->aistate = NULL;
+                    cargo->aistate = nullptr;
                 }
                 else
                 {
@@ -8752,7 +8752,7 @@ void Unit::EjectCargo(unsigned int index)
                     cargo->name = tmpcontent;
                 if (cp && _Universe->numPlayers() == 1)
                 {
-                    cargo->SetOwner(NULL);
+                    cargo->SetOwner(nullptr);
                     PrimeOrders();
                     cargo->SetTurretAI();
                     cargo->faction = faction;
@@ -8765,7 +8765,7 @@ void Unit::EjectCargo(unsigned int index)
                         if ((simulate_while_at_base) || (_Universe->numPlayers() > 1))
                             this->TurretFAW();
                         //make unit a sitting duck in the mean time
-                        SwitchUnits(NULL, this);
+                        SwitchUnits(nullptr, this);
                         if (owner)
                             cargo->owner = owner;
                         else
@@ -8784,12 +8784,12 @@ void Unit::EjectCargo(unsigned int index)
                     }
                     else
                     {
-                        SwitchUnits(NULL, cargo);
+                        SwitchUnits(nullptr, cargo);
                         if (owner)
                             cargo->owner = owner;
                         else
                             cargo->owner = this;
-                    } //switching NULL gives "dead" ai to the unit I ejected from, by the way.
+                    } //switching nullptr gives "dead" ai to the unit I ejected from, by the way.
                 }
                 _Universe->activeStarSystem()->AddUnit(cargo);
                 if ((unsigned int)index != ((unsigned int)-1) && (unsigned int)index != ((unsigned int)-2))
@@ -8957,7 +8957,7 @@ Cargo *Unit::GetCargo(const std::string &s, unsigned int &i)
     const Unit *thus = this;
     if (thus->GetCargo(s, i))
         return &GetCargo(i);
-    return NULL;
+    return nullptr;
 }
 
 const Cargo *Unit::GetCargo(const std::string &s, unsigned int &i) const
@@ -8983,7 +8983,7 @@ const Cargo *Unit::GetCargo(const std::string &s, unsigned int &i) const
         searchfor.content = s;
         vector<Cargo>::iterator tmp = std::find(pImage->cargo.begin(), pImage->cargo.end(), searchfor);
         if (tmp == pImage->cargo.end())
-            return NULL;
+            return nullptr;
         if ((*tmp).content == searchfor.content)
         {
             i = (tmp - pImage->cargo.begin());
@@ -8998,13 +8998,13 @@ const Cargo *Unit::GetCargo(const std::string &s, unsigned int &i) const
             }
             return &(*tmp);
         }
-        return NULL;
+        return nullptr;
     }
     Cargo searchfor;
     searchfor.content = s;
     vector<Cargo>::iterator tmp = (std::find(pImage->cargo.begin(), pImage->cargo.end(), searchfor));
     if (tmp == pImage->cargo.end())
-        return NULL;
+        return nullptr;
     i = (tmp - pImage->cargo.begin());
     return &(*tmp);
 }
@@ -9371,11 +9371,11 @@ bool Unit::TransferUnitToSystem(StarSystem *Current)
     if (getStarSystem()->RemoveUnit(this))
     {
         this->RemoveFromSystem();
-        this->Target(NULL);
+        this->Target(nullptr);
         Current->AddUnit(this);
 
         Cockpit *an_active_cockpit = _Universe->isPlayerStarship(this);
-        if (an_active_cockpit != NULL)
+        if (an_active_cockpit != nullptr)
         {
             an_active_cockpit->activeStarSystem = Current;
             an_active_cockpit->visitSystem(Current->getFileName());
@@ -9547,7 +9547,7 @@ enum Unit::tractorHow Unit::getTractorability() const
         tractorability_mask_init = true;
     }
     unsigned char tflags;
-    if (_Universe->isPlayerStarship(this) != NULL)
+    if (_Universe->isPlayerStarship(this) != nullptr)
         tflags = tractorability_flags & tractorability_mask;
 
     else

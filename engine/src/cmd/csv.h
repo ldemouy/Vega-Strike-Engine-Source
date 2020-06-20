@@ -60,7 +60,7 @@ public:
     CSVRow(CSVTable *parent, unsigned int which);
     CSVRow()
     {
-        parent = NULL;
+        parent = nullptr;
         iter = std::string::npos;
     }
     const std::string &operator[](const std::string &) const;
@@ -70,7 +70,7 @@ public:
     std::vector<std::string>::iterator end();
     bool success() const
     {
-        return parent != NULL;
+        return parent != nullptr;
     }
     CSVTable *getParent()
     {

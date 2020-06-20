@@ -29,7 +29,7 @@ template<class KEY, class VALUE, class SIZ> VALUE *Hashtable<KEY, VALUE, SIZ>::G
 		if((*iter).key == key)
 			break;
 	if(iter==end)
-		return NULL;
+		return nullptr;
 	else
 		return (*iter).value;
 }
@@ -49,7 +49,7 @@ template<class KEY, class VALUE, class SIZ> void Hashtable<KEY, VALUE, SIZ>::Del
 		if((*iter).key == key)
 			break;
 	if(iter==end)
-		return NULL;
+		return nullptr;
 	else {
 		table[hashval].erase(iter);
 	}

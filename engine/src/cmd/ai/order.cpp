@@ -58,14 +58,14 @@ Order *Order::queryType(unsigned int type)
     for (unsigned int i = 0; i < suborders.size(); i++)
         if ((suborders[i]->type & type) == type)
             return suborders[i];
-    return NULL;
+    return nullptr;
 }
 Order *Order::queryAny(unsigned int type)
 {
     for (unsigned int i = 0; i < suborders.size(); i++)
         if ((suborders[i]->type & type) != 0)
             return suborders[i];
-    return NULL;
+    return nullptr;
 }
 
 void Order::eraseType(unsigned int type)
@@ -82,11 +82,11 @@ void Order::eraseType(unsigned int type)
 
 Order *Order::EnqueueOrder(Order *ord)
 {
-    if (ord == NULL)
+    if (ord == nullptr)
     {
-        printf("NOT ENQEUEING NULL ORDER\n");
+        printf("NOT ENQEUEING nullptr ORDER\n");
         printf("this order: %s\n", getOrderDescription().c_str());
-        return NULL;
+        return nullptr;
     }
     ord->SetParent(parent);
     suborders.push_back(ord);
@@ -94,11 +94,11 @@ Order *Order::EnqueueOrder(Order *ord)
 }
 Order *Order::EnqueueOrderFirst(Order *ord)
 {
-    if (ord == NULL)
+    if (ord == nullptr)
     {
-        printf("NOT ENQEUEING NULL ORDER\n");
+        printf("NOT ENQEUEING nullptr ORDER\n");
         printf("this order: %s\n", getOrderDescription().c_str());
-        return NULL;
+        return nullptr;
     }
     ord->SetParent(parent);
 
@@ -155,16 +155,16 @@ bool Order::AttachOrder(QVector targetv)
 
 Order *Order::findOrder(Order *ord)
 {
-    if (ord == NULL)
+    if (ord == nullptr)
     {
         printf("FINDING EMPTY ORDER\n");
         printf("this order: %s\n", getOrderDescription().c_str());
-        return NULL;
+        return nullptr;
     }
     for (unsigned int i = 0; i < suborders.size(); i++)
         if (suborders[i] == ord)
             return suborders[i];
-    return NULL;
+    return nullptr;
 }
 Order::~Order()
 {
@@ -179,7 +179,7 @@ void Order::Destroy()
     unsigned int i;
     for (i = 0; i < suborders.size(); i++)
     {
-        if (suborders[i] == NULL)
+        if (suborders[i] == nullptr)
         {
             printf("ORDER: a null order\n");
             printf("this order: %s\n", getOrderDescription().c_str());
@@ -211,9 +211,9 @@ void Order::ClearMessages()
 void Order::eraseOrder(Order *ord)
 {
     bool found = false;
-    if (ord == NULL)
+    if (ord == nullptr)
     {
-        printf("NOT ERASING A NULL ORDER\n");
+        printf("NOT ERASING A nullptr ORDER\n");
         printf("this order: %s\n", getOrderDescription().c_str());
         return;
     }
@@ -237,8 +237,8 @@ Order *Order::findOrderList()
     olist_t *orderlist = getOrderList();
     if (orderlist)
         return this;
-    Order *found_order = NULL;
-    for (unsigned int i = 0; i < suborders.size() && found_order == NULL; i++)
+    Order *found_order = nullptr;
+    for (unsigned int i = 0; i < suborders.size() && found_order == nullptr; i++)
         found_order = suborders[i]->findOrderList();
     return found_order;
 }

@@ -80,7 +80,7 @@ void AImissionScript::Execute()
     mission->runScript(modulename, "executeai", classid);
 
     varInst *vi = mission->lookupClassVariable(modulename, "aistyle", classid);
-    if (vi == NULL || vi->type != VAR_INT)
+    if (vi == nullptr || vi->type != VAR_INT)
     {
         Order::Execute();
     }
@@ -95,7 +95,7 @@ void AImissionScript::Execute()
     done = false;
 
     varInst *done_vi = mission->lookupClassVariable(modulename, "_done", classid);
-    if (done_vi != NULL && done_vi->type == VAR_BOOL && done_vi->bool_val == true)
+    if (done_vi != nullptr && done_vi->type == VAR_BOOL && done_vi->bool_val == true)
         done = true;
     mission->deleteVarInst(done_vi);
 }

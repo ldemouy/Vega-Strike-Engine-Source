@@ -77,7 +77,7 @@ public:
         vrv = (char *)((size_t *)p + 1);
 
         // Align
-        vrv += (ALIGN - (vrv - (char *)NULL) % ALIGN) % ALIGN;
+        vrv += (ALIGN - (vrv - (char *)nullptr) % ALIGN) % ALIGN;
 
         // Store offset
         *((size_t *)vrv - 1) = vrv - (char *)p;

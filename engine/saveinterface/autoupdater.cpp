@@ -37,7 +37,7 @@ GdkWindow * Help (const char *title, const char *text) {
     window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
     gtk_window_set_default_size(GTK_WINDOW(window), 300,0);
     gtk_window_set_title(GTK_WINDOW(window), title);
-    gtk_signal_connect(GTK_OBJECT(window), "delete_event", GTK_SIGNAL_FUNC(win_close), NULL);
+    gtk_signal_connect(GTK_OBJECT(window), "delete_event", GTK_SIGNAL_FUNC(win_close), nullptr);
     GtkWidget *label = gtk_label_new(text);
     gtk_container_add (GTK_CONTAINER (window), label);
     gtk_widget_show (label);
@@ -56,12 +56,12 @@ DWORD WINAPI DrawStartupDialog(LPVOID lpParameter) {
 	char *str= (char*)lpParameter;
         progress=false;
         Help ("Please Wait While Downloading Data...","Please Wait While Downloading Data...");
-	spawnl (P_WAIT,"cvs","cvs","-z9","update","-kb","-d","-r",str,checked?"-C":NULL,NULL);
-	spawnl (P_WAIT,"cvs","cvs","-z9","update","-kb","-d","-r",str,"-C","vegastrike.config","vegastrile.exe",NULL);
+	spawnl (P_WAIT,"cvs","cvs","-z9","update","-kb","-d","-r",str,checked?"-C":nullptr,nullptr);
+	spawnl (P_WAIT,"cvs","cvs","-z9","update","-kb","-d","-r",str,"-C","vegastrike.config","vegastrile.exe",nullptr);
         free (str);
         progress=true;
         g_print("\nDone updating data...\n");
-	spawnl (P_WAIT,"setup","setup",NULL);
+	spawnl (P_WAIT,"setup","setup",nullptr);
 	return 0;
 }
 void CvsUpdate (int index) {
@@ -69,7 +69,7 @@ void CvsUpdate (int index) {
     char *str=strdup(buttonvec[index].c_str());
     printf ("cvs update -kb -r %s\n",str);
     DWORD id;
-    HANDLE hThr=CreateThread(NULL,0,DrawStartupDialog,str,0,&id);
+    HANDLE hThr=CreateThread(nullptr,0,DrawStartupDialog,str,0,&id);
     fflush (stdout);
   }
 }
@@ -127,9 +127,9 @@ void main2()
       * by the window manager, usually by the "close" option, or on the
       * titlebar), we ask it to call the delete_event () function
       * as defined above. The data passed to the callback
-      * function is NULL and is ignored in the callback function. */
-    gtk_signal_connect(GTK_OBJECT(window), "destroy", GTK_SIGNAL_FUNC(gtk_exit), NULL);
-    gtk_signal_connect(GTK_OBJECT(window), "delete_event", GTK_SIGNAL_FUNC(gtk_exit), NULL);
+      * function is nullptr and is ignored in the callback function. */
+    gtk_signal_connect(GTK_OBJECT(window), "destroy", GTK_SIGNAL_FUNC(gtk_exit), nullptr);
+    gtk_signal_connect(GTK_OBJECT(window), "delete_event", GTK_SIGNAL_FUNC(gtk_exit), nullptr);
     gtk_container_add(GTK_CONTAINER(vbox),check);
     buttonvec=GetButtons ();
     button = gtk_button_new_with_label ("Update to: Recent experimental data");
@@ -141,7 +141,7 @@ void main2()
       button = gtk_button_new_with_label ((std::string("Update to: ")+buttonvec[i]).c_str());
          
          /* When the button receives the "clicked" signal, it will call the
-          * function hello() passing it NULL as its argument.  The hello()
+          * function hello() passing it nullptr as its argument.  The hello()
           * function is defined above. */
         gtk_signal_connect (GTK_OBJECT (button), "clicked",
                              GTK_SIGNAL_FUNC (hello), (void*)i);
@@ -159,9 +159,9 @@ void CvsUpdateList () {
   char *str="HEAD";
   printf ("cvs update -kb -r %s update_list.txt\n",str);
   fflush (stdout);
-  spawnl (P_WAIT,"cvs","cvs","update","-kb","-r","HEAD","update_list.txt",NULL);
+  spawnl (P_WAIT,"cvs","cvs","update","-kb","-r","HEAD","update_list.txt",nullptr);
   g_print("\nDone updating list...\n");
- // spawnl (P_WAIT,"cvs","cvs","update","-kb","-r","HEAD","update_list.txt",NULL);
+ // spawnl (P_WAIT,"cvs","cvs","update","-kb","-r","HEAD","update_list.txt",nullptr);
  // gdk_exit (0);  
   main2 ();
 }
@@ -217,13 +217,13 @@ int main (int argc, char **argv) {
       * by the window manager, usually by the "close" option, or on the
       * titlebar), we ask it to call the delete_event () function
       * as defined above. The data passed to the callback
-      * function is NULL and is ignored in the callback function. */
-    gtk_signal_connect(GTK_OBJECT(window), "destroy", GTK_SIGNAL_FUNC(gtk_exit), NULL);
-    gtk_signal_connect(GTK_OBJECT(window), "delete_event", GTK_SIGNAL_FUNC(gtk_exit), NULL);
+      * function is nullptr and is ignored in the callback function. */
+    gtk_signal_connect(GTK_OBJECT(window), "destroy", GTK_SIGNAL_FUNC(gtk_exit), nullptr);
+    gtk_signal_connect(GTK_OBJECT(window), "delete_event", GTK_SIGNAL_FUNC(gtk_exit), nullptr);
     button = gtk_button_new_with_label ("Update");
          
          /* When the button receives the "clicked" signal, it will call the
-          * function hello() passing it NULL as its argument.  The hello()
+          * function hello() passing it nullptr as its argument.  The hello()
           * function is defined above. */
     gtk_signal_connect (GTK_OBJECT (button), "clicked",
                              GTK_SIGNAL_FUNC (bCvsUpdateList), vbox);
@@ -232,7 +232,7 @@ int main (int argc, char **argv) {
     button = gtk_button_new_with_label ("Do Not Update");
          
          /* When the button receives the "clicked" signal, it will call the
-          * function hello() passing it NULL as its argument.  The hello()
+          * function hello() passing it nullptr as its argument.  The hello()
           * function is defined above. */
     gtk_signal_connect (GTK_OBJECT (button), "clicked",
                              GTK_SIGNAL_FUNC (bmain2), vbox);

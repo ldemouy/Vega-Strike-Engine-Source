@@ -47,7 +47,7 @@
 
 varInst *Mission::checkObjectExpr(missionNode *node, int mode)
 {
-    varInst *res = NULL;
+    varInst *res = nullptr;
     if (node->tag == DTAG_VAR_EXPR)
     {
         res = doObjectVar(node, mode);
@@ -72,9 +72,9 @@ varInst *Mission::checkObjectExpr(missionNode *node, int mode)
     else if (node->tag == DTAG_EXEC)
     {
         varInst *vi = doExec(node, mode);
-        if (vi == NULL)
+        if (vi == nullptr)
         {
-            fatalError(node, mode, "doExec returned NULL");
+            fatalError(node, mode, "doExec returned nullptr");
             assert(0);
         }
         else if (node->script.vartype == VAR_OBJECT)
@@ -212,7 +212,7 @@ int Mission::intMath(string mathname, int res1, int res2)
     }
     else
     {
-        fatalError(NULL, SCRIPT_RUN, "no such intmath expression");
+        fatalError(nullptr, SCRIPT_RUN, "no such intmath expression");
         assert(0);
     }
     return res;
@@ -240,7 +240,7 @@ double Mission::floatMath(string mathname, double res1, double res2)
     }
     else
     {
-        fatalError(NULL, SCRIPT_RUN, "no such floatmath expression");
+        fatalError(nullptr, SCRIPT_RUN, "no such floatmath expression");
         assert(0);
     }
     return res;
@@ -407,9 +407,9 @@ double Mission::checkFloatExpr(missionNode *node, int mode)
     else if (node->tag == DTAG_EXEC)
     {
         varInst *vi = doExec(node, mode);
-        if (vi == NULL)
+        if (vi == nullptr)
         {
-            fatalError(node, mode, "doExec returned NULL");
+            fatalError(node, mode, "doExec returned nullptr");
             assert(0);
         }
         else if (node->script.vartype == VAR_FLOAT)
@@ -478,9 +478,9 @@ int Mission::checkIntExpr(missionNode *node, int mode)
     else if (node->tag == DTAG_EXEC)
     {
         varInst *vi = doExec(node, mode);
-        if (vi == NULL)
+        if (vi == nullptr)
         {
-            fatalError(node, mode, "doExec returned NULL");
+            fatalError(node, mode, "doExec returned nullptr");
             assert(0);
         }
         else if (node->script.vartype == VAR_INT)
@@ -563,9 +563,9 @@ bool Mission::checkBoolExpr(missionNode *node, int mode)
     else if (node->tag == DTAG_EXEC)
     {
         varInst *vi = doExec(node, mode);
-        if (vi == NULL)
+        if (vi == nullptr)
         {
-            fatalError(node, mode, "doExec returned NULL");
+            fatalError(node, mode, "doExec returned nullptr");
             assert(0);
             //parsing?
         }
@@ -796,7 +796,7 @@ bool Mission::doTest(missionNode *node, int mode)
 
 varInst *Mission::checkExpression(missionNode *node, int mode)
 {
-    varInst *ret = NULL;
+    varInst *ret = nullptr;
     debug(3, node, mode, "checking expression");
     switch (node->tag)
     {

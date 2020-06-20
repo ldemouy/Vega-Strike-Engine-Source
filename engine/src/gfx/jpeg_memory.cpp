@@ -9,7 +9,7 @@ GLOBAL(void)
 jpeg_memory_dest(j_compress_ptr cinfo, JOCTET *buffer, int bufsize)
 {
     mem_dest_ptr dest;
-    if (cinfo->dest == NULL) /* first time for this JPEG object? */
+    if (cinfo->dest == nullptr) /* first time for this JPEG object? */
         cinfo->dest = (struct jpeg_destination_mgr *)(*cinfo->mem->alloc_small)((j_common_ptr)cinfo, JPOOL_PERMANENT,
                                                                                 sizeof(memory_destination_mgr));
     dest = (mem_dest_ptr)cinfo->dest;
@@ -69,7 +69,7 @@ int jpeg_compress_to_file(char *src, char *file, int width, int height, int qual
     struct jpeg_compress_struct cinfo;
     struct jpeg_error_mgr jerr;
     JSAMPROW row_pointer;
-    if ((outfile = fopen(file, "wb")) == NULL)
+    if ((outfile = fopen(file, "wb")) == nullptr)
     {
         cerr << "can't open " << file << endl;
         return -1;
@@ -120,7 +120,7 @@ static void skip_input_data(j_decompress_ptr cinfo, long num_bytes)
 {
     if ((size_t)num_bytes > cinfo->src->bytes_in_buffer)
     {
-        cinfo->src->next_input_byte = NULL;
+        cinfo->src->next_input_byte = nullptr;
         cinfo->src->bytes_in_buffer = 0;
     }
     else
@@ -190,7 +190,7 @@ void jpeg_decompress_from_file(unsigned char *dst, char *file, int size, int *w,
     int line_size;
     unsigned char *dstcur;
     FILE *infile;
-    if ((infile = fopen(file, "rb")) == NULL)
+    if ((infile = fopen(file, "rb")) == nullptr)
     {
         cerr << "can't open " << file << endl;
         return;

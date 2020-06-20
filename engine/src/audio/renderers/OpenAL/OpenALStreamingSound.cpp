@@ -31,7 +31,7 @@ namespace Audio
                                                                           bufferSamples(_bufferSamples)
     {
         for (size_t i = 0; i < NUM_BUFFERS; ++i)
-            bufferHandles[i] = AL_NULL_BUFFER;
+            bufferHandles[i] = AL_nullptr_BUFFER;
     }
 
     OpenALStreamingSound::~OpenALStreamingSound()
@@ -115,7 +115,7 @@ namespace Audio
         {
             closeStream();
         }
-        if (bufferHandles[0] != AL_NULL_BUFFER)
+        if (bufferHandles[0] != AL_nullptr_BUFFER)
         {
             alDeleteBuffers(sizeof(bufferHandles) / sizeof(bufferHandles[0]), bufferHandles);
         }
@@ -131,7 +131,7 @@ namespace Audio
         // Check for a full queue
         if (playBufferIndex == readBufferIndex)
         {
-            return AL_NULL_BUFFER;
+            return AL_nullptr_BUFFER;
         }
 
         bufferStarts[readBufferIndex] = getStream()->getPosition();

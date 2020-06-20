@@ -92,7 +92,7 @@ namespace logging = boost::log;
  * Globals
  */
 Universe *_Universe;
-TextPlane *bs_tp = NULL;
+TextPlane *bs_tp = nullptr;
 char SERVER = 0;
 
 //false if command line option --net is given to start without network
@@ -152,7 +152,7 @@ void cleanup(void)
 {
     STATIC_VARS_DESTROYED = true;
     printf("Thank you for playing!\n");
-    if (_Universe != NULL)
+    if (_Universe != nullptr)
         _Universe->WriteSaveGame(true);
 #ifdef _WIN32
 #if defined(_MSC_VER) && defined(_DEBUG)
@@ -278,7 +278,7 @@ int main(int argc, char *argv[])
     mission_name[0] = '\0';
     {
         char pwd[8192] = "";
-        if (NULL != getcwd(pwd, 8191))
+        if (nullptr != getcwd(pwd, 8191))
         {
             pwd[8191] = '\0';
             printf(" In path %s\n", pwd);
@@ -304,7 +304,7 @@ int main(int argc, char *argv[])
     /* Seed the random number generator */
     if (benchmark < 0.0)
     {
-        srand(time(NULL));
+        srand(time(nullptr));
     }
     else
     { //in benchmark mode, always use the same seed
@@ -405,7 +405,7 @@ int main(int argc, char *argv[])
     return 0;
 }
 
-static Animation *SplashScreen = NULL;
+static Animation *SplashScreen = nullptr;
 static bool BootstrapMyStarSystemLoading = true;
 void SetStarSystemLoading(bool value)
 {
@@ -425,14 +425,14 @@ Animation *GetSplashScreen()
 }
 void bootstrap_draw(const std::string &message, Animation *newSplashScreen)
 {
-    static Animation *ani = NULL;
+    static Animation *ani = nullptr;
     static bool reentryWatchdog = false;
     if (!BootstrapMyStarSystemLoading || reentryWatchdog)
     {
         return;
     }
     Music::MuzakCycle(); //Allow for loading music...
-    if (SplashScreen == NULL && newSplashScreen == NULL)
+    if (SplashScreen == nullptr && newSplashScreen == nullptr)
     {
         //if there's no splashscreen, we don't draw on it
         //this happens, when the splash screens texture is loaded
@@ -440,7 +440,7 @@ void bootstrap_draw(const std::string &message, Animation *newSplashScreen)
     }
 
     reentryWatchdog = true;
-    if (newSplashScreen != NULL)
+    if (newSplashScreen != nullptr)
     {
         ani = newSplashScreen;
     }
@@ -546,7 +546,7 @@ void bootstrap_first_loop()
     {
         vector<string> s = parse_space_string(game_options.splash_screen);
         vector<string> sa = parse_space_string(game_options.splash_audio);
-        int32_t snum = time(NULL) % s.size();
+        int32_t snum = time(nullptr) % s.size();
         SplashScreen = new Animation(s[snum].c_str(), 0);
         if (sa.size() && sa[0].length())
         {

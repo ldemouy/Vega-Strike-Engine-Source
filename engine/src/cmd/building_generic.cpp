@@ -10,7 +10,7 @@ Building::Building(ContinuousTerrain *parent,
 {
     this->vehicle = vehicle;
     continuous = true;
-    this->parent.plane = NULL;
+    this->parent.plane = nullptr;
 }
 
 Building::Building(Terrain *parent,
@@ -23,7 +23,7 @@ Building::Building(Terrain *parent,
 {
     this->vehicle = vehicle;
     continuous = false;
-    this->parent.terrain = NULL;
+    this->parent.terrain = nullptr;
 }
 
 /********** IGNORE BUILDINGS ON SERVER SIDE FOR NOW *********/

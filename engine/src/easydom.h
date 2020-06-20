@@ -134,7 +134,7 @@ public:
 
     domNodeType *LoadXML(const char *filename)
     {
-        topnode = NULL;
+        topnode = nullptr;
         //Not really nice but should do its job
         uint32_t length = strlen(filename);
         VSFile f;
@@ -172,11 +172,11 @@ public:
         {
             //cout << "warning: could not open file: " << filename << endl;
             //assert(0);
-            return NULL;
+            return nullptr;
         }
         xml = new easyDomFactoryXML;
 
-        XML_Parser parser = XML_ParserCreate(NULL);
+        XML_Parser parser = XML_ParserCreate(nullptr);
         XML_SetUserData(parser, this);
         XML_SetElementHandler(parser, &easyDomFactory::beginElement, &easyDomFactory::endElement);
         XML_SetCharacterDataHandler(parser, &easyDomFactory::charHandler);
@@ -230,11 +230,11 @@ public:
         {
             //cout << "warning: could not open file: " << filename << endl;
             //assert(0);
-            return NULL;
+            return nullptr;
         }
         xml = new easyDomFactoryXML;
 
-        XML_Parser parser = XML_ParserCreate(NULL);
+        XML_Parser parser = XML_ParserCreate(nullptr);
         XML_SetUserData(parser, this);
         XML_SetElementHandler(parser, &easyDomFactory::beginElement, &easyDomFactory::endElement);
         XML_SetCharacterDataHandler(parser, &easyDomFactory::charHandler);
@@ -312,7 +312,7 @@ public:
         bool hasParent = false;
         if (nodestack.empty())
         {
-            parent = NULL;
+            parent = nullptr;
         }
         else
         {

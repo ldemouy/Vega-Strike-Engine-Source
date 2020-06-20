@@ -20,7 +20,7 @@ bool match( char *item, long len, string mymatch, int &finlen )
     char  *final = item;
     double rez   = strtod( item, &final );
     if (rez != 0) {
-        if ( feq( rez, strtod( mymatch.c_str(), NULL ) ) ) {
+        if ( feq( rez, strtod( mymatch.c_str(), nullptr ) ) ) {
             finlen = final-item;
             return true;
         }
@@ -112,7 +112,7 @@ int main( int argc, char **argv )
 {
     if (argc <= 1)
         return -1;
-    double adjustment = strtod( argv[1], NULL );
+    double adjustment = strtod( argv[1], nullptr );
     for (int i = 2; i < argc; ++i)
         findNReplace( argv[i], adjustment );
     return 0;

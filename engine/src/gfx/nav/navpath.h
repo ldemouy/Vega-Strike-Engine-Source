@@ -191,7 +191,7 @@ public:
 
     virtual NavPath *getRequiredPath()
     {
-        return NULL;
+        return nullptr;
     }
     //Desc: Returns the list of paths this node is dependant on.
     virtual std::string getDescription() const = 0;
@@ -423,7 +423,7 @@ public:
     }
     ChainPathNode()
     {
-        supplierPath = NULL;
+        supplierPath = nullptr;
     }
     ChainPathNode(NavPath *supplier, PartType part)
     {

@@ -17,7 +17,7 @@ PythonMissionBaseClass::~PythonMissionBaseClass()
 {
     for (unsigned int i = 0; i < relevant_units.size(); ++i)
     {
-        relevant_units[i]->SetUnit(NULL);
+        relevant_units[i]->SetUnit(nullptr);
         delete relevant_units[i];
     }
     relevant_units.clear();

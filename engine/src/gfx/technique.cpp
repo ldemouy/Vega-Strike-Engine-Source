@@ -401,7 +401,7 @@ void Technique::Pass::compile()
 
             // Compile program
             prog = GFXCreateProgram(vertexProgram.c_str(), fragmentProgram.c_str(),
-                                    (defines.empty() ? NULL : defines.c_str()));
+                                    (defines.empty() ? nullptr : defines.c_str()));
             if (prog == 0)
             {
                 throw ProgramCompileError("Error compiling program vp:\"" + vertexProgram +

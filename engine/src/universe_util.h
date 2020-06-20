@@ -285,7 +285,7 @@ namespace UniverseUtil
     ///this sets the owner of a completeness
     void setOwnerII(int which, Unit *owner);
 
-    ///this gets an owner of a completeness (NULL means all players can see this objective)
+    ///this gets an owner of a completeness (nullptr means all players can see this objective)
     Unit *getOwner(int which);
     //gets the owner of this mission
     int getMissionOwner();

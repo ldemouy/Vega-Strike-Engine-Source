@@ -166,7 +166,7 @@ void strappend(char *dest, char *source, int length) {
 
 int randnum(int start, int end) {
 	int random, dif, min, max;
-	if (RANDOMIZED == 0) { srand(time(NULL)); RANDOMIZED = 1; }
+	if (RANDOMIZED == 0) { srand(time(nullptr)); RANDOMIZED = 1; }
 	min = start;
 	max = end;
 	if (end < start) { min = end; max = start; }

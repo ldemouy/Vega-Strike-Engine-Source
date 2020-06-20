@@ -277,9 +277,9 @@ void GameCockpit::beginElement(const string &name, const AttributeList &attribut
         XMLSupport::parse_bool(vs_config->getVariable("graphics", "crosshair_smooth_texture", "true"));
     AttributeList::const_iterator iter;
     Gauge::DIRECTION tmpdir = Gauge::GAUGE_UP;
-    VSSprite **newsprite = NULL;
-    VDU **newvdu = NULL;
-    VSSprite *adjsprite = NULL;
+    VSSprite **newsprite = nullptr;
+    VDU **newvdu = nullptr;
+    VSSprite *adjsprite = nullptr;
     std::string gaugename("shieldstat.spr");
     std::string myfont("9x12.font");
     Names elem = (Names)element_map.lookup(name);
@@ -293,7 +293,7 @@ void GameCockpit::beginElement(const string &name, const AttributeList &attribut
     short rows = 13;
     short cols = 15;
     unsigned int default_mode = VDU::TARGET;
-    VSSprite *oldpit = NULL;
+    VSSprite *oldpit = nullptr;
     bool replaced[4] = {false, false, false, false};
     int counter = 0;
     switch ((int)elem)
@@ -344,7 +344,7 @@ void GameCockpit::beginElement(const string &name, const AttributeList &attribut
                 SetSoundFile((*iter).value);
                 break;
             case MESH:
-                mesh = Mesh::LoadMeshes((*iter).value.c_str(), Vector(1, 1, 1), 0, NULL);
+                mesh = Mesh::LoadMeshes((*iter).value.c_str(), Vector(1, 1, 1), 0, nullptr);
                 break;
             case FRONT:
             case BACK:
@@ -373,7 +373,7 @@ void GameCockpit::beginElement(const string &name, const AttributeList &attribut
             if (!replaced[counter])
             {
                 delete Pit[counter];
-                Pit[counter] = NULL;
+                Pit[counter] = nullptr;
             }
         break;
     case UnitImages<void>::SHIELD4:
@@ -499,19 +499,19 @@ void GameCockpit::beginElement(const string &name, const AttributeList &attribut
         if (elem == CROSSHAIRS)
         {
             if (Panel.size() == 0)
-                Panel.push_back(NULL);
+                Panel.push_back(nullptr);
             if (Panel.front())
             {
                 delete Panel.front();
-                Panel.front() = NULL;
+                Panel.front() = nullptr;
             }
             newsprite = &Panel.front();
         }
         else
         {
-            if (Panel.size() == 0) /* Create NULL crosshairs */
-                Panel.push_back(NULL);
-            Panel.push_back(NULL);
+            if (Panel.size() == 0) /* Create nullptr crosshairs */
+                Panel.push_back(nullptr);
+            Panel.push_back(nullptr);
             newsprite = &Panel.back();
         }
         goto loadsprite;
@@ -522,7 +522,7 @@ void GameCockpit::beginElement(const string &name, const AttributeList &attribut
         newsprite = &radarSprites[1];
         goto loadsprite;
     case LVDU:
-        vdu.push_back(NULL);
+        vdu.push_back(nullptr);
         newvdu = &vdu.back();
         mymodes = VDU::MANIFEST | VDU::WEAPON | VDU::DAMAGE | VDU::OBJECTIVES | VDU::SHIELD;
         default_mode = VDU::OBJECTIVES;
@@ -532,13 +532,13 @@ void GameCockpit::beginElement(const string &name, const AttributeList &attribut
 
         goto loadsprite;
     case RVDU:
-        vdu.push_back(NULL);
+        vdu.push_back(nullptr);
         newvdu = &vdu.back();
         mymodes = VDU::TARGETMANIFEST | VDU::NAV | VDU::TARGET;
         default_mode = VDU::TARGET;
         goto loadsprite;
     case AVDU:
-        vdu.push_back(NULL);
+        vdu.push_back(nullptr);
         newvdu = &vdu.back();
         mymodes = VDU::MSG;
         for (iter = attributes.begin(); iter != attributes.end(); iter++)
@@ -589,7 +589,7 @@ void GameCockpit::beginElement(const string &name, const AttributeList &attribut
                     {
                         for (int i = 0; i < 32; ++i)
                         {
-                            tmp->SwitchMode(NULL);
+                            tmp->SwitchMode(nullptr);
                             if (tmp->getMode() == default_mode)
                                 break;
                         }
@@ -709,7 +709,7 @@ void GameCockpit::LoadXML(VSFileSystem::VSFile &f)
         Panel.push_back(new VSSprite("crosshairs.spr"));
         return;
     }
-    XML_Parser parser = XML_ParserCreate(NULL);
+    XML_Parser parser = XML_ParserCreate(nullptr);
     XML_SetUserData(parser, this);
     XML_SetElementHandler(parser, &Cockpit::beginElement, &Cockpit::endElement);
 

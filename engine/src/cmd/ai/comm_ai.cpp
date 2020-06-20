@@ -97,8 +97,8 @@ void GetMadAt(Unit *unit, Unit *parent, int32_t numhits = 0)
         static int32_t snumhits = XMLSupport::parse_int(vs_config->getVariable("AI", "ContrabandMadness", "5"));
         numhits = snumhits;
     }
-    CommunicationMessage hit(unit, parent, NULL, 0);
-    hit.SetCurrentState(hit.fsm->GetHitNode(), NULL, 0);
+    CommunicationMessage hit(unit, parent, nullptr, 0);
+    hit.SetCurrentState(hit.fsm->GetHitNode(), nullptr, 0);
     for (int32_t i = 0; i < numhits; i++)
     {
         parent->getAIState()->Communicate(hit);
@@ -128,7 +128,7 @@ void AllUnitsCloseAndEngage(Unit *unit, int32_t faction)
         UniverseUtil::adjustRelationModifierInt(cp, faction, delta);
     }
     for (un_iter i = _Universe->activeStarSystem()->getUnitList().createIterator();
-         (ally = *i) != NULL;
+         (ally = *i) != nullptr;
          ++i)
     //Vector loc;
     {
@@ -182,7 +182,7 @@ void CommunicatingAI::TerminateContrabandSearch(bool contraband_detected)
             o->Communicate(c);
         }
     }
-    contraband_searchee.SetUnit(NULL);
+    contraband_searchee.SetUnit(nullptr);
 }
 
 void CommunicatingAI::GetMadAt(Unit *unit, int32_t numHitsPerContrabandFail)
@@ -437,7 +437,7 @@ Unit *CommunicatingAI::GetRandomUnit(float playerprob, float targprob)
     findObjects(_Universe->activeStarSystem()->collidemap[Unit::UNIT_ONLY], iter, &unitLocator);
 
     Unit *target = unitLocator.retval.unit;
-    if (target == NULL || target == parent)
+    if (target == nullptr || target == parent)
     {
         target = parent->Target();
     }

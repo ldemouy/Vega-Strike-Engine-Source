@@ -123,7 +123,7 @@ struct drawdata
     Glow   *Engine;
 };
 
-FILE *fp = NULL;
+FILE *fp = nullptr;
 const bool writenormals = true;
 void wrtc( char c )
 {
@@ -216,7 +216,7 @@ void Vert( int point, float s, float t )
 int main( int argc, char **argv )
 {
     int       i;
-    int      *revpnts = NULL;
+    int      *revpnts = nullptr;
     drawdata  DrawDat;
     memset( (void*) &DrawDat, 0, sizeof (drawdata) );
     shipstats Stat;

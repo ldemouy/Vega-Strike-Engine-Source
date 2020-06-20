@@ -45,8 +45,8 @@ std::string GetHelperPlayerSaveGame(int num)
         return CurrentSaveGameName;
     }
     cout << "Hi helper play " << num << endl;
-    static string *res = NULL;
-    if (res == NULL)
+    static string *res = nullptr;
+    if (res == nullptr)
     {
         res = new std::string;
         VSFile f;
@@ -607,7 +607,7 @@ void SaveGame::ReadMissionStringData(char *&buf, bool select_data, const std::se
     {
         int md_i_size;
         string mag_num(AnyStringScanInString(buf2));
-        md_i_size = strtol(buf2, (char **)NULL, 10);
+        md_i_size = strtol(buf2, (char **)nullptr, 10);
 
         //Put ptr to point after the number we just read
         buf2 += hopto(buf2, ' ', '\n', 0);
@@ -859,7 +859,7 @@ string SaveGame::WritePlayerData(const QVector &FP,
     this->playerfaction = fact;
     SetSavedCredits(credits);
     free(tmp);
-    tmp = NULL;
+    tmp = nullptr;
 
     return playerdata;
 }
@@ -904,7 +904,7 @@ string SaveGame::WriteDynamicUniverse()
     dyn_univ += FactionUtil::SerializeFaction();
 
     free(tmp);
-    tmp = NULL;
+    tmp = nullptr;
 
     return dyn_univ;
 }
@@ -1089,8 +1089,8 @@ void SaveGame::ParseSaveGame(const string &filename_p,
                 ReadSavedPackets(buf, commitfaction, skip_news, select_data, select_data_filter);
             }
             free(freetmp2);
-            freetmp2 = NULL;
-            tmp2 = NULL;
+            freetmp2 = nullptr;
+            tmp2 = nullptr;
             delete[] deletebuf;
         }
         if (read)

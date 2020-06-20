@@ -43,16 +43,16 @@
  *******************************---------------------------------------------------------------------------
  */
 
-static SDL_Surface *screen = NULL;
+static SDL_Surface *screen = nullptr;
 
-static winsys_display_func_t display_func = NULL;
-static winsys_idle_func_t idle_func = NULL;
-static winsys_reshape_func_t reshape_func = NULL;
-static winsys_keyboard_func_t keyboard_func = NULL;
-static winsys_mouse_func_t mouse_func = NULL;
-static winsys_motion_func_t motion_func = NULL;
-static winsys_motion_func_t passive_motion_func = NULL;
-static winsys_atexit_func_t atexit_func = NULL;
+static winsys_display_func_t display_func = nullptr;
+static winsys_idle_func_t idle_func = nullptr;
+static winsys_reshape_func_t reshape_func = nullptr;
+static winsys_keyboard_func_t keyboard_func = nullptr;
+static winsys_mouse_func_t mouse_func = nullptr;
+static winsys_motion_func_t motion_func = nullptr;
+static winsys_motion_func_t passive_motion_func = nullptr;
+static winsys_atexit_func_t atexit_func = nullptr;
 
 static bool redisplay = false;
 static bool keepRunning = true;
@@ -241,15 +241,15 @@ static bool setup_sdl_video_mode()
 #endif
     width = g_game.x_resolution;
     height = g_game.y_resolution;
-    if ((screen = SDL_SetVideoMode(width, height, bpp, video_flags)) == NULL)
+    if ((screen = SDL_SetVideoMode(width, height, bpp, video_flags)) == nullptr)
     {
         BOOST_LOG_TRIVIAL(info) << boost::format("Couldn't initialize video: %1%") % SDL_GetError();
-        for (int counter = 0; screen == NULL && counter < 2; ++counter)
+        for (int counter = 0; screen == nullptr && counter < 2; ++counter)
         {
             for (int bpd = 4; bpd > 1; --bpd)
             {
                 SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, bpd * 8);
-                if ((screen = SDL_SetVideoMode(width, height, bpp, video_flags | SDL_ANYFORMAT)) == NULL)
+                if ((screen = SDL_SetVideoMode(width, height, bpp, video_flags | SDL_ANYFORMAT)) == nullptr)
                     BOOST_LOG_TRIVIAL(info) << boost::format("Couldn't initialize video bpp %1% depth %2%: %3%") % bpp % (bpd * 8) %
                                                    SDL_GetError();
                 // VSFileSystem::vs_dprintf( 1, "Couldn't initialize video bpp %d depth %d: %s\n",
@@ -257,7 +257,7 @@ static bool setup_sdl_video_mode()
                 else
                     break;
             }
-            if (screen == NULL)
+            if (screen == nullptr)
             {
                 SDL_GL_SetAttribute(SDL_GL_RED_SIZE, otherattributes);
                 SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, otherattributes);
@@ -265,7 +265,7 @@ static bool setup_sdl_video_mode()
                 gl_options.color_depth = bpp = otherbpp;
             }
         }
-        if (screen == NULL)
+        if (screen == nullptr)
         {
             VSFileSystem::vs_fprintf(stderr, "FAILED to initialize video\n");
             exit(1);
@@ -326,7 +326,7 @@ void winsys_init(int *argc, char **argv, char const *window_title, char const *i
     SDL_EnableUNICODE(1); //supposedly fixes int'l keyboards.
 
     //signal( SIGSEGV, SIG_DFL );
-    SDL_Surface *icon = NULL;
+    SDL_Surface *icon = nullptr;
 #if 1
     if (icon_title)
         icon = SDL_LoadBMP(icon_title);
@@ -602,7 +602,7 @@ void winsys_exit(int code)
  *******************************---------------------------------------------------------------------------
  */
 
-static winsys_keyboard_func_t keyboard_func = NULL;
+static winsys_keyboard_func_t keyboard_func = nullptr;
 
 static bool redisplay = false;
 

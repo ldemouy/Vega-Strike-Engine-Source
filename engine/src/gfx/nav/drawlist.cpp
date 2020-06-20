@@ -19,8 +19,8 @@ navdrawnode::navdrawnode() //new undefined node, check for these values if wonde
     size = 0.0;
     x = 0;
     y = 0;
-    nextitem = NULL;
-    source = NULL;
+    nextitem = nullptr;
+    source = nullptr;
 }
 
 navdrawnode::navdrawnode(int type_, float size_, float x_, float y_, navdrawnode *nextitem_) //new node into list
@@ -30,7 +30,7 @@ navdrawnode::navdrawnode(int type_, float size_, float x_, float y_, navdrawnode
     x = x_;
     y = y_;
     nextitem = nextitem_;
-    source = NULL;
+    source = nullptr;
 }
 
 navdrawnode::navdrawnode(int type_, float size_, float x_, float y_, Unit *source_, navdrawnode *nextitem_) //new node into list
@@ -46,8 +46,8 @@ navdrawnode::navdrawnode(int type_, float size_, float x_, float y_, Unit *sourc
 navdrawlist::navdrawlist(bool mouse, navscreenoccupied *screenoccupation_, GFXColor *factioncolours_) //start list with a 'mouselist' flag
 {
     inmouserange = mouse;
-    head = NULL;
-    tail = NULL;
+    head = nullptr;
+    tail = nullptr;
     unselectedalpha = 0.8;
     n_contents = 0;
     screenoccupation = screenoccupation_;
@@ -59,8 +59,8 @@ navdrawlist::~navdrawlist() //destroy list
 {
     inmouserange = 0;
     wipe();
-    head = NULL;
-    tail = NULL;
+    head = nullptr;
+    tail = nullptr;
     n_contents = 0;
 }
 
@@ -71,9 +71,9 @@ int navdrawlist::get_n_contents() //return the amount of items in the list
 
 void navdrawlist::insert(int type, float size, float x, float y) //insert iteam at head of list
 {
-    if (head == NULL)
+    if (head == nullptr)
     {
-        head = new navdrawnode(type, size, x, y, NULL);
+        head = new navdrawnode(type, size, x, y, nullptr);
         tail = head;
     }
     else
@@ -85,9 +85,9 @@ void navdrawlist::insert(int type, float size, float x, float y) //insert iteam 
 
 void navdrawlist::insert(int type, float size, float x, float y, Unit *source) //insert iteam at head of list
 {
-    if (head == NULL)
+    if (head == nullptr)
     {
-        head = new navdrawnode(type, size, x, y, source, NULL);
+        head = new navdrawnode(type, size, x, y, source, nullptr);
         tail = head;
     }
     else
@@ -100,30 +100,30 @@ void navdrawlist::insert(int type, float size, float x, float y, Unit *source) /
 void navdrawlist::wipe() //whipe the list clean
 {
     navdrawnode *temp = head;
-    navdrawnode *tempdelete = NULL;
-    while (temp != NULL)
+    navdrawnode *tempdelete = nullptr;
+    while (temp != nullptr)
     {
         tempdelete = temp;
         temp = temp->nextitem;
         delete tempdelete;
     }
-    head = NULL;
+    head = nullptr;
     n_contents = 0;
 }
 
 void navdrawlist::rotate() //take the head and stick it in the back
 {
-    if (head != NULL)
+    if (head != nullptr)
     {
         //|
         //|
-        if (head->nextitem != NULL)
+        if (head->nextitem != nullptr)
         {
             //there is something there, and its not alone
             tail->nextitem = head;
             tail = head;
             head = head->nextitem;
-            tail->nextitem = NULL;
+            tail->nextitem = nullptr;
         }
     }
 }
@@ -138,7 +138,7 @@ void drawdescription(Unit *source,
                      navscreenoccupied *screenoccupation,
                      const GFXColor &col) //take the head and stick it in the back
 {
-    if (source == NULL)
+    if (source == nullptr)
         return;
     drawdescription(getUnitNameAndFgNoBase(source), x_, y_, size_x, size_y, ignore_occupied_areas, screenoccupation, col);
 }
@@ -279,12 +279,12 @@ void drawlistitem(int type,
         unhighlighted_unit_text = getUnitTypeColor("unit", true, GFXColor(0, 0, 0, 0), unselectedalpha);
     }
 
-    //if(source != NULL)
+    //if(source != nullptr)
     //relation =      FactionUtil::GetIntRelation( ( UniverseUtil::getPlayerX(UniverseUtil::getCurrentPlayer()) )->faction ,source->faction);
     //else
     //relation = 0;
     //the realtime relationship
-    if (source != NULL)
+    if (source != nullptr)
         relation = source->getRelation(UniverseUtil::getPlayerX(UniverseUtil::getCurrentPlayer()));
     else
         relation = 0;
@@ -373,7 +373,7 @@ void drawlistitem(int type,
     {
         if (!inmouserange)
         {
-            if (factioncolours == NULL)
+            if (factioncolours == nullptr)
             {
                 NavigationSystem::DrawHalfCircleTop(x, y, size, relColor);
                 drawdescription(source, x, y, 1.0, 1.0, false, screenoccupation, unhighlighted_fighter_text);
@@ -398,7 +398,7 @@ void drawlistitem(int type,
     {
         if (!inmouserange)
         {
-            if (factioncolours == NULL)
+            if (factioncolours == nullptr)
             {
                 NavigationSystem::DrawCircle(x, y, size, relColor);
                 drawdescription(source, x, y, 1.0, 1.0, false, screenoccupation, unhighlighted_capship_text);
@@ -506,14 +506,14 @@ void drawlistitem(int type,
 
 void navdrawlist::draw() //Draw the items in the list
 {
-    if (head == NULL)
+    if (head == nullptr)
     {
         return;
     }
     else
     {
         navdrawnode *current = head;
-        while (current != NULL)
+        while (current != nullptr)
         {
             drawlistitem(current->type,
                          current->size,

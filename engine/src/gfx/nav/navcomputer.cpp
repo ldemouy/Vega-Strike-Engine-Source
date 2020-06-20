@@ -96,7 +96,7 @@ const NavComputer::WctlTableEntry NavComputer::WctlCommandTable[] = {
     NavComputer::WctlTableEntry("Not", "", &NavComputer::actionNot),
     NavComputer::WctlTableEntry("RemoveCriteria", "", &NavComputer::actionRemoveCriteria),
     NavComputer::WctlTableEntry("Chain", "", &NavComputer::actionChain),
-    NavComputer::WctlTableEntry("", "", NULL)};
+    NavComputer::WctlTableEntry("", "", nullptr)};
 
 //Process a command from the window.
 //This just dispatches to a handler.
@@ -118,19 +118,19 @@ bool NavComputer::processWindowCommand(const EventCommandId &command, Control *c
 }
 
 //CONSTRUCTOR.
-NavComputer::NavComputer(NavigationSystem *navsystem) : navsys(navsystem), m_currentDisplay(NULL_DISPLAY), m_currentSelector(NULL_SELECTOR)
+NavComputer::NavComputer(NavigationSystem *navsystem) : navsys(navsystem), m_currentDisplay(nullptr_DISPLAY), m_currentSelector(nullptr_SELECTOR)
 {
     int i;
     pathman = navsystem->pathman;
-    currentPath = NULL;
-    currentNode = NULL;
+    currentPath = nullptr;
+    currentNode = nullptr;
     criteria = false;
     //Initialize display mode group controls array.
     for (i = 0; i < DISPLAY_MODE_COUNT; i++)
-        m_displayModeGroups[i] = NULL;
+        m_displayModeGroups[i] = nullptr;
     //Initialize selector mode group controls array.
     for (i = 0; i < SELECTOR_MODE_COUNT; i++)
-        m_selectorModeGroups[i] = NULL;
+        m_selectorModeGroups[i] = nullptr;
     m_displayModes.push_back(LIST);
     m_displayModes.push_back(EDIT);
 
@@ -147,10 +147,10 @@ NavComputer::~NavComputer(void)
     int i;
     //Delete any group controls that the window doesn't "own".
     for (i = 0; i < DISPLAY_MODE_COUNT; i++)
-        if (m_displayModeGroups[i] != NULL)
+        if (m_displayModeGroups[i] != nullptr)
             delete m_displayModeGroups[i];
     for (i = 0; i < SELECTOR_MODE_COUNT; i++)
-        if (m_selectorModeGroups[i] != NULL)
+        if (m_selectorModeGroups[i] != nullptr)
             delete m_selectorModeGroups[i];
 }
 
@@ -869,8 +869,8 @@ void NavComputer::switchToMajorControls(DisplayMode mode)
 {
     if (m_currentDisplay != mode)
     {
-        assert(m_displayModeGroups[mode] != NULL); //We should have controls for this mode.
-        if (m_currentDisplay != NULL_DISPLAY)
+        assert(m_displayModeGroups[mode] != nullptr); //We should have controls for this mode.
+        if (m_currentDisplay != nullptr_DISPLAY)
         {
             //Get the old controls out of the window.
             Control *oldControls = window()->findControlById(displayModeInfo[m_currentDisplay].groupId);
@@ -883,7 +883,7 @@ void NavComputer::switchToMajorControls(DisplayMode mode)
 
         window()->addControl(m_displayModeGroups[mode]);
         //Take this group out of our table because we don't own it anymore.
-        m_displayModeGroups[mode] = NULL;
+        m_displayModeGroups[mode] = nullptr;
 
         recalcTitle();
     }
@@ -894,7 +894,7 @@ void NavComputer::switchToMinorControls(SelectorMode mode)
 {
     if (m_currentSelector != mode)
     {
-        if (m_currentSelector != NULL_SELECTOR)
+        if (m_currentSelector != nullptr_SELECTOR)
         {
             //Get the old controls out of the window.
             Control *oldControls = window()->findControlById(selectorModeInfo[m_currentSelector].groupId);
@@ -904,12 +904,12 @@ void NavComputer::switchToMinorControls(SelectorMode mode)
             m_selectorModeGroups[m_currentSelector] = oldControls;
         }
         m_currentSelector = mode;
-        if (mode != NULL_SELECTOR)
+        if (mode != nullptr_SELECTOR)
         {
-            assert(m_selectorModeGroups[mode] != NULL); //We should have controls for this mode.
+            assert(m_selectorModeGroups[mode] != nullptr); //We should have controls for this mode.
             window()->addControl(m_selectorModeGroups[mode]);
             //Take this group out of our table because we don't own it anymore.
-            m_selectorModeGroups[mode] = NULL;
+            m_selectorModeGroups[mode] = nullptr;
         }
     }
 }
@@ -919,7 +919,7 @@ bool NavComputer::changeToListMode(const EventCommandId &command, Control *contr
 {
     if (m_currentDisplay != LIST)
     {
-        switchToMinorControls(NULL_SELECTOR);
+        switchToMinorControls(nullptr_SELECTOR);
         switchToMajorControls(LIST);
         loadPathLister();
     }
@@ -929,9 +929,9 @@ bool NavComputer::changeToListMode(const EventCommandId &command, Control *contr
 //Change display mode to EDIT
 bool NavComputer::changeToEditMode(const EventCommandId &command, Control *control)
 {
-    if (m_currentDisplay != EDIT && currentPath != NULL)
+    if (m_currentDisplay != EDIT && currentPath != nullptr)
     {
-        switchToMinorControls(NULL_SELECTOR);
+        switchToMinorControls(nullptr_SELECTOR);
         switchToMajorControls(EDIT);
         setCurrentNode();
         criteria = false;
@@ -978,7 +978,7 @@ bool NavComputer::changeToChainMode(const EventCommandId &command, Control *cont
 //Open the window, etc.
 void NavComputer::run(void)
 {
-    toggleVisibility(EventCommandId(), NULL);
+    toggleVisibility(EventCommandId(), nullptr);
 }
 
 void nav_main_loop()
@@ -1029,7 +1029,7 @@ bool NavComputer::toggleVisibility(const EventCommandId &command, Control *contr
 
         //Simulate clicking the leftmost mode button.
         //We don't actually use the button because there isn't a button if there's only one mode.
-        processWindowCommand(displayModeInfo[m_displayModes[0]].command, NULL);
+        processWindowCommand(displayModeInfo[m_displayModes[0]].command, nullptr);
     }
     return m_visible;
 }
@@ -1046,7 +1046,7 @@ void NavComputer::recalcTitle()
 
     //Set the string in the base title control.
     StaticDisplay *baseTitleDisplay = static_cast<StaticDisplay *>(window()->findControlById("NavigationTitle"));
-    assert(baseTitleDisplay != NULL);
+    assert(baseTitleDisplay != nullptr);
     baseTitleDisplay->setText(baseTitle);
 }
 
@@ -1124,7 +1124,7 @@ bool NavComputer::RenameConfirm::processWindowCommand(const EventCommandId &comm
     if (command == "Rename")
     {
         TextInputDisplay *input = static_cast<TextInputDisplay *>(window()->findControlById("PathNameBox"));
-        assert(input != NULL);
+        assert(input != nullptr);
         m_parent->actionRenameConfirmed(input->text());
         window()->close();
     }
@@ -1140,15 +1140,15 @@ bool NavComputer::RenameConfirm::processWindowCommand(const EventCommandId &comm
 void NavComputer::loadPathLister()
 {
     SimplePicker *listPicker = static_cast<SimplePicker *>(window()->findControlById("PathLister"));
-    assert(listPicker != NULL);
+    assert(listPicker != nullptr);
     listPicker->clear();
 
-    currentPath = NULL;
+    currentPath = nullptr;
     for (vector<NavPath *>::iterator i = pathman->paths.begin(); i < pathman->paths.end(); ++i)
         listPicker->addCell(new ValuedPickerCell<NavPath *>((*i), (*i)->getName()));
     //Make sure the description is empty.
     StaticDisplay *desc = static_cast<StaticDisplay *>(window()->findControlById("Description"));
-    assert(desc != NULL);
+    assert(desc != nullptr);
     desc->setText("");
 }
 
@@ -1156,7 +1156,7 @@ void NavComputer::loadPathLister()
 void NavComputer::loadChainLister()
 {
     SimplePicker *chainPicker = static_cast<SimplePicker *>(window()->findControlById("ChainLister"));
-    assert(chainPicker != NULL);
+    assert(chainPicker != nullptr);
     chainPicker->clear();
     for (vector<NavPath *>::iterator i = pathman->paths.begin(); i < pathman->paths.end(); ++i)
         chainPicker->addCell(new ValuedPickerCell<NavPath *>((*i), (*i)->getName()));
@@ -1164,7 +1164,7 @@ void NavComputer::loadChainLister()
 
 void NavComputer::loadCriteriaPickerCell(SimplePicker *picker, ValuedPickerCell<CriteriaNode *> *parent, CriteriaNode *node)
 {
-    assert(node != NULL);
+    assert(node != nullptr);
     ValuedPickerCell<CriteriaNode *> *cell = new ValuedPickerCell<CriteriaNode *>(node, node->getText());
     cell->setHideChildren(false);
     if (parent)
@@ -1173,7 +1173,7 @@ void NavComputer::loadCriteriaPickerCell(SimplePicker *picker, ValuedPickerCell<
     }
     else
     {
-        assert(picker != NULL);
+        assert(picker != nullptr);
         picker->addCell(cell);
     }
     vector<CriteriaNode *> childList = node->getChildren();
@@ -1185,18 +1185,18 @@ void NavComputer::loadCriteriaPickerCell(SimplePicker *picker, ValuedPickerCell<
 void NavComputer::loadCriteriaLister()
 {
     SimplePicker *picker = static_cast<SimplePicker *>(window()->findControlById("CriteriaLister"));
-    assert(picker != NULL);
+    assert(picker != nullptr);
     picker->clear();
     if (criteria)
         if (static_cast<CriteriaPathNode *>(currentNode)->getRoot()->getChild())
-            loadCriteriaPickerCell(picker, NULL, static_cast<CriteriaPathNode *>(currentNode)->getRoot()->getChild());
+            loadCriteriaPickerCell(picker, nullptr, static_cast<CriteriaPathNode *>(currentNode)->getRoot()->getChild());
 }
 
 //Load the absolute button.
 void NavComputer::loadAbsoluteButton()
 {
     NewButton *absolute = static_cast<NewButton *>(window()->findControlById("Absolute"));
-    assert(absolute != NULL);
+    assert(absolute != nullptr);
     absolute->setLabel(navsys->systemIter[navsys->systemselectionindex].GetName());
 }
 
@@ -1212,7 +1212,7 @@ bool NavComputer::setCurrentNode(PathNode *source)
 void NavComputer::updateDescription()
 {
     StaticDisplay *desc = static_cast<StaticDisplay *>(window()->findControlById("Description"));
-    assert(desc != NULL);
+    assert(desc != nullptr);
     if (currentPath)
         desc->setText(currentPath->getDescription());
     else
@@ -1222,7 +1222,7 @@ void NavComputer::updateDescription()
 void NavComputer::updateNodeDescription()
 {
     StaticDisplay *desc = static_cast<StaticDisplay *>(window()->findControlById("NodeDescription"));
-    assert(desc != NULL);
+    assert(desc != nullptr);
     if (currentNode)
         desc->setText(currentNode->getDescription());
     else
@@ -1232,11 +1232,11 @@ void NavComputer::updateNodeDescription()
 //The selection in the Path lister changed.
 bool NavComputer::pathListerChangedSelection(const EventCommandId &command, Control *control)
 {
-    assert(control != NULL);
+    assert(control != nullptr);
     Picker *picker = static_cast<Picker *>(control);
     ValuedPickerCell<NavPath *> *cell = static_cast<ValuedPickerCell<NavPath *> *>(picker->selectedCell());
-    if (cell == NULL)
-        currentPath = NULL;
+    if (cell == nullptr)
+        currentPath = nullptr;
     else
         currentPath = cell->value();
     updateDescription();
@@ -1338,20 +1338,20 @@ bool NavComputer::actionAbsolute(const EventCommandId &command, Control *control
 bool NavComputer::actionAnd(const EventCommandId &command, Control *control)
 {
     Picker *parameterPicker = static_cast<Picker *>(window()->findControlById("ParameterLister"));
-    assert(parameterPicker != NULL);
+    assert(parameterPicker != nullptr);
 
     Picker *criteriaPicker = static_cast<Picker *>(window()->findControlById("CriteriaLister"));
-    assert(criteriaPicker != NULL);
+    assert(criteriaPicker != nullptr);
 
     TextInputDisplay *input = static_cast<TextInputDisplay *>(window()->findControlById("ParameterValueBox"));
-    assert(input != NULL);
+    assert(input != nullptr);
     if (input->text() == "")
         return true;
     ValuedPickerCell<CriteriaType> *parameterCell =
         static_cast<ValuedPickerCell<CriteriaType> *>(parameterPicker->selectedCell());
     ValuedPickerCell<CriteriaNode *> *criteriaCell =
         static_cast<ValuedPickerCell<CriteriaNode *> *>(criteriaPicker->selectedCell());
-    if (parameterCell == NULL)
+    if (parameterCell == nullptr)
         return true;
     if (!criteria)
     {
@@ -1365,13 +1365,13 @@ bool NavComputer::actionAnd(const EventCommandId &command, Control *control)
         newNode = new CriteriaOwnedBy(input->text());
     else
         newNode = new CriteriaSector(input->text());
-    if (static_cast<CriteriaPathNode *>(currentNode)->getRoot()->getChild() == NULL)
+    if (static_cast<CriteriaPathNode *>(currentNode)->getRoot()->getChild() == nullptr)
     {
         static_cast<CriteriaPathNode *>(currentNode)->getRoot()->setChild(newNode);
     }
     else
     {
-        if (criteriaCell == NULL)
+        if (criteriaCell == nullptr)
             return true;
         new CriteriaAnd(criteriaCell->value(), newNode);
     }
@@ -1383,20 +1383,20 @@ bool NavComputer::actionAnd(const EventCommandId &command, Control *control)
 bool NavComputer::actionOr(const EventCommandId &command, Control *control)
 {
     Picker *parameterPicker = static_cast<Picker *>(window()->findControlById("ParameterLister"));
-    assert(parameterPicker != NULL);
+    assert(parameterPicker != nullptr);
 
     Picker *criteriaPicker = static_cast<Picker *>(window()->findControlById("CriteriaLister"));
-    assert(criteriaPicker != NULL);
+    assert(criteriaPicker != nullptr);
 
     TextInputDisplay *input = static_cast<TextInputDisplay *>(window()->findControlById("ParameterValueBox"));
-    assert(input != NULL);
+    assert(input != nullptr);
     if (input->text() == "")
         return true;
     ValuedPickerCell<CriteriaType> *parameterCell =
         static_cast<ValuedPickerCell<CriteriaType> *>(parameterPicker->selectedCell());
     ValuedPickerCell<CriteriaNode *> *criteriaCell =
         static_cast<ValuedPickerCell<CriteriaNode *> *>(criteriaPicker->selectedCell());
-    if (parameterCell == NULL)
+    if (parameterCell == nullptr)
         return true;
     if (!criteria)
     {
@@ -1410,13 +1410,13 @@ bool NavComputer::actionOr(const EventCommandId &command, Control *control)
         newNode = new CriteriaOwnedBy(input->text());
     else
         newNode = new CriteriaSector(input->text());
-    if (static_cast<CriteriaPathNode *>(currentNode)->getRoot()->getChild() == NULL)
+    if (static_cast<CriteriaPathNode *>(currentNode)->getRoot()->getChild() == nullptr)
     {
         static_cast<CriteriaPathNode *>(currentNode)->getRoot()->setChild(newNode);
     }
     else
     {
-        if (criteriaCell == NULL)
+        if (criteriaCell == nullptr)
             return true;
         new CriteriaOr(criteriaCell->value(), newNode);
     }
@@ -1428,12 +1428,12 @@ bool NavComputer::actionOr(const EventCommandId &command, Control *control)
 bool NavComputer::actionNot(const EventCommandId &command, Control *control)
 {
     Picker *criteriaPicker = static_cast<Picker *>(window()->findControlById("CriteriaLister"));
-    assert(criteriaPicker != NULL);
+    assert(criteriaPicker != nullptr);
     ValuedPickerCell<CriteriaNode *> *criteriaCell =
         static_cast<ValuedPickerCell<CriteriaNode *> *>(criteriaPicker->selectedCell());
-    if (criteriaCell == NULL)
+    if (criteriaCell == nullptr)
         return true;
-    assert(criteriaCell->value() != NULL);
+    assert(criteriaCell->value() != nullptr);
     new CriteriaNot(criteriaCell->value());
 
     updateNodeDescription();
@@ -1444,10 +1444,10 @@ bool NavComputer::actionNot(const EventCommandId &command, Control *control)
 bool NavComputer::actionRemoveCriteria(const EventCommandId &command, Control *control)
 {
     Picker *criteriaPicker = static_cast<Picker *>(window()->findControlById("CriteriaLister"));
-    assert(criteriaPicker != NULL);
+    assert(criteriaPicker != nullptr);
     ValuedPickerCell<CriteriaNode *> *criteriaCell =
         static_cast<ValuedPickerCell<CriteriaNode *> *>(criteriaPicker->selectedCell());
-    if (criteriaCell == NULL)
+    if (criteriaCell == nullptr)
         return true;
     CriteriaNode *deleteHere = criteriaCell->value()->unhook();
     if (deleteHere)
@@ -1460,10 +1460,10 @@ bool NavComputer::actionRemoveCriteria(const EventCommandId &command, Control *c
 bool NavComputer::actionChain(const EventCommandId &command, Control *control)
 {
     Picker *pathPicker = static_cast<Picker *>(window()->findControlById("ChainLister"));
-    assert(pathPicker != NULL);
+    assert(pathPicker != nullptr);
 
     Picker *typePicker = static_cast<Picker *>(window()->findControlById("ChainTypeLister"));
-    assert(typePicker != NULL);
+    assert(typePicker != nullptr);
 
     ValuedPickerCell<NavPath *> *pathCell = static_cast<ValuedPickerCell<NavPath *> *>(pathPicker->selectedCell());
     ValuedPickerCell<ChainPathNode::PartType> *typeCell =
@@ -1477,7 +1477,7 @@ bool NavComputer::actionChain(const EventCommandId &command, Control *control)
 
 void NavComputer::actionRenameConfirmed(std::string name)
 {
-    assert(currentPath != NULL);
+    assert(currentPath != nullptr);
 
     currentPath->setName(name);
     loadPathLister();

@@ -170,7 +170,7 @@ bool NavPath::setSourceNode(PathNode *node)
     {
         source = oldNode;
         delete node;
-        node = NULL;
+        node = nullptr;
         return false;
     }
     else
@@ -182,7 +182,7 @@ bool NavPath::setSourceNode(PathNode *node)
             node->getRequiredPath()->addDependant(this);
         if (oldNode)
             delete oldNode;
-        oldNode = NULL;
+        oldNode = nullptr;
         _Universe->AccessCockpit()->AccessNavSystem()->pathman->updateSpecificPath(this);
         return true;
     }
@@ -198,7 +198,7 @@ bool NavPath::setDestinationNode(PathNode *node)
     {
         destination = oldNode;
         delete node;
-        node = NULL;
+        node = nullptr;
         return false;
     }
     else
@@ -210,7 +210,7 @@ bool NavPath::setDestinationNode(PathNode *node)
             node->getRequiredPath()->addDependant(this);
         if (oldNode)
             delete oldNode;
-        oldNode = NULL;
+        oldNode = nullptr;
         _Universe->AccessCockpit()->AccessNavSystem()->pathman->updateSpecificPath(this);
         return true;
     }
@@ -238,14 +238,14 @@ std::list<unsigned> *NavPath::getAllPoints()
 
 void NavPath::addDependant(NavPath *dependant)
 {
-    if (dependant == NULL)
+    if (dependant == nullptr)
         return;
     dependants.insert(dependant);
 }
 
 void NavPath::removeDependant(NavPath *dependant)
 {
-    if (dependant == NULL)
+    if (dependant == nullptr)
         return;
     dependants.erase(dependant);
 }
@@ -552,8 +552,8 @@ NavPath::NavPath()
     name = "New Path";
     visible = true;
     color = GFXColor(1, 0, 0);
-    source = NULL;
-    destination = NULL;
+    source = nullptr;
+    destination = nullptr;
 }
 
 NavPath::~NavPath()
@@ -564,14 +564,14 @@ NavPath::~NavPath()
         if (source->getRequiredPath())
             source->getRequiredPath()->removeDependant(this);
         delete source;
-        source = NULL;
+        source = nullptr;
     }
     if (destination)
     {
         if (destination->getRequiredPath())
             destination->getRequiredPath()->removeDependant(this);
         delete source;
-        source = NULL;
+        source = nullptr;
     }
     set<NavPath *> *depList = getDependants();
     for (std::set<NavPath *>::iterator i = depList->begin(); i != depList->end(); ++i)
@@ -579,12 +579,12 @@ NavPath::~NavPath()
         if ((*i)->source->getRequiredPath() == this)
         {
             delete (*i)->source;
-            (*i)->source = NULL;
+            (*i)->source = nullptr;
         }
         if ((*i)->destination->getRequiredPath() == this)
         {
             delete (*i)->destination;
-            (*i)->destination = NULL;
+            (*i)->destination = nullptr;
         }
     }
 }
@@ -711,7 +711,7 @@ PathManager::~PathManager()
     for (std::vector<NavPath *>::iterator i = paths.begin(); i < paths.end(); ++i)
     {
         delete (*i);
-        (*i) = NULL;
+        (*i) = nullptr;
     }
 }
 
@@ -777,7 +777,7 @@ std::deque<unsigned> TargetPathNode::initSearchQueue() const
 
 std::string CriteriaPathNode::getDescription() const
 {
-    assert(criteria != NULL);
+    assert(criteria != nullptr);
 
     string temp = "Criteria: ";
     temp += criteria->getDescription();
@@ -786,13 +786,13 @@ std::string CriteriaPathNode::getDescription() const
 
 bool CriteriaPathNode::isDestination(unsigned index) const
 {
-    assert(criteria != NULL);
+    assert(criteria != nullptr);
     return criteria->isDestination(index);
 }
 
 PathNode *CriteriaPathNode::clone() const
 {
-    assert(criteria != NULL);
+    assert(criteria != nullptr);
 
     CriteriaPathNode *newNode = new CriteriaPathNode();
     newNode->criteria = static_cast<CriteriaRoot *>(criteria->clone());
@@ -806,7 +806,7 @@ CriteriaPathNode::CriteriaPathNode()
 
 CriteriaPathNode::~CriteriaPathNode()
 {
-    assert(criteria != NULL);
+    assert(criteria != nullptr);
 
     delete criteria;
 }

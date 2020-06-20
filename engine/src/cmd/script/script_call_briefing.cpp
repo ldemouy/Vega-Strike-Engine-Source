@@ -5,7 +5,7 @@
 
 varInst *Mission::call_briefing(missionNode *node, int mode)
 {
-    varInst *viret = NULL;
+    varInst *viret = nullptr;
 
     trace(node, mode);
     if (mode == SCRIPT_PARSE)
@@ -16,7 +16,7 @@ varInst *Mission::call_briefing(missionNode *node, int mode)
     callback_module_briefing_type method_id = (callback_module_briefing_type)node->script.method_id;
     viret = newVarInst(VI_TEMP);
     viret->type = VAR_VOID; //assumed void except when otherwise so stated
-    if (briefing != NULL || mode != SCRIPT_RUN)
+    if (briefing != nullptr || mode != SCRIPT_RUN)
     {
         if (method_id == CMT_BRIEFING_addShip)
         {

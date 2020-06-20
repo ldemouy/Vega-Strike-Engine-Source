@@ -23,13 +23,13 @@ Ikarus::Ikarus() : AggressiveAI("default.agg.xml")
 void Ikarus::ExecuteStrategy(Unit *target)
 {
     WillFire(target);
-    if (queryType(Order::FACING) == NULL)
+    if (queryType(Order::FACING) == nullptr)
     {
         //we have nothing to do now
         FaceTarget(false);
         AddReplaceLastOrder(true); //true stands for override any that are there
     }
-    if (queryType(Order::MOVEMENT) == NULL)
+    if (queryType(Order::MOVEMENT) == nullptr)
     {
         MatchLinearVelocity(true, Vector(0, 0, 10000), false, true); //all ahead full! (not with afterburners but in local coords)
         AddReplaceLastOrder(true);
@@ -64,7 +64,7 @@ void Ikarus::DecideTarget()
     Unit *targ = parent->Target();
     if (!targ || /*some other qualifying factor for changing targets*/ 0)
     {
-        Unit *un = NULL;
+        Unit *un = nullptr;
         for (UniverseUtil::PythonUnitIter i = UniverseUtil::getUnitList(); (un = *i); ++i)
             if (parent->getRelation(un) < 0)
             {

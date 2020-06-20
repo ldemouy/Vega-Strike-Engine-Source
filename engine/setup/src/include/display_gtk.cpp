@@ -48,8 +48,8 @@ void InitGraphics(int *argc, char ***argv)
 	gtk_window_set_default_size(GTK_WINDOW(window), 600, 400);
 	gtk_window_set_title(GTK_WINDOW(window), title);
 
-	gtk_signal_connect(GTK_OBJECT(window), "destroy", GTK_SIGNAL_FUNC(exit_0), NULL);
-	gtk_signal_connect(GTK_OBJECT(window), "delete_event", GTK_SIGNAL_FUNC(exit_0), NULL);
+	gtk_signal_connect(GTK_OBJECT(window), "destroy", GTK_SIGNAL_FUNC(exit_0), nullptr);
+	gtk_signal_connect(GTK_OBJECT(window), "delete_event", GTK_SIGNAL_FUNC(exit_0), nullptr);
 
 	gtk_container_set_border_width(GTK_CONTAINER(window), 0);
 
@@ -71,10 +71,10 @@ void myexit(int exitval)
 
 #ifdef _WIN32
 	readme_path += "\\documentation\\readme.txt";
-	int err = (int)ShellExecute(NULL, "open", readme_path.c_str(), "", "", 1);
+	int err = (int)ShellExecute(nullptr, "open", readme_path.c_str(), "", "", 1);
 #else
 	readme_path += "/documentation/readme.txt";
-	execlp("xdg-open", "xdg-open", readme_path.c_str(), NULL); //Will this work in Linux?
+	execlp("xdg-open", "xdg-open", readme_path.c_str(), nullptr); //Will this work in Linux?
 #endif
 	exit(0); //exitval);
 }
@@ -89,7 +89,7 @@ void ShowMain(void)
 	hbox = 0;
 	do
 	{
-		if (CURRENT->name == NULL)
+		if (CURRENT->name == nullptr)
 		{
 			continue;
 		}
@@ -114,7 +114,7 @@ void ShowMain(void)
 		do
 		{
 			//			printf(" %d",i);
-			if (NEWCUR->name == NULL)
+			if (NEWCUR->name == nullptr)
 			{
 				continue;
 			}
@@ -153,11 +153,11 @@ void ShowMain(void)
 	}
 	vbox = gtk_vbox_new(FALSE, 2);
 	button = gtk_button_new_with_label("Save Settings and View Readme");
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(myexit), NULL);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(myexit), nullptr);
 	gtk_widget_show(button);
 	gtk_container_add(GTK_CONTAINER(vbox), button);
 	button = gtk_button_new_with_label("Save Settings and Exit");
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(exit_0), NULL);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(exit_0), nullptr);
 	gtk_widget_show(button);
 	gtk_container_add(GTK_CONTAINER(vbox), button);
 	gtk_container_add(GTK_CONTAINER(main_vbox), vbox);
@@ -169,13 +169,13 @@ void AddCats(GtkWidget *vbox, char *group, char *def)
 {
 	struct category *CUR;
 #ifdef USE_RADIO
-	GSList *radiogroup = NULL;
+	GSList *radiogroup = nullptr;
 #endif
 	CUR = &CATS;
 	do
 	{
 		GtkWidget *button;
-		if (CUR->name == NULL)
+		if (CUR->name == nullptr)
 		{
 			continue;
 		}

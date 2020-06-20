@@ -37,7 +37,7 @@ void SetGroup(char *group, char *setting)
 	CURRENT = &GROUPS;
 	do
 	{
-		if (CURRENT->name == NULL)
+		if (CURRENT->name == nullptr)
 		{
 			continue;
 		}
@@ -54,7 +54,7 @@ void SetInfo(char *category, char *info)
 	CURRENT = &CATS;
 	do
 	{
-		if (CURRENT->name == NULL)
+		if (CURRENT->name == nullptr)
 		{
 			continue;
 		}
@@ -72,7 +72,7 @@ char *GetInfo(char *category)
 	CURRENT = &CATS;
 	do
 	{
-		if (CURRENT->name == NULL)
+		if (CURRENT->name == nullptr)
 		{
 			continue;
 		}
@@ -97,7 +97,7 @@ char *GetSetting(char *group)
 	CUR = &GROUPS;
 	do
 	{
-		if (CUR->name == NULL)
+		if (CUR->name == nullptr)
 		{
 			continue;
 		}
@@ -115,7 +115,7 @@ struct category *GetCatStruct(char *name)
 	CUR = &CATS;
 	do
 	{
-		if (CUR->name == NULL)
+		if (CUR->name == nullptr)
 		{
 			continue;
 		}
@@ -133,7 +133,7 @@ struct group *GetGroupStruct(char *name)
 	CUR = &GROUPS;
 	do
 	{
-		if (CUR->name == NULL)
+		if (CUR->name == nullptr)
 		{
 			continue;
 		}

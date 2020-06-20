@@ -1,7 +1,7 @@
 // -*- mode: c++; c-basic-offset: 4; indent-tabs-mode: nil -*-
 
-#ifndef VEGASTRIKE_GFX_RADAR_NULL_DISPLAY_H
-#define VEGASTRIKE_GFX_RADAR_NULL_DISPLAY_H
+#ifndef VEGASTRIKE_GFX_RADAR_nullptr_DISPLAY_H
+#define VEGASTRIKE_GFX_RADAR_nullptr_DISPLAY_H
 
 #include "radar.h"
 

@@ -79,15 +79,15 @@ public:
     ///Figures out the relationships of each faction with each other
     static void ParseAllAllies(/*Universe * thisuni*/);
     void ParseAllies(/*Universe * thisuni,*/ unsigned int whichfaction);
-    static void LoadXML(const char *factionfile, char *xmlbuffer = NULL, int buflength = 0);
+    static void LoadXML(const char *factionfile, char *xmlbuffer = nullptr, int buflength = 0);
     static void beginElement(void *userData, const XML_Char *name, const XML_Char **atts);
     static void endElement(void *userData, const XML_Char *name);
     Faction()
     {
         playlist = -1;
         citizen = false;
-        logo = secondaryLogo = NULL;
-        factionname = NULL;
+        logo = secondaryLogo = nullptr;
+        factionname = nullptr;
         sparkcolor[0] = .5;
         sparkcolor[1] = .5;
         sparkcolor[2] = 1;

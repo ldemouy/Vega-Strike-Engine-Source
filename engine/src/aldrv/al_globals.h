@@ -42,7 +42,7 @@ struct AUDSoundProperties
     {
         shared = false;
         success = false;
-        wave = NULL;
+        wave = nullptr;
 #ifdef HAVE_AL
         looping = false;
         size = 0;

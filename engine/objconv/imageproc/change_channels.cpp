@@ -41,24 +41,24 @@ unsigned char * ReadPNG( FILE *fp,
     fread( header, 1, 8, fp );
     if ( png_sig_cmp( header, 0, 8 ) )
         assert( 0 );
-    png_ptr = png_create_read_struct( PNG_LIBPNG_VER_STRING, NULL, (png_error_ptr) png_cexcept_error, (png_error_ptr) NULL );
-    if (png_ptr == NULL) {
+    png_ptr = png_create_read_struct( PNG_LIBPNG_VER_STRING, nullptr, (png_error_ptr) png_cexcept_error, (png_error_ptr) nullptr );
+    if (png_ptr == nullptr) {
         exit( 1 );
-        return NULL;
+        return nullptr;
     }
     info_ptr = png_create_info_struct( png_ptr );
-    if (info_ptr == NULL) {
-        png_destroy_read_struct( &png_ptr, (png_infopp) NULL, (png_infopp) NULL );
-        fprintf( stderr, "VSImage ERROR : PNG info_ptr == NULL !!!\n" );
+    if (info_ptr == nullptr) {
+        png_destroy_read_struct( &png_ptr, (png_infopp) nullptr, (png_infopp) nullptr );
+        fprintf( stderr, "VSImage ERROR : PNG info_ptr == nullptr !!!\n" );
         exit( 1 );
-        return NULL;
+        return nullptr;
     }
     if ( setjmp( png_jmpbuf( png_ptr ) ) ) {
         /* Free all of the memory associated with the png_ptr and info_ptr */
-        png_destroy_read_struct( &png_ptr, &info_ptr, (png_infopp) NULL );
+        png_destroy_read_struct( &png_ptr, &info_ptr, (png_infopp) nullptr );
         /* If we get here, we had a problem reading the file */
         exit( 1 );
-        return NULL;
+        return nullptr;
     }
     png_init_io( png_ptr, fp );
 
@@ -99,7 +99,7 @@ unsigned char * ReadPNG( FILE *fp,
     //free (row_pointers);
     *row_pointer_ptr = row_pointers;
     png_read_end( png_ptr, info_ptr );
-    png_destroy_read_struct( &png_ptr, &info_ptr, NULL );
+    png_destroy_read_struct( &png_ptr, &info_ptr, nullptr );
 
     return result;
 }
@@ -113,12 +113,12 @@ enum errort
 errort WritePNG( FILE *fp, unsigned char *data, unsigned int sizeX, unsigned int sizeY, int img_depth, int img_alpha )
 {
     png_structp png_ptr = png_create_write_struct
-                              ( PNG_LIBPNG_VER_STRING, (png_voidp) NULL, NULL, NULL );
+                              ( PNG_LIBPNG_VER_STRING, (png_voidp) nullptr, nullptr, nullptr );
     if (!png_ptr)
         return BadFormat;
     png_infop info_ptr = png_create_info_struct( png_ptr );
     if (!info_ptr) {
-        png_destroy_write_struct( &png_ptr, (png_infopp) NULL );
+        png_destroy_write_struct( &png_ptr, (png_infopp) nullptr );
         return BadFormat;
     }
     if ( setjmp( png_ptr->jmpbuf ) ) {

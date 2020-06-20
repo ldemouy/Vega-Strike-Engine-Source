@@ -22,8 +22,8 @@
 #define snprintf _snprintf
 #endif
 
-static char *InputName = NULL;
-static char *OutputName = NULL;
+static char *InputName = nullptr;
+static char *OutputName = nullptr;
 static bool pushdown = false;
 static float affine = 0;
 static float multiplicitive = 1;
@@ -198,7 +198,7 @@ static bool LoadTex(char *FileName, unsigned char scdata[lmwid][lmwid][3])
     int bpp = tex.Depth();
     int format = tex.Format();
 
-    unsigned char *buffer = NULL;
+    unsigned char *buffer = nullptr;
     bpp /= 8;
     //999 is the code for DDS file, we must decompress them.
     if (format == 999)
@@ -234,12 +234,12 @@ static bool LoadTex(char *FileName, unsigned char scdata[lmwid][lmwid][3])
         buffer = texTransform(tmp, tmp2, tex.sizeX, tex.sizeY, row_pointers);
         //We're done with row_pointers, free it
         free(row_pointers);
-        row_pointers = NULL;
+        row_pointers = nullptr;
         //We're done with the decompressed dds data, free it
         free(data);
         //We set data to the transformed image data
         data = buffer;
-        buffer = NULL;
+        buffer = nullptr;
         //it's 3 because 24/8
         bpp = 4;
     }
@@ -303,7 +303,7 @@ static char *makebgname(char *tmp, size_t size, const char *InputName, const cha
 
 static void Spherize(CubeCoord Tex[lmwid][lmwid], CubeCoord gluSph[lmwid][lmwid], unsigned char Col[])
 {
-    Texmp *Data = NULL;
+    Texmp *Data = nullptr;
     Data = new Texmp[6];
     if (!Data)
         return; //borken down and down Data[5], right Data[3]
@@ -346,7 +346,7 @@ static void Spherize(CubeCoord Tex[lmwid][lmwid], CubeCoord gluSph[lmwid][lmwid]
         Tex = gluSph;
     }
     free(tmp);
-    tmp = NULL;
+    tmp = nullptr;
     for (int t = 0; t < lmwid; t++)
         for (int s = 0; s < lmwid; s++)
         {
@@ -504,7 +504,7 @@ void EnvironmentMapGeneratorMain(const char *inpt, const char *outpt, float a, f
     }
     OutputName = strdup(outpt);
     free(tmp);
-    tmp = NULL;
+    tmp = nullptr;
     VSFileSystem::vs_fprintf(stderr,
                              "input name %s, output name %s\nAffine %f Mult %f Pow %f\n",
                              InputName,

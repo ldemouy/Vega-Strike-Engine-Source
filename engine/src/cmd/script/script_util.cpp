@@ -161,7 +161,7 @@ bool Mission::have_return(int mode)
     if (mode == SCRIPT_PARSE)
         return false;
     contextStack *cstack = runtime.cur_thread->exec_stack.back();
-    if (cstack->return_value == NULL)
+    if (cstack->return_value == nullptr)
         return false;
     return true;
 }
@@ -302,13 +302,13 @@ void Mission::printThread(missionThread *thread)
 varInst *Mission::searchScopestack(string name)
 {
     int elem = scope_stack.size() - 1;
-    varInst *vi = NULL;
-    while (vi == NULL && elem >= 0)
+    varInst *vi = nullptr;
+    while (vi == nullptr && elem >= 0)
     {
         missionNode *scope = scope_stack[elem];
 
         vi = scope->script.variables[name];
-        if (vi == NULL)
+        if (vi == nullptr)
         {
             if (scope->script.classvars.size() > 0)
             {
@@ -316,7 +316,7 @@ varInst *Mission::searchScopestack(string name)
                 vi = (*cvmap)[name];
                 debug(10, scope, 0, "found var " + name + " as classvar");
             }
-            if (vi == NULL)
+            if (vi == nullptr)
                 debug(5, scope, 0, "variable " + name + " not found in that scope");
         }
         else
@@ -333,13 +333,13 @@ varInst *Mission::searchScopestack(string name)
 missionNode *Mission::lookupScript(string scriptname, string modulename)
 {
     missionNode *module = runtime.modules[modulename];
-    if (module == NULL)
+    if (module == nullptr)
     {
         fatalError(module, SCRIPT_PARSE, "module " + modulename + " not found - maybe you forgot to import it?");
         assert(0);
     }
     missionNode *scriptnode = module->script.scripts[scriptname];
-    if (scriptnode == NULL)
+    if (scriptnode == nullptr)
     {
         fatalError(module, SCRIPT_PARSE, "script " + scriptname + " not found in module " + modulename);
         assert(0);

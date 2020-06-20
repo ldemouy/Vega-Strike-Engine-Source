@@ -21,14 +21,14 @@ using std::vector;
 unsigned int *quadsquare::VertexAllocated;
 unsigned int *quadsquare::VertexCount;
 GFXVertexList *quadsquare::vertices;
-GFXVertexList *quadsquare::blendVertices = NULL;
+GFXVertexList *quadsquare::blendVertices = nullptr;
 std::vector<TextureIndex> quadsquare::indices;
 std::vector<unsigned int> *quadsquare::unusedvertices;
 IdentityTransform *quadsquare::nonlinear_trans;
 std::vector<TerrainTexture> *quadsquare::textures;
 Vector quadsquare::normalscale;
 Vector quadsquare::camerapos;
-quadsquare *quadsquare::neighbor[4] = {NULL, NULL, NULL, NULL};
+quadsquare *quadsquare::neighbor[4] = {nullptr, nullptr, nullptr, nullptr};
 
 unsigned int quadsquare::SetVertices(GFXVertex *vertexs, const quadcornerdata &pcd)
 {
@@ -108,7 +108,7 @@ quadsquare::quadsquare(quadcornerdata *pcd)
     Static = false;
     int i;
     for (i = 0; i < 4; i++)
-        Child[i] = NULL;
+        Child[i] = nullptr;
     EnabledFlags = 0;
     for (i = 0; i < 2; i++)
         SubEnabledCount[i] = 0;
@@ -178,7 +178,7 @@ quadsquare::~quadsquare()
     {
         if (Child[i])
             delete Child[i];
-        Child[i] = NULL;
+        Child[i] = nullptr;
     }
 }
 
@@ -284,7 +284,7 @@ quadsquare *quadsquare::GetFarNeighbor(int dir, const quadcornerdata &cd) const
 {
     //Traverses the tree in search of the quadsquare neighboring this square to the
     //specified direction.  0-3 --> { E, N, W, S }.
-    //Returns NULL if the neighbor is outside the bounds of the tree.
+    //Returns nullptr if the neighbor is outside the bounds of the tree.
     //If we don't have a parent, then we don't have a neighbor.
     //(Actually, we could have inter-tree connectivity at this level
     //for connecting separate trees together.)
@@ -312,12 +312,12 @@ quadsquare *quadsquare::GetNeighbor(int dir, const quadcornerdata &cd) const
 {
     //Traverses the tree in search of the quadsquare neighboring this square to the
     //specified direction.  0-3 --> { E, N, W, S }.
-    //Returns NULL if the neighbor is outside the bounds of the tree.
+    //Returns nullptr if the neighbor is outside the bounds of the tree.
     //If we don't have a parent, then we don't have a neighbor.
     //(Actually, we could have inter-tree connectivity at this level
     //for connecting separate trees together.)
     if (cd.Parent == 0)
-        return NULL;
+        return nullptr;
     //Find the parent and the child-index of the square we want to locate or create.
     quadsquare *p = 0;
     int index = cd.ChildIndex ^ 1 ^ ((dir & 1) << 1);
@@ -361,7 +361,7 @@ void quadsquare::SetCurrentTerrain(unsigned int *VertexAllocated,
     neighbor[1] = neighbors[1];
     neighbor[2] = neighbors[2];
     neighbor[3] = neighbors[3];
-    if (quadsquare::blendVertices == NULL)
+    if (quadsquare::blendVertices == nullptr)
     {
         GFXColorVertex tmp[3];
         blendVertices = new GFXVertexList(GFXTRI, 3, tmp, 3, true);
@@ -407,7 +407,7 @@ void quadsquare::AddHeightMapAux(const quadcornerdata &cd, const HeightMapInfo &
     {
         quadcornerdata q;
         SetupCornerData(&q, cd, i);
-        if (Child[i] == NULL && cd.Level > hm.Scale)
+        if (Child[i] == nullptr && cd.Level > hm.Scale)
             //Create child node w/ current (unmodified) values for corner verts.
             Child[i] = new quadsquare(&q);
         //Recurse.

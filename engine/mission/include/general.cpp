@@ -91,7 +91,7 @@ char *split_words(char *string, int max_words) {
 char *ptr_copy(char *string) {
 	char *alloc;
 	alloc = (char *)malloc(strlen(string)+1);
-	if (alloc == 0) { ShowError("Out of memory", "G01", 1); return NULL; }
+	if (alloc == 0) { ShowError("Out of memory", "G01", 1); return nullptr; }
 	strncpy(alloc, string, strlen(string));
 	alloc[strlen(string)] = '\0';
 	return alloc;
@@ -206,7 +206,7 @@ void StripExtension(char *filename) {
 #ifdef _G_RANDOM
 int randnum(int start, int end) {
 	int random, dif, min, max;
-	if (RANDOMIZED == 0) { srand(time(NULL)); RANDOMIZED = 1; }
+	if (RANDOMIZED == 0) { srand(time(nullptr)); RANDOMIZED = 1; }
 	min = start;
 	max = end;
 	if (end < start) { min = end; max = start; }
@@ -343,7 +343,7 @@ void SetString(GString **ptr, char *line) {
 char *NewString(char *line) {
 	char *new_str;
 	new_str = (char *)malloc(strlen(line)+1);
-	if (new_str == 0) { ShowError("Out of Memory", "G02", 1); return NULL; }
+	if (new_str == 0) { ShowError("Out of Memory", "G02", 1); return nullptr; }
 	strcpy(new_str, line);
 	new_str[strlen(line)] = '\0';
 	return new_str;
@@ -462,12 +462,12 @@ glob_t *FindFiles(char *path, char *extension) {
 #else
 	FILES = (glob_t *)malloc(sizeof(glob_t));
 	pattern = (char *)malloc(strlen(path) + strlen(extension) + 1);
-	if (FILES == NULL || pattern == NULL) { ShowError("Out of memory", "G03", 1); return NULL; }
+	if (FILES == nullptr || pattern == nullptr) { ShowError("Out of memory", "G03", 1); return nullptr; }
 #endif    // __cplusplus
 
 	sprintf(pattern, "%s%s", path, extension);
 
-	//glob(pattern, GLOB_MARK, NULL, FILES);
+	//glob(pattern, GLOB_MARK, nullptr, FILES);
 	string mypath(path);
 	char thispath[800000];
 	_getcwd (thispath,790000);
@@ -477,7 +477,7 @@ glob_t *FindFiles(char *path, char *extension) {
 	vector <string> result;
 	if (dir) {
 		dirent *blah;
-		while (NULL!=(blah=readdir(dir))) {	
+		while (nullptr!=(blah=readdir(dir))) {	
 			if (0==isdir ((string(thispath)+"/"+mypath+"/"+blah->d_name).c_str())) {
 				result.push_back (mypath+blah->d_name);
 			}
@@ -504,12 +504,12 @@ glob_t *FindDirs(char *path) {
 #else
 	DIRS = (glob_t *)malloc(sizeof(glob_t));
 	pattern = (char *)malloc(strlen(path) + 2);
-	if (DIRS == NULL || pattern == NULL) { ShowError("Out of memory", "G04", 1); return NULL; }
+	if (DIRS == nullptr || pattern == nullptr) { ShowError("Out of memory", "G04", 1); return nullptr; }
 #endif    // __cplusplus
 
 	sprintf(pattern, "%s*", path);
 
-	//glob(pattern, GLOB_MARK, NULL, DIRS);
+	//glob(pattern, GLOB_MARK, nullptr, DIRS);
 	char thispath[800000];
 	_getcwd (thispath,790000);
 	_chdir(path);
@@ -519,7 +519,7 @@ glob_t *FindDirs(char *path) {
 	vector <string> result;
 	if (dir) {
 		dirent *blah;
-		while (NULL!=(blah=readdir(dir))) {	
+		while (nullptr!=(blah=readdir(dir))) {	
 			if (1==isdir ((string(thispath)+"/"+mypath+"/"+blah->d_name).c_str())) {
 				result.push_back (mypath+blah->d_name+"/");
 				_chdir (thispath);

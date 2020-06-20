@@ -74,7 +74,7 @@ public:
     //Set a specified target for commands.  Commands aren't forwarded into the
     //event chain, they are sent to this specific target.  This can be used, for
     //instance, to tie two controls tightly together.
-    //Use NULL to clear the target and forward commands into the event chain.
+    //Use nullptr to clear the target and forward commands into the event chain.
     virtual void setCommandTarget(EventResponder *responder);
 
     //BEHAVIOR

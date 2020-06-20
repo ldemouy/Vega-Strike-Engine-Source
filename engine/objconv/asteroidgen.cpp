@@ -547,7 +547,7 @@ int main( int argc, char **argv )
         srand( randomseed );
     } else {
 #ifndef _WIN32
-        srand( time( NULL ) );
+        srand( time( nullptr ) );
 #endif
     }
     for (int i = 0; i < numroids; i++)

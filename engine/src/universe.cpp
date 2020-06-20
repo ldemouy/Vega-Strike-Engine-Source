@@ -119,8 +119,8 @@ void GameUniverse::SetupCockpits(vector<string> playerNames)
 {
     for (unsigned int i = 0; i < playerNames.size(); ++i)
     {
-        cockpit.push_back(NULL);
-        cockpit.back() = new GameCockpit("", NULL, playerNames[i]);
+        cockpit.push_back(nullptr);
+        cockpit.back() = new GameCockpit("", nullptr, playerNames[i]);
     }
 }
 
@@ -271,7 +271,7 @@ void GameUniverse::StartDraw()
 #endif
     GFXBeginScene();
     size_t i;
-    StarSystem *lastStarSystem = NULL;
+    StarSystem *lastStarSystem = nullptr;
     for (i = 0; i < cockpit.size(); ++i)
     {
         SetActiveCockpit(i);

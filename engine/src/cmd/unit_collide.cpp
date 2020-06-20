@@ -31,9 +31,9 @@ void Unit::RemoveFromSystem()
     for (unsigned int locind = 0; locind < NUM_COLLIDE_MAPS; ++locind)
         if (!is_null(this->location[locind]))
         {
-            if (activeStarSystem == NULL)
+            if (activeStarSystem == nullptr)
             {
-                printf("NONFATAL NULL activeStarSystem detected...please fix\n");
+                printf("NONFATAL nullptr activeStarSystem detected...please fix\n");
                 activeStarSystem = _Universe->activeStarSystem();
             }
             static bool collidemap_sanity_check =
@@ -81,12 +81,12 @@ void Unit::RemoveFromSystem()
         if (mounts[j].type->type == weapon_info::BEAM)
             if (mounts[j].ref.gun)
                 mounts[j].ref.gun->RemoveFromSystem(true);
-    activeStarSystem = NULL;
+    activeStarSystem = nullptr;
 }
 
 void Unit::UpdateCollideQueue(StarSystem *ss, CollideMap::iterator hint[NUM_COLLIDE_MAPS])
 {
-    if (activeStarSystem == NULL)
+    if (activeStarSystem == nullptr)
         activeStarSystem = ss;
 
     else
@@ -167,7 +167,7 @@ bool Unit::InsideCollideTree(Unit *smaller,
                              bool bigasteroid,
                              bool smallasteroid)
 {
-    if (smaller->colTrees == NULL || this->colTrees == NULL)
+    if (smaller->colTrees == nullptr || this->colTrees == nullptr)
         return false;
     if (hull < 0)
         return false;
@@ -273,7 +273,7 @@ bool Unit::Collide(Unit *target)
     if (targetisUnit == NEBULAPTR)
         //why? why not?
         this->Velocity *= (1 - NEBULA_SPACE_DRAG);
-    if (target == this || ((targetisUnit != NEBULAPTR && thisisUnit != NEBULAPTR) && (owner == target || target->owner == this || (owner != NULL && target->owner == owner))))
+    if (target == this || ((targetisUnit != NEBULAPTR && thisisUnit != NEBULAPTR) && (owner == target || target->owner == this || (owner != nullptr && target->owner == owner))))
         return false;
     if (targetisUnit == ASTEROIDPTR && thisisUnit == ASTEROIDPTR)
         return false;
@@ -379,7 +379,7 @@ Unit *Unit::rayCollide(const QVector &start, const QVector &end, Vector &norm, f
         if ((tmp = *SubUnits.fastIterator()))
             rad += tmp->rSize();
     if (!globQuerySphere(start, end, cumulative_transformation_matrix.p, rad))
-        return NULL;
+        return nullptr;
     if (graphicOptions.RecurseIntoSubUnitsOnCollision)
     {
         if (!SubUnits.empty())
@@ -410,7 +410,7 @@ Unit *Unit::rayCollide(const QVector &start, const QVector &end, Vector &norm, f
             norm = ((start + del * distance) - Position()).Cast();
             Normalize(norm);
             //RAY COLLIDE does not yet set normal, use that of the sphere center to current loc
-            if (tmpCol == NULL)
+            if (tmpCol == nullptr)
             {
 
                 return this;
@@ -436,9 +436,9 @@ Unit *Unit::rayCollide(const QVector &start, const QVector &end, Vector &norm, f
     }
     else
     {
-        return (NULL);
+        return (nullptr);
     }
-    return (NULL);
+    return (nullptr);
 }
 
 bool Unit::querySphere(const QVector &pnt, float err) const

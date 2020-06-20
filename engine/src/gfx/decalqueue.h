@@ -19,7 +19,7 @@ public:
     unsigned int AddTexture(const char *texname, enum FILTER mipmap)
     {
         Texture *tmpDecal = Texture::Exists(std::string(texname));
-        if (nullity != -1 && tmpDecal == NULL && !g_game.use_textures)
+        if (nullity != -1 && tmpDecal == nullptr && !g_game.use_textures)
             tmpDecal = decal[nullity];
         unsigned int i = 0;
         unsigned int retval = 0;
@@ -69,7 +69,7 @@ public:
                 else
                 {
                     delete tex;
-                    tex = NULL;
+                    tex = nullptr;
                     retval = nullity;
                     decalref[nullity]++;
                 }
@@ -83,7 +83,7 @@ public:
         if (decalref[ref] <= 0)
         {
             delete decal[ref];
-            decal[ref] = NULL;
+            decal[ref] = nullptr;
             return true;
         }
         return false;

@@ -153,7 +153,7 @@ int main( int argc, char **argv )
     map< string, Averaging >base;
     set< string >cargotypes;
     string key;
-    while (fgets( end, MAXSIZE, fp ) != NULL) {
+    while (fgets( end, MAXSIZE, fp ) != nullptr) {
         if ( end == string( ",,\n" ) ) {
             int maxsamples = 0;
             for (map< string, Averaging >::iterator i = base.begin();
@@ -171,7 +171,7 @@ int main( int argc, char **argv )
             merge( total[key], base );
             base = map< string, Averaging > ();
             key  = "";
-            while (fgets( field, MAXSIZE, fp ) != NULL)
+            while (fgets( field, MAXSIZE, fp ) != nullptr)
                 if ( field != string( ",,\n" ) ) {
                     sscanf( field, "%s", end );
                     string tmp = end;

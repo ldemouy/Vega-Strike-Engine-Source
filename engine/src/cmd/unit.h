@@ -70,7 +70,7 @@ public:
     //Constructor that creates a mesh from an XML file If it is a
     //customizedUnit, it will check in that directory in the home dir for
     //the unit.
-    GameUnit(const char *filename, bool SubUnit, int faction, std::string customizedUnit = std::string(""), Flightgroup *flightgroup = NULL, int fg_subnumber = 0, std::string *netxml = NULL);
+    GameUnit(const char *filename, bool SubUnit, int faction, std::string customizedUnit = std::string(""), Flightgroup *flightgroup = nullptr, int fg_subnumber = 0, std::string *netxml = nullptr);
     virtual ~GameUnit();
     unsigned int nummesh() const
     {
@@ -150,7 +150,7 @@ public:
                                 const Matrix &transmat,
                                 const Vector &CumulativeVelocity,
                                 bool ResolveLast,
-                                UnitCollection *uc = NULL);
+                                UnitCollection *uc = nullptr);
     ///Thrusts by ammt and clamps accordingly (afterburn or not)
     void Thrust(const Vector &amt, bool afterburn = false);
     ///Resolves forces of given unit on a physics frame

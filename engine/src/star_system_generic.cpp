@@ -66,15 +66,15 @@ float ScaleJumpRadius(float radius)
 
 StarSystem::StarSystem()
 {
-    stars = NULL;
-    bolts = NULL;
-    collidetable = NULL;
+    stars = nullptr;
+    bolts = nullptr;
+    collidetable = nullptr;
     collidemap[Unit::UNIT_ONLY] = new CollideMap(Unit::UNIT_ONLY);
     collidemap[Unit::UNIT_BOLT] = new CollideMap(Unit::UNIT_BOLT);
 
     no_collision_time = 0; //(int)(1+2.000/SIMULATION_ATOM);
     ///adds to jumping table;
-    name = NULL;
+    name = nullptr;
     current_stage = MISSION_SIMULATION;
     time = 0;
     zone = 0;
@@ -90,7 +90,7 @@ StarSystem::StarSystem(const char *filename, const Vector &centr, const float ti
 
     this->current_sim_location = 0;
     ///adds to jumping table;
-    name = NULL;
+    name = nullptr;
     zone = 0;
     _Universe->pushActiveStarSystem(this);
     bolts = new bolt_draw;
@@ -273,7 +273,7 @@ void StarSystem::ExecuteUnitAI()
 {
     try
     {
-        Unit *unit = NULL;
+        Unit *unit = nullptr;
         for (un_iter iter = getUnitList().createIterator(); (unit = *iter); ++iter)
         {
             unit->ExecuteAI();
@@ -352,7 +352,7 @@ void StarSystem::Statistics::CheckVitals(StarSystem *ss)
     size_t totalsyschecking = 25;
     while (iter < totalnavchecking && iter < navs[k].size())
     {
-        if (navs[k][iter].GetUnit() == NULL)
+        if (navs[k][iter].GetUnit() == nullptr)
         {
             navs[k].erase(navs[k].begin() + iter);
             break;
@@ -455,7 +455,7 @@ void StarSystem::Statistics::RemoveUnit(Unit *un)
     if (un->GetDestinations().size())
     {
         //make sure it is there
-        jumpPoints[(un->GetDestinations()[0])].SetUnit(NULL);
+        jumpPoints[(un->GetDestinations()[0])].SetUnit(nullptr);
         //kill it--stupid I know--but hardly time critical
         jumpPoints.erase(jumpPoints.find(un->GetDestinations()[0]));
     }
@@ -488,7 +488,7 @@ double targetpick = 0;
 
 void StarSystem::RequestPhysics(Unit *un, unsigned int queue)
 {
-    Unit *unit = NULL;
+    Unit *unit = nullptr;
     un_iter iter = this->physics_buffer[queue].createIterator();
     while ((unit = *iter) && *iter != un)
         ++iter;
@@ -528,7 +528,7 @@ void StarSystem::UpdateUnitPhysics(bool firstframe)
             //randomization on priority changes, so we're fine.
             try
             {
-                Unit *unit = NULL;
+                Unit *unit = nullptr;
                 for (un_iter iter = physics_buffer[current_sim_location].createIterator(); (unit = *iter); ++iter)
                 {
                     int priority = UnitUtil::getPhysicsPriority(unit);
@@ -605,7 +605,7 @@ void StarSystem::UpdateUnitPhysics(bool firstframe)
     }
     else
     {
-        Unit *unit = NULL;
+        Unit *unit = nullptr;
         for (un_iter iter = getUnitList().createIterator(); (unit = *iter); ++iter)
         {
             unit->ExecuteAI();
@@ -696,7 +696,7 @@ void StarSystem::Update(float priority)
             current_stage = MISSION_SIMULATION;
             collidetable->Update();
             for (un_iter iter = drawList.createIterator(); (unit = *iter); ++iter)
-                unit->SetNebula(NULL);
+                unit->SetNebula(nullptr);
             UpdateMissiles(); //do explosions
             UpdateUnitPhysics(firstframe);
 
@@ -780,7 +780,7 @@ void StarSystem::Update(float priority, bool executeDirector)
         ++sigIter;
     while (!sigIter.isDone() && !UnitUtil::isSignificant(*sigIter))
         ++sigIter;
-    //If it is done, leave it NULL for this frame then.
+    //If it is done, leave it nullptr for this frame then.
     //WARNING cockpit does not get here...
     SIMULATION_ATOM = normal_simulation_atom;
     //WARNING cockpit does not get here...
@@ -839,7 +839,7 @@ void StarSystem::ProcessPendingJumps()
                 if (pendingjump[kk]->delay > 0)
                 {
                     float speed = dist / pendingjump[kk]->delay;
-                    bool player = (_Universe->isPlayerStarship(un) != NULL);
+                    bool player = (_Universe->isPlayerStarship(un) != nullptr);
                     if (dist > 10 && player)
                     {
                         if (un->activeStarSystem == pendingjump[kk]->orig)
@@ -869,7 +869,7 @@ void StarSystem::ProcessPendingJumps()
         int playernum = _Universe->whichPlayerStarship(un);
         //In non-networking mode or in networking mode or a netplayer wants to jump and is ready or a non-player jump
         StarSystem *savedStarSystem = _Universe->activeStarSystem();
-        if (un == NULL || !_Universe->StillExists(pendingjump[kk]->dest) || !_Universe->StillExists(pendingjump[kk]->orig))
+        if (un == nullptr || !_Universe->StillExists(pendingjump[kk]->dest) || !_Universe->StillExists(pendingjump[kk]->orig))
         {
 #ifdef JUMP_DEBUG
             VSFileSystem::vs_fprintf(stderr, "Adez Mon! Unit destroyed during jump!\n");

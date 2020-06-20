@@ -141,7 +141,7 @@ namespace Audio
 
                     clearAlError();
 
-                    if (deviceSpecifier == NULL)
+                    if (deviceSpecifier == nullptr)
                     {
 #ifdef _WIN32
                         deviceSpecifier = "DirectSound3D";
@@ -174,7 +174,7 @@ namespace Audio
                     {
                         unloadSounds();
                         alcCloseDevice(alDevice);
-                        alDevice = NULL;
+                        alDevice = nullptr;
                         clearAlError();
                     }
                 }
@@ -230,15 +230,15 @@ namespace Audio
                 {
                     if (alContext)
                     {
-                        alcMakeContextCurrent(NULL);
+                        alcMakeContextCurrent(nullptr);
                         alcDestroyContext(alContext);
                         clearAlError();
-                        alContext = NULL;
+                        alContext = nullptr;
                     }
                 }
 
-                RendererData() : alDevice(NULL),
-                                 alContext(NULL)
+                RendererData() : alDevice(nullptr),
+                                 alContext(nullptr)
                 {
                 }
 
@@ -349,7 +349,7 @@ namespace Audio
     {
         if (!data->alDevice)
         {
-            data->openDevice(NULL);
+            data->openDevice(nullptr);
         }
         data->closeContext();
         data->openContext(format);
@@ -360,7 +360,7 @@ namespace Audio
     {
         if (!data->alDevice)
         {
-            data->openDevice(NULL);
+            data->openDevice(nullptr);
         }
         if (!data->alContext)
         {
@@ -438,8 +438,8 @@ namespace Audio
 
     BorrowedOpenALRenderer::~BorrowedOpenALRenderer()
     {
-        data->alDevice = NULL;
-        data->alContext = NULL;
+        data->alDevice = nullptr;
+        data->alContext = nullptr;
     }
 
     void BorrowedOpenALRenderer::setOutputFormat(const Format &format)

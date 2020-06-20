@@ -10,6 +10,6 @@ extern void AddMeshes(std::vector<Mesh *> &xmeshes,
                       const std::string &meshes,
                       int faction,
                       Flightgroup *fg,
-                      vector<unsigned int> *counts = NULL);
+                      vector<unsigned int> *counts = nullptr);
 
 #endif

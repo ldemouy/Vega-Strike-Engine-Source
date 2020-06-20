@@ -78,7 +78,7 @@ bool NavigationSystem::ParseFile(string filename)
                     screenskipby4[1] = x_large;
                     screenskipby4[2] = y_small;
                     screenskipby4[3] = y_large;
-                    mesh[0] = Mesh::LoadMesh(mesh_.c_str(), Vector(scale_, scale_, scale_), 0, NULL);
+                    mesh[0] = Mesh::LoadMesh(mesh_.c_str(), Vector(scale_, scale_, scale_), 0, nullptr);
                 }
                 else if (tag == "button1")
                 {
@@ -102,7 +102,7 @@ bool NavigationSystem::ParseFile(string filename)
                     buttonskipby4_1[2] = y_;
                     buttonskipby4_1[3] = y_ + dy_;
 
-                    mesh[1] = Mesh::LoadMesh(mesh_.c_str(), Vector(scale_, scale_, scale_), 0, NULL);
+                    mesh[1] = Mesh::LoadMesh(mesh_.c_str(), Vector(scale_, scale_, scale_), 0, nullptr);
                 }
                 else if (tag == "button2")
                 {
@@ -128,7 +128,7 @@ bool NavigationSystem::ParseFile(string filename)
                     buttonskipby4_2[2] = y_;
                     buttonskipby4_2[3] = y_ + dy_;
 
-                    mesh[2] = Mesh::LoadMesh(mesh_.c_str(), Vector(scale_, scale_, scale_), 0, NULL);
+                    mesh[2] = Mesh::LoadMesh(mesh_.c_str(), Vector(scale_, scale_, scale_), 0, nullptr);
                 }
                 else if (tag == "button3")
                 {
@@ -154,7 +154,7 @@ bool NavigationSystem::ParseFile(string filename)
                     buttonskipby4_3[2] = y_;
                     buttonskipby4_3[3] = y_ + dy_;
 
-                    mesh[3] = Mesh::LoadMesh(mesh_.c_str(), Vector(scale_, scale_, scale_), 0, NULL);
+                    mesh[3] = Mesh::LoadMesh(mesh_.c_str(), Vector(scale_, scale_, scale_), 0, nullptr);
                 }
                 else if (tag == "button4")
                 {
@@ -180,7 +180,7 @@ bool NavigationSystem::ParseFile(string filename)
                     buttonskipby4_4[2] = y_;
                     buttonskipby4_4[3] = y_ + dy_;
 
-                    mesh[4] = Mesh::LoadMesh(mesh_.c_str(), Vector(scale_, scale_, scale_), 0, NULL);
+                    mesh[4] = Mesh::LoadMesh(mesh_.c_str(), Vector(scale_, scale_, scale_), 0, nullptr);
                 }
                 else if (tag == "button5")
                 {
@@ -206,7 +206,7 @@ bool NavigationSystem::ParseFile(string filename)
                     buttonskipby4_5[2] = y_;
                     buttonskipby4_5[3] = y_ + dy_;
 
-                    mesh[5] = Mesh::LoadMesh(mesh_.c_str(), Vector(scale_, scale_, scale_), 0, NULL);
+                    mesh[5] = Mesh::LoadMesh(mesh_.c_str(), Vector(scale_, scale_, scale_), 0, nullptr);
                 }
                 else if (tag == "button6")
                 {
@@ -232,7 +232,7 @@ bool NavigationSystem::ParseFile(string filename)
                     buttonskipby4_6[2] = y_;
                     buttonskipby4_6[3] = y_ + dy_;
 
-                    mesh[6] = Mesh::LoadMesh(mesh_.c_str(), Vector(scale_, scale_, scale_), 0, NULL);
+                    mesh[6] = Mesh::LoadMesh(mesh_.c_str(), Vector(scale_, scale_, scale_), 0, nullptr);
                 }
                 else if (tag == "button7")
                 {
@@ -258,7 +258,7 @@ bool NavigationSystem::ParseFile(string filename)
                     buttonskipby4_7[2] = y_;
                     buttonskipby4_7[3] = y_ + dy_;
 
-                    mesh[7] = Mesh::LoadMesh(mesh_.c_str(), Vector(scale_, scale_, scale_), 0, NULL);
+                    mesh[7] = Mesh::LoadMesh(mesh_.c_str(), Vector(scale_, scale_, scale_), 0, nullptr);
                 }
                 else if (tag == "objectives")
                 {

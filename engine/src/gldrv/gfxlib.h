@@ -240,7 +240,7 @@ void /*GFXDRVAPI*/ GFXFrustum(float *mat,
 //Textures
 /**
  * Creates a texture with given w,h & tex format. Returns handle in handle var
- * The palette may be specified but defaults to NULL.  Texture Stage indicates
+ * The palette may be specified but defaults to nullptr.  Texture Stage indicates
  * Which texture unit the texture must reside on.  The filter indicates
  * If linear, bilinear, mipmapping or trilinear filterring should be used.
  * Filtering is clamped to g_game.mipmap so hardware isn't abused (3dfx had
@@ -338,13 +338,13 @@ void /*GFXDRVAPI*/ GFXDepthFunc(const enum DEPTHFUNC);
 ///Returns the current stencil test function
 enum DEPTHFUNC /*GFXDRVAPI*/ GFXStencilFunc();
 
-///Gets details about the current stancil compare function - Specify NULL for unwanted fields.
+///Gets details about the current stancil compare function - Specify nullptr for unwanted fields.
 void /*GFXDRVAPI*/ GFXStencilFunc(enum DEPTHFUNC *pFunc, int *pRef, int *pMask);
 
 ///Sets up a stencil compare function
 void /*GFXDRVAPI*/ GFXStencilFunc(enum DEPTHFUNC sfunc, int ref, unsigned int mask);
 
-///Gets the current stencil write operations - Specify NULL for unwanted fields
+///Gets the current stencil write operations - Specify nullptr for unwanted fields
 void /*GFXDRVAPI*/ GFXStencilOp(enum STENCILOP *pFail, enum STENCILOP *pZfail, enum STENCILOP *pZpass);
 
 ///Sets up the stencil write operations
@@ -471,7 +471,7 @@ void GFXTextureCoordGenMode(int stage, GFXTEXTURECOORDMODE tex, const float para
 int GFXCreateProgram(const char *vertex, const char *fragment, const char *extra_defines);
 void GFXDestroyProgram(int program);
 //program created if necessary and active
-int GFXActivateShader(const char *program = NULL /*null for default prog*/);
+int GFXActivateShader(const char *program = nullptr /*null for default prog*/);
 int GFXActivateShader(int program);
 void GFXDeactivateShader();
 //return location of named value

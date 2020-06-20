@@ -42,7 +42,7 @@
 #define SQRT3 1.73205080757f	 //!< sqrt(3)
 #define INVSQRT3 0.577350269189f //!< 1 / sqrt(3)
 
-#define null 0 //!< our own NULL pointer
+#define null 0 //!< our own nullptr pointer
 
 // Custom types used in ICE
 typedef signed char sbyte;	  //!< sizeof(sbyte)	must be 1

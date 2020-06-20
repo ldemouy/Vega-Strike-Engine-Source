@@ -92,7 +92,7 @@ namespace BaseUtil
         virtual void onEndOfStream(Source &source)
         {
             // Verify context before switching rooms
-            if (BaseInterface::CurrentBase != NULL)
+            if (BaseInterface::CurrentBase != nullptr)
             {
                 if (BaseUtil::GetCurRoom() == sourceRoom)
                 {
@@ -277,7 +277,7 @@ namespace BaseUtil
                         dynamic_cast<BaseInterface::Room::BaseVSMovie *>(newroom->objs[i]);
                     movie->setCallback(callback);
 
-                    if (movie->soundsource.get() != NULL)
+                    if (movie->soundsource.get() != nullptr)
                     {
                         std::shared_ptr<SourceListener> transitionListener(
                             new VideoAudioStreamListener(room, index));
@@ -357,7 +357,7 @@ namespace BaseUtil
                 {
                     //FIXME: Will crash if not a Sprite object.
                     std::shared_ptr<Source> source = dynamic_cast<BaseInterface::Room::BaseVSSprite *>(newroom->objs[i])->soundsource;
-                    if (source.get() != NULL)
+                    if (source.get() != nullptr)
                     {
                         if (!source->isPlaying())
                         {
@@ -383,7 +383,7 @@ namespace BaseUtil
                 {
                     //FIXME: Will crash if not a Sprite object.
                     std::shared_ptr<Source> source = dynamic_cast<BaseInterface::Room::BaseVSSprite *>(newroom->objs[i])->soundsource;
-                    if (source.get() != NULL)
+                    if (source.get() != nullptr)
                     {
                         if (source->isPlaying())
                         {
@@ -863,13 +863,13 @@ namespace BaseUtil
     {
         Unit *base = BaseInterface::CurrentBase->baseun.GetUnit();
         Unit *un = BaseInterface::CurrentBase->caller.GetUnit();
-        return ::buyShip(base, un, name, my_fleet, force_base_inventory, NULL);
+        return ::buyShip(base, un, name, my_fleet, force_base_inventory, nullptr);
     }
     bool SellShip(std::string name)
     {
         Unit *base = BaseInterface::CurrentBase->baseun.GetUnit();
         Unit *un = BaseInterface::CurrentBase->caller.GetUnit();
-        return ::sellShip(base, un, name, NULL);
+        return ::sellShip(base, un, name, nullptr);
     }
 
     Dictionary &_GetEventData()

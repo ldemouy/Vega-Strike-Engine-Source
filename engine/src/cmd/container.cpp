@@ -3,10 +3,10 @@
 #include "unit_generic.h"
 UnitContainer::UnitContainer()
 {
-    unit = NULL;
+    unit = nullptr;
     VSCONSTRUCT1('U')
 }
-UnitContainer::UnitContainer(Unit *un) : unit(NULL)
+UnitContainer::UnitContainer(Unit *un) : unit(nullptr)
 {
     SetUnit(un);
     VSCONSTRUCT1('U');
@@ -21,11 +21,11 @@ UnitContainer::~UnitContainer()
 void UnitContainer::SetUnit(Unit *un)
 {
     //if the unit is null then go here otherwise if the unit is killed then go here
-    if (un != NULL ? un->Killed() == true : true)
+    if (un != nullptr ? un->Killed() == true : true)
     {
         if (unit)
             unit->UnRef();
-        unit = NULL;
+        unit = nullptr;
         return;
     }
     else
