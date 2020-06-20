@@ -1643,7 +1643,7 @@ void VDU::DrawDamage(Unit *parent)
     static GFXColor cdestroyed = vs_config->getColor("default", "hud_repair_destroyed",
                                                      GFXColor(.2, .2, .2, 1));
 
-    RGBstring fpstring = colToString(cfullpower);
+    RGBstring fpstring = colorToString(cfullpower);
     static string damage_report_heading =
         XMLSupport::escaped_string(vs_config->getVariable("graphics", "hud", "damage_report_heading",
                                                           "#00ff00DAMAGE REPORT\n\n"));
@@ -1667,7 +1667,7 @@ void VDU::DrawDamage(Unit *parent)
             final_color = cdestroyed; /*dead = grey*/                                           \
         std::string trailer;                                                                    \
         if (percent_working < max_functionality)                                                \
-            retval += colToString(final_color).str;                                             \
+            retval += colorToString(final_color).str;                                           \
         else                                                                                    \
             retval += fpstring.str;                                                             \
         trailer = fpstring.str;                                                                 \
@@ -1962,12 +1962,12 @@ void VDU::DrawWeapon(Unit *parent)
             if ((parent->mounts[i].status != Mount::UNCHOSEN) || do_list_empty_mounts)
             {
                 GFXColor mountcolor(average.r / numave, average.g / numave, average.b / numave, average.a / numave);
-                string baseweaponreport = colToString(mountcolor).str;
+                string baseweaponreport = colorToString(mountcolor).str;
                 if (parent->mounts[i].status == Mount::UNCHOSEN)
                     baseweaponreport += list_empty_mounts_as;
                 else
                     baseweaponreport += parent->mounts[i].type->weapon_name;
-                if (numave != 1) //  show banks, if any, here; "#" seems to be a reserved char, see colToString
+                if (numave != 1) //  show banks, if any, here; "#" seems to be a reserved char, see colorToString
                     baseweaponreport += string(" x") + tostring(numave);
                 if (parent->mounts[i].ammo >= 0)
                     baseweaponreport += string(" (") + tostring(parent->mounts[i].ammo) + string(")");

@@ -148,7 +148,7 @@ float Pilot::GetEffectiveRelationship(const Unit *parent, const Unit *target) co
     return getAnger(parent, target) + UnitUtil::getFactionRelation(parent, target);
 }
 
-extern float myroundclamp(float i);
+extern float roundclamp(float i);
 
 Animation *Pilot::getCommFace(Unit *parent, float mood, unsigned char &sex)
 {
@@ -158,7 +158,7 @@ Animation *Pilot::getCommFace(Unit *parent, float mood, unsigned char &sex)
         return NULL;
     mood += .1;
     mood *= (ani->size()) / .2;
-    unsigned int index = (unsigned int)myroundclamp(floor(mood));
+    unsigned int index = (unsigned int)roundclamp(floor(mood));
     if (index >= ani->size())
         index = ani->size() - 1;
     return (*ani)[index];

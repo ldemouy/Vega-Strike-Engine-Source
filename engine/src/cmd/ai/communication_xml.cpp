@@ -105,8 +105,12 @@ void FSM::beginElement(const string &name, const AttributeList attributes)
                     nam = (*iter).value;
                     {
                         for (string::iterator i = nam.begin(); i != nam.end(); i++)
+                        {
                             if (*i == '\\')
+                            {
                                 *i = '\n';
+                            }
+                        }
                     }
                     messages[num] = nam;
                 }
@@ -118,8 +122,12 @@ void FSM::beginElement(const string &name, const AttributeList attributes)
     case EDGE:
         unitlevel++;
         for (iter = attributes.begin(); iter != attributes.end(); iter++)
+        {
             if ((attribute_map.lookup((*iter).name)) == INDEX)
+            {
                 nodes.back().edges.push_back(parse_int((*iter).value));
+            }
+        }
         break;
     default:
         break;

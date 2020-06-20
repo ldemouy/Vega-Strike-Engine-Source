@@ -11,18 +11,20 @@ public:
     {
         vector<std::string> messages;
         vector<std::string> soundfiles; //messages.size() sound file path for each sex
-        vector<int> sounds;             //messages.size() sound for each sex
+        vector<int32_t> sounds;         //messages.size() sound for each sex
         vector<float> gains;            //messages.size()
         float messagedelta;
-        vector<unsigned int> edges;
-        int GetSound(unsigned char sex, unsigned int multiple, float &gain);
-        bool StopSound(unsigned char sex);
-        std::string GetMessage(unsigned int &multiple) const;
-        void AddSound(std::string soundfile, unsigned char sex, float gain = 1.0f);
+        vector<uint32_t> edges;
+        int32_t GetSound(uint8_t sex, uint32_t multiple, float &gain);
+        bool StopSound(uint8_t sex);
+        std::string GetMessage(uint32_t &multiple) const;
+        void AddSound(std::string soundfile, uint8_t sex, float gain = 1.0f);
         Node(const vector<std::string> &message, float messagedel) : messages(message), messagedelta(messagedel)
         {
             if (messages.size() == 0)
+            {
                 messages.push_back("<static>");
+            }
         }
         static Node MakeNode(std::string message, float messagedel)
         {
@@ -32,32 +34,32 @@ public:
         }
     };
     vector<Node> nodes;
-    bool StopAllSounds(unsigned char sex);
+    bool StopAllSounds(uint8_t sex);
     FSM(const std::string &filename);
     void LoadXML(const char *factionfile);
     void beginElement(const string &name, const AttributeList attributes);
     static void beginElement(void *userData, const XML_Char *name, const XML_Char **atts);
     static void endElement(void *userData, const XML_Char *name);
-    std::string GetEdgesString(unsigned int curstate);
-    float getDeltaRelation(int prevstate, unsigned int curstate) const;
-    int getCommMessageMood(int curstate, float mood, float randomresponsefactor, float relationship) const;
-    int getDefaultState(float relationship) const;
-    int GetUnDockNode() const;
-    int GetFailDockNode() const;
-    int GetDockNode() const;
-    int GetAbleToDockNode() const;
-    int GetUnAbleToDockNode() const;
-    int GetYesNode() const;
-    int GetNoNode() const;
-    int GetHitNode() const;
-    int GetDamagedNode() const;
-    int GetDealtDamageNode() const;
-    int GetScoreKillNode() const;
-    int GetRequestLandNode() const;
-    int GetContrabandInitiateNode() const;
-    int GetContrabandUnDetectedNode() const;
-    int GetContrabandDetectedNode() const;
-    int GetContrabandWobblyNode() const;
+    std::string GetEdgesString(uint32_t curstate);
+    float getDeltaRelation(int32_t prevstate, uint32_t curstate) const;
+    int32_t getCommMessageMood(int32_t curstate, float mood, float randomresponsefactor, float relationship) const;
+    int32_t getDefaultState(float relationship) const;
+    int32_t GetUnDockNode() const;
+    int32_t GetFailDockNode() const;
+    int32_t GetDockNode() const;
+    int32_t GetAbleToDockNode() const;
+    int32_t GetUnAbleToDockNode() const;
+    int32_t GetYesNode() const;
+    int32_t GetNoNode() const;
+    int32_t GetHitNode() const;
+    int32_t GetDamagedNode() const;
+    int32_t GetDealtDamageNode() const;
+    int32_t GetScoreKillNode() const;
+    int32_t GetRequestLandNode() const;
+    int32_t GetContrabandInitiateNode() const;
+    int32_t GetContrabandUnDetectedNode() const;
+    int32_t GetContrabandDetectedNode() const;
+    int32_t GetContrabandWobblyNode() const;
 };
 
 class CommunicationMessage
@@ -111,7 +113,7 @@ struct RGBstring
     char str[8];
 };
 
-RGBstring colToString(GFXColor col);
+RGBstring colorToString(GFXColor col);
 RGBstring GetRelationshipRGBstring(float rel);
 
 inline std::string GetRelationshipColorString(float rel)
