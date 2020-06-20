@@ -57,7 +57,7 @@ namespace Orders
         typedef void (AutoDocking::*StateFunction)(Unit *, Unit *);
 
     public:
-        typedef std::deque<int> DockingPath;
+        typedef std::deque<int32_t> DockingPath;
 
         AutoDocking(Unit *destination);
 

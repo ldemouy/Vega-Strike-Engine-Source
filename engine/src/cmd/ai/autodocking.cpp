@@ -2,7 +2,7 @@
 
 #include <cassert>
 #include <iterator>
-#include <boost/optional.hpp>
+#include <optional>
 #include "cmd/unit_generic.h"
 #include "cmd/unit_util.h"
 #include "cmd/ai/navigation.h"
@@ -16,9 +16,9 @@ namespace
 {
 
     // Find waypoints if we can travel through all of them.
-    boost::optional<size_t> FindWaypoint(Unit *player,
-                                         const std::vector<DockingPorts> &dockingPorts,
-                                         size_t port)
+    std::optional<size_t> FindWaypoint(Unit *player,
+                                       const std::vector<DockingPorts> &dockingPorts,
+                                       size_t port)
     {
         if (!dockingPorts[port].IsConnected())
             return port;
@@ -30,10 +30,14 @@ namespace
         {
             const DockingPorts &waypoint = dockingPorts[i];
             if (waypoint.IsDockable()) // No further waypoints
+            {
                 break;
+            }
             // Do not use docking port if one of the waypoints are too small
             if (waypoint.GetRadius() < player->rSize())
-                return boost::optional<size_t>();
+            {
+                return std::optional<size_t>();
+            }
         }
         return i - 1;
     }
@@ -49,22 +53,28 @@ namespace
         const std::vector<DockingPorts> &dockingPorts = station->DockingPortLocations();
 
         typedef std::pair<size_t, size_t> PortRange;
-        boost::optional<PortRange> candidate;
+        std::optional<PortRange> candidate;
         float shortestDistance = std::numeric_limits<float>::max();
         const bool isPlanet = station->isPlanet();
         for (size_t i = 0; i < dockingPorts.size(); ++i)
         {
             if (dockingPorts[i].IsOccupied())
+            {
                 continue;
+            }
 
             // Auto-dockable ports must be marked as connected (even if they have
             // no associated waypoints)
             if (!dockingPorts[i].IsConnected())
+            {
                 continue;
+            }
 
             // Does our ship fit into the docking port?
             if (dockingPorts[i].GetRadius() < player->rSize())
+            {
                 continue;
+            }
 
             QVector dockingPosition = Transform(station->GetTransformation(),
                                                 dockingPorts[i].GetPosition().Cast());
@@ -78,7 +88,7 @@ namespace
                 }
                 else
                 {
-                    boost::optional<size_t> waypoint = FindWaypoint(player, dockingPorts, i);
+                    std::optional<size_t> waypoint = FindWaypoint(player, dockingPorts, i);
                     if (waypoint)
                     {
                         shortestDistance = distance;
