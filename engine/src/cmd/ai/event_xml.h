@@ -18,7 +18,7 @@ namespace AIEvents
     struct AIEvresult
     {
         ///will never be zero...negative indicates "not"
-        int type;
+        int32_t type;
         ///The maximum/minimum values that will cause this event
         float max, min;
         float timetofinish;
@@ -26,7 +26,7 @@ namespace AIEvents
         float priority;
         ///The string indicating what type of thing this event evaluates
         std::string script;
-        AIEvresult(int type,
+        AIEvresult(int32_t type,
                    float const min,
                    const float max,
                    float timetofinish,
@@ -36,20 +36,32 @@ namespace AIEvents
         bool Eval(const float eval) const
         {
             if (eval >= min)
+            {
                 if (eval < max)
+                {
                     if (type > 0)
+                    {
                         return true;
+                    }
+                }
+            }
             if (eval < min)
+            {
                 if (eval >= max)
+                {
                     if (type < 0)
+                    {
                         return true;
+                    }
+                }
+            }
             return false;
         }
     };
     struct ElemAttrMap
     {
         XMLSupport::EnumMap element_map;
-        int level;
+        int32_t level;
         float curtime;
         float maxtime;
         float obedience; //short fix

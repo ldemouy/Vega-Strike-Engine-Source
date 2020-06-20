@@ -21,33 +21,31 @@ using XMLSupport::parse_float;
 using XMLSupport::parse_int;
 namespace AIEvents
 {
-    AIEvresult::AIEvresult(int type,
-                           float const min,
+    AIEvresult::AIEvresult(int32_t type,
+                           const float min,
                            const float max,
-                           float timetofinish,
-                           float timeuntilinterrupts,
+                           float time_to_finish,
+                           float time_until_interrupts,
                            float priority,
-                           const std::string &aiscript)
+                           const std::string &ai_script)
     {
-        this->timetointerrupt = timeuntilinterrupts;
-        this->timetofinish = timetofinish;
+        this->timetointerrupt = time_until_interrupts;
+        this->timetofinish = time_to_finish;
         this->type = type;
         this->priority = priority;
         this->max = max;
 
         this->min = min;
 
-        this->script = aiscript;
+        this->script = ai_script;
         if (!validateHardCodedScript(this->script))
         {
-            static int aidebug = XMLSupport::parse_int(vs_config->getVariable("AI", "debug_level", "0"));
-            if (aidebug)
+            static int32_t ai_debug = XMLSupport::parse_int(vs_config->getVariable("AI", "debug_level", "0"));
+            if (ai_debug)
             {
-                for (int i = 0; i < 10; ++i)
-                {
-                    printf("SERIOUS WARNING %s\n", this->script.c_str());
-                    fprintf(stderr, "SERIOUS WARNING: %s\n", this->script.c_str());
-                }
+
+                printf("SERIOUS WARNING %s\n", this->script.c_str());
+                fprintf(stderr, "SERIOUS WARNING: %s\n", this->script.c_str());
             }
             printf(
                 "SERIOUS WARNING in AI script: no fast method to perform %s when type %d is at least %f and at most %f with priority %f for %f time\n",
@@ -56,19 +54,19 @@ namespace AIEvents
                 min,
                 max,
                 priority,
-                timetofinish);
+                time_to_finish);
         }
     }
 
-    const int AIUNKNOWN = 0;
-    const int AIMIN = 1;
-    const int AIMAX = 2;
-    const int AISCRIPT = 3;
-    const int AINOT = 4;
-    const int TIMEIT = 5;
-    const int OBEDIENCE = 6;
-    const int TIMETOINTERRUPT = 7;
-    const int PRIORITY = 8;
+    const int32_t AIUNKNOWN = 0;
+    const int32_t AIMIN = 1;
+    const int32_t AIMAX = 2;
+    const int32_t AISCRIPT = 3;
+    const int32_t AINOT = 4;
+    const int32_t TIMEIT = 5;
+    const int32_t OBEDIENCE = 6;
+    const int32_t TIMETOINTERRUPT = 7;
+    const int32_t PRIORITY = 8;
     const XMLSupport::EnumMap::Pair AIattribute_names[] = {
         EnumMap::Pair("UNKNOWN", AIUNKNOWN),
         EnumMap::Pair("min", AIMIN),
@@ -216,7 +214,9 @@ namespace AIEvents
         f.Close();
         XML_ParserFree(parser);
         if (result.level != 0)
+        {
             fprintf(stderr, "Error loading AI script %s for faction %s. Final count not zero.\n", filename, faction.c_str());
+        }
         result.level = 0;
     }
 } // namespace AIEvents
