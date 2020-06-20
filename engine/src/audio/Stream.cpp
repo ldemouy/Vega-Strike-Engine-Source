@@ -37,12 +37,12 @@ namespace Audio
         seekImpl(position);
     }
 
-    unsigned int Stream::read(void *buffer, unsigned int bufferSize)
+    uint32_t Stream::read(void *buffer, uint32_t bufferSize)
     {
         void *rbuffer;
         void *rbufferEnd;
-        unsigned int rbufferSize;
-        unsigned int rode = 0;
+        uint32_t rbufferSize;
+        uint32_t rode = 0;
 
         try
         {
@@ -66,7 +66,7 @@ namespace Audio
                 rbufferEnd = ((char *)rbuffer) + rbufferSize;
             }
 
-            size_t remaining = min(bufferSize, (unsigned int)((char *)rbufferEnd - (char *)curBufferPos)); //is there no std::ptrdiff?
+            size_t remaining = min(bufferSize, (uint32_t)((char *)rbufferEnd - (char *)curBufferPos)); //is there no std::ptrdiff?
             memcpy(buffer, curBufferPos, remaining);
             buffer = (void *)((char *)buffer + remaining);
             curBufferPos = (void *)((char *)curBufferPos + remaining);

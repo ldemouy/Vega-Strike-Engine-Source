@@ -26,9 +26,9 @@ namespace Audio
     protected:
         struct
         {
-            int attach : 1;
-            int play : 1;
-            int update : 1;
+            int32_t attach : 1;
+            int32_t play : 1;
+            int32_t update : 1;
         } events;
 
         SourceListener()
