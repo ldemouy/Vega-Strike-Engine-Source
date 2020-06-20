@@ -96,7 +96,7 @@ void blutLoadWAVMemory(ALbyte *memory, ALenum *format, ALvoid **data, ALsizei *s
         {
             memcpy(&FileHdr, Stream, sizeof(WAVFileHdr_Struct));
             Stream += sizeof(WAVFileHdr_Struct);
-            SwapWords((unsigned int *)&FileHdr.Size);
+            SwapWords((uint32_t *)&FileHdr.Size);
             FileHdr.Size = ((FileHdr.Size + 1) & ~1) - 4;
             while ((FileHdr.Size != 0) && (memcpy(&ChunkHdr, Stream, sizeof(WAVChunkHdr_Struct))))
             {
@@ -147,7 +147,7 @@ void blutLoadWAVMemory(ALbyte *memory, ALenum *format, ALvoid **data, ALsizei *s
                             {
                                 for (size_t i = 0; i < (ChunkHdr.Size / 2); ++i)
                                 {
-                                    SwapBytes(&(*(unsigned short **)data)[i]);
+                                    SwapBytes(&(*(uint16_t **)data)[i]);
                                 }
                             }
                         }
@@ -416,13 +416,13 @@ static void ConvertFormat(vector<char> &ogg)
                 converted.push_back(0);
                 ogg_int64_t pcmsizestart = converted.size();
                 converted.resize(converted.size() + segmentsize);
-                int signedvalue = 1;
-                int bitstream = 0;
+                int32_t signedvalue = 1;
+                int32_t bitstream = 0;
                 while ((bytesread =
                             ov_read(&vf, &converted[converted.size() - segmentsize], segmentsize, 0, samples / 8, signedvalue,
                                     &bitstream)) > 0)
                 {
-                    int numtoerase = 0;
+                    int32_t numtoerase = 0;
                     if (bytesread < segmentsize)
                     {
                         numtoerase = segmentsize - bytesread;
@@ -557,7 +557,9 @@ bool AUDLoadSoundFile(const char *s, struct AUDSoundProperties *info, bool use_f
     blutLoadWAVMemory((ALbyte *)&dat[0], &info->format, &info->wave, &info->size, &info->freq, &info->looping);
 
     if (!info->wave)
+    {
         return false; //failure.
+    }
 
     info->success = true;
     return true;
@@ -572,7 +574,9 @@ int32_t AUDBufferSound(const struct AUDSoundProperties *info, bool music)
     ALuint wavbuf = 0;
     alGenBuffers(1, &wavbuf);
     if (!wavbuf)
+    {
         printf("OpenAL Error in alGenBuffers: %d\n", alGetError());
+    }
     alBufferData(wavbuf, info->format, info->wave, info->size, info->freq);
     return LoadSound(wavbuf, info->looping, music);
 #else
@@ -607,7 +611,9 @@ int32_t AUDCreateSoundWAV(const std::string &s, const bool music, const bool LOO
                 wavbuf = soundHash.Get(hashname);
             }
             if (wavbuf == &nil_wavebuf)
+            {
                 return -1; //404
+            }
         }
         if (wavbuf)
         {
@@ -717,9 +723,13 @@ int32_t AUDCreateSound(const std::string &s, const bool LOOP)
     if (s.end() - 1 >= s.begin())
     {
         if (*(s.end() - 1) == '3')
+        {
             return AUDCreateSoundMP3(s, LOOP);
+        }
         else
+        {
             return AUDCreateSoundWAV(s, LOOP);
+        }
     }
     return -1;
 }
@@ -729,9 +739,13 @@ int32_t AUDCreateMusic(const std::string &s, const bool LOOP)
     if (s.end() - 1 >= s.begin())
     {
         if (*(s.end() - 1) == 'v')
+        {
             return AUDCreateMusicWAV(s, LOOP);
+        }
         else
+        {
             return AUDCreateMusicMP3(s, LOOP);
+        }
     }
     return -1;
 }
@@ -741,9 +755,13 @@ int32_t AUDCreateSound(int32_t sound, const bool LOOP /*=false*/)
 {
 #ifdef HAVE_AL
     if (AUDIsPlaying(sound))
+    {
         AUDStopPlaying(sound);
-    if (sound >= 0 && sound < (int)sounds.size())
+    }
+    if (sound >= 0 && sound < (int32_t)sounds.size())
+    {
         return LoadSound(sounds[sound].buffer, LOOP, false);
+    }
 #endif
     return -1;
 }
@@ -796,7 +814,9 @@ void AUDDeleteSound(int32_t sound, bool music)
         //FIXME??
         //alDeleteSources(1,&sounds[sound].source);
         if (music)
+        {
             alDeleteBuffers(1, &sounds[sound].buffer);
+        }
         sounds[sound].buffer = (ALuint)0;
     }
 #endif
@@ -947,11 +967,12 @@ static bool AUDReclaimSource(const int32_t &sound, bool high_priority = false)
         {
             if (high_priority)
             {
-                uint32_t i;
                 uint32_t candidate = 0;
                 bool found = false;
-                for (i = 0; i < sounds.size(); ++i)
+                for (size_t i = 0; i < sounds.size(); ++i)
+                {
                     if (sounds[i].source != 0)
+                    {
                         if (sounds[i].pos.i != 0 || sounds[i].pos.j != 0 || sounds[i].pos.k != 0)
                         {
                             if (found)
@@ -967,6 +988,8 @@ static bool AUDReclaimSource(const int32_t &sound, bool high_priority = false)
                             }
                             found = true;
                         }
+                    }
+                }
                 if (!found)
                 {
                     return false;
@@ -1007,6 +1030,7 @@ void AUDStartPlaying(const int32_t &sound)
     if (sound >= 0 && sound < (int32_t)sounds.size())
     {
         if (sounds[sound].music || starSystemOK())
+        {
             if (AUDReclaimSource(sound, sounds[sound].pos == QVector(0, 0, 0)))
             {
 #ifdef SOUND_DEBUG
@@ -1016,6 +1040,7 @@ void AUDStartPlaying(const int32_t &sound)
                 AUDSoundGain(sound, sounds[sound].gain, sounds[sound].music);
                 alSourcePlay(sounds[sound].source);
             }
+        }
     }
 #endif
 }
@@ -1025,11 +1050,17 @@ void AUDPlay(const int32_t &sound, const QVector &pos, const Vector &vel, const 
 #ifdef HAVE_AL
     char tmp;
     if (sound < 0)
+    {
         return;
+    }
     if (sounds[sound].buffer == 0)
+    {
         return;
+    }
     if (!starSystemOK() && !sounds[sound].music)
+    {
         return;
+    }
     if (AUDIsPlaying(sound))
         AUDStopPlaying(sound);
     if ((tmp = AUDQueryAudability(sound, pos.Cast(), vel, gain)) != 0)
