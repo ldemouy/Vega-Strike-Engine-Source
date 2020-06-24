@@ -47,16 +47,22 @@ void FireAt::AddReplaceLastOrder(bool replace)
     if (lastOrder)
     {
         if (replace)
+        {
             ReplaceOrd(this, parent, lastOrder);
+        }
         else
+        {
             AddOrd(this, parent, lastOrder);
+        }
         lastOrder = nullptr;
     }
 }
 void FireAt::ExecuteLastScriptFor(float time)
 {
     if (lastOrder)
+    {
         lastOrder = new ExecuteFor(lastOrder, time);
+    }
 }
 void FireAt::FaceTarget(bool end)
 {
@@ -137,9 +143,13 @@ public:
         dir = !dir;
         SetDesiredAngularVelocity(Vector(0.0f, 0.0f, 0.0f), true);
         if (updown)
+        {
             Up(dir ? 1.0f : -1.0f);
+        }
         else
+        {
             Right(dir ? 1.0f : -1.0f);
+        }
         Vector P = Vector(0, 0, 0), Q = Vector(0, 0, 0);
         parent->GetOrientation(P, Q, facing);
     }
@@ -155,7 +165,9 @@ public:
         parent->GetOrientation(P, Q, R);
         static float ang = cos(XMLSupport::parse_float(vs_config->getVariable("AI", "evasion_angle", "45")));
         if (R.Dot(facing) < ang || (desired_ang_velocity.i == 0 && desired_ang_velocity.j == 0 && desired_ang_velocity.k == 0))
+        {
             SetOppositeDir();
+        }
     }
 };
 
@@ -193,14 +205,18 @@ void BarrelRoll(Order *aisc, Unit *un)
     {
         per = ((float)rand()) / RAND_MAX;
         if (per < .5)
+        {
             per -= 1;
+        }
         broll->Up(per);
     }
     else
     {
         per = ((float)rand()) / RAND_MAX;
         if (per < .5)
+        {
             per -= 1;
+        }
         broll->Right(per);
     }
     bool afterburn = useAfterburner();
@@ -272,18 +288,26 @@ namespace Orders
                 qq = vsr.uniformInc(-1, 1);
                 rr.j = qq;
                 if (qq > 0)
+                {
                     qq += loopdis;
+                }
                 if (qq < 0)
+                {
                     qq -= loopdis;
+                }
             }
             else
             {
                 pp = vsr.uniformInc(-1, 1);
                 rr.i = pp;
                 if (pp > 0)
+                {
                     pp += loopdis;
+                }
                 if (pp < 0)
+                {
                     pp -= loopdis;
+                }
             }
         }
         void Execute()
@@ -317,9 +341,13 @@ namespace Orders
                 {
                     done = false;
                     if (afterburn)
+                    {
                         m.SetAfterburn(ab_needed);
+                    }
                     else
+                    {
                         m.SetAfterburn(0);
+                    }
                     Vector scala =
                         targ->cumulative_transformation_matrix.getQ().Scale(qq * (parent->rSize() + targ->rSize())) + targ->cumulative_transformation_matrix.getP().Scale(pp * (parent->rSize() + targ->rSize()));
                     QVector dest = targ->Position() + scala;
@@ -361,18 +389,26 @@ namespace Orders
                 qq = vsr.uniformInc(-1, 1);
                 rr.j = qq;
                 if (qq > 0)
+                {
                     qq += loopdis;
+                }
                 if (qq < 0)
+                {
                     qq -= loopdis;
+                }
             }
             else
             {
                 pp = vsr.uniformInc(-1, 1);
                 rr.i = pp;
                 if (pp > 0)
+                {
                     pp += loopdis;
+                }
                 if (pp < 0)
+                {
                     pp -= loopdis;
+                }
             }
         }
         void Execute()
@@ -394,9 +430,13 @@ namespace Orders
                 {
                     done = false;
                     if (afterburn)
+                    {
                         m.SetAfterburn(ab_needed);
+                    }
                     else
+                    {
                         m.SetAfterburn(0);
+                    }
                     Vector scala =
                         targ->cumulative_transformation_matrix.getQ().Scale(qq * (parent->rSize() + targ->rSize())) + targ->cumulative_transformation_matrix.getP().Scale(pp * (parent->rSize() + targ->rSize()));
                     QVector dest = targ->Position() + scala;
@@ -451,18 +491,26 @@ namespace Orders
                 qq = vsr.uniformInc(-1, 1);
                 rr.j = qq;
                 if (qq > 0)
+                {
                     qq += loopdis;
+                }
                 if (qq < 0)
+                {
                     qq -= loopdis;
+                }
             }
             else
             {
                 pp = vsr.uniformInc(-1, 1);
                 rr.i = pp;
                 if (pp > 0)
+                {
                     pp += loopdis;
+                }
                 if (pp < 0)
+                {
                     pp -= loopdis;
+                }
             }
         }
         void Execute()
@@ -523,24 +571,32 @@ void AggressiveLoopAround(Order *aisc, Unit *un)
 void RollLeft(Order *aisc, Unit *un)
 {
     if (un->aistate)
+    {
         AddOrd(un->aistate, un, new Orders::ExecuteFor(new Orders::MatchRoll(un->GetComputerData().max_roll_right, false), 1.0f));
+    }
 }
 void RollRight(Order *aisc, Unit *un)
 {
     if (un->aistate)
+    {
         AddOrd(un->aistate, un, new Orders::ExecuteFor(new Orders::MatchRoll(-un->GetComputerData().max_roll_left, false), 1.0f));
+    }
 }
 void RollLeftHard(Order *aisc, Unit *un)
 {
     static float durvar = XMLSupport::parse_float(vs_config->getVariable("AI", "roll_order_duration", "5.0"));
     if (un->aistate)
+    {
         AddOrd(un->aistate, un, new Orders::ExecuteFor(new Orders::MatchRoll(un->GetComputerData().max_roll_right, false), durvar));
+    }
 }
 void RollRightHard(Order *aisc, Unit *un)
 {
     static float durvar = XMLSupport::parse_float(vs_config->getVariable("AI", "roll_order_duration", "5.0"));
     if (un->aistate)
+    {
         AddOrd(un->aistate, un, new Orders::ExecuteFor(new Orders::MatchRoll(-un->GetComputerData().max_roll_left, false), durvar));
+    }
 }
 void LoopAroundFast(Order *aisc, Unit *un)
 {
@@ -612,31 +668,15 @@ void AggressiveLoopAroundSlow(Order *aisc, Unit *un)
     Order *broll = new Orders::LoopAroundAgro(true, false, false, (int)(size_t)un);
     AddOrd(aisc, un, broll);
 }
-#if 0
-void Evade( Order *aisc, Unit *un )
-{
-    QVector v( un->Position() );
-    QVector u( v );
-    Unit   *targ = un->Target();
-    if (targ)
-        u = targ->Position();
-    Order  *ord  = new Orders::ChangeHeading( ( 200*(v-u) )+v, 3 );
-    AddOrd( aisc, un, ord );
-    bool    afterburn = useAfterburner();
-    ord = new Orders::MatchLinearVelocity( un->ClampVelocity( Vector( -10000, 0, 10000 ), afterburn ), false, afterburn, true );
-    AddOrd( aisc, un, ord );
-    ord = new Orders::FaceTargetITTS( false, 3 );
-    AddOrd( aisc, un, ord );
-    ord = new Orders::MatchLinearVelocity( un->ClampVelocity( Vector( 10000, 0, 10000 ), afterburn ), false, afterburn, true );
-    AddOrd( aisc, un, ord );
-}
-#endif
+
 void MoveTo(Order *aisc, Unit *un)
 {
     QVector Targ(un->Position());
     Unit *untarg = un->Target();
     if (untarg)
+    {
         Targ = untarg->Position();
+    }
     Order *ord = new Orders::MoveTo(Targ, false, 3);
     AddOrd(aisc, un, ord);
 }
@@ -645,7 +685,9 @@ void KickstopBase(Order *aisc, Unit *un, bool match)
 {
     Vector vec(0, 0, 0);
     if (match && un->Target())
+    {
         vec = un->Target()->GetVelocity();
+    }
     Order *ord = new Orders::MatchLinearVelocity(un->ClampVelocity(vec, false), true, false, true);
     AddOrd(aisc, un, ord);
     ord = (new Orders::FaceTargetITTS(false, 3));
@@ -826,7 +868,9 @@ void AfterburnTurnAway(Order *aisc, Unit *un)
     QVector u(v);
     Unit *targ = un->Target();
     if (targ)
+    {
         u = targ->Position();
+    }
     bool afterburn = useAfterburner() || useAfterburnerToRun();
     Order *ord = new Orders::MatchLinearVelocity(un->ClampVelocity(200 * (v - u).Cast(), afterburn), false, afterburn, false);
     AddOrd(aisc, un, ord);
@@ -839,7 +883,9 @@ void TurnAway(Order *aisc, Unit *un)
     QVector u(v);
     Unit *targ = un->Target();
     if (targ)
+    {
         u = targ->Position();
+    }
     bool afterburn = false;
     Order *ord = new Orders::MatchLinearVelocity(un->ClampVelocity(200 * (v - u).Cast(), afterburn), false, afterburn, false);
     AddOrd(aisc, un, ord);
@@ -964,11 +1010,13 @@ void DropCargo(Order *aisc, Unit *un)
 {
     if (un->numCargo() > 0)
     {
-        int dropcount = un->numCargo();
+        int32_t dropcount = un->numCargo();
 
         {
-            for (int i = 0; i < dropcount; i++)
+            for (int32_t i = 0; i < dropcount; i++)
+            {
                 un->EjectCargo(0);
+            }
         }
         Stop(aisc, un);
     }
@@ -982,11 +1030,13 @@ void DropHalfCargo(Order *aisc, Unit *un)
 {
     if (un->numCargo() > 0)
     {
-        int dropcount = (un->numCargo() / 2) + 1;
+        int32_t dropcount = (un->numCargo() / 2) + 1;
 
         {
-            for (int i = 0; i < dropcount; i++)
+            for (int32_t i = 0; i < dropcount; i++)
+            {
                 un->EjectCargo(0);
+            }
         }
         Stop(aisc, un);
     }
