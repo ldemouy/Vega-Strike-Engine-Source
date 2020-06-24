@@ -70,7 +70,7 @@ void AImissionScript::Execute()
     mission->setCurrentAIOrder(this);
     if (first_run)
     {
-        for (unsigned int i = 0;
+        for (uint32_t i = 0;
              (i < active_missions.size()) && (!(mission->runScript(modulename, "initai", classid)));
              i++)
         {
@@ -87,16 +87,22 @@ void AImissionScript::Execute()
     else
     {
         if (vi->int_val == 0)
+        {
             Order::Execute();
+        }
         else if (vi->int_val == 1)
+        {
             FlyByWire::Execute();
+        }
     }
     mission->deleteVarInst(vi);
     done = false;
 
     varInst *done_vi = mission->lookupClassVariable(modulename, "_done", classid);
     if (done_vi != nullptr && done_vi->type == VAR_BOOL && done_vi->bool_val == true)
+    {
         done = true;
+    }
     mission->deleteVarInst(done_vi);
 }
 
@@ -159,7 +165,7 @@ AIFlyToJumppoint::AIFlyToJumppoint(Unit *jumppoint_unit, float fly_speed, bool a
     vi_unit->object = jumppoint_unit;
 }
 
-AIPatrol::AIPatrol(int mode, const QVector &area, float range, Unit *around_unit,
+AIPatrol::AIPatrol(int32_t mode, const QVector &area, float range, Unit *around_unit,
                    float patrol_speed) : AImissionScript("ai_patrol")
 {
     varInst *vi_wp = mission->lookupClassVariable(modulename, "area", classid);
@@ -178,7 +184,7 @@ AIPatrol::AIPatrol(int mode, const QVector &area, float range, Unit *around_unit
     vi_unit->objectname = "unit";
     vi_unit->object = around_unit;
 }
-AIPatrolDefend::AIPatrolDefend(int mode, const QVector &area, float range, Unit *around_unit,
+AIPatrolDefend::AIPatrolDefend(int32_t mode, const QVector &area, float range, Unit *around_unit,
                                float patrol_speed) : AImissionScript("ai_patrol_defend")
 {
     varInst *vi_wp = mission->lookupClassVariable(modulename, "area", classid);
