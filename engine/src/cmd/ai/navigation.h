@@ -11,21 +11,21 @@ namespace Orders
     const float THRESHOLD = 0.01;
 
     /**
- * The moveto order attempts to calculate the best way to apply thrust (within the computer bound limits) to get a starship to place B and stopped.
- * It uses an integral of acceleration and velocity over time to solve for
- * time when to decelerate.  Is  inaccurate within 1 physics frame, and must
- * use switchbacks and then once they have been met sets terminating X,Y, and Z
- * to figure out how many switchbacks it has made
- * , missing the target and coming back over it.
- */
+     * The moveto order attempts to calculate the best way to apply thrust (within the computer bound limits) to get a starship to place B and stopped.
+     * It uses an integral of acceleration and velocity over time to solve for
+     * time when to decelerate.  Is  inaccurate within 1 physics frame, and must
+     * use switchbacks and then once they have been met sets terminating X,Y, and Z
+     * to figure out how many switchbacks it has made
+     * , missing the target and coming back over it.
+     */
 
     class MoveToParent
     {
         bool afterburn;
-        unsigned char switchbacks;
-        unsigned char terminatingX;
-        unsigned char terminatingY;
-        unsigned char terminatingZ;
+        uint8_t switchbacks;
+        uint8_t terminatingX;
+        uint8_t terminatingY;
+        uint8_t terminatingZ;
         Vector last_velocity;
         bool OptimizeSpeed(Unit *parent, float v, float &a, float max_speed);
         bool Done(const Vector &);
@@ -36,7 +36,7 @@ namespace Orders
         {
             afterburn = tf;
         }
-        MoveToParent(bool aft, unsigned char switchbacks, bool terminating = true)
+        MoveToParent(bool aft, uint8_t switchbacks, bool terminating = true)
             : afterburn(aft), switchbacks(switchbacks), terminatingX(0), terminatingY(0), terminatingZ(0), last_velocity(0, 0, 0), selfterminating(terminating) {}
         bool Execute(Unit *parent, const QVector &targetlocation);
     };
@@ -50,9 +50,9 @@ namespace Orders
             m.SetAfterburn(tf);
         }
         ///takes in the destination target, whether afterburners should be applied, and the ammount of accuracy (how many times it shoudl miss destination and come back) should be used
-        MoveTo(const QVector &target, bool aft, unsigned char switchbacks, bool terminating = true) : Order(MOVEMENT,
-                                                                                                            SLOCATION),
-                                                                                                      m(aft, switchbacks, terminating)
+        MoveTo(const QVector &target, bool aft, uint8_t switchbacks, bool terminating = true) : Order(MOVEMENT,
+                                                                                                      SLOCATION),
+                                                                                                m(aft, switchbacks, terminating)
         {
             targetlocation = target;
             done = false;
@@ -66,12 +66,12 @@ namespace Orders
         }
     };
     /**
- * This AI script attempts to change headings to face a given direction
- * again it is inaccurate to within 1 physics frame, though calculating thrust
- * at 1/3 the way through a physics frame has made this effect of wobbling
- * all but subside! switchbacks keep track of how many times it has almost
- * but passed over target destination
- */
+     * This AI script attempts to change headings to face a given direction
+     * again it is inaccurate to within 1 physics frame, though calculating thrust
+     * at 1/3 the way through a physics frame has made this effect of wobbling
+     * all but subside! switchbacks keep track of how many times it has almost
+     * but passed over target destination
+     */
     class ChangeHeading : public Order
     {
         float turningspeed;
@@ -106,15 +106,15 @@ namespace Orders
         virtual ~ChangeHeading();
     };
     /**
- * This class analyzes a Unit's position and adjusts ChangeHeading to face
- * that target's center
- */
+     * This class analyzes a Unit's position and adjusts ChangeHeading to face
+     * that target's center
+     */
     class FaceTarget : public ChangeHeading
     {
         bool finish;
 
     public:
-        FaceTarget(bool fini = false, int accuracy = 3);
+        FaceTarget(bool fini = false, int32_t accuracy = 3);
         virtual void Execute();
         virtual string getOrderDescription()
         {
@@ -123,9 +123,9 @@ namespace Orders
         virtual ~FaceTarget();
     };
     /**
- * This class analyzes a Unit's position and adjusts ChangeHeading to
- * SPEC towards target
- */
+     * This class analyzes a Unit's position and adjusts ChangeHeading to
+     * SPEC towards target
+     */
     class AutoLongHaul : public ChangeHeading
     {
         bool finish;
@@ -138,7 +138,7 @@ namespace Orders
         QVector NewDestination(const QVector &curnewdestination, double magnitude);
 
     public:
-        AutoLongHaul(bool fini = false, int accuracy = 1);
+        AutoLongHaul(bool fini = false, int32_t accuracy = 1);
         virtual void Execute();
         virtual void SetParent(Unit *parent1);
         virtual string getOrderDescription()
@@ -148,9 +148,9 @@ namespace Orders
         virtual ~AutoLongHaul();
     };
     /**
- * This class analyzes a Unit's position and adjusts ChangeHeading to face
- * that target's ITTS indicator for best firing solution
- */
+     * This class analyzes a Unit's position and adjusts ChangeHeading to face
+     * that target's ITTS indicator for best firing solution
+     */
     class FaceTargetITTS : public ChangeHeading
     {
         bool finish;
@@ -159,7 +159,7 @@ namespace Orders
         bool useitts;
 
     public:
-        FaceTargetITTS(bool fini = false, int accuracy = 3);
+        FaceTargetITTS(bool fini = false, int32_t accuracy = 3);
         virtual void Execute();
         virtual string getOrderDescription()
         {
@@ -203,7 +203,7 @@ namespace Orders
         float dist;
 
     public:
-        FaceDirection(float distToMatchFacing, bool fini = false, int accuracy = 3);
+        FaceDirection(float distToMatchFacing, bool fini = false, int32_t accuracy = 3);
         virtual void SetParent(Unit *parent1);
         virtual void Execute();
         virtual string getOrderDescription()
