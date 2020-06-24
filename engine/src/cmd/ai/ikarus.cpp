@@ -34,9 +34,6 @@ void Ikarus::ExecuteStrategy(Unit *target)
         MatchLinearVelocity(true, Vector(0, 0, 10000), false, true); //all ahead full! (not with afterburners but in local coords)
         AddReplaceLastOrder(true);
     }
-    //might want to enqueue both movement and facing at the same time as follows:
-    if (0)
-        ReplaceOrder(new AIScript("++turntowards.xml")); //find this list of names in script.cpp
 
     cur_time += SIMULATION_ATOM;
     if (cur_time - last_time > 5)
@@ -51,7 +48,9 @@ void Ikarus::WillFire(Unit *target)
 {
     bool missilelockp = false;
     if (ShouldFire(target, missilelockp)) //this is a function from fire.cpp  you probably want to write a better one
+    {
         parent->Fire(false);
+    }
     if (missilelockp)
     {
         parent->Fire(true); //if missiles locked fire
@@ -62,15 +61,17 @@ void Ikarus::WillFire(Unit *target)
 void Ikarus::DecideTarget()
 {
     Unit *targ = parent->Target();
-    if (!targ || /*some other qualifying factor for changing targets*/ 0)
+    if (!targ)
     {
         Unit *un = nullptr;
         for (UniverseUtil::PythonUnitIter i = UniverseUtil::getUnitList(); (un = *i); ++i)
+        {
             if (parent->getRelation(un) < 0)
             {
                 parent->Target(un);
                 break;
             }
+        }
     }
 }
 
@@ -86,8 +87,12 @@ void Ikarus::Execute()
         Unit *target = parent->Target();
         bool isjumpable = target ? ((!target->GetDestinations().empty()) && parent->GetJumpStatus().drive >= 0) : false;
         if (isjumpable)
+        {
             AfterburnTurnTowards(this, parent);
+        }
         else
+        {
             ExecuteStrategy(target);
+        }
     }
 }
