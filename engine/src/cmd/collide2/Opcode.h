@@ -29,7 +29,6 @@
 #include "OPC_IceHook.h"
 #include "Ice/IceRandom.h"
 #include "Ice/IceRevisitedRadix.h"
-#include "Ice/IceUtils.h"
 #include "Ice/IceContainer.h"
 #include "Ice/IcePairs.h"
 

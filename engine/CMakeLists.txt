@@ -146,8 +146,7 @@ ADD_LIBRARY(OPcollide
     src/cmd/collide2/Ice/IceRay.cpp
     src/cmd/collide2/Ice/IceRevisitedRadix.cpp
     src/cmd/collide2/Ice/IceSegment.cpp
-    src/cmd/collide2/Ice/IceTriangle.cpp
-    src/cmd/collide2/Ice/IceUtils.cpp
+    src/cmd/collide2/Ice/IceTriangle.cpp    
     src/cmd/collide2/csgeom2/opbox.cpp
     src/cmd/collide2/csgeom2/opmatrix3.cpp
     src/cmd/collide2/csgeom2/opvector3.cpp
