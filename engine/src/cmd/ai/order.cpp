@@ -32,9 +32,9 @@ void Order::Execute()
 {
     static float airesptime = XMLSupport::parse_float(vs_config->getVariable("AI", "CommResponseTime", "3"));
     ProcessCommunicationMessages(airesptime, true);
-    int completed = 0;
-    unsigned int i = 0;
-    for (i = 0; i < suborders.size(); i++)
+    int32_t completed = 0;
+    for (uint32_t i = 0; i < suborders.size(); i++)
+    {
         if ((completed & ((suborders[i])->getType() & (ALLTYPES))) == 0)
         {
             (suborders[i])->Execute();
@@ -47,30 +47,44 @@ void Order::Execute()
                 i--;
             }
         }
+    }
     if (suborders.size() == 0)
+    {
         done = true;
+    }
     else
+    {
         done = false;
+    }
 }
 
-Order *Order::queryType(unsigned int type)
+Order *Order::queryType(uint32_t type)
 {
-    for (unsigned int i = 0; i < suborders.size(); i++)
+    for (uint32_t i = 0; i < suborders.size(); i++)
+    {
         if ((suborders[i]->type & type) == type)
+        {
             return suborders[i];
+        }
+    }
     return nullptr;
 }
-Order *Order::queryAny(unsigned int type)
+Order *Order::queryAny(uint32_t type)
 {
-    for (unsigned int i = 0; i < suborders.size(); i++)
+    for (uint32_t i = 0; i < suborders.size(); i++)
+    {
         if ((suborders[i]->type & type) != 0)
+        {
             return suborders[i];
+        }
+    }
     return nullptr;
 }
 
-void Order::eraseType(unsigned int type)
+void Order::eraseType(uint32_t type)
 {
-    for (unsigned int i = 0; i < suborders.size(); i++)
+    for (uint32_t i = 0; i < suborders.size(); i++)
+    {
         if ((suborders[i]->type & type) == type)
         {
             suborders[i]->Destroy();
@@ -78,6 +92,7 @@ void Order::eraseType(unsigned int type)
             suborders.erase(j);
             i--;
         }
+    }
 }
 
 Order *Order::EnqueueOrder(Order *ord)
@@ -129,7 +144,9 @@ bool Order::AttachOrder(Unit *targets1)
     if (!(subtype & STARGET))
     {
         if (subtype & SSELF)
+        {
             return AttachSelfOrder(targets1); //can use attach order to do shit
+        }
 
         return false;
     }
@@ -140,7 +157,9 @@ bool Order::AttachOrder(Unit *targets1)
 bool Order::AttachSelfOrder(Unit *targets1)
 {
     if (!(subtype & SSELF))
+    {
         return false;
+    }
     group.SetUnit(targets1);
     return true;
 }
@@ -148,7 +167,9 @@ bool Order::AttachSelfOrder(Unit *targets1)
 bool Order::AttachOrder(QVector targetv)
 {
     if (!(subtype & SLOCATION))
+    {
         return false;
+    }
     targetlocation = targetv;
     return true;
 }
@@ -161,9 +182,13 @@ Order *Order::findOrder(Order *ord)
         printf("this order: %s\n", getOrderDescription().c_str());
         return nullptr;
     }
-    for (unsigned int i = 0; i < suborders.size(); i++)
+    for (uint32_t i = 0; i < suborders.size(); i++)
+    {
         if (suborders[i] == ord)
+        {
             return suborders[i];
+        }
+    }
     return nullptr;
 }
 Order::~Order()
@@ -176,8 +201,7 @@ void Order::Destructor()
 }
 void Order::Destroy()
 {
-    unsigned int i;
-    for (i = 0; i < suborders.size(); i++)
+    for (uint32_t i = 0; i < suborders.size(); i++)
     {
         if (suborders[i] == nullptr)
         {
@@ -189,23 +213,29 @@ void Order::Destroy()
             suborders[i]->Destroy();
         }
     }
+
+    for (auto i = messagequeue.begin(); i != messagequeue.end(); i++)
     {
-        for (list<CommunicationMessage *>::iterator i = messagequeue.begin(); i != messagequeue.end(); i++)
-            delete (*i);
+        delete (*i);
     }
+
     messagequeue.clear();
     suborders.clear();
     this->Destructor();
 }
 void Order::ClearMessages()
 {
-    unsigned int i;
-    for (i = 0; i < suborders.size(); i++)
-        suborders[i]->ClearMessages();
+
+    for (uint32_t i = 0; i < suborders.size(); i++)
     {
-        for (list<CommunicationMessage *>::iterator i = messagequeue.begin(); i != messagequeue.end(); i++)
-            delete (*i);
+        suborders[i]->ClearMessages();
     }
+
+    for (auto i = messagequeue.begin(); i != messagequeue.end(); i++)
+    {
+        delete (*i);
+    }
+
     messagequeue.clear();
 }
 void Order::eraseOrder(Order *ord)
@@ -217,7 +247,8 @@ void Order::eraseOrder(Order *ord)
         printf("this order: %s\n", getOrderDescription().c_str());
         return;
     }
-    for (unsigned int i = 0; i < suborders.size() && found == false; i++)
+    for (uint32_t i = 0; i < suborders.size() && found == false; i++)
+    {
         if (suborders[i] == ord)
         {
             suborders[i]->Destroy();
@@ -225,6 +256,7 @@ void Order::eraseOrder(Order *ord)
             suborders.erase(j);
             found = true;
         }
+    }
     if (!found)
     {
         printf("TOLD TO ERASE AN ORDER - NOT FOUND\n");
@@ -236,21 +268,29 @@ Order *Order::findOrderList()
 {
     olist_t *orderlist = getOrderList();
     if (orderlist)
+    {
         return this;
+    }
     Order *found_order = nullptr;
-    for (unsigned int i = 0; i < suborders.size() && found_order == nullptr; i++)
+    for (uint32_t i = 0; i < suborders.size() && found_order == nullptr; i++)
+    {
         found_order = suborders[i]->findOrderList();
+    }
     return found_order;
 }
 
 string Order::createFullOrderDescription(int level)
 {
     string tabs;
-    for (int i = 0; i < level; i++)
+    for (int32_t i = 0; i < level; i++)
+    {
         tabs = tabs + "   ";
+    }
     string desc = tabs + "+" + getOrderDescription() + "\n";
-    for (unsigned int j = 0; j < suborders.size(); j++)
+    for (uint32_t j = 0; j < suborders.size(); j++)
+    {
         desc = desc + suborders[j]->createFullOrderDescription(level + 1);
+    }
     return desc;
 }
 
@@ -271,7 +311,9 @@ namespace Orders
         }
         time += SIMULATION_ATOM;
         if (child)
+        {
             child->Execute();
+        }
     }
 
     Join::Join(Unit *parent, Order *first, Order *second)
@@ -299,7 +341,7 @@ namespace Orders
         }
     }
 
-    Sequence::Sequence(Unit *parent, Order *order, unsigned int excludeTypes)
+    Sequence::Sequence(Unit *parent, Order *order, uint32_t excludeTypes)
         : Order(order->getType() | excludeTypes,
                 order->getSubType()),
           order(order)

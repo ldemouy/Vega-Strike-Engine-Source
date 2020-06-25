@@ -49,9 +49,9 @@ protected:
     ///The unit this order is attached to
     Unit *parent;
     ///The bit code (from ORDERTYPES) that this order is (for parallel execution)
-    unsigned int type;
+    uint32_t type;
 
-    unsigned int subtype;
+    uint32_t subtype;
     ///Whether or not this order is done
     bool done;
     ///If this order applies to a group of units (as in form up with this group)
@@ -102,8 +102,9 @@ public:
           done(false),
           targetlocation(0, 0, 0){
               VSCONSTRUCT1('O')}
+
           ///The constructor that specifies what order dependencies this order has
-          Order(int type, int subtype)
+          Order(int32_t type, int32_t subtype)
         : parent(nullptr),
           type(type),
           subtype(subtype),
@@ -201,7 +202,7 @@ protected:
 class OrderFactory
 {
 public:
-    virtual int type()
+    virtual int32_t type()
     {
         return 0;
     }
