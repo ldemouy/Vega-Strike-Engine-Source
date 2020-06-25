@@ -84,13 +84,15 @@ static HardCodedMap hard_coded_scripts = MakeHardCodedScripts();
 bool validateHardCodedScript(std::string s)
 {
     if (s.length() == 0)
+    {
         return true;
+    }
     return hard_coded_scripts.find(s) != hard_coded_scripts.end();
 }
 struct AIScriptXML
 {
-    int unitlevel;
-    int acc;
+    int32_t unitlevel;
+    int32_t acc;
     vector<float> executefor;
     bool itts;
     bool afterburn;
@@ -325,16 +327,24 @@ void AIScript::beginElement(const string &name, const AttributeList &attributes)
                 else
                 {
                     if ((tmp = this->parent->Target()))
+                    {
                         topv() = (tmp->Position());
+                    }
                     else
+                    {
                         topv() = (xml->defaultvec);
+                    }
                 }
                 break;
             case TARGETPOS:
                 if ((tmp = this->parent->Target()))
+                {
                     topv() = (tmp->Position());
+                }
                 else
+                {
                     topv() = (xml->defaultvec);
+                }
                 break;
 
             case YOURPOS:
@@ -349,16 +359,24 @@ void AIScript::beginElement(const string &name, const AttributeList &attributes)
                 else
                 {
                     if ((tmp = this->parent->Target()))
+                    {
                         topv() = (tmp->GetVelocity());
+                    }
                     else
+                    {
                         topv() = (xml->defaultvec);
+                    }
                 }
                 break;
             case TARGETV:
                 if ((tmp = this->parent->Target()))
+                {
                     topv() = (tmp->GetVelocity());
+                }
                 else
+                {
                     topv() = (xml->defaultvec);
+                }
                 break;
 
             case YOURV:
@@ -577,9 +595,13 @@ void AIScript::endElement(const string &name)
         else
         {
             if ((tmp = parent->Target()))
+            {
                 xml->vectors.push(tmp->ToWorldCoordinates(topv()));
+            }
             else
+            {
                 xml->vectors.push(xml->defaultvec);
+            }
         }
         break;
     case THREATLOCAL:
@@ -591,25 +613,37 @@ void AIScript::endElement(const string &name)
         else
         {
             if ((tmp = parent->Target()))
+            {
                 xml->vectors.push(tmp->ToLocalCoordinates(topv()));
+            }
             else
+            {
                 xml->vectors.push(xml->defaultvec);
+            }
         }
         break;
 
     case TARGETWORLD:
         xml->unitlevel++;
         if ((tmp = parent->Target()))
+        {
             xml->vectors.push(tmp->ToWorldCoordinates(topv()));
+        }
         else
+        {
             xml->vectors.push(xml->defaultvec);
+        }
         break;
     case TARGETLOCAL:
         xml->unitlevel++;
         if ((tmp = parent->Target()))
+        {
             xml->vectors.push(tmp->ToLocalCoordinates(topv()));
+        }
         else
+        {
             xml->vectors.push(xml->defaultvec);
+        }
         break;
     case YOURLOCAL:
         xml->unitlevel++;
@@ -623,7 +657,9 @@ void AIScript::endElement(const string &name)
     case NORMALIZE:
         xml->unitlevel--;
         if (topv().i || topv().j || topv().k)
+        {
             topv().Normalize();
+        }
         break;
     case SCALE:
         xml->unitlevel--;
@@ -708,11 +744,15 @@ void AIScript::endElement(const string &name)
     case FACETARGET:
         xml->unitlevel--;
         if (xml->itts || parent->GetComputerData().itts)
+        {
             xml->orders.push_back(new Orders::FaceTargetITTS(xml->terminate,
                                                              (bool)xml->acc));
+        }
         else
+        {
             xml->orders.push_back(new Orders::FaceTarget(xml->terminate,
                                                          (bool)xml->acc));
+        }
         break;
     case MATCHLIN:
         xml->unitlevel--;
@@ -795,13 +835,19 @@ void AIScript::LoadXML()
         (*myscript)(this, parent);
         if (doroll)
         {
-            unsigned int val = rand();
+            uint32_t val = rand();
             if (val < RAND_MAX / 4)
+            {
                 RollRightHard(this, parent);
+            }
             else if (val < RAND_MAX / 2)
+            {
                 RollLeftHard(this, parent);
+            }
             else
+            {
                 RollLeft(this, parent);
+            }
         }
         if (aidebug > 1)
         {
@@ -823,7 +869,9 @@ void AIScript::LoadXML()
                     value = (pdmag - parent->rSize() - targ->rSize());
                     float myvel = pdmag > 0 ? PosDifference.Dot(parent->GetVelocity() - targ->GetVelocity()) / pdmag : 0;
                     if (myvel > 0)
+                    {
                         value -= myvel * myvel / (2 * (parent->Limits().retro / parent->GetMass()));
+                    }
                 }
                 else
                 {
@@ -841,9 +889,13 @@ void AIScript::LoadXML()
     else
     {
         if (aidebug > 1)
+        {
             VSFileSystem::vs_fprintf(stderr, "using soft coded script %s", filename);
+        }
         if (aidebug > 0)
+        {
             UniverseUtil::IOmessage(0, parent->name, "all", string("FAILED(or missile) script ") + string(filename) + " threat " + XMLSupport::tostring(parent->GetComputerData().threatlevel));
+        }
     }
 #ifdef AIDBG
     VSFileSystem::vs_fprintf(stderr, "chd");
@@ -936,7 +988,9 @@ AIScript::~AIScript()
     fflush(stderr);
 #endif
     if (filename)
+    {
         delete[] filename;
+    }
 #ifdef ORDERDEBUG
     VSFileSystem::vs_fprintf(stderr, "sc\n");
     fflush(stderr);
