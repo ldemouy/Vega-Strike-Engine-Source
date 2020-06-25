@@ -94,7 +94,7 @@ void ReleasePruningSorters()
  *	\return		true if success.
  */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool Opcode::BipartiteBoxPruning(udword nb0, const AABB **array0, udword nb1, const AABB **array1, Pairs &pairs, const Axes &axes)
+bool Opcode::BipartiteBoxPruning(udword nb0, const AABB **array0, udword nb1, const AABB **array1, Pairs &pairs, const Axis &axes)
 {
 	// Checkings
 	if (!nb0 || !array0 || !nb1 || !array1)
@@ -193,7 +193,7 @@ bool Opcode::BipartiteBoxPruning(udword nb0, const AABB **array0, udword nb1, co
  *	\return		true if success.
  */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool Opcode::CompleteBoxPruning(udword nb, const AABB **array, Pairs &pairs, const Axes &axes)
+bool Opcode::CompleteBoxPruning(udword nb, const AABB **array, Pairs &pairs, const Axis &axes)
 {
 	// Checkings
 	if (!nb || !array)

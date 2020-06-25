@@ -458,7 +458,7 @@ bool SweepAndPrune::Init(udword nb_objects, const AABB **boxes)
 
 	{
 		Pairs P;
-		CompleteBoxPruning(nb_objects, boxes, P, Axes(AXES_XZY));
+		CompleteBoxPruning(nb_objects, boxes, P, Axis(AXIS_XZY));
 		for (udword i = 0; i < P.GetNbPairs(); i++)
 		{
 			const Pair *PP = P.GetPair(i);

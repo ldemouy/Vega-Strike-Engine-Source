@@ -38,7 +38,7 @@
 namespace Opcode
 {
 
-#include "Ice/IceAxes.h"
+#include "Ice/IceAxis.h"
 #include "Ice/IcePoint.h"
 #include "Ice/IceHPoint.h"
 #include "Ice/IceMatrix3x3.h"
