@@ -141,8 +141,7 @@ ADD_LIBRARY(OPcollide
     src/cmd/collide2/Ice/IceMatrix4x4.cpp
     src/cmd/collide2/Ice/IceOBB.cpp
     src/cmd/collide2/Ice/IcePlane.cpp
-    src/cmd/collide2/Ice/IcePoint.cpp
-    src/cmd/collide2/Ice/IceRandom.cpp
+    src/cmd/collide2/Ice/IcePoint.cpp    
     src/cmd/collide2/Ice/IceRay.cpp
     src/cmd/collide2/Ice/IceRevisitedRadix.cpp
     src/cmd/collide2/Ice/IceSegment.cpp

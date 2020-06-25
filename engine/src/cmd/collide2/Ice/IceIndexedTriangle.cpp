@@ -11,6 +11,7 @@
 // Precompiled Header
 #include "Stdafx.h"
 #include <utility>
+#include <random>
 
 using namespace Opcode;
 
@@ -171,10 +172,13 @@ void IndexedTriangle::RandomPoint(const Point *verts, Point &random) const
 	if (!verts)
 		return;
 
+	std::default_random_engine engine;
+	std::uniform_real_distribution distribution;
+
 	// Random barycentric coords
-	float Alpha = UnitRandomFloat();
-	float Beta = UnitRandomFloat();
-	float Gamma = UnitRandomFloat();
+	float Alpha = distribution(engine) * ONE_OVER_RAND_MAX;
+	float Beta = distribution(engine) * ONE_OVER_RAND_MAX;
+	float Gamma = distribution(engine) * ONE_OVER_RAND_MAX;
 	float OneOverTotal = 1.0f / (Alpha + Beta + Gamma);
 	Alpha *= OneOverTotal;
 	Beta *= OneOverTotal;
