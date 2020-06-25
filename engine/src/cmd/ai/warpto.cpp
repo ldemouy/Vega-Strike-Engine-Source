@@ -49,7 +49,9 @@ bool DistanceWarrantsTravelTo(Unit *parent, float dist, bool following)
     parent->GetVelocityDifficultyMult(diff);
     float timetolive = dist / (diff * parent->GetComputerData().max_combat_speed);
     if (timetolive > max_allowable_travel_time())
+    {
         return true;
+    }
     return false;
 }
 
@@ -91,9 +93,13 @@ static void ActuallyWarpTo(Unit *parent, const QVector &tarpos, Vector tarvel, U
     }
     static bool domatch = XMLSupport::parse_bool(vs_config->getVariable("AI", "match_velocity_of_pursuant", "false"));
     if (chasedot > mintarveldot || !domatch)
+    {
         parent->computer.velocity_ref.SetUnit(nullptr);
+    }
     else
+    {
         parent->computer.velocity_ref.SetUnit(MatchSpeed);
+    }
 }
 
 void WarpToP(Unit *parent, Unit *target, bool following)
@@ -130,7 +136,9 @@ void WarpToP(Unit *parent, const QVector &target, float radius, bool following)
         static bool auto_valid =
             XMLSupport::parse_bool(vs_config->getVariable("physics", "insystem_jump_or_timeless_auto-pilot", "false"));
         if (!auto_valid)
+        {
             ActuallyWarpTo(parent, target, QVector(0, 0, .00001));
+        }
     }
     else
     {
