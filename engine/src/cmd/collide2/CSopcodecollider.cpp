@@ -50,11 +50,11 @@ csOPCODECollider::csOPCODECollider(const std::vector<mesh_polygon> &polygons)
 
 inline float min3(float a, float b, float c)
 {
-	return (a < b ? (a < c ? a : (c < b ? c : b)) : (b < c ? b : c));
+	return std::min({a, b, c});
 }
 inline float max3(float a, float b, float c)
 {
-	return (a > b ? (a > c ? a : (c > b ? c : b)) : (b > c ? b : c));
+	return std::max({a, b, c});
 }
 
 void csOPCODECollider::GeometryInitialize(const std::vector<mesh_polygon> &polygons)
@@ -71,13 +71,15 @@ void csOPCODECollider::GeometryInitialize(const std::vector<mesh_polygon> &polyg
 	{
 		m_pCollisionModel = new Opcode::Model;
 		if (!m_pCollisionModel)
+		{
 			return;
+		}
 
 		vertholder = new Point[vert_count];
 
 		csBox3 tmp;
 		tmp.StartBoundingBox();
-		unsigned int last = 0;
+		uint32_t last = 0;
 
 		/* Copies the Vector's in mesh_polygon to Point's in vertholder.
 		* This sucks but i dont see anyway around it */
@@ -116,7 +118,7 @@ csOPCODECollider::~csOPCODECollider()
 	if (m_pCollisionModel)
 	{
 		delete m_pCollisionModel;
-		m_pCollisionModel = 0;
+		m_pCollisionModel = nullptr;
 	}
 	pairs.DecRef();
 	delete[] vertholder;
@@ -128,7 +130,7 @@ void csOPCODECollider::MeshCallback(udword triangle_index,
 {
 	csOPCODECollider *collider = (csOPCODECollider *)user_data;
 	Point *vertholder = collider->vertholder;
-	int index = 3 * triangle_index;
+	int32_t index = 3 * triangle_index;
 	triangle.Vertex[0] = &vertholder[index];
 	triangle.Vertex[1] = &vertholder[index + 1];
 	triangle.Vertex[2] = &vertholder[index + 2];
@@ -168,7 +170,9 @@ void csOPCODECollider::RayCallback(const CollisionFace &faceHit, void *user_data
 	if (collider)
 	{
 		if (collider->collFace.mDistance > faceHit.mDistance)
+		{
 			collider->collFace = faceHit;
+		}
 	}
 }
 
@@ -181,10 +185,14 @@ bool csOPCODECollider::Collide(csOPCODECollider &otherCollider,
 	ColCache.Model1 = col2->m_pCollisionModel;
 	csMatrix3 m1;
 	if (trans1)
+	{
 		m1 = trans1->GetT2O();
+	}
 	csMatrix3 m2;
 	if (trans2)
+	{
 		m2 = trans2->GetT2O();
+	}
 	csVector3 u;
 	Matrix4x4 transform1;
 	transform1.m[0][3] = 0;
@@ -221,17 +229,25 @@ bool csOPCODECollider::Collide(csOPCODECollider &otherCollider,
 	transform2.m[1][2] = u.y;
 	transform2.m[2][2] = u.z;
 	if (trans1)
+	{
 		u = trans1->GetO2TTranslation();
+	}
 	else
+	{
 		u.Set(0, 0, 0);
+	}
 	transform1.m[3][0] = u.x;
 	transform1.m[3][1] = u.y;
 	transform1.m[3][2] = u.z;
 
 	if (trans2)
+	{
 		u = trans2->GetO2TTranslation();
+	}
 	else
+	{
 		u.Set(0, 0, 0);
+	}
 	transform2.m[3][0] = u.x;
 	transform2.m[3][1] = u.y;
 	transform2.m[3][2] = u.z;
@@ -273,7 +289,9 @@ Vector csOPCODECollider::getVertex(unsigned int which) const
 {
 	// This function is used to position the damage particles
 	if (!vertholder)
+	{
 		return (Vector(0, 0, 0));
+	}
 	return (Vector(vertholder[which].x, vertholder[which].y, vertholder[which].z));
 }
 
@@ -281,20 +299,24 @@ void csOPCODECollider::CopyCollisionPairs(csOPCODECollider *col1,
 										  csOPCODECollider *col2)
 {
 	if (!col1 || !col2)
+	{
 		return;
+	}
 
-	unsigned int N_pairs = TreeCollider.GetNbPairs();
+	uint32_t N_pairs = TreeCollider.GetNbPairs();
 	if (N_pairs == 0)
+	{
 		return;
+	}
 
 	const Pair *colPairs = TreeCollider.GetPairs();
 	Point *vertholder0 = col1->vertholder;
 	Point *vertholder1 = col2->vertholder;
-	int j;
+	int32_t j;
 	size_t oldlen = pairs.Length();
 	pairs.SetLength(oldlen + N_pairs);
 
-	for (unsigned int i = 0; i < N_pairs; ++i)
+	for (uint32_t i = 0; i < N_pairs; ++i)
 	{
 		j = 3 * colPairs[i].id0;
 		pairs[oldlen].a1 = vertholder0[j];

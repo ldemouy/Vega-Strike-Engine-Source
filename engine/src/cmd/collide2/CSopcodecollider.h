@@ -108,7 +108,7 @@ public:
 	~csOPCODECollider();
 
 	/* Not used in 0.5 */
-	int inline GetColliderType() const { return CS_MESH_COLLIDER; }
+	int32_t inline GetColliderType() const { return CS_MESH_COLLIDER; }
 
 	/* Collides the bolt or beam with this collider, returning true if it occurred */
 	bool rayCollide(const Opcode::Ray &boltbeam, Vector &norm, float &distance);
@@ -147,7 +147,7 @@ public:
 	Vector getVertex(unsigned int which) const;
 
 	/* Returns number of vertexes in model */
-	inline unsigned int getNumVertex() const { return (m_pCollisionModel->GetMeshInterface()->GetNbVertices()); }
+	inline uint32_t getNumVertex() const { return (m_pCollisionModel->GetMeshInterface()->GetNbVertices()); }
 };
 
 #endif
