@@ -186,23 +186,23 @@ using namespace Opcode;
 	}
 #endif
 
-#define SEGMENT_PRIM(prim_index, flag)                               \
-	/* Request vertices from the app */                              \
-	VertexPointers VP;                                               \
-	mIMesh->GetTriangle(VP, prim_index);                             \
-                                                                     \
-	/* Perform ray-tri overlap test and return */                    \
-	if (RayTriOverlap(*VP.Vertex[0], *VP.Vertex[1], *VP.Vertex[2]))  \
-	{                                                                \
-		/* Intersection point is valid if dist < segment's length */ \
-		/* We know dist>0 so we can use integers */                  \
-		if (IR(mStabbedFace.mDistance) < IR(mMaxDist))               \
-		{                                                            \
-			HANDLE_CONTACT(prim_index, flag)                         \
-		}                                                            \
-	}                                                                \
-	else                                                             \
-	{                                                                \
+#define SEGMENT_PRIM(prim_index, flag)                                                       \
+	/* Request vertices from the app */                                                      \
+	VertexPointers VP;                                                                       \
+	mIMesh->GetTriangle(VP, prim_index);                                                     \
+                                                                                             \
+	/* Perform ray-tri overlap test and return */                                            \
+	if (RayTriOverlap(*VP.Vertex[0], *VP.Vertex[1], *VP.Vertex[2]))                          \
+	{                                                                                        \
+		/* Intersection point is valid if dist < segment's length */                         \
+		/* We know dist>0 so we can use integers */                                          \
+		if (static_cast<uint32_t>(mStabbedFace.mDistance) < static_cast<uint32_t>(mMaxDist)) \
+		{                                                                                    \
+			HANDLE_CONTACT(prim_index, flag)                                                 \
+		}                                                                                    \
+	}                                                                                        \
+	else                                                                                     \
+	{                                                                                        \
 	}
 
 #define RAY_PRIM(prim_index, flag)                                  \
@@ -313,20 +313,28 @@ bool RayCollider::Collide(const Ray &world_ray, const Model &model, const Matrix
 			mExtentsCoeff = Tree->mExtentsCoeff;
 
 			// Perform stabbing query
-			if (IR(mMaxDist) != IEEE_MAX_FLOAT)
+			if (static_cast<uint32_t>(mMaxDist) != IEEE_MAX_FLOAT)
+			{
 				_SegmentStab(Tree->GetNodes());
+			}
 			else
+			{
 				_RayStab(Tree->GetNodes());
+			}
 		}
 		else
 		{
 			const AABBNoLeafTree *Tree = (const AABBNoLeafTree *)model.GetTree();
 
 			// Perform stabbing query
-			if (IR(mMaxDist) != IEEE_MAX_FLOAT)
+			if (static_cast<uint32_t>(mMaxDist) != IEEE_MAX_FLOAT)
+			{
 				_SegmentStab(Tree->GetNodes());
+			}
 			else
+			{
 				_RayStab(Tree->GetNodes());
+			}
 		}
 	}
 	else
@@ -340,20 +348,28 @@ bool RayCollider::Collide(const Ray &world_ray, const Model &model, const Matrix
 			mExtentsCoeff = Tree->mExtentsCoeff;
 
 			// Perform stabbing query
-			if (IR(mMaxDist) != IEEE_MAX_FLOAT)
+			if (static_cast<uint32_t>(mMaxDist) != IEEE_MAX_FLOAT)
+			{
 				_SegmentStab(Tree->GetNodes());
+			}
 			else
+			{
 				_RayStab(Tree->GetNodes());
+			}
 		}
 		else
 		{
 			const AABBCollisionTree *Tree = (const AABBCollisionTree *)model.GetTree();
 
 			// Perform stabbing query
-			if (IR(mMaxDist) != IEEE_MAX_FLOAT)
+			if (static_cast<uint32_t>(mMaxDist) != IEEE_MAX_FLOAT)
+			{
 				_SegmentStab(Tree->GetNodes());
+			}
 			else
+			{
 				_RayStab(Tree->GetNodes());
+			}
 		}
 	}
 
@@ -439,7 +455,7 @@ bool RayCollider::InitQuery(const Ray &world_ray, const Matrix4x4 *world, udword
 				// - distance is positive (else it can just be a face behind the orig point)
 				// - distance is smaller than a given max distance (useful for shadow feelers)
 				//				if(mStabbedFace.mDistance>0.0f && mStabbedFace.mDistance<mMaxDist)
-				if (IR(mStabbedFace.mDistance) < IR(mMaxDist)) // The other test is already performed in RayTriOverlap
+				if (static_cast<uint32_t>(mStabbedFace.mDistance) < static_cast<uint32_t>(mMaxDist)) // The other test is already performed in RayTriOverlap
 				{
 					// Set contact status
 					mFlags |= OPC_TEMPORAL_CONTACT;
@@ -466,7 +482,7 @@ bool RayCollider::InitQuery(const Ray &world_ray, const Matrix4x4 *world, udword
 	}
 
 	// Precompute data (moved after temporal coherence since only needed for ray-AABB)
-	if (IR(mMaxDist) != IEEE_MAX_FLOAT)
+	if (static_cast<uint32_t>(mMaxDist) != IEEE_MAX_FLOAT)
 	{
 		// For Segment-AABB overlap
 		mData = 0.5f * mDir * mMaxDist;
@@ -516,18 +532,26 @@ bool RayCollider::Collide(const Ray &world_ray, const AABBTree *tree, Container 
 
 	// Checkings
 	if (!tree)
+	{
 		return false;
+	}
 
 	// Init collision query
 	// Basically this is only called to initialize precomputed data
 	if (InitQuery(world_ray))
+	{
 		return true;
+	}
 
 	// Perform stabbing query
-	if (IR(mMaxDist) != IEEE_MAX_FLOAT)
+	if (static_cast<uint32_t>(mMaxDist) != IEEE_MAX_FLOAT)
+	{
 		_SegmentStab(tree, box_indices);
+	}
 	else
+	{
 		_RayStab(tree, box_indices);
+	}
 
 	return true;
 }

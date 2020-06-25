@@ -146,44 +146,31 @@ public:
 		m[0][0] = m[1][1] = m[2][2] = 1.0f;
 	}
 	//! Checks for identity
-	inline_ bool IsIdentity() const
+	inline bool IsIdentity() const
 	{
-		if (IR(m[0][0]) != IEEE_1_0)
-			return false;
-		if (IR(m[0][1]) != 0)
-			return false;
-		if (IR(m[0][2]) != 0)
-			return false;
-
-		if (IR(m[1][0]) != 0)
-			return false;
-		if (IR(m[1][1]) != IEEE_1_0)
-			return false;
-		if (IR(m[1][2]) != 0)
-			return false;
-
-		if (IR(m[2][0]) != 0)
-			return false;
-		if (IR(m[2][1]) != 0)
-			return false;
-		if (IR(m[2][2]) != IEEE_1_0)
-			return false;
-
-		return true;
+		return !(static_cast<uint32_t>(m[0][0]) != IEEE_1_0) &&
+			   !(static_cast<uint32_t>(m[0][1]) != 0) &&
+			   !(static_cast<uint32_t>(m[0][2]) != 0) &&
+			   !(static_cast<uint32_t>(m[1][0]) != 0) &&
+			   !(static_cast<uint32_t>(m[1][1]) != IEEE_1_0) &&
+			   !(static_cast<uint32_t>(m[1][2]) != 0) &&
+			   !(static_cast<uint32_t>(m[2][0]) != 0) &&
+			   !(static_cast<uint32_t>(m[2][1]) != 0) &&
+			   !(static_cast<uint32_t>(m[2][2]) != IEEE_1_0);
 	}
 
 	//! Checks matrix validity
-	inline_ BOOL IsValid() const
+	inline bool IsValid() const
 	{
-		for (udword j = 0; j < 3; j++)
+		for (uint32_t j = 0; j < 3; j++)
 		{
-			for (udword i = 0; i < 3; i++)
+			for (uint32_t i = 0; i < 3; i++)
 			{
-				if (!IsValidFloat(m[j][i]))
-					return FALSE;
+				if (isnanf(m[j][i]))
+					return false;
 			}
 		}
-		return TRUE;
+		return true;
 	}
 
 	//! Makes a skew-symmetric matrix (a.k.a. Star(*) Matrix)
@@ -402,15 +389,16 @@ public:
 	//! Transpose the matrix.
 	void Transpose()
 	{
-		IR(m[1][0]) ^= IR(m[0][1]);
-		IR(m[0][1]) ^= IR(m[1][0]);
-		IR(m[1][0]) ^= IR(m[0][1]);
-		IR(m[2][0]) ^= IR(m[0][2]);
-		IR(m[0][2]) ^= IR(m[2][0]);
-		IR(m[2][0]) ^= IR(m[0][2]);
-		IR(m[2][1]) ^= IR(m[1][2]);
-		IR(m[1][2]) ^= IR(m[2][1]);
-		IR(m[2][1]) ^= IR(m[1][2]);
+		//TODO: Investigate why this is being casted to ints
+		(uint32_t &)(m[1][0]) ^= static_cast<uint32_t>(m[0][1]);
+		(uint32_t &)(m[0][1]) ^= static_cast<uint32_t>(m[1][0]);
+		(uint32_t &)(m[1][0]) ^= static_cast<uint32_t>(m[0][1]);
+		(uint32_t &)(m[2][0]) ^= static_cast<uint32_t>(m[0][2]);
+		(uint32_t &)(m[0][2]) ^= static_cast<uint32_t>(m[2][0]);
+		(uint32_t &)(m[2][0]) ^= static_cast<uint32_t>(m[0][2]);
+		(uint32_t &)(m[2][1]) ^= static_cast<uint32_t>(m[1][2]);
+		(uint32_t &)(m[1][2]) ^= static_cast<uint32_t>(m[2][1]);
+		(uint32_t &)(m[2][1]) ^= static_cast<uint32_t>(m[1][2]);
 	}
 
 	//! this = Transpose(a)

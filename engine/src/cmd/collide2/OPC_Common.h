@@ -21,35 +21,31 @@
 #define __OPC_COMMON_H__
 
 // [GOTTFRIED]: Just a small change for readability.
-#ifdef OPC_CPU_COMPARE
-#define GREATER(x, y) AIR(x) > IR(y)
-#else
 #define GREATER(x, y) fabsf(x) > (y)
-#endif
 
 class OPCODE_API CollisionAABB
 {
 public:
 	//! Constructor
-	inline_ CollisionAABB() {}
+	inline CollisionAABB() {}
 	//! Constructor
-	inline_ CollisionAABB(const AABB &b)
+	inline CollisionAABB(const AABB &b)
 	{
 		b.GetCenter(mCenter);
 		b.GetExtents(mExtents);
 	}
 	//! Destructor
-	inline_ ~CollisionAABB() {}
+	inline ~CollisionAABB() {}
 
 	//! Get min point of the box
-	inline_ void GetMin(Point &min) const { min = mCenter - mExtents; }
+	inline void GetMin(Point &min) const { min = mCenter - mExtents; }
 	//! Get max point of the box
-	inline_ void GetMax(Point &max) const { max = mCenter + mExtents; }
+	inline void GetMax(Point &max) const { max = mCenter + mExtents; }
 
 	//! Get component of the box's min point along a given axis
-	inline_ float GetMin(udword axis) const { return mCenter[axis] - mExtents[axis]; }
+	inline float GetMin(udword axis) const { return mCenter[axis] - mExtents[axis]; }
 	//! Get component of the box's max point along a given axis
-	inline_ float GetMax(udword axis) const { return mCenter[axis] + mExtents[axis]; }
+	inline float GetMax(udword axis) const { return mCenter[axis] + mExtents[axis]; }
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/**
@@ -58,7 +54,7 @@ public:
 		 *	\param		max			[in] the max point
 		 */
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	inline_ void SetMinMax(const Point &min, const Point &max)
+	inline void SetMinMax(const Point &min, const Point &max)
 	{
 		mCenter = (max + min) * 0.5f;
 		mExtents = (max - min) * 0.5f;
@@ -71,21 +67,14 @@ public:
 		 *	\return		true if current box is inside input box
 		 */
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	inline_ BOOL IsInside(const CollisionAABB &box) const
+	inline bool IsInside(const CollisionAABB &box) const
 	{
-		if (box.GetMin(0) > GetMin(0))
-			return FALSE;
-		if (box.GetMin(1) > GetMin(1))
-			return FALSE;
-		if (box.GetMin(2) > GetMin(2))
-			return FALSE;
-		if (box.GetMax(0) < GetMax(0))
-			return FALSE;
-		if (box.GetMax(1) < GetMax(1))
-			return FALSE;
-		if (box.GetMax(2) < GetMax(2))
-			return FALSE;
-		return TRUE;
+		return !(box.GetMin(0) > GetMin(0)) &&
+			   !(box.GetMin(1) > GetMin(1)) &&
+			   !(box.GetMin(2) > GetMin(2)) &&
+			   !(box.GetMax(0) < GetMax(0)) &&
+			   !(box.GetMax(1) < GetMax(1)) &&
+			   !(box.GetMax(2) < GetMax(2));
 	}
 
 	Point mCenter;	//!< Box center
@@ -96,16 +85,16 @@ class OPCODE_API QuantizedAABB
 {
 public:
 	//! Constructor
-	inline_ QuantizedAABB() {}
+	inline QuantizedAABB() {}
 	//! Destructor
-	inline_ ~QuantizedAABB() {}
+	inline ~QuantizedAABB() {}
 
-	sword mCenter[3];  //!< Quantized center
-	uword mExtents[3]; //!< Quantized extents
+	int16_t mCenter[3];	  //!< Quantized center
+	uint16_t mExtents[3]; //!< Quantized extents
 };
 
 //! Quickly rotates & translates a vector
-inline_ void TransformPoint(Point &dest, const Point &source, const Matrix3x3 &rot, const Point &trans)
+inline void TransformPoint(Point &dest, const Point &source, const Matrix3x3 &rot, const Point &trans)
 {
 	dest.x = trans.x + source.x * rot.m[0][0] + source.y * rot.m[1][0] + source.z * rot.m[2][0];
 	dest.y = trans.y + source.x * rot.m[0][1] + source.y * rot.m[1][1] + source.z * rot.m[2][1];

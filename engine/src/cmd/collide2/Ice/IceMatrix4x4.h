@@ -240,49 +240,7 @@ public:
 		m[1][2] *= sy;
 		m[2][2] *= sz;
 	}
-	/*
-		//! Returns a row.
-		inline_	HPoint		GetRow(const udword row)	const			{ return mRow[row];														}
-		//! Sets a row.
-		inline_	Matrix4x4&	SetRow(const udword row, const HPoint& p)	{ mRow[row] = p;	return *this;										}
-		//! Sets a row.
-						Matrix4x4&	SetRow(const udword row, const Point& p)
-						{
-							m[row][0] = p.x;
-							m[row][1] = p.y;
-							m[row][2] = p.z;
-							m[row][3] = (row != 3) ? 0.0f : 1.0f;
-							return	*this;
-						}
-		//! Returns a column.
-						HPoint		GetCol(const udword col)		const
-						{
-							HPoint	Res;
-							Res.x = m[0][col];
-							Res.y = m[1][col];
-							Res.z = m[2][col];
-							Res.w = m[3][col];
-							return	Res;
-						}
-		//! Sets a column.
-						Matrix4x4&	SetCol(const udword col, const HPoint& p)
-						{
-							m[0][col] = p.x;
-							m[1][col] = p.y;
-							m[2][col] = p.z;
-							m[3][col] = p.w;
-							return	*this;
-						}
-		//! Sets a column.
-						Matrix4x4&	SetCol(const udword col, const Point& p)
-						{
-							m[0][col] = p.x;
-							m[1][col] = p.y;
-							m[2][col] = p.z;
-							m[3][col] = (col != 3) ? 0.0f : 1.0f;
-							return	*this;
-						}
-*/
+
 	//! Computes the trace. The trace is the sum of the 4 diagonal components.
 	inline_ float Trace() const { return m[0][0] + m[1][1] + m[2][2] + m[3][3]; }
 	//! Computes the trace of the upper 3x3 matrix.
@@ -298,56 +256,38 @@ public:
 	//! Checks for identity
 	inline_ bool IsIdentity() const
 	{
-		if (IR(m[0][0]) != IEEE_1_0)
-			return false;
-		if (IR(m[0][1]) != 0)
-			return false;
-		if (IR(m[0][2]) != 0)
-			return false;
-		if (IR(m[0][3]) != 0)
-			return false;
-
-		if (IR(m[1][0]) != 0)
-			return false;
-		if (IR(m[1][1]) != IEEE_1_0)
-			return false;
-		if (IR(m[1][2]) != 0)
-			return false;
-		if (IR(m[1][3]) != 0)
-			return false;
-
-		if (IR(m[2][0]) != 0)
-			return false;
-		if (IR(m[2][1]) != 0)
-			return false;
-		if (IR(m[2][2]) != IEEE_1_0)
-			return false;
-		if (IR(m[2][3]) != 0)
-			return false;
-
-		if (IR(m[3][0]) != 0)
-			return false;
-		if (IR(m[3][1]) != 0)
-			return false;
-		if (IR(m[3][2]) != 0)
-			return false;
-		if (IR(m[3][3]) != IEEE_1_0)
-			return false;
-		return true;
+		return !(static_cast<uint32_t>(m[0][0]) != IEEE_1_0) &&
+			   !(static_cast<uint32_t>(m[0][1]) != 0) &&
+			   !(static_cast<uint32_t>(m[0][2]) != 0) &&
+			   !(static_cast<uint32_t>(m[0][3]) != 0) &&
+			   !(static_cast<uint32_t>(m[1][0]) != 0) &&
+			   !(static_cast<uint32_t>(m[1][1]) != IEEE_1_0) &&
+			   !(static_cast<uint32_t>(m[1][2]) != 0) &&
+			   !(static_cast<uint32_t>(m[1][3]) != 0) &&
+			   !(static_cast<uint32_t>(m[2][0]) != 0) &&
+			   !(static_cast<uint32_t>(m[2][1]) != 0) &&
+			   !(static_cast<uint32_t>(m[2][2]) != IEEE_1_0) &&
+			   !(static_cast<uint32_t>(m[2][3]) != 0) &&
+			   !(static_cast<uint32_t>(m[3][0]) != 0) &&
+			   !(static_cast<uint32_t>(m[3][1]) != 0) &&
+			   !(static_cast<uint32_t>(m[3][2]) != 0) &&
+			   !(static_cast<uint32_t>(m[3][3]) != IEEE_1_0);
 	}
 
 	//! Checks matrix validity
-	inline_ BOOL IsValid() const
+	inline bool IsValid() const
 	{
 		for (udword j = 0; j < 4; j++)
 		{
 			for (udword i = 0; i < 4; i++)
 			{
-				if (!IsValidFloat(m[j][i]))
-					return FALSE;
+				if (isnanf(m[j][i]))
+				{
+					return false;
+				}
 			}
 		}
-		return TRUE;
+		return true;
 	}
 
 	//! Sets a rotation matrix around the X axis.
@@ -384,24 +324,25 @@ public:
 	//! Transposes the matrix.
 	void Transpose()
 	{
-		IR(m[1][0]) ^= IR(m[0][1]);
-		IR(m[0][1]) ^= IR(m[1][0]);
-		IR(m[1][0]) ^= IR(m[0][1]);
-		IR(m[2][0]) ^= IR(m[0][2]);
-		IR(m[0][2]) ^= IR(m[2][0]);
-		IR(m[2][0]) ^= IR(m[0][2]);
-		IR(m[3][0]) ^= IR(m[0][3]);
-		IR(m[0][3]) ^= IR(m[3][0]);
-		IR(m[3][0]) ^= IR(m[0][3]);
-		IR(m[1][2]) ^= IR(m[2][1]);
-		IR(m[2][1]) ^= IR(m[1][2]);
-		IR(m[1][2]) ^= IR(m[2][1]);
-		IR(m[1][3]) ^= IR(m[3][1]);
-		IR(m[3][1]) ^= IR(m[1][3]);
-		IR(m[1][3]) ^= IR(m[3][1]);
-		IR(m[2][3]) ^= IR(m[3][2]);
-		IR(m[3][2]) ^= IR(m[2][3]);
-		IR(m[2][3]) ^= IR(m[3][2]);
+		//TODO: Figure out why this is being casted to ints
+		(uint32_t &)(m[1][0]) ^= static_cast<uint32_t>(m[0][1]);
+		(uint32_t &)(m[0][1]) ^= static_cast<uint32_t>(m[1][0]);
+		(uint32_t &)(m[1][0]) ^= static_cast<uint32_t>(m[0][1]);
+		(uint32_t &)(m[2][0]) ^= static_cast<uint32_t>(m[0][2]);
+		(uint32_t &)(m[0][2]) ^= static_cast<uint32_t>(m[2][0]);
+		(uint32_t &)(m[2][0]) ^= static_cast<uint32_t>(m[0][2]);
+		(uint32_t &)(m[3][0]) ^= static_cast<uint32_t>(m[0][3]);
+		(uint32_t &)(m[0][3]) ^= static_cast<uint32_t>(m[3][0]);
+		(uint32_t &)(m[3][0]) ^= static_cast<uint32_t>(m[0][3]);
+		(uint32_t &)(m[1][2]) ^= static_cast<uint32_t>(m[2][1]);
+		(uint32_t &)(m[2][1]) ^= static_cast<uint32_t>(m[1][2]);
+		(uint32_t &)(m[1][2]) ^= static_cast<uint32_t>(m[2][1]);
+		(uint32_t &)(m[1][3]) ^= static_cast<uint32_t>(m[3][1]);
+		(uint32_t &)(m[3][1]) ^= static_cast<uint32_t>(m[1][3]);
+		(uint32_t &)(m[1][3]) ^= static_cast<uint32_t>(m[3][1]);
+		(uint32_t &)(m[2][3]) ^= static_cast<uint32_t>(m[3][2]);
+		(uint32_t &)(m[3][2]) ^= static_cast<uint32_t>(m[2][3]);
+		(uint32_t &)(m[2][3]) ^= static_cast<uint32_t>(m[3][2]);
 	}
 
 	//! Computes a cofactor. Used for matrix inversion.

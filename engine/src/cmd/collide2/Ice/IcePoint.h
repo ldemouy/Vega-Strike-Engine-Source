@@ -11,7 +11,7 @@
 // Include Guard
 #ifndef __ICEPOINT_H__
 #define __ICEPOINT_H__
-
+#include <cmath>
 // Forward declarations
 class HPoint;
 class Plane;
@@ -342,21 +342,15 @@ public:
 	//! Tests for exact zero vector
 	inline_ bool IsZero() const
 	{
-		if (IR(x) || IR(y) || IR(z))
-			return FALSE;
-		return TRUE;
+		return !(static_cast<uint32_t>(x) ||
+				 static_cast<uint32_t>(y) ||
+				 static_cast<uint32_t>(z));
 	}
 
 	//! Checks point validity
-	inline_ bool IsValid() const
+	inline bool IsValid() const
 	{
-		if (!IsValidFloat(x))
-			return FALSE;
-		if (!IsValidFloat(y))
-			return FALSE;
-		if (!IsValidFloat(z))
-			return FALSE;
-		return TRUE;
+		return !(isnanf(x) || isnanf(y) || isnanf(z));
 	}
 
 	//! Slighty moves the point
@@ -364,21 +358,21 @@ public:
 	{
 		if (coord_mask & 1)
 		{
-			udword Dummy = IR(x);
+			udword Dummy = static_cast<uint32_t>(x);
 			Dummy ^= tweak_mask;
-			x = FR(Dummy);
+			x = static_cast<float>(Dummy);
 		}
 		if (coord_mask & 2)
 		{
-			udword Dummy = IR(y);
+			udword Dummy = static_cast<uint32_t>(y);
 			Dummy ^= tweak_mask;
-			y = FR(Dummy);
+			y = static_cast<float>(Dummy);
 		}
 		if (coord_mask & 4)
 		{
-			udword Dummy = IR(z);
+			udword Dummy = static_cast<uint32_t>(z);
 			Dummy ^= tweak_mask;
-			z = FR(Dummy);
+			z = static_cast<float>(Dummy);
 		}
 	}
 
@@ -387,35 +381,47 @@ public:
 	//! Slighty moves the point out
 	inline_ void TweakBigger()
 	{
-		udword Dummy = (IR(x) & TWEAKNOTMASK);
+		uint32_t Dummy = (static_cast<uint32_t>(x) & TWEAKNOTMASK);
 		if (x >= 0.0f)
+		{
 			Dummy += TWEAKMASK + 1;
-		x = FR(Dummy);
-		Dummy = (IR(y) & TWEAKNOTMASK);
+		}
+		x = static_cast<float>(Dummy);
+		Dummy = (static_cast<uint32_t>(y) & TWEAKNOTMASK);
 		if (y >= 0.0f)
+		{
 			Dummy += TWEAKMASK + 1;
-		y = FR(Dummy);
-		Dummy = (IR(z) & TWEAKNOTMASK);
+		}
+		y = static_cast<float>(Dummy);
+		Dummy = (static_cast<uint32_t>(z) & TWEAKNOTMASK);
 		if (z >= 0.0f)
+		{
 			Dummy += TWEAKMASK + 1;
-		z = FR(Dummy);
+		}
+		z = static_cast<float>(Dummy);
 	}
 
 	//! Slighty moves the point in
 	inline_ void TweakSmaller()
 	{
-		udword Dummy = (IR(x) & TWEAKNOTMASK);
+		udword Dummy = (static_cast<uint32_t>(x) & TWEAKNOTMASK);
 		if (x < 0.0f)
+		{
 			Dummy += TWEAKMASK + 1;
-		x = FR(Dummy);
-		Dummy = (IR(y) & TWEAKNOTMASK);
+		}
+		x = static_cast<float>(Dummy);
+		Dummy = (static_cast<uint32_t>(y) & TWEAKNOTMASK);
 		if (y < 0.0f)
+		{
 			Dummy += TWEAKMASK + 1;
-		y = FR(Dummy);
-		Dummy = (IR(z) & TWEAKNOTMASK);
+		}
+		y = static_cast<float>(Dummy);
+		Dummy = (static_cast<uint32_t>(z) & TWEAKNOTMASK);
 		if (z < 0.0f)
+		{
 			Dummy += TWEAKMASK + 1;
-		z = FR(Dummy);
+		}
+		z = static_cast<float>(Dummy);
 	}
 
 	//! Normalizes the vector
@@ -485,9 +491,10 @@ public:
 	}
 
 	//! Vector code ( bitmask = sign(z) | sign(y) | sign(x) )
-	inline_ udword VectorCode() const
+	inline uint32_t VectorCode() const
 	{
-		return (IR(x) >> 31) | ((IR(y) & SIGN_BITMASK) >> 30) | ((IR(z) & SIGN_BITMASK) >> 29);
+		const uint32_t SIGN_BITMASK = 0x80000000;
+		return (static_cast<uint32_t>(x) >> 31) | ((static_cast<uint32_t>(y) & SIGN_BITMASK) >> 30) | ((static_cast<uint32_t>(z) & SIGN_BITMASK) >> 29);
 	}
 
 	//! Returns largest axis
@@ -507,10 +514,14 @@ public:
 	{
 		const float *Vals = &x;
 		PointComponent m = _X;
-		if (AIR(Vals[_Y]) > AIR(Vals[m]))
+		if (static_cast<uint32_t>(std::abs(Vals[_Y])) > static_cast<uint32_t>(std::abs(Vals[m])))
+		{
 			m = _Y;
-		if (AIR(Vals[_Z]) > AIR(Vals[m]))
+		}
+		if (static_cast<uint32_t>(std::abs(Vals[_Z])) > static_cast<uint32_t>(std::abs(Vals[m])))
+		{
 			m = _Z;
+		}
 		return m;
 	}
 
@@ -662,9 +673,9 @@ public:
 	// Logical operators
 
 	//! Operator for "if(Point==Point)"
-	inline_ bool operator==(const Point &p) const { return ((IR(x) == IR(p.x)) && (IR(y) == IR(p.y)) && (IR(z) == IR(p.z))); }
+	inline_ bool operator==(const Point &p) const { return ((static_cast<uint32_t>(x) == static_cast<uint32_t>(p.x)) && (static_cast<uint32_t>(y) == static_cast<uint32_t>(p.y)) && (static_cast<uint32_t>(z) == static_cast<uint32_t>(p.z))); }
 	//! Operator for "if(Point!=Point)"
-	inline_ bool operator!=(const Point &p) const { return ((IR(x) != IR(p.x)) || (IR(y) != IR(p.y)) || (IR(z) != IR(p.z))); }
+	inline_ bool operator!=(const Point &p) const { return ((static_cast<uint32_t>(x) != static_cast<uint32_t>(p.x)) || (static_cast<uint32_t>(y) != static_cast<uint32_t>(p.y)) || (static_cast<uint32_t>(z) != static_cast<uint32_t>(p.z))); }
 
 	// Arithmetic operators
 

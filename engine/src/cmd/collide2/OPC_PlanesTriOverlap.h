@@ -23,8 +23,7 @@ inline_ bool PlanesCollider::PlanesTriOverlap(udword in_clip_mask)
 			float d2 = p->Distance(*mVP.Vertex[2]);
 			if (d0 > 0.0f && d1 > 0.0f && d2 > 0.0f)
 				return FALSE;
-			//			if(!(IR(d0)&SIGN_BITMASK) && !(IR(d1)&SIGN_BITMASK) && !(IR(d2)&SIGN_BITMASK))	return FALSE;
-		}
+				}
 		Mask += Mask;
 		p++;
 	}

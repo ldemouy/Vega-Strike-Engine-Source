@@ -40,8 +40,10 @@ inline_ bool RayCollider::RayTriOverlap(const Point &vert0, const Point &vert1, 
 		// Calculate U parameter and test bounds
 		mStabbedFace.mU = tvec | pvec;
 		//		if(IR(u)&0x80000000 || u>det)					return FALSE;
-		if ((mStabbedFace.mU < 0.0f) || IR(mStabbedFace.mU) > IR(det))
+		if ((mStabbedFace.mU < 0.0f) || static_cast<uint32_t>(mStabbedFace.mU) > static_cast<uint32_t>(det))
+		{
 			return FALSE;
+		}
 
 		// Prepare to test V parameter
 		Point qvec = tvec ^ edge1;
@@ -49,14 +51,18 @@ inline_ bool RayCollider::RayTriOverlap(const Point &vert0, const Point &vert1, 
 		// Calculate V parameter and test bounds
 		mStabbedFace.mV = mDir | qvec;
 		if ((mStabbedFace.mV < 0.0f) || mStabbedFace.mU + mStabbedFace.mV > det)
+		{
 			return FALSE;
+		}
 
 		// Calculate t, scale parameters, ray intersects triangle
 		mStabbedFace.mDistance = edge2 | qvec;
 		// Det > 0 so we can early exit here
 		// Intersection point is valid if distance is positive (else it can just be a face behind the orig point)
 		if ((mStabbedFace.mDistance < 0.0f))
+		{
 			return FALSE;
+		}
 		// Else go on
 		float OneOverDet = 1.0f / det;
 		mStabbedFace.mDistance *= OneOverDet;

@@ -11,6 +11,7 @@
 // Include Guard
 #ifndef __ICEAABB_H__
 #define __ICEAABB_H__
+#include <cmath>
 
 // Forward declarations
 class Sphere;
@@ -190,19 +191,19 @@ public:
 	{
 		float tx = mCenter.x - a.mCenter.x;
 		float ex = a.mExtents.x + mExtents.x;
-		if (AIR(tx) > IR(ex))
+		if (static_cast<uint32_t>(std::abs(tx)) > static_cast<uint32_t>(ex))
 		{
 			return FALSE;
 		}
 		float ty = mCenter.y - a.mCenter.y;
 		float ey = a.mExtents.y + mExtents.y;
-		if (AIR(ty) > IR(ey))
+		if (static_cast<uint32_t>(std::abs(ty)) > static_cast<uint32_t>(ey))
 		{
 			return FALSE;
 		}
 		float tz = mCenter.z - a.mCenter.z;
 		float ez = a.mExtents.z + mExtents.z;
-		if (AIR(tz) > IR(ez))
+		if (static_cast<uint32_t>(std::abs(tz)) > static_cast<uint32_t>(ez))
 		{
 			return FALSE;
 		}
@@ -234,7 +235,7 @@ public:
 	{
 		float t = mCenter[axis] - a.mCenter[axis];
 		float e = a.mExtents[axis] + mExtents[axis];
-		return !(AIR(t) > IR(e));
+		return !(static_cast<uint32_t>(std::abs(t)) > static_cast<uint32_t>(e));
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -249,21 +250,21 @@ public:
 		// Compute new center
 		aabb.mCenter = mCenter * mtx;
 
-		// Compute new extents. FPU code & CPU code have been interleaved for improved performance.
+		// Compute new extents.
 		Point Ex(mtx.m[0][0] * mExtents.x, mtx.m[0][1] * mExtents.x, mtx.m[0][2] * mExtents.x);
-		IR(Ex.x) &= 0x7fffffff;
-		IR(Ex.y) &= 0x7fffffff;
-		IR(Ex.z) &= 0x7fffffff;
+		Ex.x = std::abs(Ex.x);
+		Ex.y = std::abs(Ex.y);
+		Ex.z = std::abs(Ex.z);
 
 		Point Ey(mtx.m[1][0] * mExtents.y, mtx.m[1][1] * mExtents.y, mtx.m[1][2] * mExtents.y);
-		IR(Ey.x) &= 0x7fffffff;
-		IR(Ey.y) &= 0x7fffffff;
-		IR(Ey.z) &= 0x7fffffff;
+		Ey.x = std::abs(Ey.x);
+		Ey.y = std::abs(Ey.y);
+		Ey.z = std::abs(Ey.z);
 
 		Point Ez(mtx.m[2][0] * mExtents.z, mtx.m[2][1] * mExtents.z, mtx.m[2][2] * mExtents.z);
-		IR(Ez.x) &= 0x7fffffff;
-		IR(Ez.y) &= 0x7fffffff;
-		IR(Ez.z) &= 0x7fffffff;
+		Ez.x = std::abs(Ez.x);
+		Ez.y = std::abs(Ez.y);
+		Ez.z = std::abs(Ez.z);
 
 		aabb.mExtents.x = Ex.x + Ey.x + Ez.x;
 		aabb.mExtents.y = Ex.y + Ey.y + Ez.y;

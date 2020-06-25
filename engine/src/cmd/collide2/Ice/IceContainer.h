@@ -87,7 +87,7 @@ public:
 			Resize();
 
 		// Add new entry
-		mEntries[mCurNbEntries++] = IR(entry);
+		mEntries[mCurNbEntries++] = static_cast<uint32_t>(entry);
 		return *this;
 	}
 
