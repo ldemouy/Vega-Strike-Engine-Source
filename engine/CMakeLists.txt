@@ -123,8 +123,7 @@ SET(LIBAI_SOURCES
     src/cmd/ai/hard_coded_scripts.cpp
     src/cmd/ai/ikarus.cpp
     src/cmd/ai/missionscript.cpp
-    src/cmd/ai/navigation.cpp
-    src/cmd/ai/order_comm.cpp
+    src/cmd/ai/navigation.cpp    
     src/cmd/ai/order.cpp
     src/cmd/ai/script.cpp
     src/cmd/ai/tactics.cpp
