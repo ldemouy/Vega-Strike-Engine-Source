@@ -17,6 +17,5 @@
 //also
 //    assert( (dword&)float(0.0f) == (dword&)int(0) ) must pass or this library will blow on your face
 
-#include "opcodetypes.h"
 #include "opcodesysdef.h"
 #include "Opcode.h"

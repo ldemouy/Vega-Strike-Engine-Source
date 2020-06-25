@@ -25,5 +25,4 @@ struct iBase
 
 #define CS_ASSERT assert
 
-#include "opcodetypes.h"
 #endif
