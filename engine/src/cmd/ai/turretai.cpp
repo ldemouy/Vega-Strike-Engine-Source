@@ -19,7 +19,7 @@ void TurretAI::getAverageGunSpeed(float &speed, float &range, float &mrange) con
     range = this->range;
     mrange = this->mrange;
 }
-extern unsigned int FireBitmask(Unit *parent, bool shouldfire, bool firemissile);
+extern uint32_t FireBitmask(Unit *parent, bool shouldfire, bool firemissile);
 void TurretAI::Execute()
 {
     Unit *targ = parent->Target();
@@ -64,8 +64,8 @@ void TurretAI::Execute()
             double mag = Pos.Magnitude();
             Pos = Pos / mag;
             float dot = R.Dot(Pos.Cast());
-            int neu = FactionUtil::GetNeutralFaction();
-            int upg = FactionUtil::GetUpgradeFaction();
+            int32_t neu = FactionUtil::GetNeutralFaction();
+            int32_t upg = FactionUtil::GetUpgradeFaction();
             bool isplayerstarship = _Universe->isPlayerStarshipVoid(parent->owner) != nullptr;
 
             bool shouldfire =
@@ -75,11 +75,15 @@ void TurretAI::Execute()
 
             parent->Fire(FireBitmask(parent, shouldfire, rand() < missile_prob * RAND_MAX * SIMULATION_ATOM), true);
             if (!shouldfire)
+            {
                 parent->UnFire();
+            }
             hadFired = shouldfire;
         }
         if (targ->hull < 0)
+        {
             parent->Target(nullptr);
+        }
     }
     else if (hadFired && parent->GetNumMounts() > 0)
     {
