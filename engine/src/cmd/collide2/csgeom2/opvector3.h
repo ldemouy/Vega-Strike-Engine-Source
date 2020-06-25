@@ -21,6 +21,7 @@
 #define __CS_VECTOR3_H__
 #include "cmd/collide2/Stdafx.h"
 #include "cmd/collide2/opcodesysdef.h"
+#include <cmath>
 
 /**
  * A 3D vector.
@@ -166,13 +167,13 @@ public:
   /// Test if each component of a vector is less than a small epsilon value.
   inline friend bool operator<(const csVector3 &v, float f)
   {
-    return ABS(v.x) < f && ABS(v.y) < f && ABS(v.z) < f;
+    return std::abs(v.x) < f && std::abs(v.y) < f && std::abs(v.z) < f;
   }
 
   /// Test if each component of a vector is less than a small epsilon value.
   inline friend bool operator>(float f, const csVector3 &v)
   {
-    return ABS(v.x) < f && ABS(v.y) < f && ABS(v.z) < f;
+    return std::abs(v.x) < f && std::abs(v.y) < f && std::abs(v.z) < f;
   }
 
   /// Returns n-th component of the vector.

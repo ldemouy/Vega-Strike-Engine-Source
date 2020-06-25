@@ -24,7 +24,6 @@
 -------------------------------------------------------------------------
 */
 #include "CSopcodecollider.h"
-#include "opcodeqsqrt.h"
 #include "opcodeqint.h"
 #include "opcodegarray.h"
 #define _X 1000

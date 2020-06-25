@@ -17,26 +17,25 @@
     Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-#include <math.h>
-#include <float.h>
+#include <cmath>
 #include "cmd/collide2/opcodesysdef.h"
-#include "cmd/collide2/opcodeqint.h"
-#include "cmd/collide2/opcodeqsqrt.h"
 #include "opvector3.h"
 
 //---------------------------------------------------------------------------
 
 float csVector3::Norm() const
 {
-  return qsqrt(x * x + y * y + z * z);
+  return std::sqrt(x * x + y * y + z * z);
 }
 
 void csVector3::Normalize()
 {
   float sqlen = x * x + y * y + z * z;
   if (sqlen < SMALL_EPSILON)
+  {
     return;
-  float invlen = qisqrt(sqlen);
+  }
+  float invlen = std::sqrt(1.0 / sqlen);
   *this *= invlen;
 }
 
