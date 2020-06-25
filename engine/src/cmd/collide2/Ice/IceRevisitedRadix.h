@@ -23,7 +23,7 @@ enum RadixHint
 	RADIX_FORCE_DWORD = 0x7fffffff
 };
 
-class ICECORE_API RadixSort
+class RadixSort
 {
 public:
 	// Constructor/Destructor
@@ -34,17 +34,17 @@ public:
 	RadixSort &Sort(const float *input, udword nb);
 
 	//! Access to results. mRanks is a list of indices in sorted order, i.e. in the order you may further process your data
-	inline_ const udword *GetRanks() const { return mRanks; }
+	inline const udword *GetRanks() const { return mRanks; }
 
 	//! mIndices2 gets trashed on calling the sort routine, but otherwise you can recycle it the way you want.
-	inline_ udword *GetRecyclable() const { return mRanks2; }
+	inline udword *GetRecyclable() const { return mRanks2; }
 
 	// Stats
 	udword GetUsedRam() const;
 	//! Returns the total number of calls to the radix sorter.
-	inline_ udword GetNbTotalCalls() const { return mTotalCalls; }
+	inline udword GetNbTotalCalls() const { return mTotalCalls; }
 	//! Returns the number of eraly exits due to temporal coherence.
-	inline_ udword GetNbHits() const { return mNbHits; }
+	inline udword GetNbHits() const { return mNbHits; }
 
 private:
 #ifndef RADIX_LOCAL_RAM

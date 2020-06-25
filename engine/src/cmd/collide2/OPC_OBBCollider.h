@@ -20,7 +20,7 @@
 #ifndef __OPC_OBBCOLLIDER_H__
 #define __OPC_OBBCOLLIDER_H__
 
-struct OPCODE_API OBBCache : VolumeCache
+struct  OBBCache : VolumeCache
 {
 	OBBCache() : FatCoeff(1.1f)
 	{
@@ -35,7 +35,7 @@ struct OPCODE_API OBBCache : VolumeCache
 	float FatCoeff; //!< extents multiplier used to create a fat box
 };
 
-class OPCODE_API OBBCollider : public VolumeCollider
+class  OBBCollider : public VolumeCollider
 {
 public:
 	// Constructor / Destructor
@@ -68,7 +68,7 @@ public:
 		 *	\param		flag		[in] true for full tests, false for coarse tests
 		 */
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	inline_ void SetFullBoxBoxTest(bool flag) { mFullBoxBoxTest = flag; }
+	inline void SetFullBoxBoxTest(bool flag) { mFullBoxBoxTest = flag; }
 
 	// Settings
 
@@ -78,7 +78,7 @@ public:
 		 *	\return		null if everything is ok, else a string describing the problem
 		 */
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	override(Collider) const char *ValidateSettings();
+	virtual const char *ValidateSettings() override;
 
 protected:
 	// Precomputed data
@@ -120,14 +120,14 @@ protected:
 	void _CollideNoPrimitiveTest(const AABBQuantizedNode *node);
 	void _CollideNoPrimitiveTest(const AABBQuantizedNoLeafNode *node);
 	// Overlap tests
-	inline_ bool OBBContainsBox(const Point &bc, const Point &be);
-	inline_ bool BoxBoxOverlap(const Point &extents, const Point &center);
-	inline_ bool TriBoxOverlap();
+	inline bool OBBContainsBox(const Point &bc, const Point &be);
+	inline bool BoxBoxOverlap(const Point &extents, const Point &center);
+	inline bool TriBoxOverlap();
 	// Init methods
 	bool InitQuery(OBBCache &cache, const OBB &box, const Matrix4x4 *worldb = null, const Matrix4x4 *worldm = null);
 };
 
-class OPCODE_API HybridOBBCollider : public OBBCollider
+class  HybridOBBCollider : public OBBCollider
 {
 public:
 	// Constructor / Destructor

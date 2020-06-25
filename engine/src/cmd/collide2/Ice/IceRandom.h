@@ -12,26 +12,26 @@
 #ifndef __ICERANDOM_H__
 #define __ICERANDOM_H__
 
-ICECORE_API void SRand(udword seed);
+void SRand(udword seed);
 udword Rand();
 
 //! Returns a unit random floating-point value
-inline_ float UnitRandomFloat() { return float(Rand()) * ONE_OVER_RAND_MAX; }
+inline float UnitRandomFloat() { return float(Rand()) * ONE_OVER_RAND_MAX; }
 
 //! Returns a random index so that 0<= index < max_index
-ICECORE_API udword GetRandomIndex(udword max_index);
+udword GetRandomIndex(udword max_index);
 
-class ICECORE_API BasicRandom
+class BasicRandom
 {
 public:
 	//! Constructor
-	inline_ BasicRandom(udword seed = 0) : mRnd(seed) {}
+	inline BasicRandom(udword seed = 0) : mRnd(seed) {}
 	//! Destructor
-	inline_ ~BasicRandom() {}
+	inline ~BasicRandom() {}
 
-	inline_ void SetSeed(udword seed) { mRnd = seed; }
-	inline_ udword GetCurrentValue() const { return mRnd; }
-	inline_ udword Randomize()
+	inline void SetSeed(udword seed) { mRnd = seed; }
+	inline udword GetCurrentValue() const { return mRnd; }
+	inline udword Randomize()
 	{
 		mRnd = mRnd * 2147001325 + 715136305;
 		return mRnd;

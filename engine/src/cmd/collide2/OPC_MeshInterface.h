@@ -50,17 +50,17 @@ struct VertexPointers
 typedef void (*RequestCallback)(udword triangle_index, VertexPointers &triangle, void *user_data);
 #endif
 
-class OPCODE_API MeshInterface
+class MeshInterface
 {
 public:
 	// Constructor / Destructor
 	MeshInterface();
 	~MeshInterface();
 	// Common settings
-	inline_ udword GetNbTriangles() const { return mNbTris; }
-	inline_ udword GetNbVertices() const { return mNbVerts; }
-	inline_ void SetNbTriangles(udword nb) { mNbTris = nb; }
-	inline_ void SetNbVertices(udword nb) { mNbVerts = nb; }
+	inline udword GetNbTriangles() const { return mNbTris; }
+	inline udword GetNbVertices() const { return mNbVerts; }
+	inline void SetNbTriangles(udword nb) { mNbTris = nb; }
+	inline void SetNbVertices(udword nb) { mNbVerts = nb; }
 
 #ifdef OPC_USE_CALLBACKS
 	// Callback settings
@@ -74,8 +74,8 @@ public:
 		 */
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	bool SetCallback(RequestCallback callback, void *user_data);
-	inline_ void *GetUserData() const { return mUserData; }
-	inline_ RequestCallback GetCallback() const { return mObjCallback; }
+	inline void *GetUserData() const { return mUserData; }
+	inline RequestCallback GetCallback() const { return mObjCallback; }
 #else
 	// Pointers settings
 
@@ -88,8 +88,8 @@ public:
 		 */
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	bool SetPointers(const IndexedTriangle *tris, const Point *verts);
-	inline_ const IndexedTriangle *GetTris() const { return mTris; }
-	inline_ const Point *GetVerts() const { return mVerts; }
+	inline const IndexedTriangle *GetTris() const { return mTris; }
+	inline const Point *GetVerts() const { return mVerts; }
 
 #ifdef OPC_USE_STRIDE
 	// Strides settings
@@ -103,8 +103,8 @@ public:
 		 */
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	bool SetStrides(udword tri_stride = sizeof(IndexedTriangle), udword vertex_stride = sizeof(Point));
-	inline_ udword GetTriStride() const { return mTriStride; }
-	inline_ udword GetVertexStride() const { return mVertexStride; }
+	inline udword GetTriStride() const { return mTriStride; }
+	inline udword GetVertexStride() const { return mVertexStride; }
 #endif
 #endif
 
@@ -115,7 +115,7 @@ public:
 		 *	\param		index	[in] triangle index
 		 */
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	inline_ void GetTriangle(VertexPointers &vp, udword index) const
+	inline void GetTriangle(VertexPointers &vp, udword index) const
 	{
 #ifdef OPC_USE_CALLBACKS
 		(mObjCallback)(index, vp, mUserData);

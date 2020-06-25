@@ -20,7 +20,7 @@
 #ifndef __OPC_LSSCOLLIDER_H__
 #define __OPC_LSSCOLLIDER_H__
 
-struct OPCODE_API LSSCache : VolumeCache
+struct LSSCache : VolumeCache
 {
 	LSSCache()
 	{
@@ -36,7 +36,7 @@ struct OPCODE_API LSSCache : VolumeCache
 	float FatCoeff; //!< mRadius2 multiplier used to create a fat LSS
 };
 
-class OPCODE_API LSSCollider : public VolumeCollider
+class LSSCollider : public VolumeCollider
 {
 public:
 	// Constructor / Destructor
@@ -67,7 +67,7 @@ protected:
 	// LSS in model space
 	Segment mSeg;	//!< Segment
 	float mRadius2; //!< LSS radius squared
-					// Internal methods
+		// Internal methods
 	void _Collide(const AABBCollisionNode *node);
 	void _Collide(const AABBNoLeafNode *node);
 	void _Collide(const AABBQuantizedNode *node);
@@ -78,14 +78,14 @@ protected:
 	void _CollideNoPrimitiveTest(const AABBQuantizedNode *node);
 	void _CollideNoPrimitiveTest(const AABBQuantizedNoLeafNode *node);
 	// Overlap tests
-	inline_ bool LSSContainsBox(const Point &bc, const Point &be);
-	inline_ bool LSSAABBOverlap(const Point &center, const Point &extents);
-	inline_ bool LSSTriOverlap(const Point &vert0, const Point &vert1, const Point &vert2);
+	inline bool LSSContainsBox(const Point &bc, const Point &be);
+	inline bool LSSAABBOverlap(const Point &center, const Point &extents);
+	inline bool LSSTriOverlap(const Point &vert0, const Point &vert1, const Point &vert2);
 	// Init methods
 	bool InitQuery(LSSCache &cache, const LSS &lss, const Matrix4x4 *worldl = null, const Matrix4x4 *worldm = null);
 };
 
-class OPCODE_API HybridLSSCollider : public LSSCollider
+class HybridLSSCollider : public LSSCollider
 {
 public:
 	// Constructor / Destructor

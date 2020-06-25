@@ -21,7 +21,7 @@
 
 using namespace Opcode;
 
-inline_ void Sort(udword &id0, udword &id1)
+inline void Sort(udword &id0, udword &id1)
 {
 	if (id0 > id1)
 		Swap(id0, id1);
@@ -30,9 +30,9 @@ inline_ void Sort(udword &id0, udword &id1)
 class Opcode::SAP_Element
 {
 public:
-	inline_ SAP_Element() {}
-	inline_ SAP_Element(udword id, SAP_Element *next) : mID(id), mNext(next) {}
-	inline_ ~SAP_Element() {}
+	inline SAP_Element() {}
+	inline SAP_Element(udword id, SAP_Element *next) : mID(id), mNext(next) {}
+	inline ~SAP_Element() {}
 
 	udword mID;
 	SAP_Element *mNext;
@@ -53,11 +53,11 @@ public:
 	SAP_EndPoint *Next;		// Next EndPoint whose Value is greater than ours (or null)
 	udword Data;			// Parent box ID *2 | MinMax flag
 
-	inline_ void SetData(udword box_id, bool is_max) { Data = (box_id << 1) | (is_max ? 1 : 0); }
-	inline_ bool IsMax() const { return Data & 1; }
-	inline_ udword GetBoxID() const { return Data >> 1; }
+	inline void SetData(udword box_id, bool is_max) { Data = (box_id << 1) | (is_max ? 1 : 0); }
+	inline bool IsMax() const { return Data & 1; }
+	inline udword GetBoxID() const { return Data >> 1; }
 
-	inline_ void InsertAfter(SAP_EndPoint *element)
+	inline void InsertAfter(SAP_EndPoint *element)
 	{
 		if (this != element && this != element->Next)
 		{
@@ -77,7 +77,7 @@ public:
 		}
 	}
 
-	inline_ void InsertBefore(SAP_EndPoint *element)
+	inline void InsertBefore(SAP_EndPoint *element)
 	{
 		if (this != element && this != element->Previous)
 		{
@@ -160,7 +160,7 @@ bool SAP_PairData::Init(udword nb_objects)
  *	\param		delta	[in] offset in bytes
  */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-inline_ void Remap(SAP_Element *&element, udword delta)
+inline void Remap(SAP_Element *&element, udword delta)
 {
 	if (element)
 		element = (SAP_Element *)(uintptr_t(element) + delta);
@@ -235,7 +235,7 @@ SAP_Element *SAP_PairData::GetFreeElem(udword id, SAP_Element *next, udword *rem
  *	\param		elem	[in] element to free/recycle
  */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-inline_ void SAP_PairData::FreeElem(SAP_Element *elem)
+inline void SAP_PairData::FreeElem(SAP_Element *elem)
 {
 	elem->mNext = mFirstFree; // Next free
 	mFirstFree = elem;
@@ -514,7 +514,7 @@ bool SweepAndPrune::CheckListsIntegrity()
 	return true;
 }
 
-inline_ bool Intersect(const AABB &a, const SAP_Box &b)
+inline bool Intersect(const AABB &a, const SAP_Box &b)
 {
 	if (b.Max[0]->Value < a.GetMin(0) || a.GetMax(0) < b.Min[0]->Value || b.Max[1]->Value < a.GetMin(1) || a.GetMax(1) < b.Min[1]->Value || b.Max[2]->Value < a.GetMin(2) || a.GetMax(2) < b.Min[2]->Value)
 		return FALSE;

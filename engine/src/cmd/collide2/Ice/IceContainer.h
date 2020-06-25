@@ -22,7 +22,7 @@ enum FindMode
 	FIND_FORCE_DWORD = 0x7fffffff
 };
 
-class ICECORE_API Container
+class Container
 {
 public:
 	// Constructor / Destructor
@@ -44,7 +44,7 @@ public:
 		 *	\return		Self-Reference
 		 */
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	inline_ Container &Add(udword entry)
+	inline Container &Add(udword entry)
 	{
 		// Resize if needed
 		if (mCurNbEntries == mMaxNbEntries)
@@ -55,7 +55,7 @@ public:
 		return *this;
 	}
 
-	inline_ Container &Add(const udword *entries, udword nb)
+	inline Container &Add(const udword *entries, udword nb)
 	{
 		// Resize if needed
 		if (mCurNbEntries + nb > mMaxNbEntries)
@@ -80,7 +80,7 @@ public:
 		 *	\return		Self-Reference
 		 */
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	inline_ Container &Add(float entry)
+	inline Container &Add(float entry)
 	{
 		// Resize if needed
 		if (mCurNbEntries == mMaxNbEntries)
@@ -91,7 +91,7 @@ public:
 		return *this;
 	}
 
-	inline_ Container &Add(const float *entries, udword nb)
+	inline Container &Add(const float *entries, udword nb)
 	{
 		// Resize if needed
 		if (mCurNbEntries + nb > mMaxNbEntries)
@@ -104,7 +104,7 @@ public:
 	}
 
 	//! Add unique [slow]
-	inline_ Container &AddUnique(udword entry)
+	inline Container &AddUnique(udword entry)
 	{
 		if (!Contains(entry))
 			Add(entry);
@@ -127,7 +127,7 @@ public:
 		 *	\see		Empty()
 		 */
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	inline_ void Reset()
+	inline void Reset()
 	{
 		// Avoid the write if possible
 		// ### CMOV
@@ -136,7 +136,7 @@ public:
 	}
 
 	// HANDLE WITH CARE
-	inline_ void ForceSize(udword size)
+	inline void ForceSize(udword size)
 	{
 		mCurNbEntries = size;
 	}
@@ -165,39 +165,39 @@ public:
 	// Deletes an entry - does preserve insertion order.
 	bool DeleteKeepingOrder(udword entry);
 	//! Deletes the very last entry.
-	inline_ void DeleteLastEntry()
+	inline void DeleteLastEntry()
 	{
 		if (mCurNbEntries)
 			mCurNbEntries--;
 	}
 	//! Deletes the entry whose index is given
-	inline_ void DeleteIndex(udword index) { mEntries[index] = mEntries[--mCurNbEntries]; }
+	inline void DeleteIndex(udword index) { mEntries[index] = mEntries[--mCurNbEntries]; }
 
 	// Helpers
 	Container &FindNext(udword &entry, FindMode find_mode = FIND_CLAMP);
 	Container &FindPrev(udword &entry, FindMode find_mode = FIND_CLAMP);
 	// Data access.
-	inline_ udword GetNbEntries() const { return mCurNbEntries; }	//!< Returns the current number of entries.
-	inline_ udword GetEntry(udword i) const { return mEntries[i]; } //!< Returns ith entry
-	inline_ udword *GetEntries() const { return mEntries; }			//!< Returns the list of entries.
+	inline udword GetNbEntries() const { return mCurNbEntries; }   //!< Returns the current number of entries.
+	inline udword GetEntry(udword i) const { return mEntries[i]; } //!< Returns ith entry
+	inline udword *GetEntries() const { return mEntries; }		   //!< Returns the list of entries.
 
-	inline_ udword GetFirst() const { return mEntries[0]; }
-	inline_ udword GetLast() const { return mEntries[mCurNbEntries - 1]; }
+	inline udword GetFirst() const { return mEntries[0]; }
+	inline udword GetLast() const { return mEntries[mCurNbEntries - 1]; }
 
 	// Growth control
-	inline_ float GetGrowthFactor() const { return mGrowthFactor; }		   //!< Returns the growth factor
-	inline_ void SetGrowthFactor(float growth) { mGrowthFactor = growth; } //!< Sets the growth factor
-	inline_ bool IsFull() const { return mCurNbEntries == mMaxNbEntries; } //!< Checks the container is full
-	inline_ BOOL IsNotEmpty() const { return mCurNbEntries; }			   //!< Checks the container is empty
+	inline float GetGrowthFactor() const { return mGrowthFactor; }		  //!< Returns the growth factor
+	inline void SetGrowthFactor(float growth) { mGrowthFactor = growth; } //!< Sets the growth factor
+	inline bool IsFull() const { return mCurNbEntries == mMaxNbEntries; } //!< Checks the container is full
+	inline BOOL IsNotEmpty() const { return mCurNbEntries; }			  //!< Checks the container is empty
 
 	//! Read-access as an array
-	inline_ udword operator[](udword i) const
+	inline udword operator[](udword i) const
 	{
 		OPASSERT(i >= 0 && i < mCurNbEntries);
 		return mEntries[i];
 	}
 	//! Write-access as an array
-	inline_ udword &operator[](udword i)
+	inline udword &operator[](udword i)
 	{
 		OPASSERT(i >= 0 && i < mCurNbEntries);
 		return mEntries[i];
@@ -210,11 +210,11 @@ public:
 	void operator=(const Container &object);
 
 #ifdef CONTAINER_STATS
-	inline_ udword GetNbContainers() const
+	inline udword GetNbContainers() const
 	{
 		return mNbContainers;
 	}
-	inline_ udword GetTotalBytes() const { return mUsedRam; }
+	inline udword GetTotalBytes() const { return mUsedRam; }
 
 private:
 	static udword mNbContainers; //!< Number of containers around

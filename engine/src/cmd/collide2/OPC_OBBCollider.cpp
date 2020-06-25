@@ -363,7 +363,7 @@ bool OBBCollider::InitQuery(OBBCache &cache, const OBB &box, const Matrix4x4 *wo
  *	\return		true if the OBB contains the whole box
  */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-inline_ bool OBBCollider::OBBContainsBox(const Point &bc, const Point &be)
+inline bool OBBCollider::OBBContainsBox(const Point &bc, const Point &be)
 {
 	// I assume if all 8 box vertices are inside the OBB, so does the whole box.
 	// Sounds ok but maybe there's a better way?

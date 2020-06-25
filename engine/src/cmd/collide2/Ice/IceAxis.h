@@ -34,7 +34,7 @@ enum AxisOrder
 	AXIS_FORCE_DWORD = 0x7fffffff
 };
 
-class ICEMATHS_API Axis
+class Axis
 {
 public:
 	inline Axis(AxisOrder order)

@@ -21,11 +21,11 @@
 #define __OPC_BOXPRUNING_H__
 
 // Optimized versions
-FUNCTION OPCODE_API bool CompleteBoxPruning(udword nb, const AABB **array, Pairs &pairs, const Axis &axes);
-FUNCTION OPCODE_API bool BipartiteBoxPruning(udword nb0, const AABB **array0, udword nb1, const AABB **array1, Pairs &pairs, const Axis &axes);
+extern "C"  bool CompleteBoxPruning(udword nb, const AABB **array, Pairs &pairs, const Axis &axes);
+extern "C"  bool BipartiteBoxPruning(udword nb0, const AABB **array0, udword nb1, const AABB **array1, Pairs &pairs, const Axis &axes);
 
 // Brute-force versions
-FUNCTION OPCODE_API bool BruteForceCompleteBoxTest(udword nb, const AABB **array, Pairs &pairs);
-FUNCTION OPCODE_API bool BruteForceBipartiteBoxTest(udword nb0, const AABB **array0, udword nb1, const AABB **array1, Pairs &pairs);
+extern "C"  bool BruteForceCompleteBoxTest(udword nb, const AABB **array, Pairs &pairs);
+extern "C"  bool BruteForceBipartiteBoxTest(udword nb0, const AABB **array0, udword nb1, const AABB **array1, Pairs &pairs);
 
 #endif //__OPC_BOXPRUNING_H__

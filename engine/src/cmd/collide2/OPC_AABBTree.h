@@ -59,18 +59,18 @@ public:                                    \
 	~base_class();
 
 /* Data access */
-inline_ const volume *Get##volume() const
+inline const volume *Get##volume() const
 {
 	return &mBV;
 } /* Clear the last bit */
-inline_ const base_class *GetPos() const { return (const base_class *)(mPos & ~1); }
-inline_ const base_class *GetNeg() const { return (const base_class *)(mNeg & ~1); }
+inline const base_class *GetPos() const { return (const base_class *)(mPos & ~1); }
+inline const base_class *GetNeg() const { return (const base_class *)(mNeg & ~1); }
 
-/*		inline_	bool				IsLeaf()		const	{ return (!GetPos() && !GetNeg());	}	*/ /* We don't need to test both nodes since we can't have one without the other	*/
-inline_ bool IsLeaf() const { return !GetPos(); }
+/*		inline	bool				IsLeaf()		const	{ return (!GetPos() && !GetNeg());	}	*/ /* We don't need to test both nodes since we can't have one without the other	*/
+inline bool IsLeaf() const { return !GetPos(); }
 
 /* Stats */
-inline_ udword GetNodeSize() const { return SIZEOFOBJECT; }
+inline udword GetNodeSize() const { return SIZEOFOBJECT; }
 
 protected: /* Tree-independent data */ /* Following data always belong to the BV-tree, regardless of what the tree actually contains.*/ /* Whatever happens we need the two children and the enclosing volume.*/
 volume mBV;																																/* Global bounding-volume enclosing all the node-related primitives */
@@ -80,7 +80,7 @@ uintptr_t mNeg;																															/* "Negative" child */
 
 typedef std::function<void(uint32_t nb_primitives, uint32_t *node_primitives, bool need_clipping, void *user_data)> CullingCallback;
 
-class OPCODE_API AABBTreeNode
+class  AABBTreeNode
 {
 	IMPLEMENT_TREE(AABBTreeNode, AABB)
 public:
@@ -110,7 +110,7 @@ protected:
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 typedef std::function<bool(const AABBTreeNode *current, uint32_t depth, void *user_data)> WalkingCallback;
 
-class OPCODE_API AABBTree : public AABBTreeNode
+class  AABBTree : public AABBTreeNode
 {
 public:
 	// Constructor / Destructor

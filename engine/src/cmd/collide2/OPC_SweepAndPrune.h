@@ -35,7 +35,7 @@ class SAP_Element;
 class SAP_EndPoint;
 class SAP_Box;
 
-class OPCODE_API SAP_PairData
+class SAP_PairData
 {
 public:
 	SAP_PairData();
@@ -59,11 +59,11 @@ private:
 	SAP_Element **mArray; //!< Pointers to pool
 						  // Internal methods
 	SAP_Element *GetFreeElem(udword id, SAP_Element *next, udword *remap = null);
-	inline_ void FreeElem(SAP_Element *elem);
+	inline void FreeElem(SAP_Element *elem);
 	void Release();
 };
 
-class OPCODE_API SweepAndPrune
+class SweepAndPrune
 {
 public:
 	SweepAndPrune();

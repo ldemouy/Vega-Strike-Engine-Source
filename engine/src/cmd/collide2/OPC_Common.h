@@ -23,7 +23,7 @@
 // [GOTTFRIED]: Just a small change for readability.
 #define GREATER(x, y) fabsf(x) > (y)
 
-class OPCODE_API CollisionAABB
+class  CollisionAABB
 {
 public:
 	//! Constructor
@@ -81,7 +81,7 @@ public:
 	Point mExtents; //!< Box extents
 };
 
-class OPCODE_API QuantizedAABB
+class  QuantizedAABB
 {
 public:
 	//! Constructor

@@ -20,7 +20,7 @@
 #ifndef __OPC_AABBCOLLIDER_H__
 #define __OPC_AABBCOLLIDER_H__
 
-struct OPCODE_API AABBCache : VolumeCache
+struct AABBCache : VolumeCache
 {
 	AABBCache() : FatCoeff(1.1f)
 	{
@@ -34,7 +34,7 @@ struct OPCODE_API AABBCache : VolumeCache
 	float FatCoeff; //!< mRadius2 multiplier used to create a fat sphere
 };
 
-class OPCODE_API AABBCollider : public VolumeCollider
+class AABBCollider : public VolumeCollider
 {
 public:
 	// Constructor / Destructor
@@ -76,14 +76,14 @@ protected:
 	void _CollideNoPrimitiveTest(const AABBQuantizedNode *node);
 	void _CollideNoPrimitiveTest(const AABBQuantizedNoLeafNode *node);
 	// Overlap tests
-	inline_ bool AABBContainsBox(const Point &bc, const Point &be);
-	inline_ bool AABBAABBOverlap(const Point &b, const Point &Pb);
-	inline_ bool TriBoxOverlap();
+	inline bool AABBContainsBox(const Point &bc, const Point &be);
+	inline bool AABBAABBOverlap(const Point &b, const Point &Pb);
+	inline bool TriBoxOverlap();
 	// Init methods
 	bool InitQuery(AABBCache &cache, const CollisionAABB &box);
 };
 
-class OPCODE_API HybridAABBCollider : public AABBCollider
+class HybridAABBCollider : public AABBCollider
 {
 public:
 	// Constructor / Destructor

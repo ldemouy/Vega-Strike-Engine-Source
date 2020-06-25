@@ -324,7 +324,7 @@ bool SphereCollider::Collide(SphereCache &cache, const Sphere &sphere, const AAB
  *	\return		true if the sphere contains the whole box
  */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-inline_ bool SphereCollider::SphereContainsBox(const Point &bc, const Point &be)
+inline bool SphereCollider::SphereContainsBox(const Point &bc, const Point &be)
 {
 	// I assume if all 8 box vertices are inside the sphere, so does the whole box.
 	// Sounds ok but maybe there's a better way?

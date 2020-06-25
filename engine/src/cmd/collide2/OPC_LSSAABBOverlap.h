@@ -2,7 +2,7 @@
 // Following code from Magic-Software (http://www.magic-software.com/)
 // A bit modified for Opcode
 
-inline_ float OPC_PointAABBSqrDist(const Point &point, const Point &center, const Point &extents)
+inline float OPC_PointAABBSqrDist(const Point &point, const Point &center, const Point &extents)
 {
     // Compute coordinates of point in box coordinate system
     Point Closest = point - center;
@@ -501,7 +501,7 @@ static float SqrDistance(const Ray &rkLine, const Point &center, const Point &ex
     return fSqrDistance;
 }
 
-inline_ float OPC_SegmentOBBSqrDist(const Segment &segment, const Point &c0, const Point &e0)
+inline float OPC_SegmentOBBSqrDist(const Segment &segment, const Point &c0, const Point &e0)
 {
     float fLP;
     float fSqrDistance = SqrDistance(Ray(segment.GetOrigin(), segment.ComputeDirection()), c0, e0, &fLP);
@@ -516,7 +516,7 @@ inline_ float OPC_SegmentOBBSqrDist(const Segment &segment, const Point &c0, con
         return OPC_PointAABBSqrDist(segment.mP0, c0, e0);
 }
 
-inline_ bool LSSCollider::LSSAABBOverlap(const Point &center, const Point &extents)
+inline bool LSSCollider::LSSAABBOverlap(const Point &center, const Point &extents)
 {
     // Stats
     mNbVolumeBVTests++;

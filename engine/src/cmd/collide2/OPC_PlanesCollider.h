@@ -20,14 +20,14 @@
 #ifndef __OPC_PLANESCOLLIDER_H__
 #define __OPC_PLANESCOLLIDER_H__
 
-struct OPCODE_API PlanesCache : VolumeCache
+struct PlanesCache : VolumeCache
 {
 	PlanesCache()
 	{
 	}
 };
 
-class OPCODE_API PlanesCollider : public VolumeCollider
+class PlanesCollider : public VolumeCollider
 {
 public:
 	// Constructor / Destructor
@@ -53,7 +53,7 @@ public:
 	bool Collide(PlanesCache &cache, const Plane *planes, udword nb_planes, const Model &model, const Matrix4x4 *worldm = null);
 
 	// Mutant box-with-planes collision queries
-	inline_ bool Collide(PlanesCache &cache, const OBB &box, const Model &model, const Matrix4x4 *worldb = null, const Matrix4x4 *worldm = null)
+	inline bool Collide(PlanesCache &cache, const OBB &box, const Model &model, const Matrix4x4 *worldb = null, const Matrix4x4 *worldm = null)
 	{
 		Plane PL[6];
 
@@ -82,7 +82,7 @@ public:
 		 *	\return		null if everything is ok, else a string describing the problem
 		 */
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	override(Collider) const char *ValidateSettings();
+	virtual const char *ValidateSettings() override;
 
 protected:
 	// Planes in model space
@@ -100,13 +100,13 @@ protected:
 	void _CollideNoPrimitiveTest(const AABBQuantizedNode *node, udword clip_mask);
 	void _CollideNoPrimitiveTest(const AABBQuantizedNoLeafNode *node, udword clip_mask);
 	// Overlap tests
-	inline_ bool PlanesAABBOverlap(const Point &center, const Point &extents, udword &out_clip_mask, udword in_clip_mask);
-	inline_ bool PlanesTriOverlap(udword in_clip_mask);
+	inline bool PlanesAABBOverlap(const Point &center, const Point &extents, udword &out_clip_mask, udword in_clip_mask);
+	inline bool PlanesTriOverlap(udword in_clip_mask);
 	// Init methods
 	bool InitQuery(PlanesCache &cache, const Plane *planes, udword nb_planes, const Matrix4x4 *worldm = null);
 };
 
-class OPCODE_API HybridPlanesCollider : public PlanesCollider
+class HybridPlanesCollider : public PlanesCollider
 {
 public:
 	// Constructor / Destructor

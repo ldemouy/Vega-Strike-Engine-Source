@@ -15,15 +15,15 @@
 // Forward declarations
 class LSS;
 
-class ICEMATHS_API OBB
+class OBB
 {
 public:
 	//! Constructor
-	inline_ OBB() {}
+	inline OBB() {}
 	//! Constructor
-	inline_ OBB(const Point &center, const Point &extents, const Matrix3x3 &rot) : mCenter(center), mExtents(extents), mRot(rot) {}
+	inline OBB(const Point &center, const Point &extents, const Matrix3x3 &rot) : mCenter(center), mExtents(extents), mRot(rot) {}
 	//! Destructor
-	inline_ ~OBB() {}
+	inline ~OBB() {}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/**
@@ -62,7 +62,7 @@ public:
 		 *	\param		obb		[out] the transformed OBB
 		 */
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	inline_ void Rotate(const Matrix4x4 &mtx, OBB &obb) const
+	inline void Rotate(const Matrix4x4 &mtx, OBB &obb) const
 	{
 		// The extents remain constant
 		obb.mExtents = mExtents;
@@ -78,7 +78,7 @@ public:
 		 *	\return		true if the box is valid
 		 */
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	inline_ BOOL IsValid() const
+	inline BOOL IsValid() const
 	{
 		// Consistency condition for (Center, Extents) boxes: Extents >= 0.0f
 		if (mExtents.x < 0.0f)
@@ -159,11 +159,11 @@ public:
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	bool IsInside(const OBB &box) const;
 
-	inline_ const Point &GetCenter() const { return mCenter; }
-	inline_ const Point &GetExtents() const { return mExtents; }
-	inline_ const Matrix3x3 &GetRot() const { return mRot; }
+	inline const Point &GetCenter() const { return mCenter; }
+	inline const Point &GetExtents() const { return mExtents; }
+	inline const Matrix3x3 &GetRot() const { return mRot; }
 
-	inline_ void GetRotatedExtents(Matrix3x3 &extents) const
+	inline void GetRotatedExtents(Matrix3x3 &extents) const
 	{
 		extents = mRot;
 		extents.Scale(mExtents);

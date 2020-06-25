@@ -241,7 +241,7 @@ bool RadixSort::Resize(udword nb)
 	return true;
 }
 
-inline_ void RadixSort::CheckResize(udword nb)
+inline void RadixSort::CheckResize(udword nb)
 {
 	udword CurSize = CURRENT_SIZE;
 	if (nb != CurSize)

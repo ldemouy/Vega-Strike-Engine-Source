@@ -33,7 +33,7 @@
 
 using namespace Opcode;
 
-inline_ void FindRunningIndex(udword &index, float *array, udword *sorted, int last, float max)
+inline void FindRunningIndex(udword &index, float *array, udword *sorted, int last, float max)
 {
 	int First = index;
 	while (First <= last)
@@ -57,19 +57,19 @@ inline_ void FindRunningIndex(udword &index, float *array, udword *sorted, int l
 static PRUNING_SORTER *gCompletePruningSorter = null;
 static PRUNING_SORTER *gBipartitePruningSorter0 = null;
 static PRUNING_SORTER *gBipartitePruningSorter1 = null;
-inline_ PRUNING_SORTER *GetCompletePruningSorter()
+inline PRUNING_SORTER *GetCompletePruningSorter()
 {
 	if (!gCompletePruningSorter)
 		gCompletePruningSorter = new PRUNING_SORTER;
 	return gCompletePruningSorter;
 }
-inline_ PRUNING_SORTER *GetBipartitePruningSorter0()
+inline PRUNING_SORTER *GetBipartitePruningSorter0()
 {
 	if (!gBipartitePruningSorter0)
 		gBipartitePruningSorter0 = new PRUNING_SORTER;
 	return gBipartitePruningSorter0;
 }
-inline_ PRUNING_SORTER *GetBipartitePruningSorter1()
+inline PRUNING_SORTER *GetBipartitePruningSorter1()
 {
 	if (!gBipartitePruningSorter1)
 		gBipartitePruningSorter1 = new PRUNING_SORTER;

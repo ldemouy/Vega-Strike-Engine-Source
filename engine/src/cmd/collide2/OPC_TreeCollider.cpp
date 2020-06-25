@@ -586,7 +586,7 @@ void AABBTreeCollider::PrimTest(udword id0, udword id1)
  *	\param		id1		[in] leaf-triangle index from tree B
  */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-inline_ void AABBTreeCollider::PrimTestTriIndex(udword id1)
+inline void AABBTreeCollider::PrimTestTriIndex(udword id1)
 {
 	// Request vertices from the app
 	VertexPointers VP;
@@ -608,7 +608,7 @@ inline_ void AABBTreeCollider::PrimTestTriIndex(udword id1)
  *	\param		id0		[in] leaf-triangle index from tree A
  */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-inline_ void AABBTreeCollider::PrimTestIndexTri(udword id0)
+inline void AABBTreeCollider::PrimTestIndexTri(udword id0)
 {
 	// Request vertices from the app
 	VertexPointers VP;

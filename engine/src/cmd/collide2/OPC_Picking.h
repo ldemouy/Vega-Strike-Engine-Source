@@ -33,12 +33,12 @@ enum CullMode
 
 typedef CullMode (*CullModeCallback)(udword triangle_index, void *user_data);
 
-OPCODE_API bool SetupAllHits(RayCollider &collider, std::vector<CollisionFace> &contacts);
-OPCODE_API bool SetupClosestHit(RayCollider &collider, std::vector<CollisionFace> &closest_contact);
-OPCODE_API bool SetupShadowFeeler(RayCollider &collider);
-OPCODE_API bool SetupInOutTest(RayCollider &collider);
+ bool SetupAllHits(RayCollider &collider, std::vector<CollisionFace> &contacts);
+ bool SetupClosestHit(RayCollider &collider, std::vector<CollisionFace> &closest_contact);
+ bool SetupShadowFeeler(RayCollider &collider);
+ bool SetupInOutTest(RayCollider &collider);
 
-OPCODE_API bool Picking(
+ bool Picking(
 	CollisionFace &picked_face,
 	const Ray &world_ray, const Model &model, const Matrix4x4 *world,
 	float min_dist, float max_dist, const Point &view_point, CullModeCallback callback, void *user_data);

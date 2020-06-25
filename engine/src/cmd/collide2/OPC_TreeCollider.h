@@ -26,7 +26,7 @@
 //! coherence. That is, in case temporal coherence is enabled, those two primitives are
 //! tested for overlap before everything else. If they still collide, we're done before
 //! even entering the recursive collision code.
-struct OPCODE_API BVTCache : Pair
+struct  BVTCache : Pair
 {
 	//! Constructor
 	BVTCache()
@@ -66,7 +66,7 @@ struct OPCODE_API BVTCache : Pair
 #endif // __MESHMERIZER_H__
 };
 
-class OPCODE_API AABBTreeCollider : public Collider
+class  AABBTreeCollider : public Collider
 {
 public:
 	// Constructor / Destructor
@@ -104,7 +104,7 @@ public:
 		 *	\see		SetFullPrimBoxTest(bool flag)
 		 */
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	inline_ void SetFullBoxBoxTest(bool flag) { mFullBoxBoxTest = flag; }
+	inline void SetFullBoxBoxTest(bool flag) { mFullBoxBoxTest = flag; }
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/**
@@ -125,7 +125,7 @@ public:
 		 *	\return		the number of BV-BV tests performed during last query
 		 */
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	inline_ udword GetNbBVBVTests() const { return mNbBVBVTests; }
+	inline udword GetNbBVBVTests() const { return mNbBVBVTests; }
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/**
@@ -135,7 +135,7 @@ public:
 		 *	\return		the number of Triangle-Triangle tests performed during last query
 		 */
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	inline_ udword GetNbPrimPrimTests() const { return mNbPrimPrimTests; }
+	inline udword GetNbPrimPrimTests() const { return mNbPrimPrimTests; }
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/**
@@ -145,7 +145,7 @@ public:
 		 *	\return		the number of BV-Triangle tests performed during last query
 		 */
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	inline_ udword GetNbBVPrimTests() const { return mNbBVPrimTests; }
+	inline udword GetNbBVPrimTests() const { return mNbBVPrimTests; }
 
 	// Data access
 
@@ -157,7 +157,7 @@ public:
 		 *	\return		the number of contacts / colliding pairs.
 		 */
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	inline_ udword GetNbPairs() const { return mPairs.GetNbEntries() >> 1; }
+	inline udword GetNbPairs() const { return mPairs.GetNbEntries() >> 1; }
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/**
@@ -167,7 +167,7 @@ public:
 		 *	\return		the list of colliding pairs (triangle indices)
 		 */
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	inline_ const Pair *GetPairs() const { return (const Pair *)mPairs.GetEntries(); }
+	inline const Pair *GetPairs() const { return (const Pair *)mPairs.GetEntries(); }
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/**
@@ -175,7 +175,7 @@ public:
 		 *	\return		null if everything is ok, else a string describing the problem
 		 */
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	override(Collider) const char *ValidateSettings();
+	virtual const char *ValidateSettings() override;
 
 protected:
 	// Colliding pairs
@@ -220,17 +220,17 @@ protected:
 	void _Collide(const AABBQuantizedNoLeafNode *a, const AABBQuantizedNoLeafNode *b);
 	// Overlap tests
 	void PrimTest(udword id0, udword id1);
-	inline_ void PrimTestTriIndex(udword id1);
-	inline_ void PrimTestIndexTri(udword id0);
+	inline void PrimTestTriIndex(udword id1);
+	inline void PrimTestIndexTri(udword id0);
 
-	inline_ bool BoxBoxOverlap(const Point &ea, const Point &ca, const Point &eb, const Point &cb);
-	inline_ bool TriBoxOverlap(const Point &center, const Point &extents);
-	inline_ bool TriTriOverlap(const Point &V0, const Point &V1, const Point &V2, const Point &U0, const Point &U1, const Point &U2);
+	inline bool BoxBoxOverlap(const Point &ea, const Point &ca, const Point &eb, const Point &cb);
+	inline bool TriBoxOverlap(const Point &center, const Point &extents);
+	inline bool TriTriOverlap(const Point &V0, const Point &V1, const Point &V2, const Point &U0, const Point &U1, const Point &U2);
 	// Init methods
 	void InitQuery(const Matrix4x4 *world0 = null, const Matrix4x4 *world1 = null);
 	bool CheckTemporalCoherence(Pair *cache);
 
-	inline_ bool Setup(const MeshInterface *mi0, const MeshInterface *mi1)
+	inline bool Setup(const MeshInterface *mi0, const MeshInterface *mi1)
 	{
 		mIMesh0 = mi0;
 		mIMesh1 = mi1;

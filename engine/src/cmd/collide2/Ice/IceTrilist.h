@@ -12,15 +12,15 @@
 #ifndef __ICETRILIST_H__
 #define __ICETRILIST_H__
 
-class ICEMATHS_API TriList : public Container
+class TriList : public Container
 {
 public:
 	// Constructor / Destructor
 	TriList() {}
 	~TriList() {}
 
-	inline_ udword GetNbTriangles() const { return GetNbEntries() / 9; }
-	inline_ Triangle *GetTriangles() const { return (Triangle *)GetEntries(); }
+	inline udword GetNbTriangles() const { return GetNbEntries() / 9; }
+	inline Triangle *GetTriangles() const { return (Triangle *)GetEntries(); }
 
 	void AddTri(const Triangle &tri)
 	{
@@ -37,15 +37,15 @@ public:
 	}
 };
 
-class ICEMATHS_API TriangleList : public Container
+class TriangleList : public Container
 {
 public:
 	// Constructor / Destructor
 	TriangleList() {}
 	~TriangleList() {}
 
-	inline_ udword GetNbTriangles() const { return GetNbEntries() / 3; }
-	inline_ IndexedTriangle *GetTriangles() const { return (IndexedTriangle *)GetEntries(); }
+	inline udword GetNbTriangles() const { return GetNbEntries() / 3; }
+	inline IndexedTriangle *GetTriangles() const { return (IndexedTriangle *)GetEntries(); }
 
 	void AddTriangle(const IndexedTriangle &tri)
 	{

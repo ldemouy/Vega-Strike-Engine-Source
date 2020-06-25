@@ -20,7 +20,7 @@
 #ifndef __OPC_SPHERECOLLIDER_H__
 #define __OPC_SPHERECOLLIDER_H__
 
-struct OPCODE_API SphereCache : VolumeCache
+struct SphereCache : VolumeCache
 {
 	SphereCache() : Center(0.0f, 0.0f, 0.0f), FatRadius2(0.0f), FatCoeff(1.1f) {}
 	~SphereCache() {}
@@ -32,7 +32,7 @@ struct OPCODE_API SphereCache : VolumeCache
 	float FatCoeff; //!< mRadius2 multiplier used to create a fat sphere
 };
 
-class OPCODE_API SphereCollider : public VolumeCollider
+class SphereCollider : public VolumeCollider
 {
 public:
 	// Constructor / Destructor
@@ -64,7 +64,7 @@ protected:
 	// Sphere in model space
 	Point mCenter;	//!< Sphere center
 	float mRadius2; //!< Sphere radius squared
-					// Internal methods
+		// Internal methods
 	void _Collide(const AABBCollisionNode *node);
 	void _Collide(const AABBNoLeafNode *node);
 	void _Collide(const AABBQuantizedNode *node);
@@ -75,14 +75,14 @@ protected:
 	void _CollideNoPrimitiveTest(const AABBQuantizedNode *node);
 	void _CollideNoPrimitiveTest(const AABBQuantizedNoLeafNode *node);
 	// Overlap tests
-	inline_ bool SphereContainsBox(const Point &bc, const Point &be);
-	inline_ bool SphereAABBOverlap(const Point &center, const Point &extents);
+	inline bool SphereContainsBox(const Point &bc, const Point &be);
+	inline bool SphereAABBOverlap(const Point &center, const Point &extents);
 	bool SphereTriOverlap(const Point &vert0, const Point &vert1, const Point &vert2);
 	// Init methods
 	bool InitQuery(SphereCache &cache, const Sphere &sphere, const Matrix4x4 *worlds = null, const Matrix4x4 *worldm = null);
 };
 
-class OPCODE_API HybridSphereCollider : public SphereCollider
+class HybridSphereCollider : public SphereCollider
 {
 public:
 	// Constructor / Destructor

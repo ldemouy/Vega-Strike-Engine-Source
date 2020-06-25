@@ -319,7 +319,7 @@ namespace Opcode
 		return UsedBytes;
 	}
 
-	inline_ void OPComputeMinMax(Point &min, Point &max, const VertexPointers &vp)
+	inline void OPComputeMinMax(Point &min, Point &max, const VertexPointers &vp)
 	{
 		// Compute triangle's AABB = a leaf box
 #ifdef OPC_USE_FCOMI // a 15% speedup on my machine, not much

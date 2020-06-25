@@ -27,27 +27,27 @@ enum PartVal
 };
 
 // A triangle class.
-class ICEMATHS_API Triangle
+class Triangle
 {
 public:
 	//! Constructor
-	inline_ Triangle() {}
+	inline Triangle() {}
 	//! Constructor
-	inline_ Triangle(const Point &p0, const Point &p1, const Point &p2)
+	inline Triangle(const Point &p0, const Point &p1, const Point &p2)
 	{
 		mVerts[0] = p0;
 		mVerts[1] = p1;
 		mVerts[2] = p2;
 	}
 	//! Copy constructor
-	inline_ Triangle(const Triangle &triangle)
+	inline Triangle(const Triangle &triangle)
 	{
 		mVerts[0] = triangle.mVerts[0];
 		mVerts[1] = triangle.mVerts[1];
 		mVerts[2] = triangle.mVerts[2];
 	}
 	//! Destructor
-	inline_ ~Triangle() {}
+	inline ~Triangle() {}
 	//! Vertices
 	Point mVerts[3];
 
@@ -59,7 +59,7 @@ public:
 	void Normal(Point &normal) const;
 	void DenormalizedNormal(Point &normal) const;
 	void Center(Point &center) const;
-	inline_ Plane PlaneEquation() const { return Plane(mVerts[0], mVerts[1], mVerts[2]); }
+	inline Plane PlaneEquation() const { return Plane(mVerts[0], mVerts[1], mVerts[2]); }
 
 	PartVal TestAgainstPlane(const Plane &plane, float epsilon) const;
 	//				float			Distance(Point& cp, Point& cq, Tri& tri);

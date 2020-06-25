@@ -26,7 +26,7 @@ enum AABBType
 	AABB_FORCE_DWORD = 0x7fffffff
 };
 
-class ICEMATHS_API AABB
+class AABB
 {
 public:
 	//! Constructor
@@ -311,7 +311,7 @@ private:
 	Point mExtents; //!< x, y and z extents
 };
 
-inline_ void ComputeMinMax(const Point &p, Point &min, Point &max)
+inline void ComputeMinMax(const Point &p, Point &min, Point &max)
 {
 	if (p.x > max.x)
 	{
