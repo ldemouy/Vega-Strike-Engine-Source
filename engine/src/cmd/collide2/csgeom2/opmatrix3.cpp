@@ -17,8 +17,7 @@
     Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-#include <math.h>
-#include <float.h>
+#include <cmath>
 #include "cmd/collide2/opcodesysdef.h"
 #include "cmd/collide2/opcodeqint.h"
 #include "opmatrix3.h"
@@ -96,7 +95,15 @@ void csMatrix3::Identity()
 
 bool csMatrix3::IsIdentity() const
 {
-  return (m11 == 1.0) && (m22 == 1.0) && (m33 == 1.0) && (m12 == 0.0) && (m13 == 0.0) && (m21 == 0.0) && (m23 == 0.0) && (m31 == 0.0) && (m32 == 0.0);
+  return (m11 == 1.0) &&
+         (m22 == 1.0) &&
+         (m33 == 1.0) &&
+         (m12 == 0.0) &&
+         (m13 == 0.0) &&
+         (m21 == 0.0) &&
+         (m23 == 0.0) &&
+         (m31 == 0.0) &&
+         (m32 == 0.0);
 }
 
 void csMatrix3::Transpose()
@@ -223,38 +230,30 @@ csMatrix3 operator/(const csMatrix3 &m, float f)
 
 bool operator==(const csMatrix3 &m1, const csMatrix3 &m2)
 {
-  if (m1.m11 != m2.m11 || m1.m12 != m2.m12 || m1.m13 != m2.m13)
-    return false;
-  if (m1.m21 != m2.m21 || m1.m22 != m2.m22 || m1.m23 != m2.m23)
-    return false;
-  if (m1.m31 != m2.m31 || m1.m32 != m2.m32 || m1.m33 != m2.m33)
-    return false;
-  return true;
+  return !(m1.m11 != m2.m11 || m1.m12 != m2.m12 || m1.m13 != m2.m13) &&
+         !(m1.m21 != m2.m21 || m1.m22 != m2.m22 || m1.m23 != m2.m23) &&
+         !(m1.m31 != m2.m31 || m1.m32 != m2.m32 || m1.m33 != m2.m33);
 }
 
 bool operator!=(const csMatrix3 &m1, const csMatrix3 &m2)
 {
-  if (m1.m11 != m2.m11 || m1.m12 != m2.m12 || m1.m13 != m2.m13)
-    return true;
-  if (m1.m21 != m2.m21 || m1.m22 != m2.m22 || m1.m23 != m2.m23)
-    return true;
-  if (m1.m31 != m2.m31 || m1.m32 != m2.m32 || m1.m33 != m2.m33)
-    return true;
-  return false;
+  return (m1.m11 != m2.m11 || m1.m12 != m2.m12 || m1.m13 != m2.m13) ||
+         (m1.m21 != m2.m21 || m1.m22 != m2.m22 || m1.m23 != m2.m23) ||
+         (m1.m31 != m2.m31 || m1.m32 != m2.m32 || m1.m33 != m2.m33);
 }
 
 bool operator<(const csMatrix3 &m, float f)
 {
-  return ABS(m.m11) < f && ABS(m.m12) < f && ABS(m.m13) < f &&
-         ABS(m.m21) < f && ABS(m.m22) < f && ABS(m.m23) < f &&
-         ABS(m.m31) < f && ABS(m.m32) < f && ABS(m.m33) < f;
+  return std::abs(m.m11) < f && std::abs(m.m12) < f && std::abs(m.m13) < f &&
+         std::abs(m.m21) < f && std::abs(m.m22) < f && std::abs(m.m23) < f &&
+         std::abs(m.m31) < f && std::abs(m.m32) < f && std::abs(m.m33) < f;
 }
 
 bool operator>(float f, const csMatrix3 &m)
 {
-  return ABS(m.m11) < f && ABS(m.m12) < f && ABS(m.m13) < f &&
-         ABS(m.m21) < f && ABS(m.m22) < f && ABS(m.m23) < f &&
-         ABS(m.m31) < f && ABS(m.m32) < f && ABS(m.m33) < f;
+  return std::abs(m.m11) < f && std::abs(m.m12) < f && std::abs(m.m13) < f &&
+         std::abs(m.m21) < f && std::abs(m.m22) < f && std::abs(m.m23) < f &&
+         std::abs(m.m31) < f && std::abs(m.m32) < f && std::abs(m.m33) < f;
 }
 
 //---------------------------------------------------------------------------
