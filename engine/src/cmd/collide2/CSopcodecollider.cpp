@@ -24,20 +24,15 @@
 -------------------------------------------------------------------------
 */
 #include "CSopcodecollider.h"
-#include "opcodegarray.h"
-#define _X 1000
-
-#undef _X
 
 using namespace Opcode;
 
-static CS_DECLARE_GROWING_ARRAY_REF(pairs, csCollisionPair);
+static std::vector<csCollisionPair> pairs;
 
 csOPCODECollider::csOPCODECollider(const std::vector<mesh_polygon> &polygons)
 {
 	m_pCollisionModel = 0;
 	vertholder = 0;
-	pairs.IncRef();
 	TreeCollider.SetFirstContact(true);
 	TreeCollider.SetFullBoxBoxTest(false);
 	TreeCollider.SetTemporalCoherence(false);
@@ -119,7 +114,6 @@ csOPCODECollider::~csOPCODECollider()
 		delete m_pCollisionModel;
 		m_pCollisionModel = nullptr;
 	}
-	pairs.DecRef();
 	delete[] vertholder;
 }
 
@@ -265,17 +259,17 @@ bool csOPCODECollider::Collide(csOPCODECollider &otherCollider,
 
 void csOPCODECollider::ResetCollisionPairs()
 {
-	pairs.SetLength(0);
+	pairs.clear();
 }
 
 csCollisionPair *csOPCODECollider::GetCollisions()
 {
-	return (pairs.GetArray());
+	return (pairs.data());
 }
 
 size_t csOPCODECollider::GetCollisionPairCount()
 {
-	return (pairs.Length());
+	return (pairs.size());
 }
 
 void csOPCODECollider::SetOneHitOnly(bool on)
@@ -312,8 +306,7 @@ void csOPCODECollider::CopyCollisionPairs(csOPCODECollider *col1,
 	Point *vertholder0 = col1->vertholder;
 	Point *vertholder1 = col2->vertholder;
 	int32_t j;
-	size_t oldlen = pairs.Length();
-	pairs.SetLength(oldlen + N_pairs);
+	size_t oldlen = pairs.size();
 
 	for (uint32_t i = 0; i < N_pairs; ++i)
 	{

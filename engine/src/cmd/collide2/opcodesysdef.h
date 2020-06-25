@@ -12,17 +12,6 @@
 #define EPSILON .00001
 #define __CS_CSSYSDEFS_H__
 
-#include <stdlib.h>
-#include <string.h>
-#include <assert.h>
-
-class csObject
-{
-};
-struct iBase
-{
-};
-
 #define CS_ASSERT assert
 
 #endif
