@@ -22,6 +22,8 @@
 
 #ifdef OPC_RAYHIT_CALLBACK
 
+#include <vector>
+
 enum CullMode
 {
 	CULLMODE_NONE = 0,
@@ -31,8 +33,8 @@ enum CullMode
 
 typedef CullMode (*CullModeCallback)(udword triangle_index, void *user_data);
 
-OPCODE_API bool SetupAllHits(RayCollider &collider, CollisionFaces &contacts);
-OPCODE_API bool SetupClosestHit(RayCollider &collider, CollisionFace &closest_contact);
+OPCODE_API bool SetupAllHits(RayCollider &collider, std::vector<CollisionFace> &contacts);
+OPCODE_API bool SetupClosestHit(RayCollider &collider, std::vector<CollisionFace> &closest_contact);
 OPCODE_API bool SetupShadowFeeler(RayCollider &collider);
 OPCODE_API bool SetupInOutTest(RayCollider &collider);
 

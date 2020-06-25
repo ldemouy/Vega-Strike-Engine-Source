@@ -33,14 +33,14 @@ namespace Opcode
 
 */
 
-	bool SetupAllHits(RayCollider &collider, CollisionFaces &contacts)
+	bool SetupAllHits(RayCollider &collider, std::vector<CollisionFace> &contacts)
 	{
 		struct Local
 		{
 			static void AllContacts(const CollisionFace &hit, void *user_data)
 			{
-				CollisionFaces *CF = (CollisionFaces *)user_data;
-				CF->AddFace(hit);
+				auto CF = (std::vector<CollisionFace> *)user_data;
+				CF->push_back(hit);
 			}
 		};
 
