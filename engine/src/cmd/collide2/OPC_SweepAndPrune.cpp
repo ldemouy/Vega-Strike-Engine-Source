@@ -19,6 +19,7 @@
 // Precompiled Header
 #include "Stdafx.h"
 #include <utility>
+#include "Ice/IceRevisitedRadix.h"
 using namespace Opcode;
 
 inline void Sort(uint32_t &id0, uint32_t &id1)
