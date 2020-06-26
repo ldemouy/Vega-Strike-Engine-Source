@@ -26,7 +26,7 @@
 //! coherence. That is, in case temporal coherence is enabled, those two primitives are
 //! tested for overlap before everything else. If they still collide, we're done before
 //! even entering the recursive collision code.
-struct  BVTCache : Pair
+struct BVTCache : Pair
 {
 	//! Constructor
 	BVTCache()
@@ -66,7 +66,7 @@ struct  BVTCache : Pair
 #endif // __MESHMERIZER_H__
 };
 
-class  AABBTreeCollider : public Collider
+class AABBTreeCollider : public Collider
 {
 public:
 	// Constructor / Destructor
@@ -236,9 +236,9 @@ protected:
 		mIMesh1 = mi1;
 
 		if (!mIMesh0 || !mIMesh1)
-			return FALSE;
+			return false;
 
-		return TRUE;
+		return true;
 	}
 };
 

@@ -184,7 +184,7 @@ bool OBBCollider::Collide(OBBCache &cache, const OBB &box, const Model &model, c
  *	\param		box			[in] obb in local space
  *	\param		worldb		[in] obb's world matrix, or null
  *	\param		worldm		[in] model's world matrix, or null
- *	\return		TRUE if we can return immediately
+ *	\return		true if we can return immediately
  *	\warning	SCALE NOT SUPPORTED. The matrices must contain rotation & translation parts only.
  */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -249,7 +249,7 @@ bool OBBCollider::InitQuery(OBBCache &cache, const OBB &box, const Matrix4x4 *wo
 			OBB_PRIM(udword(0), OPC_CONTACT)
 
 			// Return immediately regardless of status
-			return TRUE;
+			return true;
 		}
 	}
 
@@ -276,7 +276,7 @@ bool OBBCollider::InitQuery(OBBCache &cache, const OBB &box, const Matrix4x4 *wo
 
 				// Return immediately if possible
 				if (GetContactStatus())
-					return TRUE;
+					return true;
 			}
 			// else no face has been touched during previous query
 			// => we'll have to perform a normal query
@@ -297,7 +297,7 @@ bool OBBCollider::InitQuery(OBBCache &cache, const OBB &box, const Matrix4x4 *wo
 					mFlags |= OPC_TEMPORAL_CONTACT;
 
 				// In any case we don't need to do a query
-				return TRUE;
+				return true;
 			}
 			else
 			{
@@ -352,7 +352,7 @@ bool OBBCollider::InitQuery(OBBCache &cache, const OBB &box, const Matrix4x4 *wo
 	mBB_8 = mBoxExtents.x * mAR.m[2][2] + mBoxExtents.z * mAR.m[0][2];
 	mBB_9 = mBoxExtents.x * mAR.m[1][2] + mBoxExtents.y * mAR.m[0][2];
 
-	return FALSE;
+	return false;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -370,9 +370,9 @@ inline bool OBBCollider::OBBContainsBox(const Point &bc, const Point &be)
 	/*
 #define TEST_PT(a,b,c)																												\
 	p.x=a;	p.y=b;	p.z=c;		p+=bc;																								\
-	f = p.x * mRModelToBox.m[0][0] + p.y * mRModelToBox.m[1][0] + p.z * mRModelToBox.m[2][0];	if(f>mB0.x || f<mB1.x) return FALSE;\
-	f = p.x * mRModelToBox.m[0][1] + p.y * mRModelToBox.m[1][1] + p.z * mRModelToBox.m[2][1];	if(f>mB0.y || f<mB1.y) return FALSE;\
-	f = p.x * mRModelToBox.m[0][2] + p.y * mRModelToBox.m[1][2] + p.z * mRModelToBox.m[2][2];	if(f>mB0.z || f<mB1.z) return FALSE;
+	f = p.x * mRModelToBox.m[0][0] + p.y * mRModelToBox.m[1][0] + p.z * mRModelToBox.m[2][0];	if(f>mB0.x || f<mB1.x) return false;\
+	f = p.x * mRModelToBox.m[0][1] + p.y * mRModelToBox.m[1][1] + p.z * mRModelToBox.m[2][1];	if(f>mB0.y || f<mB1.y) return false;\
+	f = p.x * mRModelToBox.m[0][2] + p.y * mRModelToBox.m[1][2] + p.z * mRModelToBox.m[2][2];	if(f>mB0.z || f<mB1.z) return false;
 
 	Point p;
 	float f;
@@ -386,7 +386,7 @@ inline bool OBBCollider::OBBContainsBox(const Point &bc, const Point &be)
 	TEST_PT(be.x, -be.y, -be.z)
 	TEST_PT(-be.x, -be.y, -be.z)
 
-	return TRUE;
+	return true;
 */
 
 	// Yes there is:
@@ -396,27 +396,27 @@ inline bool OBBCollider::OBBContainsBox(const Point &bc, const Point &be)
 	float NEx = fabsf(mRModelToBox.m[0][0] * be.x) + fabsf(mRModelToBox.m[1][0] * be.y) + fabsf(mRModelToBox.m[2][0] * be.z);
 
 	if (mB0.x < NCx + NEx)
-		return FALSE;
+		return false;
 	if (mB1.x > NCx - NEx)
-		return FALSE;
+		return false;
 
 	float NCy = bc.x * mRModelToBox.m[0][1] + bc.y * mRModelToBox.m[1][1] + bc.z * mRModelToBox.m[2][1];
 	float NEy = fabsf(mRModelToBox.m[0][1] * be.x) + fabsf(mRModelToBox.m[1][1] * be.y) + fabsf(mRModelToBox.m[2][1] * be.z);
 
 	if (mB0.y < NCy + NEy)
-		return FALSE;
+		return false;
 	if (mB1.y > NCy - NEy)
-		return FALSE;
+		return false;
 
 	float NCz = bc.x * mRModelToBox.m[0][2] + bc.y * mRModelToBox.m[1][2] + bc.z * mRModelToBox.m[2][2];
 	float NEz = fabsf(mRModelToBox.m[0][2] * be.x) + fabsf(mRModelToBox.m[1][2] * be.y) + fabsf(mRModelToBox.m[2][2] * be.z);
 
 	if (mB0.z < NCz + NEz)
-		return FALSE;
+		return false;
 	if (mB1.z > NCz - NEz)
-		return FALSE;
+		return false;
 
-	return TRUE;
+	return true;
 }
 
 #define TEST_BOX_IN_OBB(center, extents) \

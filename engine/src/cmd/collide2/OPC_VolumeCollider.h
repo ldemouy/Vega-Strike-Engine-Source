@@ -20,7 +20,7 @@
 #ifndef __OPC_VOLUMECOLLIDER_H__
 #define __OPC_VOLUMECOLLIDER_H__
 
-struct  VolumeCache
+struct VolumeCache
 {
 	VolumeCache() : Model(null) {}
 	~VolumeCache() {}
@@ -29,7 +29,7 @@ struct  VolumeCache
 	const BaseModel *Model;		 //!< Owner
 };
 
-class  VolumeCollider : public Collider
+class VolumeCollider : public Collider
 {
 public:
 	// Constructor / Destructor
@@ -125,12 +125,12 @@ protected:
 			// Cached list was for another model so we can't keep it
 			// Keep track of new owner and reset cache
 			cache.Model = mCurrentModel;
-			return FALSE;
+			return false;
 		}
 		else
 		{
 			// Same models, no problem
-			return TRUE;
+			return true;
 		}
 	}
 };

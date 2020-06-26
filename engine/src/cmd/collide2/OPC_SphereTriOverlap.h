@@ -15,17 +15,17 @@ bool SphereCollider::SphereTriOverlap(const Point &vert0, const Point &vert1, co
 	Point kDiff = vert2 - mCenter;
 	float fC = kDiff.SquareMagnitude();
 	if (fC <= mRadius2)
-		return TRUE;
+		return true;
 
 	kDiff = vert1 - mCenter;
 	fC = kDiff.SquareMagnitude();
 	if (fC <= mRadius2)
-		return TRUE;
+		return true;
 
 	kDiff = vert0 - mCenter;
 	fC = kDiff.SquareMagnitude();
 	if (fC <= mRadius2)
-		return TRUE;
+		return true;
 
 	// Else do the full distance test
 	Point TriEdge0 = vert1 - vert0;

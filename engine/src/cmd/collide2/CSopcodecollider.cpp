@@ -150,7 +150,7 @@ bool csOPCODECollider::rayCollide(const Ray &boltbeam, Vector &norm, float &dist
 		}
 		else
 		{
-			return true; //FIXME: buggy! this should return FALSE but the math is obviously broken with opcode, so opcode is rarely telling us about intersections
+			return true; //FIXME: buggy! this should return false but the math is obviously broken with opcode, so opcode is rarely telling us about intersections
 		}
 		//FIXME set normal
 	}
@@ -246,7 +246,7 @@ bool csOPCODECollider::Collide(csOPCODECollider &otherCollider,
 	transform2.m[3][2] = u.z;
 	if (TreeCollider.Collide(ColCache, &transform1, &transform2))
 	{
-		bool status = (TreeCollider.GetContactStatus() != FALSE);
+		bool status = (TreeCollider.GetContactStatus() != false);
 		if (status)
 		{
 			CopyCollisionPairs(this, col2);

@@ -78,7 +78,7 @@ Music::Music(Unit *parent) : random(false), p(parent), song(-1), thread_initiali
 #endif
 
 #ifdef _WIN32
-    musicinfo_mutex = CreateMutex(nullptr, TRUE, nullptr);
+    musicinfo_mutex = CreateMutex(nullptr, true, nullptr);
 #else //_WIN32
 #ifdef ERRORCHECK_MUTEX
     pthread_mutexattr_t checkme;

@@ -522,8 +522,5 @@ inline bool LSSCollider::LSSAABBOverlap(const Point &center, const Point &extent
     mNbVolumeBVTests++;
 
     float s2 = OPC_SegmentOBBSqrDist(mSeg, center, extents);
-    if (s2 < mRadius2)
-        return TRUE;
-
-    return FALSE;
+    return s2 < mRadius2;
 }

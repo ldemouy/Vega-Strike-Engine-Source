@@ -193,21 +193,21 @@ public:
 		float ex = a.mExtents.x + mExtents.x;
 		if (static_cast<uint32_t>(std::abs(tx)) > static_cast<uint32_t>(ex))
 		{
-			return FALSE;
+			return false;
 		}
 		float ty = mCenter.y - a.mCenter.y;
 		float ey = a.mExtents.y + mExtents.y;
 		if (static_cast<uint32_t>(std::abs(ty)) > static_cast<uint32_t>(ey))
 		{
-			return FALSE;
+			return false;
 		}
 		float tz = mCenter.z - a.mCenter.z;
 		float ez = a.mExtents.z + mExtents.z;
 		if (static_cast<uint32_t>(std::abs(tz)) > static_cast<uint32_t>(ez))
 		{
-			return FALSE;
+			return false;
 		}
-		return TRUE;
+		return true;
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

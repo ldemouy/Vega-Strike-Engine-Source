@@ -12,6 +12,8 @@
 #ifndef __ICEMEMORYMACROS_H__
 #define __ICEMEMORYMACROS_H__
 
+#include <cstring>
+
 #undef ZeroMemory
 #undef CopyMemory
 #undef MoveMemory

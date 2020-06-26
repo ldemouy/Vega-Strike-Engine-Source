@@ -2,7 +2,7 @@
 /**
  *	Planes-triangle overlap test.
  *	\param		in_clip_mask	[in] bitmask for active planes
- *	\return		TRUE if triangle overlap planes
+ *	\return		true if triangle overlap planes
  *	\warning	THIS IS A CONSERVATIVE TEST !! Some triangles will be returned as intersecting, while they're not!
  */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -22,8 +22,8 @@ inline bool PlanesCollider::PlanesTriOverlap(udword in_clip_mask)
 			float d1 = p->Distance(*mVP.Vertex[1]);
 			float d2 = p->Distance(*mVP.Vertex[2]);
 			if (d0 > 0.0f && d1 > 0.0f && d2 > 0.0f)
-				return FALSE;
-				}
+				return false;
+		}
 		Mask += Mask;
 		p++;
 	}
@@ -36,5 +36,5 @@ inline bool PlanesCollider::PlanesTriOverlap(udword in_clip_mask)
 		if(d0>0.0f && d1>0.0f && d2>0.0f)	return false;
 	}
 */
-	return TRUE;
+	return true;
 }

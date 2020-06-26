@@ -30,7 +30,7 @@ std::vector <std::string> buttonvec;
 
 int win_close( GtkWidget *w, void *)
 {
-    return FALSE;
+    return false;
 }
 GdkWindow * Help (const char *title, const char *text) {
     GtkWidget *window;
@@ -122,7 +122,7 @@ void main2()
     gtk_window_set_title(GTK_WINDOW(window), "Get Recent Update");
     GtkWidget *check;
     check=gtk_check_button_new_with_label ("Restore all files to factory defaults (will not delete saved games).");
-    GtkWidget *vbox=gtk_vbox_new(FALSE, 3);
+    GtkWidget *vbox=gtk_vbox_new(false, 3);
      /* When the window is given the "delete_event" signal (this is given
       * by the window manager, usually by the "close" option, or on the
       * titlebar), we ask it to call the delete_event () function
@@ -210,8 +210,8 @@ int main (int argc, char **argv) {
     window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
     gtk_window_set_default_size(GTK_WINDOW(window), 0,0);
     gtk_window_set_title(GTK_WINDOW(window), "Update");
-    GtkWidget *hbox=gtk_hbox_new(FALSE, 3);
-    GtkWidget *vbox=gtk_vbox_new(FALSE, 10);
+    GtkWidget *hbox=gtk_hbox_new(false, 3);
+    GtkWidget *vbox=gtk_vbox_new(false, 10);
     GtkWidget *label=gtk_label_new("     Do you wish to update the update list for more recent releases?     ");
      /* When the window is given the "delete_event" signal (this is given
       * by the window manager, usually by the "close" option, or on the

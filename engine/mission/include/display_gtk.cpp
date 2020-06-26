@@ -39,7 +39,7 @@ void InitGraphics(void) {
 	gtk_container_set_border_width(GTK_CONTAINER(window), 0);
 
 	/* The main vertical box to store the header, the horizontal box (mission tree and description) and the bottom buttons) */
-	main_vbox = gtk_vbox_new(FALSE, 1);
+	main_vbox = gtk_vbox_new(false, 1);
 	gtk_container_border_width(GTK_CONTAINER(main_vbox), 1);
 	gtk_container_add(GTK_CONTAINER(window), main_vbox);
 
@@ -50,7 +50,7 @@ void InitGraphics(void) {
 	gtk_widget_show(label);
 
 	/* A horizontal box to store the mission tree and the description labels */
-	main_hbox = gtk_hbox_new(FALSE, 1);
+	main_hbox = gtk_hbox_new(false, 1);
 	gtk_container_add(GTK_CONTAINER(main_vbox), main_hbox);
 	gtk_widget_show(main_hbox);
 
@@ -99,7 +99,7 @@ void ShowMain(int run_vegastrike) {
 void AddMainLabels(void) {
 	GtkWidget *vbox;
 
-	vbox = gtk_vbox_new(FALSE, 0);
+	vbox = gtk_vbox_new(false, 0);
 	gtk_container_add(GTK_CONTAINER(main_hbox), vbox);
 	gtk_widget_show(vbox);
 
@@ -113,7 +113,7 @@ void AddMainLabels(void) {
 void AddLabelRow(char *desc, int count, GtkWidget *vbox) {
 	GtkWidget *hbox, *label;
 
-	hbox = gtk_hbox_new(FALSE, 2);
+	hbox = gtk_hbox_new(false, 2);
 	gtk_container_add(GTK_CONTAINER(vbox), hbox);
 	gtk_widget_show(hbox);
 

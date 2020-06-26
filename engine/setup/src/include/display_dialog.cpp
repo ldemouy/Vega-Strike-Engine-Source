@@ -35,7 +35,7 @@ int ShowMainMenu(char **menuitem_list, char *def, char *retbuffer)
   memset(&dialog_state, 0, sizeof(dialog_state));
   dialog_vars.input_result = retbuffer;
   dialog_vars.input_result[0] = '\0';
-  dialog_state.use_shadow = TRUE;
+  dialog_state.use_shadow = true;
   dialog_vars.default_item = def;
   dialog_vars.ok_label = "Edit Option";
   dialog_vars.cancel_label = "Save and Exit";
@@ -54,7 +54,7 @@ int ShowSubMenu(char **menuitem_list, char *def, char *retbuffer, const char *na
   memset(&dialog_state, 0, sizeof(dialog_state));
   dialog_vars.input_result = retbuffer;
   dialog_vars.input_result[0] = '\0';
-  dialog_state.use_shadow = TRUE;
+  dialog_state.use_shadow = true;
   dialog_vars.default_item = def;
   dialog_vars.title = title;
   dialog_vars.backtitle = "Vega Strike Configurator";

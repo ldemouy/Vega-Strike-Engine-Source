@@ -289,7 +289,7 @@ void OBB::ComputeLSS(LSS &lss) const
 /**
  *	Checks the OBB is inside another OBB.
  *	\param		box		[in] the other OBB
- *	\return		TRUE if we're inside the other box
+ *	\return		true if we're inside the other box
  */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool OBB::IsInside(const OBB &box) const
@@ -316,21 +316,21 @@ bool OBB::IsInside(const OBB &box) const
 
 	float f = fabsf(mtx.m[0][0] * mExtents.x) + fabsf(mtx.m[1][0] * mExtents.y) + fabsf(mtx.m[2][0] * mExtents.z) - box.mExtents.x;
 	if (f > _1in0.mCenter.x)
-		return FALSE;
+		return false;
 	if (-f < _1in0.mCenter.x)
-		return FALSE;
+		return false;
 
 	f = fabsf(mtx.m[0][1] * mExtents.x) + fabsf(mtx.m[1][1] * mExtents.y) + fabsf(mtx.m[2][1] * mExtents.z) - box.mExtents.y;
 	if (f > _1in0.mCenter.y)
-		return FALSE;
+		return false;
 	if (-f < _1in0.mCenter.y)
-		return FALSE;
+		return false;
 
 	f = fabsf(mtx.m[0][2] * mExtents.x) + fabsf(mtx.m[1][2] * mExtents.y) + fabsf(mtx.m[2][2] * mExtents.z) - box.mExtents.z;
 	if (f > _1in0.mCenter.z)
-		return FALSE;
+		return false;
 	if (-f < _1in0.mCenter.z)
-		return FALSE;
+		return false;
 
-	return TRUE;
+	return true;
 }

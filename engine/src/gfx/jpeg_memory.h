@@ -8,7 +8,7 @@
  * #if defined( _WIN32) && !defined( __CYGWIN__)
  * #ifndef HAVE_BOOLEAN
  * #define HAVE_BOOLEAN
- * #define FALSE 0
+ * #define false 0
  * #define TRUE 1
  *  typedef unsigned char boolean;
  * #endif

@@ -82,12 +82,12 @@ public:
 	{
 		// Consistency condition for (Center, Extents) boxes: Extents >= 0.0f
 		if (mExtents.x < 0.0f)
-			return FALSE;
+			return false;
 		if (mExtents.y < 0.0f)
-			return FALSE;
+			return false;
 		if (mExtents.z < 0.0f)
-			return FALSE;
-		return TRUE;
+			return false;
+		return true;
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -154,7 +154,7 @@ public:
 	/**
 		 *	Checks the OBB is inside another OBB.
 		 *	\param		box		[in] the other OBB
-		 *	\return		TRUE if we're inside the other box
+		 *	\return		true if we're inside the other box
 		 */
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	bool IsInside(const OBB &box) const;

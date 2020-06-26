@@ -170,7 +170,7 @@ bool SphereCollider::Collide(SphereCache &cache, const Sphere &sphere, const Mod
  *	\param		sphere		[in] sphere in local space
  *	\param		worlds		[in] sphere's world matrix, or null
  *	\param		worldm		[in] model's world matrix, or null
- *	\return		TRUE if we can return immediately
+ *	\return		true if we can return immediately
  *	\warning	SCALE NOT SUPPORTED. The matrices must contain rotation & translation parts only.
  */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -212,7 +212,7 @@ bool SphereCollider::InitQuery(SphereCache &cache, const Sphere &sphere, const M
 			SPHERE_PRIM(udword(0), OPC_CONTACT)
 
 			// Return immediately regardless of status
-			return TRUE;
+			return true;
 		}
 	}
 
@@ -239,7 +239,7 @@ bool SphereCollider::InitQuery(SphereCache &cache, const Sphere &sphere, const M
 
 				// Return immediately if possible
 				if (GetContactStatus())
-					return TRUE;
+					return true;
 			}
 			// else no face has been touched during previous query
 			// => we'll have to perform a normal query
@@ -258,7 +258,7 @@ bool SphereCollider::InitQuery(SphereCache &cache, const Sphere &sphere, const M
 					mFlags |= OPC_TEMPORAL_CONTACT;
 
 				// In any case we don't need to do a query
-				return TRUE;
+				return true;
 			}
 			else
 			{
@@ -283,7 +283,7 @@ bool SphereCollider::InitQuery(SphereCache &cache, const Sphere &sphere, const M
 		mTouchedPrimitives->Reset();
 	}
 
-	return FALSE;
+	return false;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -333,34 +333,34 @@ inline bool SphereCollider::SphereContainsBox(const Point &bc, const Point &be)
 	p.y = bc.y + be.y;
 	p.z = bc.z + be.z;
 	if (mCenter.SquareDistance(p) >= mRadius2)
-		return FALSE;
+		return false;
 	p.x = bc.x - be.x;
 	if (mCenter.SquareDistance(p) >= mRadius2)
-		return FALSE;
+		return false;
 	p.x = bc.x + be.x;
 	p.y = bc.y - be.y;
 	if (mCenter.SquareDistance(p) >= mRadius2)
-		return FALSE;
+		return false;
 	p.x = bc.x - be.x;
 	if (mCenter.SquareDistance(p) >= mRadius2)
-		return FALSE;
+		return false;
 	p.x = bc.x + be.x;
 	p.y = bc.y + be.y;
 	p.z = bc.z - be.z;
 	if (mCenter.SquareDistance(p) >= mRadius2)
-		return FALSE;
+		return false;
 	p.x = bc.x - be.x;
 	if (mCenter.SquareDistance(p) >= mRadius2)
-		return FALSE;
+		return false;
 	p.x = bc.x + be.x;
 	p.y = bc.y - be.y;
 	if (mCenter.SquareDistance(p) >= mRadius2)
-		return FALSE;
+		return false;
 	p.x = bc.x - be.x;
 	if (mCenter.SquareDistance(p) >= mRadius2)
-		return FALSE;
+		return false;
 
-	return TRUE;
+	return true;
 }
 
 #define TEST_BOX_IN_SPHERE(center, extents) \

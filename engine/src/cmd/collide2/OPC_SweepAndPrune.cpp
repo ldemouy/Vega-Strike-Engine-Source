@@ -517,9 +517,9 @@ bool SweepAndPrune::CheckListsIntegrity()
 inline bool Intersect(const AABB &a, const SAP_Box &b)
 {
 	if (b.Max[0]->Value < a.GetMin(0) || a.GetMax(0) < b.Min[0]->Value || b.Max[1]->Value < a.GetMin(1) || a.GetMax(1) < b.Min[1]->Value || b.Max[2]->Value < a.GetMin(2) || a.GetMax(2) < b.Min[2]->Value)
-		return FALSE;
+		return false;
 
-	return TRUE;
+	return true;
 }
 
 bool SweepAndPrune::UpdateObject(udword i, const AABB &box)

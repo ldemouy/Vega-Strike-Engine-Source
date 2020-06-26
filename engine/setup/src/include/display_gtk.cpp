@@ -53,7 +53,7 @@ void InitGraphics(int *argc, char ***argv)
 
 	gtk_container_set_border_width(GTK_CONTAINER(window), 0);
 
-	main_vbox = gtk_vbox_new(FALSE, 1);
+	main_vbox = gtk_vbox_new(false, 1);
 	gtk_container_border_width(GTK_CONTAINER(main_vbox), 1);
 	gtk_container_add(GTK_CONTAINER(window), main_vbox);
 
@@ -97,9 +97,9 @@ void ShowMain(void)
 		count++;
 		if (column == 1)
 		{
-			hbox = gtk_hbox_new(FALSE, 2);
+			hbox = gtk_hbox_new(false, 2);
 		}
-		vbox = gtk_vbox_new(FALSE, 0);
+		vbox = gtk_vbox_new(false, 0);
 		label = gtk_label_new(CURRENT->name);
 		gtk_container_add(GTK_CONTAINER(vbox), label);
 		gtk_widget_show(label);
@@ -151,7 +151,7 @@ void ShowMain(void)
 		gtk_container_add(GTK_CONTAINER(main_vbox), hbox);
 		gtk_widget_show(hbox);
 	}
-	vbox = gtk_vbox_new(FALSE, 2);
+	vbox = gtk_vbox_new(false, 2);
 	button = gtk_button_new_with_label("Save Settings and View Readme");
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(myexit), nullptr);
 	gtk_widget_show(button);

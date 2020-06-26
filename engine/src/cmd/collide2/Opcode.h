@@ -21,12 +21,10 @@
 #define __OPCODE_H__
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Preprocessor
 
-#define ICE_DONT_CHECK_COMPILER_OPTIONS
+#include "Ice/IceTypes.h"
+#include "Ice/IceMemoryMacros.h"
 
-#include "OPC_IceHook.h"
-//#include "Ice/IceRandom.h"
 #include "Ice/IceRevisitedRadix.h"
 #include "Ice/IceContainer.h"
 #include "Ice/IcePairs.h"

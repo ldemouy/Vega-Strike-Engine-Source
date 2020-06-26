@@ -98,16 +98,16 @@ public:
 		 *	\param		primitives		[in] list of indices of primitives
 		 *	\param		nb_prims		[in] number of indices
 		 *	\param		global_box		[in] global AABB enclosing the set of input primitives
-		 *	\return		TRUE if the node should be subdivised
+		 *	\return		true if the node should be subdivised
 		 */
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	virtual bool ValidateSubdivision(const uint32_t * /*primitives*/, udword nb_prims, const AABB & /*global_box*/)
 	{
 		// Check the user-defined limit
 		if (nb_prims <= mSettings.mLimit)
-			return FALSE;
+			return false;
 
-		return TRUE;
+		return true;
 	}
 
 	BuildSettings mSettings; //!< Splitting rules & split limit [Opcode 1.3]

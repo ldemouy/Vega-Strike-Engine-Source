@@ -182,7 +182,7 @@ bool PlanesCollider::Collide(PlanesCache &cache, const Plane *planes, udword nb_
  *	\param		planes		[in] list of planes
  *	\param		nb_planes	[in] number of planes
  *	\param		worldm		[in] model's world matrix, or null
- *	\return		TRUE if we can return immediately
+ *	\return		true if we can return immediately
  *	\warning	SCALE NOT SUPPORTED. The matrix must contain rotation & translation parts only.
  */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -227,7 +227,7 @@ bool PlanesCollider::InitQuery(PlanesCache &cache, const Plane *planes, udword n
 			PLANES_PRIM(udword(0), OPC_CONTACT)
 
 			// Return immediately regardless of status
-			return TRUE;
+			return true;
 		}
 	}
 
@@ -255,7 +255,7 @@ bool PlanesCollider::InitQuery(PlanesCache &cache, const Plane *planes, udword n
 
 				// Return immediately if possible
 				if (GetContactStatus())
-					return TRUE;
+					return true;
 			}
 			// else no face has been touched during previous query
 			// => we'll have to perform a normal query
@@ -269,7 +269,7 @@ bool PlanesCollider::InitQuery(PlanesCache &cache, const Plane *planes, udword n
 		mTouchedPrimitives->Reset();
 	}
 
-	return FALSE;
+	return false;
 }
 
 #define TEST_CLIP_MASK                                                                                \

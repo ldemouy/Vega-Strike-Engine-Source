@@ -745,7 +745,5 @@ inline bool LSSCollider::LSSTriOverlap(const Point &vert0, const Point &vert1, c
 	mNbVolumePrimTests++;
 
 	float s2 = OPC_SegmentTriangleSqrDist(mSeg, vert0, vert1, vert2);
-	if (s2 < mRadius2)
-		return TRUE;
-	return FALSE;
+	return s2 < mRadius2;
 }

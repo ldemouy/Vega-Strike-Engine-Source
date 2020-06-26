@@ -388,7 +388,7 @@ bool RayCollider::Collide(const Ray &world_ray, const Model &model, const Matrix
  *	\param		world_ray	[in] stabbing ray in world space
  *	\param		world		[in] object's world matrix, or null
  *	\param		face_id		[in] index of previously stabbed triangle
- *	\return		TRUE if we can return immediately
+ *	\return		true if we can return immediately
  *	\warning	SCALE NOT SUPPORTED. The matrix must contain rotation & translation parts only.
  */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -431,7 +431,7 @@ bool RayCollider::InitQuery(const Ray &world_ray, const Matrix4x4 *world, udword
 			SEGMENT_PRIM(udword(0), OPC_CONTACT)
 
 			// Return immediately regardless of status
-			return TRUE;
+			return true;
 		}
 	}
 
@@ -466,7 +466,7 @@ bool RayCollider::InitQuery(const Ray &world_ray, const Matrix4x4 *world, udword
 					if (mStabbedFaces)
 						mStabbedFaces->AddFace(mStabbedFace);
 #endif
-					return TRUE;
+					return true;
 				}
 			}
 		}
@@ -477,7 +477,7 @@ bool RayCollider::InitQuery(const Ray &world_ray, const Matrix4x4 *world, udword
 
 		// Return immediately if possible
 		if (GetContactStatus())
-			return TRUE;
+			return true;
 #endif
 	}
 
@@ -509,7 +509,7 @@ bool RayCollider::InitQuery(const Ray &world_ray, const Matrix4x4 *world, udword
 		mFDir.z = fabsf(mDir.z);
 	}
 
-	return FALSE;
+	return false;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

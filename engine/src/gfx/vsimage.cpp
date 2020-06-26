@@ -20,17 +20,6 @@
 #define png_jmpbuf(png_ptr) ((png_ptr)->jmpbuf)
 #endif
 
-#if defined(_WIN32) && !defined(__CYGWIN__)
-
-#ifndef HAVE_BOOLEAN
-#define HAVE_BOOLEAN
-#define FALSE 0
-#define TRUE 1
-typedef unsigned char boolean;
-#endif
-
-#endif
-
 #ifndef DDS_CUBEMAP
 #define DDS_CUBEMAP 0x00000200L
 #define DDS_CUBEMAP_POSITIVEX 0x00000400L
@@ -279,7 +268,7 @@ unsigned char *VSImage::ReadPNG()
             PngFileBuffer.Buffer = img_file->get_pk3_data();
             PngFileBuffer.Pos = 8;
         }
-        png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, (png_error_ptr)png_cexcept_error, (png_error_ptr)nullptr);
+        png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, (png_error_ptr)png_cexcept_error, (png_error_ptr) nullptr);
         if (png_ptr == nullptr)
         {
             BOOST_LOG_TRIVIAL(info) << "VSImage ERROR : PNG ptr == nullptr !!!";
@@ -289,7 +278,7 @@ unsigned char *VSImage::ReadPNG()
         info_ptr = png_create_info_struct(png_ptr);
         if (info_ptr == nullptr)
         {
-            png_destroy_read_struct(&png_ptr, (png_infopp)nullptr, (png_infopp)nullptr);
+            png_destroy_read_struct(&png_ptr, (png_infopp) nullptr, (png_infopp) nullptr);
             BOOST_LOG_TRIVIAL(info) << "VSImage ERROR : PNG info_ptr == nullptr !!!";
             BOOST_LOG_TRIVIAL(info) << img_file->GetFilename();
             throw(1);
@@ -297,7 +286,7 @@ unsigned char *VSImage::ReadPNG()
         if (setjmp(png_jmpbuf(png_ptr)))
         {
             /* Free all of the memory associated with the png_ptr and info_ptr */
-            png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)nullptr);
+            png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) nullptr);
             /* If we get here, we had a problem reading the file */
             BOOST_LOG_TRIVIAL(info) << "VSImage ERROR : problem reading file/buffer -> setjmp !!!";
             BOOST_LOG_TRIVIAL(info) << img_file->GetFilename();
@@ -464,7 +453,7 @@ unsigned char *VSImage::ReadJPEG()
             jpeg_stdio_src((j_decompress_ptr)&cinfo, img_file->GetFP());
         else
             jpeg_memory_src(&cinfo, (unsigned char *)img_file->get_pk3_data(), img_file->Size());
-        (void)jpeg_read_header(&cinfo, TRUE);
+        (void)jpeg_read_header(&cinfo, true);
         this->sizeX = cinfo.image_width;
         this->sizeY = cinfo.image_height;
         this->img_nmips = 0;
@@ -928,13 +917,13 @@ VSError VSImage::WriteImage(VSFile *pf,
 
 VSError VSImage::WritePNG(unsigned char *data)
 {
-    png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, (png_voidp)nullptr, nullptr, nullptr);
+    png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, (png_voidp) nullptr, nullptr, nullptr);
     if (!png_ptr)
         return BadFormat;
     png_infop info_ptr = png_create_info_struct(png_ptr);
     if (!info_ptr)
     {
-        png_destroy_write_struct(&png_ptr, (png_infopp)nullptr);
+        png_destroy_write_struct(&png_ptr, (png_infopp) nullptr);
         return BadFormat;
     }
     if (setjmp(png_jmpbuf(png_ptr)))

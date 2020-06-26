@@ -105,7 +105,7 @@ void GoToParentDir () {
 
 int win_close( GtkWidget *w, void *)
 {
-    return FALSE;
+    return false;
 }
 void changehome();
 GdkWindow * Help (const char *title, const char *text) {
@@ -397,7 +397,7 @@ int main( int   argc,
     window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
     gtk_window_set_default_size(GTK_WINDOW(window), 300,350);
     gtk_window_set_title(GTK_WINDOW(window), "Vega Strike Launcher");
-    GtkWidget *vbox=gtk_vbox_new(FALSE, 3);
+    GtkWidget *vbox=gtk_vbox_new(false, 3);
      /* When the window is given the "delete_event" signal (this is given
       * by the window manager, usually by the "close" option, or on the
       * titlebar), we ask it to call the delete_event () function
@@ -805,7 +805,7 @@ void LoadSaveFunction (char *Filename, char *otherstr, int i, GtkSignalFunc func
     filew = gtk_file_selection_new (Filename);
 	if (!usenormalbuttons){
 	gtk_widget_destroy(GTK_FILE_SELECTION(filew)->button_area);
-	GTK_FILE_SELECTION(filew)->button_area=gtk_hbox_new(FALSE ,0);
+	GTK_FILE_SELECTION(filew)->button_area=gtk_hbox_new(false ,0);
 	gtk_widget_show(GTK_FILE_SELECTION(filew)->button_area);
 	GtkWidget *newb=gtk_button_new_with_label("Delete Game");
 //	char *Addon="\nWarning: Do not use the \"Delete File\" button to delete saved games...\nUse the \"Delete Game\" button instead.";
@@ -849,9 +849,9 @@ void LoadSaveFunction (char *Filename, char *otherstr, int i, GtkSignalFunc func
     gtk_widget_show(lbl);
     GtkWidget *box=gtk_label_new("");
     gtk_container_add (GTK_CONTAINER (GTK_FILE_SELECTION(filew)->button_area),box);
-    gtk_box_pack_end (GTK_BOX (GTK_FILE_SELECTION(filew)->ok_button->parent),GTK_FILE_SELECTION (filew)->help_button, FALSE, TRUE, 40);
+    gtk_box_pack_end (GTK_BOX (GTK_FILE_SELECTION(filew)->ok_button->parent),GTK_FILE_SELECTION (filew)->help_button, false, TRUE, 40);
 	if (!usenormalbuttons)
-		gtk_box_pack_end(GTK_BOX(GTK_FILE_SELECTION(filew)->main_vbox),GTK_FILE_SELECTION(filew)->button_area,FALSE,TRUE,0);
+		gtk_box_pack_end(GTK_BOX(GTK_FILE_SELECTION(filew)->main_vbox),GTK_FILE_SELECTION(filew)->button_area,false,TRUE,0);
     gtk_widget_show(box);
     gtk_widget_show(GTK_FILE_SELECTION(filew)->help_button);
     gtk_widget_show(filew);

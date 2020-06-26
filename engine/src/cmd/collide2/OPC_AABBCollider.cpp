@@ -161,7 +161,7 @@ bool AABBCollider::Collide(AABBCache &cache, const CollisionAABB &box, const Mod
  *
  *	\param		cache		[in/out] a box cache
  *	\param		box			[in] AABB in world space
- *	\return		TRUE if we can return immediately
+ *	\return		true if we can return immediately
  */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool AABBCollider::InitQuery(AABBCache &cache, const CollisionAABB &box)
@@ -187,7 +187,7 @@ bool AABBCollider::InitQuery(AABBCache &cache, const CollisionAABB &box)
 			AABB_PRIM(udword(0), OPC_CONTACT)
 
 			// Return immediately regardless of status
-			return TRUE;
+			return true;
 		}
 	}
 
@@ -214,7 +214,7 @@ bool AABBCollider::InitQuery(AABBCache &cache, const CollisionAABB &box)
 
 				// Return immediately if possible
 				if (GetContactStatus())
-					return TRUE;
+					return true;
 			}
 			// else no face has been touched during previous query
 			// => we'll have to perform a normal query
@@ -232,7 +232,7 @@ bool AABBCollider::InitQuery(AABBCache &cache, const CollisionAABB &box)
 					mFlags |= OPC_TEMPORAL_CONTACT;
 
 				// In any case we don't need to do a query
-				return TRUE;
+				return true;
 			}
 			else
 			{
@@ -259,7 +259,7 @@ bool AABBCollider::InitQuery(AABBCache &cache, const CollisionAABB &box)
 	mMin = box.mCenter - box.mExtents;
 	mMax = box.mCenter + box.mExtents;
 
-	return FALSE;
+	return false;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -302,21 +302,12 @@ bool AABBCollider::Collide(AABBCache &cache, const CollisionAABB &box, const AAB
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 inline bool AABBCollider::AABBContainsBox(const Point &bc, const Point &be)
 {
-	if (mMin.x > bc.x - be.x)
-		return FALSE;
-	if (mMin.y > bc.y - be.y)
-		return FALSE;
-	if (mMin.z > bc.z - be.z)
-		return FALSE;
-
-	if (mMax.x < bc.x + be.x)
-		return FALSE;
-	if (mMax.y < bc.y + be.y)
-		return FALSE;
-	if (mMax.z < bc.z + be.z)
-		return FALSE;
-
-	return TRUE;
+	return !(mMin.x > bc.x - be.x) &&
+		   !(mMin.y > bc.y - be.y) &&
+		   !(mMin.z > bc.z - be.z) &&
+		   !(mMax.x < bc.x + be.x) &&
+		   !(mMax.y < bc.y + be.y) &&
+		   !(mMax.z < bc.z + be.z);
 }
 
 #define TEST_BOX_IN_AABB(center, extents) \

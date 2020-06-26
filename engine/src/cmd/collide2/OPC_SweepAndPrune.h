@@ -26,7 +26,7 @@
 	 *	\param		id0			[in] id of colliding object
 	 *	\param		id1			[in] id of colliding object
 	 *	\param		user_data	[in] user-defined data
-	 *	\return		TRUE to continue enumeration
+	 *	\return		true to continue enumeration
 	 */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 typedef BOOL (*PairCallback)(udword id0, udword id1, void *user_data);

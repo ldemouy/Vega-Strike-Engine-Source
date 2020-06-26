@@ -167,7 +167,7 @@ bool LSSCollider::Collide(LSSCache &cache, const LSS &lss, const Model &model, c
  *	\param		lss			[in] lss in local space
  *	\param		worldl		[in] lss world matrix, or null
  *	\param		worldm		[in] model's world matrix, or null
- *	\return		TRUE if we can return immediately
+ *	\return		true if we can return immediately
  *	\warning	SCALE NOT SUPPORTED. The matrices must contain rotation & translation parts only.
  */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -214,7 +214,7 @@ bool LSSCollider::InitQuery(LSSCache &cache, const LSS &lss, const Matrix4x4 *wo
 			LSS_PRIM(udword(0), OPC_CONTACT)
 
 			// Return immediately regardless of status
-			return TRUE;
+			return true;
 		}
 	}
 
@@ -241,7 +241,7 @@ bool LSSCollider::InitQuery(LSSCache &cache, const LSS &lss, const Matrix4x4 *wo
 
 				// Return immediately if possible
 				if (GetContactStatus())
-					return TRUE;
+					return true;
 			}
 			// else no face has been touched during previous query
 			// => we'll have to perform a normal query
@@ -266,7 +266,7 @@ bool LSSCollider::InitQuery(LSSCache &cache, const LSS &lss, const Matrix4x4 *wo
 					mFlags |= OPC_TEMPORAL_CONTACT;
 
 				// In any case we don't need to do a query
-				return TRUE;
+				return true;
 			}
 			else
 			{
@@ -292,7 +292,7 @@ bool LSSCollider::InitQuery(LSSCache &cache, const LSS &lss, const Matrix4x4 *wo
 		mTouchedPrimitives->Reset();
 	}
 
-	return FALSE;
+	return false;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -336,7 +336,7 @@ bool LSSCollider::Collide(LSSCache &cache, const LSS &lss, const AABBTree *tree)
 inline bool LSSCollider::LSSContainsBox(const Point & /*bc*/, const Point & /*be*/)
 {
 	// Not implemented
-	return FALSE;
+	return false;
 }
 
 #define TEST_BOX_IN_LSS(center, extents) \

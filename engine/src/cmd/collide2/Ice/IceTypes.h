@@ -12,7 +12,16 @@
 #ifndef __ICETYPES_H__
 #define __ICETYPES_H__
 
+#include <cfloat>
+
 #define USE_HANDLE_MANAGER
+
+#ifndef OPASSERT
+#define OPASSERT(exp) \
+	{                 \
+	}
+#endif
+#define ICE_COMPILE_TIME_ASSERT(exp) extern char ICE_Dummy[(exp) ? 1 : -1]
 
 // Constants
 #ifndef PI
