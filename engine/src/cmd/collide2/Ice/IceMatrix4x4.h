@@ -12,6 +12,7 @@
 #ifndef __ICEMATRIX4X4_H__
 #define __ICEMATRIX4X4_H__
 #include "IceTypes.h"
+#include "IceMemoryMacros.h"
 // Forward declarations
 class PRS;
 class PR;

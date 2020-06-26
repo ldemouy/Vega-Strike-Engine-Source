@@ -19,6 +19,7 @@
 // Include Guard
 #ifndef __OPC_TREECOLLIDER_H__
 #define __OPC_TREECOLLIDER_H__
+#include "Ice/IcePairs.h"
 
 //! This structure holds cached information used by the algorithm.
 //! Two model pointers and two colliding primitives are cached. Model pointers are assigned

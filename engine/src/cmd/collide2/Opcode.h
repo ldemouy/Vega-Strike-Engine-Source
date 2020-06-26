@@ -22,16 +22,12 @@
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "Ice/IceMemoryMacros.h"
-
 #include "Ice/IceRevisitedRadix.h"
 #include "Ice/IceContainer.h"
-#include "Ice/IcePairs.h"
 
 namespace Opcode
 {
 
-#include "Ice/IceAxis.h"
 #include "Ice/IcePoint.h"
 #include "Ice/IceHPoint.h"
 #include "Ice/IceMatrix3x3.h"
@@ -40,7 +36,6 @@ namespace Opcode
 #include "Ice/IceRay.h"
 #include "Ice/IceIndexedTriangle.h"
 #include "Ice/IceTriangle.h"
-#include "Ice/IceTrilist.h"
 #include "Ice/IceAABB.h"
 #include "Ice/IceOBB.h"
 #include "Ice/IceBoundingSphere.h"

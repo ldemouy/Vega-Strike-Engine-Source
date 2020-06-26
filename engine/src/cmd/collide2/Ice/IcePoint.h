@@ -12,7 +12,7 @@
 #ifndef __ICEPOINT_H__
 #define __ICEPOINT_H__
 #include <cmath>
-
+#include "IceAxis.h"
 // Forward declarations
 class HPoint;
 class Plane;
