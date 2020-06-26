@@ -232,7 +232,7 @@ protected:
     }
 
     //Find the cell that corresponds to a point in the control.
-    PickerCell *cellForMouse(const Point &p);
+    PickerCell *cellForMouse(const Point2 &p);
 
     //Reload the list of cells that are being displayed.
     //This should be called when a change is made in the lists of cells, or

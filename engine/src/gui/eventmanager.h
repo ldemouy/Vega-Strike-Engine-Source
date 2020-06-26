@@ -58,7 +58,7 @@ public:
     void sendCommand(const EventCommandId &id, Control *control);
 
     //Get the current mouse position.
-    Point mouseLoc(void)
+    Point2 mouseLoc(void)
     {
         return m_mouseLoc;
     }
@@ -75,7 +75,7 @@ protected:
 
     //DATA
     std::vector<EventResponder *> m_responders; //Stack of responders for events.
-    Point m_mouseLoc;                           //Current mouse point.
+    Point2 m_mouseLoc;                          //Current mouse point.
 
     //HACKS FOR WORKING WITH CURRENT EVENT SYSTEM
     void checkForShutDownEventManager(void); //Called to revert to old event management.

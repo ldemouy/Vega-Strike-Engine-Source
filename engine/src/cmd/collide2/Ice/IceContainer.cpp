@@ -24,8 +24,6 @@
 // Precompiled Header
 #include "Stdafx.h"
 
-using namespace Opcode;
-
 // Static members
 #ifdef CONTAINER_STATS
 uint32_t Container::mNbContainers = 0;

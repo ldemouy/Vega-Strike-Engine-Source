@@ -207,7 +207,7 @@ int Picker::selectedItem(void)
 }
 
 //Find the cell for a mouse point.
-PickerCell *Picker::cellForMouse(const Point &point)
+PickerCell *Picker::cellForMouse(const Point2 &point)
 {
     if (m_rect.inside(point))
     {

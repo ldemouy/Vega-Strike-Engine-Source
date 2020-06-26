@@ -68,7 +68,7 @@
 // Precompiled Header
 #include "Stdafx.h"
 
-using namespace Opcode;
+
 
 //! Compilation flag:
 //! - true to fix quantized boxes (i.e. make sure they enclose the original ones)

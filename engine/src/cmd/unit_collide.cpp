@@ -407,9 +407,9 @@ Unit *Unit::rayCollide(const QVector &start, const QVector &end, Vector &norm, f
     {
         Vector coord;
         /* Set up points and ray to send to ray collider. */
-        Opcode::Point rayOrigin(st.i, st.j, st.k);
-        Opcode::Point rayDirection(ed.i, ed.j, ed.k);
-        Opcode::Ray boltbeam(rayOrigin, rayDirection);
+        Point rayOrigin(st.i, st.j, st.k);
+        Point rayDirection(ed.i, ed.j, ed.k);
+        Ray boltbeam(rayOrigin, rayDirection);
         if (this->colTrees)
         {
             // Retrieve the correct scale'd collider from the unit's collide tree.

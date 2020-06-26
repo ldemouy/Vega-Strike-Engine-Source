@@ -20,7 +20,6 @@
 #include "Stdafx.h"
 #include <utility>
 #include "Ice/IceRevisitedRadix.h"
-using namespace Opcode;
 
 inline void Sort(uint32_t &id0, uint32_t &id1)
 {
@@ -28,7 +27,7 @@ inline void Sort(uint32_t &id0, uint32_t &id1)
 		std::swap(id0, id1);
 }
 
-class Opcode::SAP_Element
+class SAP_Element
 {
 public:
 	inline SAP_Element() {}
@@ -39,14 +38,14 @@ public:
 	SAP_Element *mNext;
 };
 
-class Opcode::SAP_Box
+class SAP_Box
 {
 public:
 	SAP_EndPoint *Min[3];
 	SAP_EndPoint *Max[3];
 };
 
-class Opcode::SAP_EndPoint
+class SAP_EndPoint
 {
 public:
 	float Value;			// Min or Max value

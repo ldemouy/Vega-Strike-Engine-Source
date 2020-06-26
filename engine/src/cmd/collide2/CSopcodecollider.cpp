@@ -25,8 +25,6 @@
 */
 #include "CSopcodecollider.h"
 
-using namespace Opcode;
-
 static std::vector<csCollisionPair> pairs;
 
 csOPCODECollider::csOPCODECollider(const std::vector<mesh_polygon> &polygons)
@@ -63,7 +61,7 @@ void csOPCODECollider::GeometryInitialize(const std::vector<mesh_polygon> &polyg
 	tri_count = vert_count / 3;
 	if (tri_count)
 	{
-		m_pCollisionModel = new Opcode::Model;
+		m_pCollisionModel = new Model;
 		if (!m_pCollisionModel)
 		{
 			return;

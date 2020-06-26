@@ -163,29 +163,29 @@ void ScrollerButton::draw(void)
     static const float ARROW_POINT = .012; //From center to point of arrow.
     static const float ARROW_WIDTH = .01;  //From center to side points.
     static const float ARROW_BACK = .01;   //From center back to "bottom" of arrow.
-    Point center = m_rect.center();
-    vector<Point> coords(3); //3-element vector.
+    Point2 center = m_rect.center();
+    vector<Point2> coords(3); //3-element vector.
     switch (m_arrowType)
     {
     case LEFT_ARROW:
-        coords[0] = Point(center.x + ARROW_POINT, center.y);
-        coords[1] = Point(center.x - ARROW_BACK, center.y + ARROW_WIDTH);
-        coords[2] = Point(center.x - ARROW_BACK, center.y - ARROW_WIDTH);
+        coords[0] = Point2(center.x + ARROW_POINT, center.y);
+        coords[1] = Point2(center.x - ARROW_BACK, center.y + ARROW_WIDTH);
+        coords[2] = Point2(center.x - ARROW_BACK, center.y - ARROW_WIDTH);
         break;
     case RIGHT_ARROW:
-        coords[0] = Point(center.x - ARROW_POINT, center.y);
-        coords[1] = Point(center.x + ARROW_BACK, center.y + ARROW_WIDTH);
-        coords[2] = Point(center.x + ARROW_BACK, center.y - ARROW_WIDTH);
+        coords[0] = Point2(center.x - ARROW_POINT, center.y);
+        coords[1] = Point2(center.x + ARROW_BACK, center.y + ARROW_WIDTH);
+        coords[2] = Point2(center.x + ARROW_BACK, center.y - ARROW_WIDTH);
         break;
     case UP_ARROW:
-        coords[0] = Point(center.x, center.y + ARROW_POINT);
-        coords[1] = Point(center.x + ARROW_WIDTH, center.y - ARROW_BACK);
-        coords[2] = Point(center.x - ARROW_WIDTH, center.y - ARROW_BACK);
+        coords[0] = Point2(center.x, center.y + ARROW_POINT);
+        coords[1] = Point2(center.x + ARROW_WIDTH, center.y - ARROW_BACK);
+        coords[2] = Point2(center.x - ARROW_WIDTH, center.y - ARROW_BACK);
         break;
     case DOWN_ARROW:
-        coords[0] = Point(center.x, center.y - ARROW_POINT);
-        coords[1] = Point(center.x + ARROW_WIDTH, center.y + ARROW_BACK);
-        coords[2] = Point(center.x - ARROW_WIDTH, center.y + ARROW_BACK);
+        coords[0] = Point2(center.x, center.y - ARROW_POINT);
+        coords[1] = Point2(center.x + ARROW_WIDTH, center.y + ARROW_BACK);
+        coords[2] = Point2(center.x - ARROW_WIDTH, center.y + ARROW_BACK);
         break;
     }
     drawFilledPolygon(coords, textColor());

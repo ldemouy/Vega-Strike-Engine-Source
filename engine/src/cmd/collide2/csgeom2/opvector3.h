@@ -95,7 +95,7 @@ public:
     z = px.x * py.y - px.y * py.x;
   }
 
-  inline void Cross(const Opcode::Point &px, const Opcode::Point &py)
+  inline void Cross(const Point &px, const Point &py)
   {
     x = px.y * py.z - px.z * py.y;
     y = px.z * py.x - px.x * py.z;

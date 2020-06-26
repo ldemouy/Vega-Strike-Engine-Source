@@ -24,9 +24,6 @@
 
 #include "Ice/IceContainer.h"
 
-namespace Opcode
-{
-
 #include "Ice/IcePoint.h"
 #include "Ice/IceHPoint.h"
 #include "Ice/IceMatrix3x3.h"
@@ -69,7 +66,5 @@ namespace Opcode
 // Sweep-and-prune
 #include "OPC_BoxPruning.h"
 #include "OPC_SweepAndPrune.h"
-
-} // namespace Opcode
 
 #endif // __OPCODE_H__

@@ -25,23 +25,23 @@
 #include "gldrv/gfxlib.h"
 #include "gldrv/winsys.h"
 //Location in 2d.
-struct Point
+struct Point2
 {
     float x, y;
 
     //OPERATORS
-    bool operator==(const Point &other)
+    bool operator==(const Point2 &other)
     {
         return x == other.x && y == other.y;
     }
-    bool operator!=(const Point &other)
+    bool operator!=(const Point2 &other)
     {
         return !(*this == other);
     }
 
     //CONSTRUCTION
-    Point() : x(0.0), y(0.0) {}
-    Point(float cx, float cy) : x(cx), y(cy)
+    Point2() : x(0.0), y(0.0) {}
+    Point2(float cx, float cy) : x(cx), y(cy)
     {
     }
 };
@@ -73,7 +73,7 @@ class Rect
 {
 public:
     //Data
-    Point origin;
+    Point2 origin;
     Size size;
 
     float left(void) const
@@ -94,13 +94,13 @@ public:
     }
 
     //The center of this rectangle.
-    Point center(void) const
+    Point2 center(void) const
     {
-        return Point(origin.x + size.width / 2, origin.y + size.height / 2);
+        return Point2(origin.x + size.width / 2, origin.y + size.height / 2);
     }
 
     //Whether a Point is inside this Rect.
-    bool inside(const Point &p) const
+    bool inside(const Point2 &p) const
     {
         return p.x >= left() && p.x < right() && p.y >= bottom() && p.y < top();
     }
@@ -134,7 +134,7 @@ public:
 
     //CONSTRUCTION
     Rect() {}
-    Rect(Point &p, Size &s) : origin(p), size(s)
+    Rect(Point2 &p, Size &s) : origin(p), size(s)
     {
     }
     Rect(float x, float y, float width, float height) : origin(x, y), size(width, height)
@@ -181,11 +181,11 @@ struct InputEvent
     InputEventType type; //Kind of event.
     unsigned int code;   //Key or mouse button.
     EventModMask mask;   //Modifier keys or buttons.
-    Point loc;           //Coordinate of mouse.
+    Point2 loc;          //Coordinate of mouse.
 
     //CONSTRUCTION
-    InputEvent(InputEventType t, unsigned int c, EventModMask m, const Point &l) : type(t), code(c), mask(m), loc(l) {}
-    InputEvent() : type(MOUSE_UP_EVENT), code(LEFT_MOUSE_BUTTON), mask(0), loc(Point(0, 0)) {}
+    InputEvent(InputEventType t, unsigned int c, EventModMask m, const Point2 &l) : type(t), code(c), mask(m), loc(l) {}
+    InputEvent() : type(MOUSE_UP_EVENT), code(LEFT_MOUSE_BUTTON), mask(0), loc(Point2(0, 0)) {}
 };
 
 //Text justification possibilities.
@@ -233,7 +233,7 @@ void drawUpLeftShadow(const Rect &rect, const GFXColor &color, float lineWidth);
 void drawLowRightShadow(const Rect &rect, const GFXColor &color, float lineWidth);
 
 //Fill a closed polygon.
-void drawFilledPolygon(const std::vector<Point> &coords, const GFXColor &color);
+void drawFilledPolygon(const std::vector<Point2> &coords, const GFXColor &color);
 
 //////////////////   MIN AND MAX FUNCTIONS   ////////////////////
 

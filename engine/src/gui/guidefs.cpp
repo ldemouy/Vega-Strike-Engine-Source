@@ -162,14 +162,14 @@ void drawLowRightShadow(const Rect &rect, const GFXColor &color, float lineWidth
 }
 
 //Fill a closed polygon.
-void drawFilledPolygon(const std::vector<Point> &coords, const GFXColor &color)
+void drawFilledPolygon(const std::vector<Point2> &coords, const GFXColor &color)
 {
     GFXDisable(TEXTURE0);
     GFXColorf(color);
 
     std::vector<float> verts(coords.size() * 2);
     float *v = &verts[0];
-    for (std::vector<Point>::const_iterator i = coords.begin(); i != coords.end(); i++)
+    for (std::vector<Point2>::const_iterator i = coords.begin(); i != coords.end(); i++)
     {
         *v++ = i->x;
         *v++ = i->y;

@@ -197,7 +197,7 @@ void WindowManager::draw()
     ConditionalCursorDraw(true);
     //Figure position of cursor sprite.
     float sizex = 0.0, sizey = 0.0;
-    const Point loc = globalEventManager().mouseLoc();
+    const Point2 loc = globalEventManager().mouseLoc();
     MouseVSSprite.GetSize(sizex, sizey);
     float tempx = 0.0, tempy = 0.0;
     MouseVSSprite.GetPosition(tempx, tempy);

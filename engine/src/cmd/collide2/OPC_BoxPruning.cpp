@@ -32,8 +32,6 @@
 #include "Stdafx.h"
 #include "Ice/IceRevisitedRadix.h"
 
-using namespace Opcode;
-
 inline void FindRunningIndex(uint32_t &index, float *array, uint32_t *sorted, int last, float max)
 {
 	int First = index;
@@ -95,7 +93,7 @@ void ReleasePruningSorters()
  *	\return		true if success.
  */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool Opcode::BipartiteBoxPruning(uint32_t nb0, const AABB **array0, uint32_t nb1, const AABB **array1, Pairs &pairs, const Axis &axes)
+bool BipartiteBoxPruning(uint32_t nb0, const AABB **array0, uint32_t nb1, const AABB **array1, Pairs &pairs, const Axis &axes)
 {
 	// Checkings
 	if (!nb0 || !array0 || !nb1 || !array1)
@@ -194,7 +192,7 @@ bool Opcode::BipartiteBoxPruning(uint32_t nb0, const AABB **array0, uint32_t nb1
  *	\return		true if success.
  */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool Opcode::CompleteBoxPruning(uint32_t nb, const AABB **array, Pairs &pairs, const Axis &axes)
+bool CompleteBoxPruning(uint32_t nb, const AABB **array, Pairs &pairs, const Axis &axes)
 {
 	// Checkings
 	if (!nb || !array)
@@ -338,7 +336,7 @@ bool Opcode::CompleteBoxPruning(uint32_t nb, const AABB **array, Pairs &pairs, c
  *	\return		true if success.
  */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool Opcode::BruteForceBipartiteBoxTest(uint32_t nb0, const AABB **array0, uint32_t nb1, const AABB **array1, Pairs &pairs)
+bool BruteForceBipartiteBoxTest(uint32_t nb0, const AABB **array0, uint32_t nb1, const AABB **array1, Pairs &pairs)
 {
 	// Checkings
 	if (!nb0 || !array0 || !nb1 || !array1)
@@ -365,7 +363,7 @@ bool Opcode::BruteForceBipartiteBoxTest(uint32_t nb0, const AABB **array0, uint3
  *	\return		true if success.
  */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool Opcode::BruteForceCompleteBoxTest(uint32_t nb, const AABB **array, Pairs &pairs)
+bool BruteForceCompleteBoxTest(uint32_t nb, const AABB **array, Pairs &pairs)
 {
 	// Checkings
 	if (!nb || !array)

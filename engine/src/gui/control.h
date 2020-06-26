@@ -45,7 +45,7 @@ public:
     }
 
     //Whether the specified point is inside this control.
-    virtual bool hitTest(const Point &p);
+    virtual bool hitTest(const Point2 &p);
 
     //Whether to show the control or not.
     virtual bool hidden(void)

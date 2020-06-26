@@ -257,12 +257,12 @@ void EventManager::ProcessMouseClick(int button, int state, int x, int y)
     assert(WHEELDOWN_MOUSE_BUTTON == WS_WHEEL_DOWN);
     if (state == WS_MOUSE_DOWN)
     {
-        InputEvent event(MOUSE_DOWN_EVENT, button, 0, Point(MouseXTo2dX(x), MouseYTo2dY(y)));
+        InputEvent event(MOUSE_DOWN_EVENT, button, 0, Point2(MouseXTo2dX(x), MouseYTo2dY(y)));
         globalEventManager().sendInputEvent((event));
     }
     else
     {
-        InputEvent event(MOUSE_UP_EVENT, button, 0, Point(MouseXTo2dX(x), MouseYTo2dY(y)));
+        InputEvent event(MOUSE_UP_EVENT, button, 0, Point2(MouseXTo2dX(x), MouseYTo2dY(y)));
         globalEventManager().sendInputEvent((event));
     }
     clearDeleteQueue();
@@ -272,7 +272,7 @@ void EventManager::ProcessMouseActive(int x, int y)
 {
     ModifyMouseSensitivity(x, y);
     //FIXME mbyron -- Should provide info about which buttons are down.
-    InputEvent event(MOUSE_DRAG_EVENT, 0, 0, Point(MouseXTo2dX(x), MouseYTo2dY(y)));
+    InputEvent event(MOUSE_DRAG_EVENT, 0, 0, Point2(MouseXTo2dX(x), MouseYTo2dY(y)));
     globalEventManager().sendInputEvent((event));
     clearDeleteQueue();
 }
@@ -280,7 +280,7 @@ void EventManager::ProcessMouseActive(int x, int y)
 void EventManager::ProcessMousePassive(int x, int y)
 {
     ModifyMouseSensitivity(x, y);
-    InputEvent event(MOUSE_MOVE_EVENT, 0, 0, Point(MouseXTo2dX(x), MouseYTo2dY(y)));
+    InputEvent event(MOUSE_MOVE_EVENT, 0, 0, Point2(MouseXTo2dX(x), MouseYTo2dY(y)));
     globalEventManager().sendInputEvent((event));
     clearDeleteQueue();
 }

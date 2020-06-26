@@ -24,7 +24,7 @@
 // Precompiled Header
 #include "Stdafx.h"
 
-using namespace Opcode;
+
 
 float Segment::SquareDistance(const Point &point, float *t) const
 {

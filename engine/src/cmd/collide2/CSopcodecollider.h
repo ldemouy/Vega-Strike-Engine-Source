@@ -76,27 +76,27 @@ private:
 
 	/* callback used to return vertex points when requested from opcode*/
 	static void MeshCallback(uint32_t triangle_index,
-							 Opcode::VertexPointers &triangle, void *user_data);
+							 VertexPointers &triangle, void *user_data);
 
 	/* returns face of mesh where ray collided */
-	static void RayCallback(const Opcode::CollisionFace &, void *);
+	static void RayCallback(const CollisionFace &, void *);
 
 	/* Radius around unit using center of unit and furthest part of unit */
 	float radius;
 
 	/* Array of Point's corresponding to vertices of triangles given by mesh_polygon */
-	Opcode::Point *vertholder;
+	Point *vertholder;
 
 	/* OPCODE interfaces. */
-	Opcode::Model *m_pCollisionModel;
-	Opcode::MeshInterface opcMeshInt;
-	Opcode::BVTCache ColCache;
-	Opcode::CollisionFace collFace;
+	Model *m_pCollisionModel;
+	MeshInterface opcMeshInt;
+	BVTCache ColCache;
+	CollisionFace collFace;
 	/* Collider type: Tree - Used primarily for mesh on mesh collisions */
-	Opcode::AABBTreeCollider TreeCollider;
+	AABBTreeCollider TreeCollider;
 
 	/* Collider type: Ray - used to check if a ray collided with the tree collider above */
-	Opcode::RayCollider rCollider;
+	RayCollider rCollider;
 
 	/* We have to copy our Points to csVector3's because opcode likes Point
 		* and VS likes Vector.  */
@@ -110,7 +110,7 @@ public:
 	int32_t inline GetColliderType() const { return CS_MESH_COLLIDER; }
 
 	/* Collides the bolt or beam with this collider, returning true if it occurred */
-	bool rayCollide(const Opcode::Ray &boltbeam, Vector &norm, float &distance);
+	bool rayCollide(const Ray &boltbeam, Vector &norm, float &distance);
 
 	/* Collides the argument collider with this collider, returning true if it occurred */
 	bool Collide(csOPCODECollider &pOtherCollider,

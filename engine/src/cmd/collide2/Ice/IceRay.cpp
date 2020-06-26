@@ -61,7 +61,7 @@
 // Precompiled Header
 #include "Stdafx.h"
 
-using namespace Opcode;
+
 
 float Ray::SquareDistance(const Point &point, float *t) const
 {

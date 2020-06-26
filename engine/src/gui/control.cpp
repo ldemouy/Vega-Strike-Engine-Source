@@ -27,7 +27,7 @@
 static const float DEFAULT_OUTLINE_LINE_WIDTH = 1.0;
 
 //Whether the specified point is inside this control.
-bool Control::hitTest(const Point &p)
+bool Control::hitTest(const Point2 &p)
 {
     const float maxX = m_rect.origin.x + m_rect.size.width;
     const float maxY = m_rect.origin.y + m_rect.size.height;
