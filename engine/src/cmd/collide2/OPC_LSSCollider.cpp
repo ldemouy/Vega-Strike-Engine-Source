@@ -309,7 +309,6 @@ bool LSSCollider::Collide(LSSCache &cache, const LSS &lss, const AABBTree *tree)
 	// This is typically called for a scene tree, full of -AABBs-, not full of triangles.
 	// So we don't really have "primitives" to deal with. Hence it doesn't work with
 	// "FirstContact" + "TemporalCoherence".
-	OPASSERT(!(FirstContactEnabled() && TemporalCoherenceEnabled()));
 
 	// Checkings
 	if (!tree)

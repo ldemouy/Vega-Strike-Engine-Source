@@ -247,7 +247,6 @@ void SAP_PairData::AddPair(uint32_t id1, uint32_t id2)
 	// Order the ids
 	Sort(id1, id2);
 
-	OPASSERT(id1 < mNbObjects);
 	if (id1 >= mNbObjects)
 		return;
 
@@ -340,7 +339,6 @@ void SAP_PairData::DumpPairs(Pairs &pairs) const
 		SAP_Element *Current = mArray[i];
 		while (Current)
 		{
-			OPASSERT(Current->mID < mNbObjects);
 
 			pairs.AddPair(i, Current->mID);
 			Current = Current->mNext;
@@ -359,7 +357,6 @@ void SAP_PairData::DumpPairs(PairCallback callback, void *user_data) const
 		SAP_Element *Current = mArray[i];
 		while (Current)
 		{
-			OPASSERT(Current->mID < mNbObjects);
 
 			if (!(callback)(i, Current->mID, user_data))
 				return;
@@ -427,8 +424,6 @@ bool SweepAndPrune::Init(uint32_t nb_objects, const AABB **boxes)
 			float SortedCoord = Data[SortedIndex];
 			uint32_t BoxIndex = SortedIndex >> 1;
 
-			OPASSERT(BoxIndex < nb_objects);
-
 			SAP_EndPoint *CurrentEndPoint = &mList[Axis][SortedIndex];
 			CurrentEndPoint->Value = SortedCoord;
 			//			CurrentEndPoint->IsMax		= SortedIndex&1;		// ### could be implicit ?
@@ -471,7 +466,8 @@ bool SweepAndPrune::Init(uint32_t nb_objects, const AABB **boxes)
 				mPairs.AddPair(id0, id1);
 			}
 			else
-				OPASSERT(0);
+			{
+			}
 		}
 	}
 
@@ -496,20 +492,16 @@ bool SweepAndPrune::CheckListsIntegrity()
 
 			if (Previous)
 			{
-				OPASSERT(Previous->Value <= Current->Value);
 				if (Previous->Value > Current->Value)
 					return false;
 			}
 
-			OPASSERT(Current->Previous == Previous);
 			if (Current->Previous != Previous)
 				return false;
 
 			Previous = Current;
 			Current = Current->Next;
 		}
-
-		OPASSERT(Nb == mNbObjects * 2);
 	}
 	return true;
 }
@@ -531,7 +523,6 @@ bool SweepAndPrune::UpdateObject(uint32_t i, const AABB &box)
 		// Update min
 		{
 			SAP_EndPoint *const CurrentMin = mBoxes[i].Min[Axis];
-			OPASSERT(!CurrentMin->IsMax());
 
 			const float Limit = box.GetMin(Axis);
 			if (Limit == CurrentMin->Value)
@@ -543,7 +534,6 @@ bool SweepAndPrune::UpdateObject(uint32_t i, const AABB &box)
 
 				// Min is moving left:
 				SAP_EndPoint *NewPos = CurrentMin;
-				OPASSERT(NewPos);
 
 				SAP_EndPoint *tmp;
 				while ((tmp = NewPos->Previous) && tmp->Value > Limit)
@@ -570,7 +560,6 @@ bool SweepAndPrune::UpdateObject(uint32_t i, const AABB &box)
 
 				// Min is moving right:
 				SAP_EndPoint *NewPos = CurrentMin;
-				OPASSERT(NewPos);
 
 				SAP_EndPoint *tmp;
 				while ((tmp = NewPos->Next) && tmp->Value < Limit)
@@ -595,7 +584,6 @@ bool SweepAndPrune::UpdateObject(uint32_t i, const AABB &box)
 		// Update max
 		{
 			SAP_EndPoint *const CurrentMax = mBoxes[i].Max[Axis];
-			OPASSERT(CurrentMax->IsMax());
 
 			const float Limit = box.GetMax(Axis);
 			if (Limit == CurrentMax->Value)
@@ -607,7 +595,6 @@ bool SweepAndPrune::UpdateObject(uint32_t i, const AABB &box)
 
 				// Max is moving right:
 				SAP_EndPoint *NewPos = CurrentMax;
-				OPASSERT(NewPos);
 
 				SAP_EndPoint *tmp;
 				while ((tmp = NewPos->Next) && tmp->Value < Limit)
@@ -633,7 +620,6 @@ bool SweepAndPrune::UpdateObject(uint32_t i, const AABB &box)
 
 				// Max is moving left:
 				SAP_EndPoint *NewPos = CurrentMax;
-				OPASSERT(NewPos);
 
 				SAP_EndPoint *tmp;
 				while ((tmp = NewPos->Previous) && tmp->Value > Limit)

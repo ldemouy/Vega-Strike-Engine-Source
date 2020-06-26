@@ -276,7 +276,6 @@ bool AABBCollider::Collide(AABBCache &cache, const CollisionAABB &box, const AAB
 	// This is typically called for a scene tree, full of -AABBs-, not full of triangles.
 	// So we don't really have "primitives" to deal with. Hence it doesn't work with
 	// "FirstContact" + "TemporalCoherence".
-	OPASSERT(!(FirstContactEnabled() && TemporalCoherenceEnabled()));
 
 	// Checkings
 	if (!tree)

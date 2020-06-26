@@ -300,7 +300,6 @@ bool SphereCollider::Collide(SphereCache &cache, const Sphere &sphere, const AAB
 	// This is typically called for a scene tree, full of -AABBs-, not full of triangles.
 	// So we don't really have "primitives" to deal with. Hence it doesn't work with
 	// "FirstContact" + "TemporalCoherence".
-	OPASSERT(!(FirstContactEnabled() && TemporalCoherenceEnabled()));
 
 	// Checkings
 	if (!tree)

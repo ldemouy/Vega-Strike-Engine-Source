@@ -107,7 +107,7 @@ static void _BuildCollisionTree(AABBCollisionNode *linear, const uint32_t box_id
 	if (current_node->IsLeaf())
 	{
 		// The input tree must be complete => i.e. one primitive/leaf
-		OPASSERT(current_node->GetNbPrimitives() == 1);
+
 		// Get the primitive index from the input tree
 		uint32_t PrimitiveIndex = current_node->GetPrimitives()[0];
 		// Setup box data as the primitive index, marked as leaf
@@ -121,7 +121,7 @@ static void _BuildCollisionTree(AABBCollisionNode *linear, const uint32_t box_id
 		// Setup box data as the forthcoming new P pointer
 		linear[box_id].mData = (uintptr_t)&linear[PosID];
 		// Make sure it's not marked as leaf
-		OPASSERT(!(linear[box_id].mData & 1));
+
 		// Recurse with new IDs
 		_BuildCollisionTree(linear, PosID, current_id, current_node->GetPos());
 		_BuildCollisionTree(linear, NegID, current_id, current_node->GetNeg());
@@ -152,8 +152,7 @@ static void _BuildNoLeafTree(AABBNoLeafNode *linear, const uint32_t box_id, uint
 	const AABBTreeNode *P = current_node->GetPos();
 	const AABBTreeNode *N = current_node->GetNeg();
 	// Leaf nodes here?!
-	OPASSERT(P);
-	OPASSERT(N);
+
 	// Internal node => keep the box
 	current_node->GetAABB()->GetCenter(linear[box_id].mAABB.mCenter);
 	current_node->GetAABB()->GetExtents(linear[box_id].mAABB.mExtents);
@@ -161,7 +160,7 @@ static void _BuildNoLeafTree(AABBNoLeafNode *linear, const uint32_t box_id, uint
 	if (P->IsLeaf())
 	{
 		// The input tree must be complete => i.e. one primitive/leaf
-		OPASSERT(P->GetNbPrimitives() == 1);
+
 		// Get the primitive index from the input tree
 		uint32_t PrimitiveIndex = P->GetPrimitives()[0];
 		// Setup prev box data as the primitive index, marked as leaf
@@ -174,7 +173,7 @@ static void _BuildNoLeafTree(AABBNoLeafNode *linear, const uint32_t box_id, uint
 		// Setup box data
 		linear[box_id].mPosData = (uintptr_t)&linear[PosID];
 		// Make sure it's not marked as leaf
-		OPASSERT(!(linear[box_id].mPosData & 1));
+
 		// Recurse
 		_BuildNoLeafTree(linear, PosID, current_id, P);
 	}
@@ -182,7 +181,7 @@ static void _BuildNoLeafTree(AABBNoLeafNode *linear, const uint32_t box_id, uint
 	if (N->IsLeaf())
 	{
 		// The input tree must be complete => i.e. one primitive/leaf
-		OPASSERT(N->GetNbPrimitives() == 1);
+
 		// Get the primitive index from the input tree
 		uint32_t PrimitiveIndex = N->GetPrimitives()[0];
 		// Setup prev box data as the primitive index, marked as leaf
@@ -195,7 +194,7 @@ static void _BuildNoLeafTree(AABBNoLeafNode *linear, const uint32_t box_id, uint
 		// Setup box data
 		linear[box_id].mNegData = (uintptr_t)&linear[NegID];
 		// Make sure it's not marked as leaf
-		OPASSERT(!(linear[box_id].mNegData & 1));
+
 		// Recurse
 		_BuildNoLeafTree(linear, NegID, current_id, N);
 	}
@@ -250,7 +249,6 @@ bool AABBCollisionTree::Build(AABBTree *tree)
 	// Build the tree
 	uint32_t CurID = 1;
 	_BuildCollisionTree(mNodes, 0, CurID, tree);
-	OPASSERT(CurID == mNbNodes);
 
 	return true;
 }
@@ -264,7 +262,7 @@ bool AABBCollisionTree::Build(AABBTree *tree)
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool AABBCollisionTree::Refit(const MeshInterface * /*mesh_interface*/)
 {
-	OPASSERT(!"Not implemented since AABBCollisionTrees have twice as more nodes to refit as AABBNoLeafTrees!");
+
 	return false;
 }
 
@@ -348,7 +346,6 @@ bool AABBNoLeafTree::Build(AABBTree *tree)
 	// Build the tree
 	uint32_t CurID = 1;
 	_BuildNoLeafTree(mNodes, 0, CurID, tree);
-	OPASSERT(CurID == mNbNodes);
 
 	return true;
 }
@@ -663,7 +660,7 @@ bool AABBQuantizedTree::Build(AABBTree *tree)
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool AABBQuantizedTree::Refit(const MeshInterface * /*mesh_interface*/)
 {
-	OPASSERT(!"Not implemented since requantizing is painful !");
+
 	return false;
 }
 
@@ -744,7 +741,6 @@ bool AABBQuantizedNoLeafTree::Build(AABBTree *tree)
 	// Build the tree
 	uint32_t CurID = 1;
 	_BuildNoLeafTree(Nodes, 0, CurID, tree);
-	OPASSERT(CurID == mNbNodes);
 
 	// Quantize
 	{
@@ -782,7 +778,7 @@ bool AABBQuantizedNoLeafTree::Build(AABBTree *tree)
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool AABBQuantizedNoLeafTree::Refit(const MeshInterface * /*mesh_interface*/)
 {
-	OPASSERT(!"Not implemented since requantizing is painful !");
+
 	return false;
 }
 

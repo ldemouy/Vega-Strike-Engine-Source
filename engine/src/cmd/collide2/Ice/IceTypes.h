@@ -12,14 +12,6 @@
 #ifndef __ICETYPES_H__
 #define __ICETYPES_H__
 
-#include <cfloat>
-
-#ifndef OPASSERT
-#define OPASSERT(exp) \
-	{                 \
-	}
-#endif
-
 // Constants
 #ifndef PI
 #define PI 3.1415926535897932384626433832795028841971693993751f //!< PI

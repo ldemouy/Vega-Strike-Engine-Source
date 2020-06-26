@@ -42,13 +42,12 @@ struct LeafTriangles
 	inline uint32_t GetTriangleIndex() const { return Data >> 4; }
 	inline void SetData(uint32_t nb, uint32_t index)
 	{
-		OPASSERT(nb > 0 && nb <= 16);
 		nb--;
 		Data = (index << 4) | (nb & 15);
 	}
 };
 
-class  HybridModel : public BaseModel
+class HybridModel : public BaseModel
 {
 public:
 	// Constructor/Destructor

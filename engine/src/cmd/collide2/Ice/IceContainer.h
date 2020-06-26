@@ -193,13 +193,11 @@ public:
 	//! Read-access as an array
 	inline uint32_t operator[](uint32_t i) const
 	{
-		OPASSERT(i >= 0 && i < mCurNbEntries);
 		return mEntries[i];
 	}
 	//! Write-access as an array
 	inline uint32_t &operator[](uint32_t i)
 	{
-		OPASSERT(i >= 0 && i < mCurNbEntries);
 		return mEntries[i];
 	}
 
