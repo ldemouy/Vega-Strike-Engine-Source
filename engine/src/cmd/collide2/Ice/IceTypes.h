@@ -142,12 +142,6 @@ typedef union {
 typedef bool (*ENUMERATION)(udword value, udword param, udword context); //!< ICE standard enumeration call
 typedef void **VTABLE;													 //!< A V-Table.
 
-#undef MIN
-#undef MAX
-#define MIN(a, b) ((a) < (b) ? (a) : (b))					//!< Returns the min value between a and b
-#define MAX(a, b) ((a) > (b) ? (a) : (b))					//!< Returns the max value between a and b
-#define MAXMAX(a, b, c) ((a) > (b) ? MAX(a, c) : MAX(b, c)) //!<	Returns the max value between a, b and c
-
 template <class T>
 inline const T &TMin(const T &a, const T &b)
 {

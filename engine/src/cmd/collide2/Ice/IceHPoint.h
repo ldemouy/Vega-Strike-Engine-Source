@@ -12,6 +12,8 @@
 #ifndef __ICEHPOINT_H__
 #define __ICEHPOINT_H__
 
+#include <algorithm>
+
 class HPoint : public Point
 {
 public:
@@ -110,25 +112,25 @@ public:
 	}
 
 	//! Returns MIN(x, y, z, w);
-	float Min() const { return MIN(x, MIN(y, MIN(z, w))); }
+	float Min() const { return std::min({x, y, z, w}); }
 	//! Returns MAX(x, y, z, w);
-	float Max() const { return MAX(x, MAX(y, MAX(z, w))); }
+	float Max() const { return std::max({x, y, z, w}); }
 	//! Sets each element to be componentwise minimum
 	HPoint &Min(const HPoint &p)
 	{
-		x = MIN(x, p.x);
-		y = MIN(y, p.y);
-		z = MIN(z, p.z);
-		w = MIN(w, p.w);
+		x = std::min(x, p.x);
+		y = std::min(y, p.y);
+		z = std::min(z, p.z);
+		w = std::min(w, p.w);
 		return *this;
 	}
 	//! Sets each element to be componentwise maximum
 	HPoint &Max(const HPoint &p)
 	{
-		x = MAX(x, p.x);
-		y = MAX(y, p.y);
-		z = MAX(z, p.z);
-		w = MAX(w, p.w);
+		x = std::max(x, p.x);
+		y = std::max(y, p.y);
+		z = std::max(z, p.z);
+		w = std::max(w, p.w);
 		return *this;
 	}
 
