@@ -24,8 +24,8 @@ public:
 	//! Destructor
 	inline ~Ray() {}
 
-	float SquareDistance(const Point &point, float *t = null) const;
-	inline float Distance(const Point &point, float *t = null) const { return sqrtf(SquareDistance(point, t)); }
+	float SquareDistance(const Point &point, float *t = nullptr) const;
+	inline float Distance(const Point &point, float *t = nullptr) const { return sqrtf(SquareDistance(point, t)); }
 
 	Point mOrig; //!< Ray origin
 	Point mDir;	 //!< Normalized direction

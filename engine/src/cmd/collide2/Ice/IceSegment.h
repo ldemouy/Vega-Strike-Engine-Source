@@ -45,8 +45,8 @@ public:
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	inline void ComputePoint(Point &pt, float t) const { pt = mP0 + t * (mP1 - mP0); }
 
-	float SquareDistance(const Point &point, float *t = null) const;
-	inline float Distance(const Point &point, float *t = null) const { return sqrtf(SquareDistance(point, t)); }
+	float SquareDistance(const Point &point, float *t = nullptr) const;
+	inline float Distance(const Point &point, float *t = nullptr) const { return sqrtf(SquareDistance(point, t)); }
 
 	Point mP0; //!< Start of segment
 	Point mP1; //!< End of segment

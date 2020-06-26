@@ -95,24 +95,24 @@ inline void MoveMemory(void *dest, const void *src, udword size) { memmove(dest,
 #define DELETESINGLE(x) \
 	{                   \
 		delete x;       \
-		x = null;       \
+		x = nullptr;    \
 	} //!< Deletes an instance of a class.
 #define DELETEARRAY(x) \
 	{                  \
 		delete[] x;    \
-		x = null;      \
+		x = nullptr;   \
 	} //!< Deletes an array.
 #define SAFE_RELEASE(x) \
 	if (x)              \
 	{                   \
 		(x)->Release(); \
-		(x) = null;     \
+		(x) = nullptr;  \
 	} //!< Safe D3D-style release
 #define SAFE_DESTRUCT(x)     \
 	if (x)                   \
 	{                        \
 		(x)->SelfDestruct(); \
-		(x) = null;          \
+		(x) = nullptr;       \
 	} //!< Safe ICE-style release
 
 #ifdef __ICEERROR_H__

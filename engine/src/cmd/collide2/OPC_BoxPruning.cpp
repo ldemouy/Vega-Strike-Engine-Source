@@ -54,9 +54,9 @@ inline void FindRunningIndex(udword &index, float *array, udword *sorted, int la
 //#define PRUNING_SORTER	InsertionSort
 
 // Static for coherence
-static PRUNING_SORTER *gCompletePruningSorter = null;
-static PRUNING_SORTER *gBipartitePruningSorter0 = null;
-static PRUNING_SORTER *gBipartitePruningSorter1 = null;
+static PRUNING_SORTER *gCompletePruningSorter = nullptr;
+static PRUNING_SORTER *gBipartitePruningSorter0 = nullptr;
+static PRUNING_SORTER *gBipartitePruningSorter1 = nullptr;
 inline PRUNING_SORTER *GetCompletePruningSorter()
 {
 	if (!gCompletePruningSorter)

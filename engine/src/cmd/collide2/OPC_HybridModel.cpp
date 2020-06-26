@@ -93,9 +93,9 @@ namespace Opcode
  */
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	HybridModel::HybridModel() : mNbLeaves(0),
-								 mTriangles(null),
+								 mTriangles(nullptr),
 								 mNbPrimitives(0),
-								 mIndices(null)
+								 mIndices(nullptr)
 	{
 	}
 
@@ -128,9 +128,9 @@ namespace Opcode
 		Internal()
 		{
 			mNbLeaves = 0;
-			mLeaves = null;
-			mTriangles = null;
-			mBase = null;
+			mLeaves = nullptr;
+			mTriangles = nullptr;
+			mBase = nullptr;
 		}
 		~Internal()
 		{
@@ -166,7 +166,7 @@ namespace Opcode
 		SetMeshInterface(create.mIMesh);
 
 		bool Status = false;
-		AABBTree *LeafTree = null;
+		AABBTree *LeafTree = nullptr;
 		Internal Data;
 
 		// 2) Build a generic AABB Tree.

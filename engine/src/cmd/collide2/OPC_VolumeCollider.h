@@ -22,7 +22,7 @@
 
 struct VolumeCache
 {
-	VolumeCache() : Model(null) {}
+	VolumeCache() : Model(nullptr) {}
 	~VolumeCache() {}
 
 	Container TouchedPrimitives; //!< Indices of touched primitives
@@ -56,7 +56,7 @@ public:
 		 *	\return		the list of touched primitives (primitive indices)
 		 */
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	inline const udword *GetTouchedPrimitives() const { return mTouchedPrimitives ? mTouchedPrimitives->GetEntries() : null; }
+	inline const udword *GetTouchedPrimitives() const { return mTouchedPrimitives ? mTouchedPrimitives->GetEntries() : nullptr; }
 
 	// Stats
 

@@ -127,11 +127,11 @@ using namespace Opcode;
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 MeshInterface::MeshInterface() :
 #ifdef OPC_USE_CALLBACKS
-								 mUserData(null),
-								 mObjCallback(null),
+								 mUserData(nullptr),
+								 mObjCallback(nullptr),
 #else
-								 mTris(null),
-								 mVerts(null),
+								 mTris(nullptr),
+								 mVerts(nullptr),
 #ifdef OPC_USE_STRIDE
 								 mTriStride(sizeof(IndexedTriangle)),
 								 mVertexStride(sizeof(Point)),
@@ -230,7 +230,7 @@ bool MeshInterface::SetCallback(RequestCallback callback, void *user_data)
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool MeshInterface::SetPointers(const IndexedTriangle *tris, const Point *verts)
 {
-	//	if(!tris || !verts)	return SetIceError("MeshInterface::SetPointers: pointer is null", null);
+	//	if(!tris || !verts)	return SetIceError("MeshInterface::SetPointers: pointer is null", nullptr);
 	if (!tris || !verts)
 		return (false);
 
@@ -250,9 +250,9 @@ bool MeshInterface::SetPointers(const IndexedTriangle *tris, const Point *verts)
 bool MeshInterface::SetStrides(udword tri_stride, udword vertex_stride)
 {
 	if (tri_stride < sizeof(IndexedTriangle))
-		return SetIceError("MeshInterface::SetStrides: invalid triangle stride", null);
+		return SetIceError("MeshInterface::SetStrides: invalid triangle stride", nullptr);
 	if (vertex_stride < sizeof(Point))
-		return SetIceError("MeshInterface::SetStrides: invalid vertex stride", null);
+		return SetIceError("MeshInterface::SetStrides: invalid vertex stride", nullptr);
 
 	mTriStride = tri_stride;
 	mVertexStride = vertex_stride;

@@ -35,7 +35,7 @@ public:                                                                         
 	inline const base_class *GetNeg() const                                                          \
 	{                                                                                                \
 		const base_class *P = GetPos();                                                              \
-		return P ? P + 1 : null;                                                                     \
+		return P ? P + 1 : nullptr;                                                                  \
 	}                                                                                                \
                                                                                                      \
 	/* We don't need to test both nodes since we can't have one without the other	*/                 \
@@ -80,7 +80,7 @@ uintptr_t mNeg;																															/* "Negative" child */
 
 typedef std::function<void(uint32_t nb_primitives, uint32_t *node_primitives, bool need_clipping, void *user_data)> CullingCallback;
 
-class  AABBTreeNode
+class AABBTreeNode
 {
 	IMPLEMENT_TREE(AABBTreeNode, AABB)
 public:
@@ -110,7 +110,7 @@ protected:
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 typedef std::function<bool(const AABBTreeNode *current, uint32_t depth, void *user_data)> WalkingCallback;
 
-class  AABBTree : public AABBTreeNode
+class AABBTree : public AABBTreeNode
 {
 public:
 	// Constructor / Destructor

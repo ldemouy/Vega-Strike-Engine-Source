@@ -59,7 +59,7 @@ public:
 		 *	\warning	SCALE NOT SUPPORTED. The matrices must contain rotation & translation parts only.
 		 */
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	bool Collide(LSSCache &cache, const LSS &lss, const Model &model, const Matrix4x4 *worldl = null, const Matrix4x4 *worldm = null);
+	bool Collide(LSSCache &cache, const LSS &lss, const Model &model, const Matrix4x4 *worldl = nullptr, const Matrix4x4 *worldm = nullptr);
 	//
 	bool Collide(LSSCache &cache, const LSS &lss, const AABBTree *tree);
 
@@ -82,7 +82,7 @@ protected:
 	inline bool LSSAABBOverlap(const Point &center, const Point &extents);
 	inline bool LSSTriOverlap(const Point &vert0, const Point &vert1, const Point &vert2);
 	// Init methods
-	bool InitQuery(LSSCache &cache, const LSS &lss, const Matrix4x4 *worldl = null, const Matrix4x4 *worldm = null);
+	bool InitQuery(LSSCache &cache, const LSS &lss, const Matrix4x4 *worldl = nullptr, const Matrix4x4 *worldm = nullptr);
 };
 
 class HybridLSSCollider : public LSSCollider
@@ -92,7 +92,7 @@ public:
 	HybridLSSCollider();
 	virtual ~HybridLSSCollider();
 
-	bool Collide(LSSCache &cache, const LSS &lss, const HybridModel &model, const Matrix4x4 *worldl = null, const Matrix4x4 *worldm = null);
+	bool Collide(LSSCache &cache, const LSS &lss, const HybridModel &model, const Matrix4x4 *worldl = nullptr, const Matrix4x4 *worldm = nullptr);
 
 protected:
 	Container mTouchedBoxes;

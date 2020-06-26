@@ -72,14 +72,14 @@ namespace Opcode
 	bool SetupShadowFeeler(RayCollider &collider)
 	{
 		collider.SetFirstContact(true);
-		collider.SetHitCallback(null);
+		collider.SetHitCallback(nullptr);
 		return true;
 	}
 
 	bool SetupInOutTest(RayCollider &collider)
 	{
 		collider.SetFirstContact(false);
-		collider.SetHitCallback(null);
+		collider.SetHitCallback(nullptr);
 		// Results with collider.GetNbIntersections()
 		return true;
 	}

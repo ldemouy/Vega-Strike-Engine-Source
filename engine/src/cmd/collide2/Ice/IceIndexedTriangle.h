@@ -60,7 +60,7 @@ public:
 	void GetVRefs(ubyte edgenb, udword &vref0, udword &vref1, udword &vref2) const;
 	float MinEdgeLength(const Point *verts) const;
 	float MaxEdgeLength(const Point *verts) const;
-	void ComputePoint(const Point *verts, float u, float v, Point &pt, udword *nearvtx = null) const;
+	void ComputePoint(const Point *verts, float u, float v, Point &pt, udword *nearvtx = nullptr) const;
 	float Angle(const IndexedTriangle &tri, const Point *verts) const;
 	inline Plane PlaneEquation(const Point *verts) const { return Plane(verts[mVRef[0]], verts[mVRef[1]], verts[mVRef[2]]); }
 	bool Equal(const IndexedTriangle &tri) const;

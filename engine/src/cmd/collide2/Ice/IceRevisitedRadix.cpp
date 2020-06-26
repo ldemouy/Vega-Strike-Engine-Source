@@ -192,7 +192,7 @@ using namespace Opcode;
  *	Constructor.
  */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-RadixSort::RadixSort() : mCurrentSize(0), mRanks(null), mRanks2(null), mTotalCalls(0), mNbHits(0)
+RadixSort::RadixSort() : mCurrentSize(0), mRanks(nullptr), mRanks2(nullptr), mTotalCalls(0), mNbHits(0)
 {
 #ifndef RADIX_LOCAL_RAM
 	// Allocate input-independent ram

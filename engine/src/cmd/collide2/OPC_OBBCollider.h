@@ -20,7 +20,7 @@
 #ifndef __OPC_OBBCOLLIDER_H__
 #define __OPC_OBBCOLLIDER_H__
 
-struct  OBBCache : VolumeCache
+struct OBBCache : VolumeCache
 {
 	OBBCache() : FatCoeff(1.1f)
 	{
@@ -35,7 +35,7 @@ struct  OBBCache : VolumeCache
 	float FatCoeff; //!< extents multiplier used to create a fat box
 };
 
-class  OBBCollider : public VolumeCollider
+class OBBCollider : public VolumeCollider
 {
 public:
 	// Constructor / Destructor
@@ -58,7 +58,7 @@ public:
 		 *	\warning	SCALE NOT SUPPORTED. The matrices must contain rotation & translation parts only.
 		 */
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	bool Collide(OBBCache &cache, const OBB &box, const Model &model, const Matrix4x4 *worldb = null, const Matrix4x4 *worldm = null);
+	bool Collide(OBBCache &cache, const OBB &box, const Model &model, const Matrix4x4 *worldb = nullptr, const Matrix4x4 *worldm = nullptr);
 
 	// Settings
 
@@ -124,17 +124,17 @@ protected:
 	inline bool BoxBoxOverlap(const Point &extents, const Point &center);
 	inline bool TriBoxOverlap();
 	// Init methods
-	bool InitQuery(OBBCache &cache, const OBB &box, const Matrix4x4 *worldb = null, const Matrix4x4 *worldm = null);
+	bool InitQuery(OBBCache &cache, const OBB &box, const Matrix4x4 *worldb = nullptr, const Matrix4x4 *worldm = nullptr);
 };
 
-class  HybridOBBCollider : public OBBCollider
+class HybridOBBCollider : public OBBCollider
 {
 public:
 	// Constructor / Destructor
 	HybridOBBCollider();
 	virtual ~HybridOBBCollider();
 
-	bool Collide(OBBCache &cache, const OBB &box, const HybridModel &model, const Matrix4x4 *worldb = null, const Matrix4x4 *worldm = null);
+	bool Collide(OBBCache &cache, const OBB &box, const HybridModel &model, const Matrix4x4 *worldb = nullptr, const Matrix4x4 *worldm = nullptr);
 
 protected:
 	Container mTouchedBoxes;
