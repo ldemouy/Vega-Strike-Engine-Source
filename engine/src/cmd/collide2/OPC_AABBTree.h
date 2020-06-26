@@ -70,7 +70,7 @@ inline const base_class *GetNeg() const { return (const base_class *)(mNeg & ~1)
 inline bool IsLeaf() const { return !GetPos(); }
 
 /* Stats */
-inline udword GetNodeSize() const { return SIZEOFOBJECT; }
+inline uint32_t GetNodeSize() const { return SIZEOFOBJECT; }
 
 protected: /* Tree-independent data */ /* Following data always belong to the BV-tree, regardless of what the tree actually contains.*/ /* Whatever happens we need the two children and the enclosing volume.*/
 volume mBV;																																/* Global bounding-volume enclosing all the node-related primitives */

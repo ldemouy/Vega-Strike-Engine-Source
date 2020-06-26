@@ -61,7 +61,7 @@ struct BVTCache : Pair
 
 #ifdef __MESHMERIZER_H__ // Collision hulls only supported within ICE !
 	SVCache SepVector;
-	udword CountDown;
+	uint32_t CountDown;
 	bool HullTest;
 #endif // __MESHMERIZER_H__
 };
@@ -125,7 +125,7 @@ public:
 		 *	\return		the number of BV-BV tests performed during last query
 		 */
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	inline udword GetNbBVBVTests() const { return mNbBVBVTests; }
+	inline uint32_t GetNbBVBVTests() const { return mNbBVBVTests; }
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/**
@@ -135,7 +135,7 @@ public:
 		 *	\return		the number of Triangle-Triangle tests performed during last query
 		 */
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	inline udword GetNbPrimPrimTests() const { return mNbPrimPrimTests; }
+	inline uint32_t GetNbPrimPrimTests() const { return mNbPrimPrimTests; }
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/**
@@ -145,7 +145,7 @@ public:
 		 *	\return		the number of BV-Triangle tests performed during last query
 		 */
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	inline udword GetNbBVPrimTests() const { return mNbBVPrimTests; }
+	inline uint32_t GetNbBVPrimTests() const { return mNbBVPrimTests; }
 
 	// Data access
 
@@ -157,7 +157,7 @@ public:
 		 *	\return		the number of contacts / colliding pairs.
 		 */
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	inline udword GetNbPairs() const { return mPairs.GetNbEntries() >> 1; }
+	inline uint32_t GetNbPairs() const { return mPairs.GetNbEntries() >> 1; }
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/**
@@ -184,9 +184,9 @@ protected:
 	const MeshInterface *mIMesh0; //!< User-defined mesh interface for object0
 	const MeshInterface *mIMesh1; //!< User-defined mesh interface for object1
 								  // Stats
-	udword mNbBVBVTests;		  //!< Number of BV-BV tests
-	udword mNbPrimPrimTests;	  //!< Number of Primitive-Primitive tests
-	udword mNbBVPrimTests;		  //!< Number of BV-Primitive tests
+	uint32_t mNbBVBVTests;		  //!< Number of BV-BV tests
+	uint32_t mNbPrimPrimTests;	  //!< Number of Primitive-Primitive tests
+	uint32_t mNbBVPrimTests;	  //!< Number of BV-Primitive tests
 								  // Precomputed data
 	Matrix3x3 mAR;				  //!< Absolute rotation matrix
 	Matrix3x3 mR0to1;			  //!< Rotation from object0 to object1
@@ -200,7 +200,7 @@ protected:
 	Point mExtentsCoeff1;
 	// Leaf description
 	Point mLeafVerts[3];   //!< Triangle vertices
-	udword mLeafIndex;	   //!< Triangle index
+	uint32_t mLeafIndex;   //!< Triangle index
 						   // Settings
 	bool mFullBoxBoxTest;  //!< Perform full BV-BV tests (true) or SAT-lite tests (false)
 	bool mFullPrimBoxTest; //!< Perform full Primitive-BV tests (true) or SAT-lite tests (false)
@@ -219,9 +219,9 @@ protected:
 	void _CollideBoxTri(const AABBQuantizedNoLeafNode *b);
 	void _Collide(const AABBQuantizedNoLeafNode *a, const AABBQuantizedNoLeafNode *b);
 	// Overlap tests
-	void PrimTest(udword id0, udword id1);
-	inline void PrimTestTriIndex(udword id1);
-	inline void PrimTestIndexTri(udword id0);
+	void PrimTest(uint32_t id0, uint32_t id1);
+	inline void PrimTestTriIndex(uint32_t id1);
+	inline void PrimTestIndexTri(uint32_t id0);
 
 	inline bool BoxBoxOverlap(const Point &ea, const Point &ca, const Point &eb, const Point &cb);
 	inline bool TriBoxOverlap(const Point &center, const Point &extents);

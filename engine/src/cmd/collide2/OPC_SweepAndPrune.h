@@ -29,7 +29,7 @@
 	 *	\return		true to continue enumeration
 	 */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-typedef bool (*PairCallback)(udword id0, udword id1, void *user_data);
+typedef bool (*PairCallback)(uint32_t id0, uint32_t id1, void *user_data);
 
 class SAP_Element;
 class SAP_EndPoint;
@@ -41,24 +41,24 @@ public:
 	SAP_PairData();
 	~SAP_PairData();
 
-	bool Init(udword nb_objects);
+	bool Init(uint32_t nb_objects);
 
-	void AddPair(udword id1, udword id2);
-	void RemovePair(udword id1, udword id2);
+	void AddPair(uint32_t id1, uint32_t id2);
+	void RemovePair(uint32_t id1, uint32_t id2);
 
 	void DumpPairs(Pairs &pairs) const;
 	void DumpPairs(PairCallback callback, void *user_data) const;
 
 private:
-	udword mNbElements;		   //!< Total number of elements in the pool
-	udword mNbUsedElements;	   //!< Number of used elements
+	uint32_t mNbElements;	   //!< Total number of elements in the pool
+	uint32_t mNbUsedElements;  //!< Number of used elements
 	SAP_Element *mElementPool; //!< Array of mNbElements elements
 	SAP_Element *mFirstFree;   //!< First free element in the pool
 
-	udword mNbObjects;	  //!< Max number of objects we can handle
+	uint32_t mNbObjects;  //!< Max number of objects we can handle
 	SAP_Element **mArray; //!< Pointers to pool
 						  // Internal methods
-	SAP_Element *GetFreeElem(udword id, SAP_Element *next, udword *remap = nullptr);
+	SAP_Element *GetFreeElem(uint32_t id, SAP_Element *next, uint32_t *remap = nullptr);
 	inline void FreeElem(SAP_Element *elem);
 	void Release();
 };
@@ -69,8 +69,8 @@ public:
 	SweepAndPrune();
 	~SweepAndPrune();
 
-	bool Init(udword nb_objects, const AABB **boxes);
-	bool UpdateObject(udword i, const AABB &box);
+	bool Init(uint32_t nb_objects, const AABB **boxes);
+	bool UpdateObject(uint32_t i, const AABB &box);
 
 	void GetPairs(Pairs &pairs) const;
 	void GetPairs(PairCallback callback, void *user_data) const;
@@ -78,7 +78,7 @@ public:
 private:
 	SAP_PairData mPairs;
 
-	udword mNbObjects;
+	uint32_t mNbObjects;
 	SAP_Box *mBoxes;
 	SAP_EndPoint *mList[3];
 	// Internal methods

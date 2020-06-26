@@ -18,8 +18,8 @@ class PR;
 
 class Matrix4x4
 {
-	//				void	LUBackwardSubstitution( sdword *indx, float* b );
-	//				void	LUDecomposition( sdword* indx, float* d );
+	//				void	LUBackwardSubstitution( int32_t *indx, float* b );
+	//				void	LUDecomposition( int32_t* indx, float* d );
 
 public:
 	//! Empty constructor.
@@ -98,7 +98,7 @@ public:
 
 	// Row-column access
 	//! Returns a row.
-	inline void GetRow(const udword r, HPoint &p) const
+	inline void GetRow(const uint32_t r, HPoint &p) const
 	{
 		p.x = m[r][0];
 		p.y = m[r][1];
@@ -106,18 +106,18 @@ public:
 		p.w = m[r][3];
 	}
 	//! Returns a row.
-	inline void GetRow(const udword r, Point &p) const
+	inline void GetRow(const uint32_t r, Point &p) const
 	{
 		p.x = m[r][0];
 		p.y = m[r][1];
 		p.z = m[r][2];
 	}
 	//! Returns a row.
-	inline const HPoint &GetRow(const udword r) const { return *(const HPoint *)&m[r][0]; }
+	inline const HPoint &GetRow(const uint32_t r) const { return *(const HPoint *)&m[r][0]; }
 	//! Returns a row.
-	inline HPoint &GetRow(const udword r) { return *(HPoint *)&m[r][0]; }
+	inline HPoint &GetRow(const uint32_t r) { return *(HPoint *)&m[r][0]; }
 	//! Sets a row.
-	inline void SetRow(const udword r, const HPoint &p)
+	inline void SetRow(const uint32_t r, const HPoint &p)
 	{
 		m[r][0] = p.x;
 		m[r][1] = p.y;
@@ -125,7 +125,7 @@ public:
 		m[r][3] = p.w;
 	}
 	//! Sets a row.
-	inline void SetRow(const udword r, const Point &p)
+	inline void SetRow(const uint32_t r, const Point &p)
 	{
 		m[r][0] = p.x;
 		m[r][1] = p.y;
@@ -133,7 +133,7 @@ public:
 		m[r][3] = (r != 3) ? 0.0f : 1.0f;
 	}
 	//! Returns a column.
-	inline void GetCol(const udword c, HPoint &p) const
+	inline void GetCol(const uint32_t c, HPoint &p) const
 	{
 		p.x = m[0][c];
 		p.y = m[1][c];
@@ -141,14 +141,14 @@ public:
 		p.w = m[3][c];
 	}
 	//! Returns a column.
-	inline void GetCol(const udword c, Point &p) const
+	inline void GetCol(const uint32_t c, Point &p) const
 	{
 		p.x = m[0][c];
 		p.y = m[1][c];
 		p.z = m[2][c];
 	}
 	//! Sets a column.
-	inline void SetCol(const udword c, const HPoint &p)
+	inline void SetCol(const uint32_t c, const HPoint &p)
 	{
 		m[0][c] = p.x;
 		m[1][c] = p.y;
@@ -156,7 +156,7 @@ public:
 		m[3][c] = p.w;
 	}
 	//! Sets a column.
-	inline void SetCol(const udword c, const Point &p)
+	inline void SetCol(const uint32_t c, const Point &p)
 	{
 		m[0][c] = p.x;
 		m[1][c] = p.y;
@@ -275,9 +275,9 @@ public:
 	//! Checks matrix validity
 	inline bool IsValid() const
 	{
-		for (udword j = 0; j < 4; j++)
+		for (uint32_t j = 0; j < 4; j++)
 		{
-			for (udword i = 0; i < 4; i++)
+			for (uint32_t i = 0; i < 4; i++)
 			{
 				if (isnanf(m[j][i]))
 				{
@@ -344,7 +344,7 @@ public:
 	}
 
 	//! Computes a cofactor. Used for matrix inversion.
-	float CoFactor(udword row, udword col) const;
+	float CoFactor(uint32_t row, uint32_t col) const;
 	//! Computes the determinant of the matrix.
 	float Determinant() const;
 	//! Inverts the matrix. Determinant must be different from zero, else matrix can't be inverted.

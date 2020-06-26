@@ -101,32 +101,32 @@ public:
 
 	// Row-column access
 	//! Returns a row.
-	inline void GetRow(const udword r, Point &p) const
+	inline void GetRow(const uint32_t r, Point &p) const
 	{
 		p.x = m[r][0];
 		p.y = m[r][1];
 		p.z = m[r][2];
 	}
 	//! Returns a row.
-	inline const Point &GetRow(const udword r) const { return *(const Point *)&m[r][0]; }
+	inline const Point &GetRow(const uint32_t r) const { return *(const Point *)&m[r][0]; }
 	//! Returns a row.
-	inline Point &GetRow(const udword r) { return *(Point *)&m[r][0]; }
+	inline Point &GetRow(const uint32_t r) { return *(Point *)&m[r][0]; }
 	//! Sets a row.
-	inline void SetRow(const udword r, const Point &p)
+	inline void SetRow(const uint32_t r, const Point &p)
 	{
 		m[r][0] = p.x;
 		m[r][1] = p.y;
 		m[r][2] = p.z;
 	}
 	//! Returns a column.
-	inline void GetCol(const udword c, Point &p) const
+	inline void GetCol(const uint32_t c, Point &p) const
 	{
 		p.x = m[0][c];
 		p.y = m[1][c];
 		p.z = m[2][c];
 	}
 	//! Sets a column.
-	inline void SetCol(const udword c, const Point &p)
+	inline void SetCol(const uint32_t c, const Point &p)
 	{
 		m[0][c] = p.x;
 		m[1][c] = p.y;
@@ -420,9 +420,9 @@ public:
 	}
 	/*
 		//! Compute a cofactor. Used for matrix inversion.
-				float			CoFactor(ubyte row, ubyte column)	const
+				float			CoFactor(uint8_t row, uint8_t column)	const
 				{
-					static sdword gIndex[3+2] = { 0, 1, 2, 0, 1 };
+					static int32_t gIndex[3+2] = { 0, 1, 2, 0, 1 };
 					return	(m[gIndex[row+1]][gIndex[column+1]]*m[gIndex[row+2]][gIndex[column+2]] - m[gIndex[row+2]][gIndex[column+1]]*m[gIndex[row+1]][gIndex[column+2]]);
 				}
 */

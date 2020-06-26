@@ -68,7 +68,7 @@
  *		bool Status = TC.GetContactStatus();
  *
  *		// Number of colliding pairs and list of pairs
- *		udword NbPairs = TC.GetNbPairs();
+ *		uint32_t NbPairs = TC.GetNbPairs();
  *		const Pair* p = TC.GetPairs()
  *	\endcode
  *
@@ -156,7 +156,7 @@ bool Model::Build(const OPCODECREATE &create)
 	SetMeshInterface(create.mIMesh);
 
 	// Special case for 1-triangle meshes [Opcode 1.3]
-	udword NbTris = create.mIMesh->GetNbTriangles();
+	uint32_t NbTris = create.mIMesh->GetNbTriangles();
 	if (NbTris == 1)
 	{
 		// We don't need to actually create a tree here, since we'll only have a single triangle to deal with anyway.
@@ -220,7 +220,7 @@ bool Model::Build(const OPCODECREATE &create)
  *	\return		amount of bytes used
  */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-udword Model::GetUsedBytes() const
+uint32_t Model::GetUsedBytes() const
 {
 	if (!mTree)
 		return 0;

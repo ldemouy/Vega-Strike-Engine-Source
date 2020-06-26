@@ -101,7 +101,7 @@ public:
 		 *	\return		true if the node should be subdivised
 		 */
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	virtual bool ValidateSubdivision(const uint32_t * /*primitives*/, udword nb_prims, const AABB & /*global_box*/)
+	virtual bool ValidateSubdivision(const uint32_t * /*primitives*/, uint32_t nb_prims, const AABB & /*global_box*/)
 	{
 		// Check the user-defined limit
 		if (nb_prims <= mSettings.mLimit)
@@ -122,8 +122,8 @@ public:
 	inline uint32_t GetNbInvalidSplits() const { return mNbInvalidSplits; }
 
 private:
-	udword mCount;			 //!< Stats: number of nodes created
-	udword mNbInvalidSplits; //!< Stats: number of invalid splits
+	uint32_t mCount;		   //!< Stats: number of nodes created
+	uint32_t mNbInvalidSplits; //!< Stats: number of invalid splits
 };
 
 class AABBTreeOfVerticesBuilder : public AABBTreeBuilder

@@ -333,7 +333,7 @@ bool AABBTreeNode::Subdivide(AABBTreeBuilder *builder)
 	{
 		// We use a pre-allocated linear pool for complete trees [Opcode 1.3]
 		AABBTreeNode *Pool = (AABBTreeNode *)builder->mNodeBase;
-		udword Count = builder->GetCount() - 1; // Count begins to 1...
+		uint32_t Count = builder->GetCount() - 1; // Count begins to 1...
 		// Set last bit to tell it shouldn't be freed ### pretty ugly, find a better way. Maybe one bit in mNbPrimitives
 		OPASSERT(!(uintptr_t(&Pool[Count + 0]) & 1));
 		OPASSERT(!(uintptr_t(&Pool[Count + 1]) & 1));
@@ -645,7 +645,7 @@ uint32_t AABBTree::GetUsedBytes() const
 	uint32_t TotalSize = mTotalNbNodes * GetNodeSize();
 	if (mIndices)
 	{
-		TotalSize += mNbPrimitives * sizeof(udword);
+		TotalSize += mNbPrimitives * sizeof(uint32_t);
 	}
 	return TotalSize;
 }

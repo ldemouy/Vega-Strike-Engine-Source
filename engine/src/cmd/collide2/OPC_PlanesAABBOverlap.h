@@ -11,7 +11,7 @@
  *	\return		true if boxes overlap planes
  */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-inline bool PlanesCollider::PlanesAABBOverlap(const Point &center, const Point &extents, udword &out_clip_mask, udword in_clip_mask)
+inline bool PlanesCollider::PlanesAABBOverlap(const Point &center, const Point &extents, uint32_t &out_clip_mask, uint32_t in_clip_mask)
 {
 	// Stats
 	mNbVolumeBVTests++;
@@ -26,8 +26,8 @@ inline bool PlanesCollider::PlanesAABBOverlap(const Point &center, const Point &
 	// to be outside any of the planes. The loop also constructs a new output
 	// clip mask. Most FPUs have a native single-cycle fabsf() operation.
 
-	udword Mask = 1;		   // current mask index (1,2,4,8,..)
-	udword TmpOutClipMask = 0; // initialize output clip mask into empty.
+	uint32_t Mask = 1;		   // current mask index (1,2,4,8,..)
+	uint32_t TmpOutClipMask = 0; // initialize output clip mask into empty.
 
 	while (Mask <= in_clip_mask) // keep looping while we have active planes left...
 	{

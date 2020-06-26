@@ -352,23 +352,23 @@ public:
 	}
 
 	//! Slighty moves the point
-	void Tweak(udword coord_mask, udword tweak_mask)
+	void Tweak(uint32_t coord_mask, uint32_t tweak_mask)
 	{
 		if (coord_mask & 1)
 		{
-			udword Dummy = static_cast<uint32_t>(x);
+			uint32_t Dummy = static_cast<uint32_t>(x);
 			Dummy ^= tweak_mask;
 			x = static_cast<float>(Dummy);
 		}
 		if (coord_mask & 2)
 		{
-			udword Dummy = static_cast<uint32_t>(y);
+			uint32_t Dummy = static_cast<uint32_t>(y);
 			Dummy ^= tweak_mask;
 			y = static_cast<float>(Dummy);
 		}
 		if (coord_mask & 4)
 		{
-			udword Dummy = static_cast<uint32_t>(z);
+			uint32_t Dummy = static_cast<uint32_t>(z);
 			Dummy ^= tweak_mask;
 			z = static_cast<float>(Dummy);
 		}
@@ -402,7 +402,7 @@ public:
 	//! Slighty moves the point in
 	inline void TweakSmaller()
 	{
-		udword Dummy = (static_cast<uint32_t>(x) & TWEAKNOTMASK);
+		uint32_t Dummy = (static_cast<uint32_t>(x) & TWEAKNOTMASK);
 		if (x < 0.0f)
 		{
 			Dummy += TWEAKMASK + 1;
@@ -548,10 +548,10 @@ public:
 	Point &Unfold(Plane &p, Point &a, Point &b);
 
 	//! Hash function from Ville Miettinen
-	inline udword GetHashValue() const
+	inline uint32_t GetHashValue() const
 	{
-		const udword *h = (const udword *)(this);
-		udword f = (h[0] + h[1] * 11 - (h[2] * 17)) & 0x7fffffff; // avoid problems with +-0
+		const uint32_t *h = (const uint32_t *)(this);
+		uint32_t f = (h[0] + h[1] * 11 - (h[2] * 17)) & 0x7fffffff; // avoid problems with +-0
 		return (f >> 22) ^ (f >> 12) ^ (f);
 	}
 

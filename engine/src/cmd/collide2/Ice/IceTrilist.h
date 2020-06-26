@@ -19,7 +19,7 @@ public:
 	TriList() {}
 	~TriList() {}
 
-	inline udword GetNbTriangles() const { return GetNbEntries() / 9; }
+	inline uint32_t GetNbTriangles() const { return GetNbEntries() / 9; }
 	inline Triangle *GetTriangles() const { return (Triangle *)GetEntries(); }
 
 	void AddTri(const Triangle &tri)
@@ -44,7 +44,7 @@ public:
 	TriangleList() {}
 	~TriangleList() {}
 
-	inline udword GetNbTriangles() const { return GetNbEntries() / 3; }
+	inline uint32_t GetNbTriangles() const { return GetNbEntries() / 3; }
 	inline IndexedTriangle *GetTriangles() const { return (IndexedTriangle *)GetEntries(); }
 
 	void AddTriangle(const IndexedTriangle &tri)
@@ -52,7 +52,7 @@ public:
 		Add(tri.mVRef[0]).Add(tri.mVRef[1]).Add(tri.mVRef[2]);
 	}
 
-	void AddTriangle(udword vref0, udword vref1, udword vref2)
+	void AddTriangle(uint32_t vref0, uint32_t vref1, uint32_t vref2)
 	{
 		Add(vref0).Add(vref1).Add(vref2);
 	}

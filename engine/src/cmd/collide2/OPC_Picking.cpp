@@ -117,7 +117,7 @@ namespace Opcode
 					return;
 
 				// This is the index of currently stabbed triangle.
-				udword StabbedFaceIndex = hit.mFaceID;
+				uint32_t StabbedFaceIndex = hit.mFaceID;
 
 				// We may keep it or not, depending on backface culling
 				bool KeepIt = true;

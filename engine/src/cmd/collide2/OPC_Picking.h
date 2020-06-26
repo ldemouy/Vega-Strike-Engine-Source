@@ -31,7 +31,7 @@ enum CullMode
 	CULLMODE_CCW = 2
 };
 
-typedef CullMode (*CullModeCallback)(udword triangle_index, void *user_data);
+typedef CullMode (*CullModeCallback)(uint32_t triangle_index, void *user_data);
 
  bool SetupAllHits(RayCollider &collider, std::vector<CollisionFace> &contacts);
  bool SetupClosestHit(RayCollider &collider, std::vector<CollisionFace> &closest_contact);

@@ -31,44 +31,44 @@ public:                                                                         
 	/* Data access */                                                             \
 	inline const base_class *GetPos() const { return (base_class *)mData; }       \
 	inline const base_class *GetNeg() const { return ((base_class *)mData) + 1; } \
-	inline udword GetPrimitive() const { return (udword)(mData >> 1); }           \
+	inline uint32_t GetPrimitive() const { return (uint32_t)(mData >> 1); }       \
 	/* Stats */                                                                   \
-	inline udword GetNodeSize() const { return SIZEOFOBJECT; }                    \
+	inline uint32_t GetNodeSize() const { return SIZEOFOBJECT; }                  \
                                                                                   \
 	volume mAABB;                                                                 \
 	uintptr_t mData;
 
 //! Common interface for a node of a no-leaf tree
-#define IMPLEMENT_NOLEAF_NODE(base_class, volume)                              \
-public:                                                                        \
-	/* Constructor / Destructor */                                             \
-	inline base_class() : mPosData(0), mNegData(0) {}                          \
-	inline ~base_class() {}                                                    \
-	/* Leaf tests */                                                           \
-	inline bool HasPosLeaf() const { return mPosData & 1; }                    \
-	inline bool HasNegLeaf() const { return mNegData & 1; }                    \
-	/* Data access */                                                          \
-	inline const base_class *GetPos() const { return (base_class *)mPosData; } \
-	inline const base_class *GetNeg() const { return (base_class *)mNegData; } \
-	inline udword GetPosPrimitive() const { return (udword)(mPosData >> 1); }  \
-	inline udword GetNegPrimitive() const { return (udword)(mNegData >> 1); }  \
-	/* Stats */                                                                \
-	inline udword GetNodeSize() const { return SIZEOFOBJECT; }                 \
-                                                                               \
-	volume mAABB;                                                              \
-	uintptr_t mPosData;                                                        \
+#define IMPLEMENT_NOLEAF_NODE(base_class, volume)                                 \
+public:                                                                           \
+	/* Constructor / Destructor */                                                \
+	inline base_class() : mPosData(0), mNegData(0) {}                             \
+	inline ~base_class() {}                                                       \
+	/* Leaf tests */                                                              \
+	inline bool HasPosLeaf() const { return mPosData & 1; }                       \
+	inline bool HasNegLeaf() const { return mNegData & 1; }                       \
+	/* Data access */                                                             \
+	inline const base_class *GetPos() const { return (base_class *)mPosData; }    \
+	inline const base_class *GetNeg() const { return (base_class *)mNegData; }    \
+	inline uint32_t GetPosPrimitive() const { return (uint32_t)(mPosData >> 1); } \
+	inline uint32_t GetNegPrimitive() const { return (uint32_t)(mNegData >> 1); } \
+	/* Stats */                                                                   \
+	inline uint32_t GetNodeSize() const { return SIZEOFOBJECT; }                  \
+                                                                                  \
+	volume mAABB;                                                                 \
+	uintptr_t mPosData;                                                           \
 	uintptr_t mNegData;
 
-class  AABBCollisionNode
+class AABBCollisionNode
 {
 	IMPLEMENT_IMPLICIT_NODE(AABBCollisionNode, CollisionAABB)
 
 	inline float GetVolume() const { return mAABB.mExtents.x * mAABB.mExtents.y * mAABB.mExtents.z; }
 	inline float GetSize() const { return mAABB.mExtents.SquareMagnitude(); }
-	inline udword GetRadius() const
+	inline uint32_t GetRadius() const
 	{
-		udword *Bits = (udword *)&mAABB.mExtents.x;
-		udword Max = Bits[0];
+		uint32_t *Bits = (uint32_t *)&mAABB.mExtents.x;
+		uint32_t Max = Bits[0];
 		if (Bits[1] > Max)
 			Max = Bits[1];
 		if (Bits[2] > Max)
@@ -85,14 +85,14 @@ class  AABBCollisionNode
 	// good strategy.
 };
 
-class  AABBQuantizedNode
+class AABBQuantizedNode
 {
 	IMPLEMENT_IMPLICIT_NODE(AABBQuantizedNode, QuantizedAABB)
 
-	inline uword GetSize() const
+	inline uint16_t GetSize() const
 	{
-		const uword *Bits = mAABB.mExtents;
-		uword Max = Bits[0];
+		const uint16_t *Bits = mAABB.mExtents;
+		uint16_t Max = Bits[0];
 		if (Bits[1] > Max)
 			Max = Bits[1];
 		if (Bits[2] > Max)
@@ -103,12 +103,12 @@ class  AABBQuantizedNode
 	// over the place.......!
 };
 
-class  AABBNoLeafNode
+class AABBNoLeafNode
 {
 	IMPLEMENT_NOLEAF_NODE(AABBNoLeafNode, CollisionAABB)
 };
 
-class  AABBQuantizedNoLeafNode
+class AABBQuantizedNoLeafNode
 {
 	IMPLEMENT_NOLEAF_NODE(AABBQuantizedNoLeafNode, QuantizedAABB)
 };
@@ -135,7 +135,7 @@ private:                                                                        
 
 typedef bool (*GenericWalkingCallback)(const void *current, void *user_data);
 
-class  AABBOptimizedTree
+class AABBOptimizedTree
 {
 public:
 	// Constructor / Destructor
@@ -173,24 +173,24 @@ public:
 	virtual bool Walk(GenericWalkingCallback callback, void *user_data) const = 0;
 
 	// Data access
-	virtual udword GetUsedBytes() const = 0;
-	inline udword GetNbNodes() const { return mNbNodes; }
+	virtual uint32_t GetUsedBytes() const = 0;
+	inline uint32_t GetNbNodes() const { return mNbNodes; }
 
 protected:
-	udword mNbNodes;
+	uint32_t mNbNodes;
 };
 
-class  AABBCollisionTree : public AABBOptimizedTree
+class AABBCollisionTree : public AABBOptimizedTree
 {
 	IMPLEMENT_COLLISION_TREE(AABBCollisionTree, AABBCollisionNode)
 };
 
-class  AABBNoLeafTree : public AABBOptimizedTree
+class AABBNoLeafTree : public AABBOptimizedTree
 {
 	IMPLEMENT_COLLISION_TREE(AABBNoLeafTree, AABBNoLeafNode)
 };
 
-class  AABBQuantizedTree : public AABBOptimizedTree
+class AABBQuantizedTree : public AABBOptimizedTree
 {
 	IMPLEMENT_COLLISION_TREE(AABBQuantizedTree, AABBQuantizedNode)
 
@@ -199,7 +199,7 @@ public:
 	Point mExtentsCoeff;
 };
 
-class  AABBQuantizedNoLeafTree : public AABBOptimizedTree
+class AABBQuantizedNoLeafTree : public AABBOptimizedTree
 {
 	IMPLEMENT_COLLISION_TREE(AABBQuantizedNoLeafTree, AABBQuantizedNoLeafNode)
 

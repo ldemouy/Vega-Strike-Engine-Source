@@ -117,7 +117,7 @@ csOPCODECollider::~csOPCODECollider()
 	delete[] vertholder;
 }
 
-void csOPCODECollider::MeshCallback(udword triangle_index,
+void csOPCODECollider::MeshCallback(uint32_t triangle_index,
 									VertexPointers &triangle,
 									void *user_data)
 {

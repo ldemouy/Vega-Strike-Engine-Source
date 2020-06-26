@@ -33,7 +33,7 @@
 
 using namespace Opcode;
 
-inline void FindRunningIndex(udword &index, float *array, udword *sorted, int last, float max)
+inline void FindRunningIndex(uint32_t &index, float *array, uint32_t *sorted, int last, float max)
 {
 	int First = index;
 	while (First <= last)
@@ -94,22 +94,22 @@ void ReleasePruningSorters()
  *	\return		true if success.
  */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool Opcode::BipartiteBoxPruning(udword nb0, const AABB **array0, udword nb1, const AABB **array1, Pairs &pairs, const Axis &axes)
+bool Opcode::BipartiteBoxPruning(uint32_t nb0, const AABB **array0, uint32_t nb1, const AABB **array1, Pairs &pairs, const Axis &axes)
 {
 	// Checkings
 	if (!nb0 || !array0 || !nb1 || !array1)
 		return false;
 
 	// Catch axes
-	udword Axis0 = axes.mAxis0;
-	udword Axis1 = axes.mAxis1;
-	udword Axis2 = axes.mAxis2;
+	uint32_t Axis0 = axes.mAxis0;
+	uint32_t Axis1 = axes.mAxis1;
+	uint32_t Axis2 = axes.mAxis2;
 
 	// Allocate some temporary data
 	float *MinPosList0 = new float[nb0];
 	float *MinPosList1 = new float[nb1];
 
-	udword i;
+	uint32_t i;
 	// 1) Build main lists using the primary axis
 	for (i = 0; i < nb0; i++)
 		MinPosList0[i] = array0[i]->GetMin(Axis0);
@@ -119,16 +119,16 @@ bool Opcode::BipartiteBoxPruning(udword nb0, const AABB **array0, udword nb1, co
 	// 2) Sort the lists
 	PRUNING_SORTER *RS0 = GetBipartitePruningSorter0();
 	PRUNING_SORTER *RS1 = GetBipartitePruningSorter1();
-	const udword *Sorted0 = RS0->Sort(MinPosList0, nb0).GetRanks();
-	const udword *Sorted1 = RS1->Sort(MinPosList1, nb1).GetRanks();
+	const uint32_t *Sorted0 = RS0->Sort(MinPosList0, nb0).GetRanks();
+	const uint32_t *Sorted1 = RS1->Sort(MinPosList1, nb1).GetRanks();
 
 	// 3) Prune the lists
-	udword Index0, Index1;
+	uint32_t Index0, Index1;
 
-	const udword *const LastSorted0 = &Sorted0[nb0];
-	const udword *const LastSorted1 = &Sorted1[nb1];
-	const udword *RunningAddress0 = Sorted0;
-	const udword *RunningAddress1 = Sorted1;
+	const uint32_t *const LastSorted0 = &Sorted0[nb0];
+	const uint32_t *const LastSorted1 = &Sorted1[nb1];
+	const uint32_t *RunningAddress0 = Sorted0;
+	const uint32_t *RunningAddress1 = Sorted1;
 
 	while (RunningAddress1 < LastSorted1 && Sorted0 < LastSorted0)
 	{
@@ -137,7 +137,7 @@ bool Opcode::BipartiteBoxPruning(udword nb0, const AABB **array0, udword nb1, co
 		while (RunningAddress1 < LastSorted1 && MinPosList1[*RunningAddress1] < MinPosList0[Index0])
 			RunningAddress1++;
 
-		const udword *RunningAddress2_1 = RunningAddress1;
+		const uint32_t *RunningAddress2_1 = RunningAddress1;
 
 		while (RunningAddress2_1 < LastSorted1 && MinPosList1[Index1 = *RunningAddress2_1++] <= array0[Index0]->GetMax(Axis0))
 		{
@@ -160,7 +160,7 @@ bool Opcode::BipartiteBoxPruning(udword nb0, const AABB **array0, udword nb1, co
 		while (RunningAddress0 < LastSorted0 && MinPosList0[*RunningAddress0] <= MinPosList1[Index0])
 			RunningAddress0++;
 
-		const udword *RunningAddress2_0 = RunningAddress0;
+		const uint32_t *RunningAddress2_0 = RunningAddress0;
 
 		while (RunningAddress2_0 < LastSorted0 && MinPosList0[Index1 = *RunningAddress2_0++] <= array1[Index0]->GetMax(Axis0))
 		{
@@ -193,16 +193,16 @@ bool Opcode::BipartiteBoxPruning(udword nb0, const AABB **array0, udword nb1, co
  *	\return		true if success.
  */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool Opcode::CompleteBoxPruning(udword nb, const AABB **array, Pairs &pairs, const Axis &axes)
+bool Opcode::CompleteBoxPruning(uint32_t nb, const AABB **array, Pairs &pairs, const Axis &axes)
 {
 	// Checkings
 	if (!nb || !array)
 		return false;
 
 	// Catch axes
-	udword Axis0 = axes.mAxis0;
-	udword Axis1 = axes.mAxis1;
-	udword Axis2 = axes.mAxis2;
+	uint32_t Axis0 = axes.mAxis0;
+	uint32_t Axis1 = axes.mAxis1;
+	uint32_t Axis2 = axes.mAxis2;
 
 #ifdef ORIGINAL_VERSION
 	// Allocate some temporary data
@@ -210,18 +210,18 @@ bool Opcode::CompleteBoxPruning(udword nb, const AABB **array, Pairs &pairs, con
 	float *PosList = new float[nb + 1];
 
 	// 1) Build main list using the primary axis
-	for (udword i = 0; i < nb; i++)
+	for (uint32_t i = 0; i < nb; i++)
 		PosList[i] = array[i]->GetMin(Axis0);
 	PosList[nb++] = std::numeric_limits<float>::max();
 
 	// 2) Sort the list
 	PRUNING_SORTER *RS = GetCompletePruningSorter();
-	const udword *Sorted = RS->Sort(PosList, nb).GetRanks();
+	const uint32_t *Sorted = RS->Sort(PosList, nb).GetRanks();
 
 	// 3) Prune the list
-	const udword *const LastSorted = &Sorted[nb];
-	const udword *RunningAddress = Sorted;
-	udword Index0, Index1;
+	const uint32_t *const LastSorted = &Sorted[nb];
+	const uint32_t *RunningAddress = Sorted;
+	uint32_t Index0, Index1;
 	while (RunningAddress < LastSorted && Sorted < LastSorted)
 	{
 		Index0 = *Sorted++;
@@ -232,7 +232,7 @@ bool Opcode::CompleteBoxPruning(udword nb, const AABB **array, Pairs &pairs, con
 
 		if (RunningAddress < LastSorted)
 		{
-			const udword *RunningAddress2 = RunningAddress;
+			const uint32_t *RunningAddress2 = RunningAddress;
 
 			//			while(RunningAddress2<LastSorted && PosList[Index1 = *RunningAddress2++]<=array[Index0]->GetMax(Axis0))
 			while (PosList[Index1 = *RunningAddress2++] <= array[Index0]->GetMax(Axis0))
@@ -260,19 +260,19 @@ bool Opcode::CompleteBoxPruning(udword nb, const AABB **array, Pairs &pairs, con
 	float *MinList = new float[nb + 1];
 
 	// 1) Build main list using the primary axis
-	for (udword i = 0; i < nb; i++)
+	for (uint32_t i = 0; i < nb; i++)
 		MinList[i] = array[i]->GetMin(Axis0);
 	MinList[nb] = std::numeric_limits<float>::max();
 
 	// 2) Sort the list
 	PRUNING_SORTER *RS = GetCompletePruningSorter();
-	udword *Sorted = RS->Sort(MinList, nb + 1).GetRanks();
+	uint32_t *Sorted = RS->Sort(MinList, nb + 1).GetRanks();
 
 	// 3) Prune the list
-	//	const udword* const LastSorted = &Sorted[nb];
-	//	const udword* const LastSorted = &Sorted[nb-1];
-	const udword *RunningAddress = Sorted;
-	udword Index0, Index1;
+	//	const uint32_t* const LastSorted = &Sorted[nb];
+	//	const uint32_t* const LastSorted = &Sorted[nb-1];
+	const uint32_t *RunningAddress = Sorted;
+	uint32_t Index0, Index1;
 
 	//	while(RunningAddress<LastSorted && Sorted<LastSorted)
 	//	while(RunningAddress<LastSorted)
@@ -287,7 +287,7 @@ bool Opcode::CompleteBoxPruning(udword nb, const AABB **array, Pairs &pairs, con
 		//RunningAddress = Sorted;
 		//		if(RunningAddress<LastSorted)
 		{
-			const udword *RunningAddress2 = RunningAddress;
+			const uint32_t *RunningAddress2 = RunningAddress;
 
 			//			while(RunningAddress2<LastSorted && PosList[Index1 = *RunningAddress2++]<=array[Index0]->GetMax(Axis0))
 
@@ -337,16 +337,16 @@ bool Opcode::CompleteBoxPruning(udword nb, const AABB **array, Pairs &pairs, con
  *	\return		true if success.
  */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool Opcode::BruteForceBipartiteBoxTest(udword nb0, const AABB **array0, udword nb1, const AABB **array1, Pairs &pairs)
+bool Opcode::BruteForceBipartiteBoxTest(uint32_t nb0, const AABB **array0, uint32_t nb1, const AABB **array1, Pairs &pairs)
 {
 	// Checkings
 	if (!nb0 || !array0 || !nb1 || !array1)
 		return false;
 
 	// Brute-force nb0*nb1 overlap tests
-	for (udword i = 0; i < nb0; i++)
+	for (uint32_t i = 0; i < nb0; i++)
 	{
-		for (udword j = 0; j < nb1; j++)
+		for (uint32_t j = 0; j < nb1; j++)
 		{
 			if (array0[i]->Intersect(*array1[j]))
 				pairs.AddPair(i, j);
@@ -364,16 +364,16 @@ bool Opcode::BruteForceBipartiteBoxTest(udword nb0, const AABB **array0, udword 
  *	\return		true if success.
  */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool Opcode::BruteForceCompleteBoxTest(udword nb, const AABB **array, Pairs &pairs)
+bool Opcode::BruteForceCompleteBoxTest(uint32_t nb, const AABB **array, Pairs &pairs)
 {
 	// Checkings
 	if (!nb || !array)
 		return false;
 
 	// Brute-force n(n-1)/2 overlap tests
-	for (udword i = 0; i < nb; i++)
+	for (uint32_t i = 0; i < nb; i++)
 	{
-		for (udword j = i + 1; j < nb; j++)
+		for (uint32_t j = i + 1; j < nb; j++)
 		{
 			if (array[i]->Intersect(*array[j]))
 				pairs.AddPair(i, j);

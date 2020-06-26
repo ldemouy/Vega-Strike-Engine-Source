@@ -15,7 +15,7 @@
 inline bool planeBoxOverlap(const Point &normal, const float d, const Point &maxbox)
 {
 	Point vmin, vmax;
-	for (udword q = 0; q <= 2; q++)
+	for (uint32_t q = 0; q <= 2; q++)
 	{
 		if (normal[q] > 0.0f)
 		{

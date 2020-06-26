@@ -148,7 +148,7 @@ public:
 	virtual const char *ValidateSettings() = 0;
 
 protected:
-	udword mFlags;					//!< Bit flags
+	uint32_t mFlags;					//!< Bit flags
 	const BaseModel *mCurrentModel; //!< Current model for collision query (owner of touched faces)
 									// User mesh interface
 	const MeshInterface *mIMesh;	//!< User-defined mesh interface

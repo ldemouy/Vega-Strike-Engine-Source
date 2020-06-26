@@ -47,7 +47,7 @@ struct VertexPointers
 	 *	\param		user_data		[in] user-defined data from SetCallback()
 	 */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-typedef void (*RequestCallback)(udword triangle_index, VertexPointers &triangle, void *user_data);
+typedef void (*RequestCallback)(uint32_t triangle_index, VertexPointers &triangle, void *user_data);
 #endif
 
 class MeshInterface
@@ -57,10 +57,10 @@ public:
 	MeshInterface();
 	~MeshInterface();
 	// Common settings
-	inline udword GetNbTriangles() const { return mNbTris; }
-	inline udword GetNbVertices() const { return mNbVerts; }
-	inline void SetNbTriangles(udword nb) { mNbTris = nb; }
-	inline void SetNbVertices(udword nb) { mNbVerts = nb; }
+	inline uint32_t GetNbTriangles() const { return mNbTris; }
+	inline uint32_t GetNbVertices() const { return mNbVerts; }
+	inline void SetNbTriangles(uint32_t nb) { mNbTris = nb; }
+	inline void SetNbVertices(uint32_t nb) { mNbVerts = nb; }
 
 #ifdef OPC_USE_CALLBACKS
 	// Callback settings
@@ -102,9 +102,9 @@ public:
 		 *	\return		true if success
 		 */
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	bool SetStrides(udword tri_stride = sizeof(IndexedTriangle), udword vertex_stride = sizeof(Point));
-	inline udword GetTriStride() const { return mTriStride; }
-	inline udword GetVertexStride() const { return mVertexStride; }
+	bool SetStrides(uint32_t tri_stride = sizeof(IndexedTriangle), uint32_t vertex_stride = sizeof(Point));
+	inline uint32_t GetTriStride() const { return mTriStride; }
+	inline uint32_t GetVertexStride() const { return mVertexStride; }
 #endif
 #endif
 
@@ -115,16 +115,16 @@ public:
 		 *	\param		index	[in] triangle index
 		 */
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	inline void GetTriangle(VertexPointers &vp, udword index) const
+	inline void GetTriangle(VertexPointers &vp, uint32_t index) const
 	{
 #ifdef OPC_USE_CALLBACKS
 		(mObjCallback)(index, vp, mUserData);
 #else
 #ifdef OPC_USE_STRIDE
-		const IndexedTriangle *T = (const IndexedTriangle *)(((ubyte *)mTris) + index * mTriStride);
-		vp.Vertex[0] = (const Point *)(((ubyte *)mVerts) + T->mVRef[0] * mVertexStride);
-		vp.Vertex[1] = (const Point *)(((ubyte *)mVerts) + T->mVRef[1] * mVertexStride);
-		vp.Vertex[2] = (const Point *)(((ubyte *)mVerts) + T->mVRef[2] * mVertexStride);
+		const IndexedTriangle *T = (const IndexedTriangle *)(((uint8_t *)mTris) + index * mTriStride);
+		vp.Vertex[0] = (const Point *)(((uint8_t *)mVerts) + T->mVRef[0] * mVertexStride);
+		vp.Vertex[1] = (const Point *)(((uint8_t *)mVerts) + T->mVRef[1] * mVertexStride);
+		vp.Vertex[2] = (const Point *)(((uint8_t *)mVerts) + T->mVRef[2] * mVertexStride);
 #else
 		const IndexedTriangle *T = &mTris[index];
 		vp.Vertex[0] = &mVerts[T->mVRef[0]];
@@ -142,7 +142,7 @@ public:
 		 *	\return		true if success
 		 */
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	bool RemapClient(udword nb_indices, const udword *permutation) const;
+	bool RemapClient(uint32_t nb_indices, const uint32_t *permutation) const;
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/**
@@ -159,7 +159,7 @@ public:
 		 *	\return		number of degenerate faces
 		 */
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	udword CheckTopology() const;
+	uint32_t CheckTopology() const;
 
 private:
 #ifdef OPC_USE_CALLBACKS
@@ -171,12 +171,12 @@ private:
 	const IndexedTriangle *mTris; //!< Array of indexed triangles
 	const Point *mVerts;		  //!< Array of vertices
 #ifdef OPC_USE_STRIDE
-	udword mTriStride;			  //!< Possible triangle stride in bytes [Opcode 1.3]
-	udword mVertexStride;		  //!< Possible vertex stride in bytes [Opcode 1.3]
+	uint32_t mTriStride;		  //!< Possible triangle stride in bytes [Opcode 1.3]
+	uint32_t mVertexStride;		  //!< Possible vertex stride in bytes [Opcode 1.3]
 #endif
 #endif
-	udword mNbTris;	 //!< Number of triangles in the input model
-	udword mNbVerts; //!< Number of vertices in the input model
+	uint32_t mNbTris;  //!< Number of triangles in the input model
+	uint32_t mNbVerts; //!< Number of vertices in the input model
 };
 
 #endif //__OPC_MESHINTERFACE_H__

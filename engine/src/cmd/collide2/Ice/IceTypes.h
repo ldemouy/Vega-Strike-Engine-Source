@@ -28,13 +28,6 @@
 #define INVSQRT2 0.707106781188f	 //!< 1 / sqrt(2)
 #define INVSQRT3 0.577350269189f	 //!< 1 / sqrt(3)
 
-// Custom types used in ICE
-typedef unsigned char ubyte;  //!< sizeof(ubyte)	must be 1
-typedef signed short sword;	  //!< sizeof(sword)	must be 2
-typedef unsigned short uword; //!< sizeof(uword)	must be 2
-typedef signed int sdword;	  //!< sizeof(sdword)	must be 4
-typedef unsigned int udword;  //!< sizeof(udword)	must be 4
-
 #define INVALID_ID 0xffffffff //!< Invalid dword ID (counterpart of null pointers)
 
 // Type ranges

@@ -341,7 +341,7 @@ inline void ComputeMinMax(const Point &p, Point &min, Point &max)
 	}
 }
 
-inline void ComputeAABB(AABB &aabb, const Point *list, udword nb_pts)
+inline void ComputeAABB(AABB &aabb, const Point *list, uint32_t nb_pts)
 {
 	if (list)
 	{

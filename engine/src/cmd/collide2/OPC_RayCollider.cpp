@@ -292,7 +292,7 @@ const char *RayCollider::ValidateSettings()
  *	\warning	SCALE NOT SUPPORTED. The matrices must contain rotation & translation parts only.
  */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool RayCollider::Collide(const Ray &world_ray, const Model &model, const Matrix4x4 *world, udword *cache)
+bool RayCollider::Collide(const Ray &world_ray, const Model &model, const Matrix4x4 *world, uint32_t *cache)
 {
 	// Checkings
 	if (!Setup(&model))
@@ -392,7 +392,7 @@ bool RayCollider::Collide(const Ray &world_ray, const Model &model, const Matrix
  *	\warning	SCALE NOT SUPPORTED. The matrix must contain rotation & translation parts only.
  */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool RayCollider::InitQuery(const Ray &world_ray, const Matrix4x4 *world, udword *face_id)
+bool RayCollider::InitQuery(const Ray &world_ray, const Matrix4x4 *world, uint32_t *face_id)
 {
 	// Reset stats & contact status
 	Collider::InitQuery();
@@ -428,7 +428,7 @@ bool RayCollider::InitQuery(const Ray &world_ray, const Matrix4x4 *world, udword
 		if (!SkipPrimitiveTests())
 		{
 			// Perform overlap test between the unique triangle and the ray (and set contact status if needed)
-			SEGMENT_PRIM(udword(0), OPC_CONTACT)
+			SEGMENT_PRIM(uint32_t(0), OPC_CONTACT)
 
 			// Return immediately regardless of status
 			return true;
@@ -496,9 +496,9 @@ bool RayCollider::InitQuery(const Ray &world_ray, const Matrix4x4 *world, udword
 	else
 	{
 		// For Ray-AABB overlap
-		//		udword x = SIR(mDir.x)-1;
-		//		udword y = SIR(mDir.y)-1;
-		//		udword z = SIR(mDir.z)-1;
+		//		uint32_t x = SIR(mDir.x)-1;
+		//		uint32_t y = SIR(mDir.y)-1;
+		//		uint32_t z = SIR(mDir.z)-1;
 		//		mData.x = FR(x);
 		//		mData.y = FR(y);
 		//		mData.z = FR(z);

@@ -28,7 +28,7 @@ public:
 	// Constructor / Destructor
 	Container();
 	Container(const Container &object);
-	Container(udword size, float growth_factor);
+	Container(uint32_t size, float growth_factor);
 	~Container();
 	// Management
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -37,14 +37,14 @@ public:
 		 *	The method is inline, not the resize. The call overhead happens on resizes only, which is not a problem since the resizing operation
 		 *	costs a lot more than the call overhead...
 		 *
-		 *	\param		entry		[in] a udword to store in the container
+		 *	\param		entry		[in] a uint32_t to store in the container
 		 *	\see		Add(float entry)
 		 *	\see		Empty()
-		 *	\see		Contains(udword entry)
+		 *	\see		Contains(uint32_t entry)
 		 *	\return		Self-Reference
 		 */
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	inline Container &Add(udword entry)
+	inline Container &Add(uint32_t entry)
 	{
 		// Resize if needed
 		if (mCurNbEntries == mMaxNbEntries)
@@ -55,14 +55,14 @@ public:
 		return *this;
 	}
 
-	inline Container &Add(const udword *entries, udword nb)
+	inline Container &Add(const uint32_t *entries, uint32_t nb)
 	{
 		// Resize if needed
 		if (mCurNbEntries + nb > mMaxNbEntries)
 			Resize(nb);
 
 		// Add new entry
-		CopyMemory(&mEntries[mCurNbEntries], entries, nb * sizeof(udword));
+		CopyMemory(&mEntries[mCurNbEntries], entries, nb * sizeof(uint32_t));
 		mCurNbEntries += nb;
 		return *this;
 	}
@@ -74,9 +74,9 @@ public:
 		 *	costs a lot more than the call overhead...
 		 *
 		 *	\param		entry		[in] a float to store in the container
-		 *	\see		Add(udword entry)
+		 *	\see		Add(uint32_t entry)
 		 *	\see		Empty()
-		 *	\see		Contains(udword entry)
+		 *	\see		Contains(uint32_t entry)
 		 *	\return		Self-Reference
 		 */
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -91,7 +91,7 @@ public:
 		return *this;
 	}
 
-	inline Container &Add(const float *entries, udword nb)
+	inline Container &Add(const float *entries, uint32_t nb)
 	{
 		// Resize if needed
 		if (mCurNbEntries + nb > mMaxNbEntries)
@@ -104,7 +104,7 @@ public:
 	}
 
 	//! Add unique [slow]
-	inline Container &AddUnique(udword entry)
+	inline Container &AddUnique(uint32_t entry)
 	{
 		if (!Contains(entry))
 			Add(entry);
@@ -136,7 +136,7 @@ public:
 	}
 
 	// HANDLE WITH CARE
-	inline void ForceSize(udword size)
+	inline void ForceSize(uint32_t size)
 	{
 		mCurNbEntries = size;
 	}
@@ -148,7 +148,7 @@ public:
 		 *	\return		true if success
 		 */
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	bool SetSize(udword nb);
+	bool SetSize(uint32_t nb);
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/**
@@ -159,11 +159,11 @@ public:
 	bool Refit();
 
 	// Checks whether the container already contains a given value.
-	bool Contains(udword entry, udword *location = nullptr) const;
+	bool Contains(uint32_t entry, uint32_t *location = nullptr) const;
 	// Deletes an entry - doesn't preserve insertion order.
-	bool Delete(udword entry);
+	bool Delete(uint32_t entry);
 	// Deletes an entry - does preserve insertion order.
-	bool DeleteKeepingOrder(udword entry);
+	bool DeleteKeepingOrder(uint32_t entry);
 	//! Deletes the very last entry.
 	inline void DeleteLastEntry()
 	{
@@ -171,18 +171,18 @@ public:
 			mCurNbEntries--;
 	}
 	//! Deletes the entry whose index is given
-	inline void DeleteIndex(udword index) { mEntries[index] = mEntries[--mCurNbEntries]; }
+	inline void DeleteIndex(uint32_t index) { mEntries[index] = mEntries[--mCurNbEntries]; }
 
 	// Helpers
-	Container &FindNext(udword &entry, FindMode find_mode = FIND_CLAMP);
-	Container &FindPrev(udword &entry, FindMode find_mode = FIND_CLAMP);
+	Container &FindNext(uint32_t &entry, FindMode find_mode = FIND_CLAMP);
+	Container &FindPrev(uint32_t &entry, FindMode find_mode = FIND_CLAMP);
 	// Data access.
-	inline udword GetNbEntries() const { return mCurNbEntries; }   //!< Returns the current number of entries.
-	inline udword GetEntry(udword i) const { return mEntries[i]; } //!< Returns ith entry
-	inline udword *GetEntries() const { return mEntries; }		   //!< Returns the list of entries.
+	inline uint32_t GetNbEntries() const { return mCurNbEntries; }	   //!< Returns the current number of entries.
+	inline uint32_t GetEntry(uint32_t i) const { return mEntries[i]; } //!< Returns ith entry
+	inline uint32_t *GetEntries() const { return mEntries; }		   //!< Returns the list of entries.
 
-	inline udword GetFirst() const { return mEntries[0]; }
-	inline udword GetLast() const { return mEntries[mCurNbEntries - 1]; }
+	inline uint32_t GetFirst() const { return mEntries[0]; }
+	inline uint32_t GetLast() const { return mEntries[mCurNbEntries - 1]; }
 
 	// Growth control
 	inline float GetGrowthFactor() const { return mGrowthFactor; }		  //!< Returns the growth factor
@@ -191,43 +191,43 @@ public:
 	inline bool IsNotEmpty() const { return mCurNbEntries; }			  //!< Checks the container is empty
 
 	//! Read-access as an array
-	inline udword operator[](udword i) const
+	inline uint32_t operator[](uint32_t i) const
 	{
 		OPASSERT(i >= 0 && i < mCurNbEntries);
 		return mEntries[i];
 	}
 	//! Write-access as an array
-	inline udword &operator[](udword i)
+	inline uint32_t &operator[](uint32_t i)
 	{
 		OPASSERT(i >= 0 && i < mCurNbEntries);
 		return mEntries[i];
 	}
 
 	// Stats
-	udword GetUsedRam() const;
+	uint32_t GetUsedRam() const;
 
 	//! Operator for "Container A = Container B"
 	void operator=(const Container &object);
 
 #ifdef CONTAINER_STATS
-	inline udword GetNbContainers() const
+	inline uint32_t GetNbContainers() const
 	{
 		return mNbContainers;
 	}
-	inline udword GetTotalBytes() const { return mUsedRam; }
+	inline uint32_t GetTotalBytes() const { return mUsedRam; }
 
 private:
-	static udword mNbContainers; //!< Number of containers around
-	static udword mUsedRam;		 //!< Amount of bytes used by containers in the system
+	static uint32_t mNbContainers; //!< Number of containers around
+	static uint32_t mUsedRam;	   //!< Amount of bytes used by containers in the system
 #endif
 private:
 	// Resizing
-	bool Resize(udword needed = 1);
+	bool Resize(uint32_t needed = 1);
 	// Data
-	udword mMaxNbEntries; //!< Maximum possible number of entries
-	udword mCurNbEntries; //!< Current number of entries
-	udword *mEntries;	  //!< List of entries
-	float mGrowthFactor;  //!< Resize: new number of entries = old number * mGrowthFactor
+	uint32_t mMaxNbEntries; //!< Maximum possible number of entries
+	uint32_t mCurNbEntries; //!< Current number of entries
+	uint32_t *mEntries;		//!< List of entries
+	float mGrowthFactor;	//!< Resize: new number of entries = old number * mGrowthFactor
 };
 
 #endif // __ICECONTAINER_H__

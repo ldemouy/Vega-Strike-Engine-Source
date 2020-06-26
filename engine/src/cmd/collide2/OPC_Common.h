@@ -43,9 +43,9 @@ public:
 	inline void GetMax(Point &max) const { max = mCenter + mExtents; }
 
 	//! Get component of the box's min point along a given axis
-	inline float GetMin(udword axis) const { return mCenter[axis] - mExtents[axis]; }
+	inline float GetMin(uint32_t axis) const { return mCenter[axis] - mExtents[axis]; }
 	//! Get component of the box's max point along a given axis
-	inline float GetMax(udword axis) const { return mCenter[axis] + mExtents[axis]; }
+	inline float GetMax(uint32_t axis) const { return mCenter[axis] + mExtents[axis]; }
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/**

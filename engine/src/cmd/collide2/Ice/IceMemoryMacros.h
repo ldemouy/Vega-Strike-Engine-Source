@@ -26,7 +26,7 @@
 //!	\see		StoreDwords
 //!	\see		CopyMemory
 //!	\see		MoveMemory
-inline void ZeroMemory(void *addr, udword size) { memset(addr, 0, size); }
+inline void ZeroMemory(void *addr, uint32_t size) { memset(addr, 0, size); }
 
 //!	Fills a buffer with a given byte.
 //!	\param		addr	[in] buffer address
@@ -36,7 +36,7 @@ inline void ZeroMemory(void *addr, udword size) { memset(addr, 0, size); }
 //!	\see		ZeroMemory
 //!	\see		CopyMemory
 //!	\see		MoveMemory
-inline void FillMemory(void *dest, udword size, ubyte val) { memset(dest, val, size); }
+inline void FillMemory(void *dest, uint32_t size, uint8_t val) { memset(dest, val, size); }
 
 //!	Fills a buffer with a given dword.
 //!	\param		addr	[in] buffer address
@@ -47,14 +47,14 @@ inline void FillMemory(void *dest, udword size, ubyte val) { memset(dest, val, s
 //!	\see		CopyMemory
 //!	\see		MoveMemory
 //!	\warning	writes nb*4 bytes !
-inline void StoreDwords(udword *dest, udword nb, udword value)
+inline void StoreDwords(uint32_t *dest, uint32_t nb, uint32_t value)
 {
 	// The asm code below **SHOULD** be equivalent to one of those C versions
 	// or the other if your compiled is good: (checked on VC++ 6.0)
 	//
 	//	1) while(nb--)	*dest++ = value;
 	//
-	//	2) for(udword i=0;i<nb;i++)	dest[i] = value;
+	//	2) for(uint32_t i=0;i<nb;i++)	dest[i] = value;
 	//
 	/*_asm push eax
 		_asm push ecx
@@ -78,7 +78,7 @@ inline void StoreDwords(udword *dest, udword nb, udword value)
 //!	\see		FillMemory
 //!	\see		StoreDwords
 //!	\see		MoveMemory
-inline void CopyMemory(void *dest, const void *src, udword size) { memcpy(dest, src, size); }
+inline void CopyMemory(void *dest, const void *src, uint32_t size) { memcpy(dest, src, size); }
 
 //!	Moves a buffer.
 //!	\param		addr	[in] destination buffer address
@@ -88,7 +88,7 @@ inline void CopyMemory(void *dest, const void *src, udword size) { memcpy(dest, 
 //!	\see		FillMemory
 //!	\see		StoreDwords
 //!	\see		CopyMemory
-inline void MoveMemory(void *dest, const void *src, udword size) { memmove(dest, src, size); }
+inline void MoveMemory(void *dest, const void *src, uint32_t size) { memmove(dest, src, size); }
 
 #define SIZEOFOBJECT sizeof(*this) //!< Gives the size of current object. Avoid some mistakes (e.g. "sizeof(this)").
 //#define CLEAROBJECT		{ memset(this, 0, SIZEOFOBJECT);	}			//!< Clears current object. Laziness is my business. HANDLE WITH CARE.

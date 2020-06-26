@@ -28,9 +28,9 @@ public:
 	//! Destructor
 	inline ~CollisionFace() {}
 
-	udword mFaceID;	 //!< Index of touched face
-	float mDistance; //!< Distance from collider to hitpoint
-	float mU, mV;	 //!< Impact barycentric coordinates
+	uint32_t mFaceID; //!< Index of touched face
+	float mDistance;  //!< Distance from collider to hitpoint
+	float mU, mV;	  //!< Impact barycentric coordinates
 };
 
 #ifdef OPC_RAYHIT_CALLBACK
@@ -65,7 +65,7 @@ public:
 		 *	\warning	SCALE NOT SUPPORTED. The matrices must contain rotation & translation parts only.
 		 */
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	bool Collide(const Ray &world_ray, const Model &model, const Matrix4x4 *world = nullptr, udword *cache = nullptr);
+	bool Collide(const Ray &world_ray, const Model &model, const Matrix4x4 *world = nullptr, uint32_t *cache = nullptr);
 	//
 	bool Collide(const Ray &world_ray, const AABBTree *tree, Container &box_indices);
 	// Settings
@@ -131,7 +131,7 @@ public:
 		 *	\return		the number of Ray-BV tests performed during last query
 		 */
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	inline udword GetNbRayBVTests() const { return mNbRayBVTests; }
+	inline uint32_t GetNbRayBVTests() const { return mNbRayBVTests; }
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/**
@@ -141,7 +141,7 @@ public:
 		 *	\return		the number of Ray-Triangle tests performed during last query
 		 */
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	inline udword GetNbRayPrimTests() const { return mNbRayPrimTests; }
+	inline uint32_t GetNbRayPrimTests() const { return mNbRayPrimTests; }
 
 	// In-out test
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -152,7 +152,7 @@ public:
 		 *	\return		the number of valid intersections during last query
 		 */
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	inline udword GetNbIntersections() const { return mNbIntersections; }
+	inline uint32_t GetNbIntersections() const { return mNbIntersections; }
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/**
@@ -177,11 +177,11 @@ protected:
 	CollisionFaces *mStabbedFaces; //!< List of stabbed faces
 #endif
 	// Stats
-	udword mNbRayBVTests;	 //!< Number of Ray-BV tests
-	udword mNbRayPrimTests;	 //!< Number of Ray-Primitive tests
-							 // In-out test
-	udword mNbIntersections; //!< Number of valid intersections
-							 // Dequantization coeffs
+	uint32_t mNbRayBVTests;	   //!< Number of Ray-BV tests
+	uint32_t mNbRayPrimTests;  //!< Number of Ray-Primitive tests
+							   // In-out test
+	uint32_t mNbIntersections; //!< Number of valid intersections
+							   // Dequantization coeffs
 	Point mCenterCoeff;
 	Point mExtentsCoeff;
 	// Settings
@@ -206,7 +206,7 @@ protected:
 	inline bool SegmentAABBOverlap(const Point &center, const Point &extents);
 	inline bool RayTriOverlap(const Point &vert0, const Point &vert1, const Point &vert2);
 	// Init methods
-	bool InitQuery(const Ray &world_ray, const Matrix4x4 *world = nullptr, udword *face_id = nullptr);
+	bool InitQuery(const Ray &world_ray, const Matrix4x4 *world = nullptr, uint32_t *face_id = nullptr);
 };
 
 #endif // __OPC_RAYCOLLIDER_H__

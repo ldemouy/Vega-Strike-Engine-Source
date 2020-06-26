@@ -75,7 +75,7 @@ private:
 	void GeometryInitialize(const std::vector<mesh_polygon> &polygons);
 
 	/* callback used to return vertex points when requested from opcode*/
-	static void MeshCallback(udword triangle_index,
+	static void MeshCallback(uint32_t triangle_index,
 							 Opcode::VertexPointers &triangle, void *user_data);
 
 	/* returns face of mesh where ray collided */

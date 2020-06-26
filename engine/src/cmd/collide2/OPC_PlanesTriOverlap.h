@@ -6,13 +6,13 @@
  *	\warning	THIS IS A CONSERVATIVE TEST !! Some triangles will be returned as intersecting, while they're not!
  */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-inline bool PlanesCollider::PlanesTriOverlap(udword in_clip_mask)
+inline bool PlanesCollider::PlanesTriOverlap(uint32_t in_clip_mask)
 {
 	// Stats
 	mNbVolumePrimTests++;
 
 	const Plane *p = mPlanes;
-	udword Mask = 1;
+	uint32_t Mask = 1;
 
 	while (Mask <= in_clip_mask)
 	{
@@ -28,7 +28,7 @@ inline bool PlanesCollider::PlanesTriOverlap(udword in_clip_mask)
 		p++;
 	}
 	/*
-	for(udword i=0;i<6;i++)
+	for(uint32_t i=0;i<6;i++)
 	{
 		float d0 = p[i].Distance(mLeafVerts[0]);
 		float d1 = p[i].Distance(mLeafVerts[1]);
