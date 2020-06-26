@@ -467,7 +467,7 @@ float IndexedTriangle::MinEdgeLength(const Point *verts) const
 	if (!verts)
 		return 0.0f;
 
-	float Min = MAX_FLOAT;
+	float Min = std::numeric_limits<float>::max();
 	float Length01 = verts[0].Distance(verts[1]);
 	float Length02 = verts[0].Distance(verts[2]);
 	float Length12 = verts[1].Distance(verts[2]);
@@ -492,7 +492,7 @@ float IndexedTriangle::MaxEdgeLength(const Point *verts) const
 	if (!verts)
 		return 0.0f;
 
-	float Max = MIN_FLOAT;
+	float Max = std::numeric_limits<float>::min();
 	float Length01 = verts[0].Distance(verts[1]);
 	float Length02 = verts[0].Distance(verts[2]);
 	float Length12 = verts[1].Distance(verts[2]);

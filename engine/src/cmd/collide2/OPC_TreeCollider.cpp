@@ -705,8 +705,8 @@ void AABBTreeCollider::_Collide(const AABBNoLeafNode *a, const AABBNoLeafNode *b
 		return;
 
 	// Catch leaf status
-	BOOL BHasPosLeaf = b->HasPosLeaf();
-	BOOL BHasNegLeaf = b->HasNegLeaf();
+	bool BHasPosLeaf = b->HasPosLeaf();
+	bool BHasNegLeaf = b->HasNegLeaf();
 
 	if (a->HasPosLeaf())
 	{
@@ -950,8 +950,8 @@ void AABBTreeCollider::_Collide(const AABBQuantizedNoLeafNode *a, const AABBQuan
 		return;
 
 	// Catch leaf status
-	BOOL BHasPosLeaf = b->HasPosLeaf();
-	BOOL BHasNegLeaf = b->HasNegLeaf();
+	bool BHasPosLeaf = b->HasPosLeaf();
+	bool BHasNegLeaf = b->HasNegLeaf();
 
 	if (a->HasPosLeaf())
 	{

@@ -87,7 +87,7 @@ public:
 	void SetEmpty()
 	{
 		mCenter.Zero();
-		mExtents.Set(MIN_FLOAT, MIN_FLOAT, MIN_FLOAT);
+		mExtents.Set(std::numeric_limits<float>::min(), std::numeric_limits<float>::min(), std::numeric_limits<float>::min());
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -187,7 +187,7 @@ public:
 		 *	\return		true on intersection
 		 */
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	inline BOOL Intersect(const AABB &a) const
+	inline bool Intersect(const AABB &a) const
 	{
 		float tx = mCenter.x - a.mCenter.x;
 		float ex = a.mExtents.x + mExtents.x;
@@ -345,8 +345,8 @@ inline void ComputeAABB(AABB &aabb, const Point *list, udword nb_pts)
 {
 	if (list)
 	{
-		Point Maxi(MIN_FLOAT, MIN_FLOAT, MIN_FLOAT);
-		Point Mini(MAX_FLOAT, MAX_FLOAT, MAX_FLOAT);
+		Point Maxi(std::numeric_limits<float>::min(), std::numeric_limits<float>::min(), std::numeric_limits<float>::min());
+		Point Mini(std::numeric_limits<float>::max(), std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
 		while (nb_pts--)
 		{
 			//				_prefetch(list+1);	// off by one ?

@@ -33,7 +33,7 @@ public:
 	void SetEmpty()
 	{
 		mCenter.Zero();
-		mExtents.Set(MIN_FLOAT, MIN_FLOAT, MIN_FLOAT);
+		mExtents.Set(std::numeric_limits<float>::min(), std::numeric_limits<float>::min(), std::numeric_limits<float>::min());
 		mRot.Identity();
 	}
 
@@ -78,7 +78,7 @@ public:
 		 *	\return		true if the box is valid
 		 */
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	inline BOOL IsValid() const
+	inline bool IsValid() const
 	{
 		// Consistency condition for (Center, Extents) boxes: Extents >= 0.0f
 		if (mExtents.x < 0.0f)

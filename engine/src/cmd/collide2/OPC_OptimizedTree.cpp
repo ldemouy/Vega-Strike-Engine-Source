@@ -483,24 +483,24 @@ bool AABBNoLeafTree::Walk(GenericWalkingCallback callback, void *user_data) cons
 // I'm not looking for (min, max) values like in a standard AABB, I'm looking for the extremal
 // centers/extents in order to quantize them. The first node would only give a single center and
 // a single extents. While extents would be the biggest, the center wouldn't.
-#define FIND_MAX_VALUES                                \
-	/* Get max values */                               \
-	Point CMax(MIN_FLOAT, MIN_FLOAT, MIN_FLOAT);       \
-	Point EMax(MIN_FLOAT, MIN_FLOAT, MIN_FLOAT);       \
-	for (i = 0; i < mNbNodes; i++)                     \
-	{                                                  \
-		if (fabsf(Nodes[i].mAABB.mCenter.x) > CMax.x)  \
-			CMax.x = fabsf(Nodes[i].mAABB.mCenter.x);  \
-		if (fabsf(Nodes[i].mAABB.mCenter.y) > CMax.y)  \
-			CMax.y = fabsf(Nodes[i].mAABB.mCenter.y);  \
-		if (fabsf(Nodes[i].mAABB.mCenter.z) > CMax.z)  \
-			CMax.z = fabsf(Nodes[i].mAABB.mCenter.z);  \
-		if (fabsf(Nodes[i].mAABB.mExtents.x) > EMax.x) \
-			EMax.x = fabsf(Nodes[i].mAABB.mExtents.x); \
-		if (fabsf(Nodes[i].mAABB.mExtents.y) > EMax.y) \
-			EMax.y = fabsf(Nodes[i].mAABB.mExtents.y); \
-		if (fabsf(Nodes[i].mAABB.mExtents.z) > EMax.z) \
-			EMax.z = fabsf(Nodes[i].mAABB.mExtents.z); \
+#define FIND_MAX_VALUES                                                                                                  \
+	/* Get max values */                                                                                                 \
+	Point CMax(std::numeric_limits<float>::min(), std::numeric_limits<float>::min(), std::numeric_limits<float>::min()); \
+	Point EMax(std::numeric_limits<float>::min(), std::numeric_limits<float>::min(), std::numeric_limits<float>::min()); \
+	for (i = 0; i < mNbNodes; i++)                                                                                       \
+	{                                                                                                                    \
+		if (fabsf(Nodes[i].mAABB.mCenter.x) > CMax.x)                                                                    \
+			CMax.x = fabsf(Nodes[i].mAABB.mCenter.x);                                                                    \
+		if (fabsf(Nodes[i].mAABB.mCenter.y) > CMax.y)                                                                    \
+			CMax.y = fabsf(Nodes[i].mAABB.mCenter.y);                                                                    \
+		if (fabsf(Nodes[i].mAABB.mCenter.z) > CMax.z)                                                                    \
+			CMax.z = fabsf(Nodes[i].mAABB.mCenter.z);                                                                    \
+		if (fabsf(Nodes[i].mAABB.mExtents.x) > EMax.x)                                                                   \
+			EMax.x = fabsf(Nodes[i].mAABB.mExtents.x);                                                                   \
+		if (fabsf(Nodes[i].mAABB.mExtents.y) > EMax.y)                                                                   \
+			EMax.y = fabsf(Nodes[i].mAABB.mExtents.y);                                                                   \
+		if (fabsf(Nodes[i].mAABB.mExtents.z) > EMax.z)                                                                   \
+			EMax.z = fabsf(Nodes[i].mAABB.mExtents.z);                                                                   \
 	}
 
 #define INIT_QUANTIZATION                                                   \

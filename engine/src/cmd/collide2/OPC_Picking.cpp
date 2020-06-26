@@ -65,7 +65,7 @@ namespace Opcode
 		collider.SetFirstContact(false);
 		collider.SetHitCallback(Local::ClosestContact);
 		collider.SetUserData(&closest_contact);
-		closest_contact.mDistance = MAX_FLOAT;
+		closest_contact.mDistance = std::numeric_limits<float>::max();
 		return true;
 	}
 
@@ -156,7 +156,7 @@ namespace Opcode
 		RC.SetHitCallback(Local::RenderCullingCallback);
 
 		picked_face.mFaceID = INVALID_ID;
-		picked_face.mDistance = MAX_FLOAT;
+		picked_face.mDistance = std::numeric_limits<float>::max();
 		picked_face.mU = 0.0f;
 		picked_face.mV = 0.0f;
 

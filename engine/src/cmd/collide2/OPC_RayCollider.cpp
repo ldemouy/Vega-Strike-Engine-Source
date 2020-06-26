@@ -234,7 +234,7 @@ RayCollider::RayCollider() :
 							 mNbRayBVTests(0),
 							 mNbRayPrimTests(0),
 							 mNbIntersections(0),
-							 mMaxDist(MAX_FLOAT),
+							 mMaxDist(std::numeric_limits<float>::max()),
 #ifndef OPC_RAYHIT_CALLBACK
 							 mClosestHit(false),
 #endif

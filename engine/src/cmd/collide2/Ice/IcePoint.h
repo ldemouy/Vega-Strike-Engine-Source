@@ -47,13 +47,13 @@ public:
 	//! + infinity
 	inline Point &SetPlusInfinity()
 	{
-		x = y = z = MAX_FLOAT;
+		x = y = z = std::numeric_limits<float>::max();
 		return *this;
 	}
 	//! - infinity
 	inline Point &SetMinusInfinity()
 	{
-		x = y = z = MIN_FLOAT;
+		x = y = z = std::numeric_limits<float>::min();
 		return *this;
 	}
 

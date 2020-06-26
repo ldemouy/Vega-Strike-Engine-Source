@@ -114,8 +114,9 @@ bool AABBTreeOfTrianglesBuilder::ComputeGlobalBox(const uint32_t *primitives, ui
 		return false;
 
 	// Initialize global box
-	Point Min(MAX_FLOAT, MAX_FLOAT, MAX_FLOAT);
-	Point Max(MIN_FLOAT, MIN_FLOAT, MIN_FLOAT);
+	//TODO: figure out if ironic
+	Point Min(std::numeric_limits<float>::max(), std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
+	Point Max(std::numeric_limits<float>::min(), std::numeric_limits<float>::min(), std::numeric_limits<float>::min());
 
 	// Loop through triangles
 	VertexPointers VP;

@@ -212,7 +212,7 @@ bool Opcode::CompleteBoxPruning(udword nb, const AABB **array, Pairs &pairs, con
 	// 1) Build main list using the primary axis
 	for (udword i = 0; i < nb; i++)
 		PosList[i] = array[i]->GetMin(Axis0);
-	PosList[nb++] = MAX_FLOAT;
+	PosList[nb++] = std::numeric_limits<float>::max();
 
 	// 2) Sort the list
 	PRUNING_SORTER *RS = GetCompletePruningSorter();
@@ -262,7 +262,7 @@ bool Opcode::CompleteBoxPruning(udword nb, const AABB **array, Pairs &pairs, con
 	// 1) Build main list using the primary axis
 	for (udword i = 0; i < nb; i++)
 		MinList[i] = array[i]->GetMin(Axis0);
-	MinList[nb] = MAX_FLOAT;
+	MinList[nb] = std::numeric_limits<float>::max();
 
 	// 2) Sort the list
 	PRUNING_SORTER *RS = GetCompletePruningSorter();

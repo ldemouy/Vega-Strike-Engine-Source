@@ -20,7 +20,7 @@
 #ifndef __OPC_RAYCOLLIDER_H__
 #define __OPC_RAYCOLLIDER_H__
 
-class  CollisionFace
+class CollisionFace
 {
 public:
 	//! Constructor
@@ -44,7 +44,7 @@ public:
 typedef void (*HitCallback)(const CollisionFace &hit, void *user_data);
 #endif
 
-class  RayCollider : public Collider
+class RayCollider : public Collider
 {
 public:
 	// Constructor / Destructor
@@ -102,7 +102,7 @@ public:
 		 *	\see		SetDestination(StabbedFaces* sf)
 		 */
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	inline void SetMaxDist(float max_dist = MAX_FLOAT) { mMaxDist = max_dist; }
+	inline void SetMaxDist(float max_dist = std::numeric_limits<float>::max()) { mMaxDist = max_dist; }
 
 #ifdef OPC_RAYHIT_CALLBACK
 	inline void SetHitCallback(HitCallback cb)

@@ -117,7 +117,7 @@ protected:
 		Collider::InitQuery();
 	}
 
-	inline BOOL IsCacheValid(VolumeCache &cache)
+	inline bool IsCacheValid(VolumeCache &cache)
 	{
 		// We're going to do a volume-vs-model query.
 		if (cache.Model != mCurrentModel)

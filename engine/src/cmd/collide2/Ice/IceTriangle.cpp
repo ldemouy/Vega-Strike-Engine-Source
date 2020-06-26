@@ -217,7 +217,7 @@ void Triangle::ComputeMoment(Moment& m)
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 float Triangle::MinEdgeLength() const
 {
-	float Min = MAX_FLOAT;
+	float Min = std::numeric_limits<float>::max();
 	float Length01 = mVerts[0].Distance(mVerts[1]);
 	float Length02 = mVerts[0].Distance(mVerts[2]);
 	float Length12 = mVerts[1].Distance(mVerts[2]);
@@ -238,7 +238,7 @@ float Triangle::MinEdgeLength() const
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 float Triangle::MaxEdgeLength() const
 {
-	float Max = MIN_FLOAT;
+	float Max = std::numeric_limits<float>::min();
 	float Length01 = mVerts[0].Distance(mVerts[1]);
 	float Length02 = mVerts[0].Distance(mVerts[2]);
 	float Length12 = mVerts[1].Distance(mVerts[2]);

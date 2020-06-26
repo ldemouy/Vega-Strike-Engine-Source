@@ -188,7 +188,7 @@ public:
 	inline float GetGrowthFactor() const { return mGrowthFactor; }		  //!< Returns the growth factor
 	inline void SetGrowthFactor(float growth) { mGrowthFactor = growth; } //!< Sets the growth factor
 	inline bool IsFull() const { return mCurNbEntries == mMaxNbEntries; } //!< Checks the container is full
-	inline BOOL IsNotEmpty() const { return mCurNbEntries; }			  //!< Checks the container is empty
+	inline bool IsNotEmpty() const { return mCurNbEntries; }			  //!< Checks the container is empty
 
 	//! Read-access as an array
 	inline udword operator[](udword i) const

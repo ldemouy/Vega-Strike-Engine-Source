@@ -68,7 +68,7 @@ static float OPC_PointTriangleSqrDist(const Point &point, const Point &p0, const
 			// minimum at interior point
 			if (fDet == 0.0f)
 			{
-				fSqrDist = MAX_FLOAT;
+				fSqrDist = std::numeric_limits<float>::max();
 			}
 			else
 			{
