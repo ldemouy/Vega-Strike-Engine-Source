@@ -105,8 +105,6 @@ SET(LIBSCRIPT_SOURCES
 SET(LIBCMDSCRIPTSERVER_SOURCES
     src/cmd/script/flightgroup_server.cpp
     src/cmd/script/script_call_unit_server.cpp
-    src/cmd/script/c_alike/c_alike.tab.cpp
-    src/cmd/script/c_alike/lex.yy.cpp
 )
 
 SET(LIBAI_SOURCES
@@ -447,9 +445,7 @@ SET(VEGASTRIKE_SOURCES
     src/cmd/cont_terrain.cpp
     src/cmd/music.cpp
     src/cmd/nebula.cpp
-    src/cmd/planet.cpp
-    src/cmd/script/c_alike/c_alike.tab.cpp
-    src/cmd/script/c_alike/lex.yy.cpp
+    src/cmd/planet.cpp    
     src/cmd/script/director.cpp
     src/cmd/script/flightgroup.cpp
     src/cmd/script/script_call_briefing.cpp

@@ -119,8 +119,6 @@ public:
     void getColor(char *name, float color[4]);
     char *getVariable(char *section, char *name);
 
-    void c_alike_to_xml(const char *filename);
-
     struct easyDomFactoryXML
     {
         int32_t currentindex;

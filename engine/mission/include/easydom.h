@@ -33,36 +33,37 @@
 #include <map>
 #include "xml_support.h"
 
+using std::ostream;
+using std::stack;
 using std::string;
 using std::vector;
-using std::stack;
-using std::ostream;
 
 using XMLSupport::AttributeList;
 
 extern string parseCalike(char const *filename);
 
-class easyDomNode {
- public:
+class easyDomNode
+{
+public:
   easyDomNode();
 
-  void set(easyDomNode *parent,string name,  AttributeList *attributes);
-  void printNode(ostream& out,int recurse_level,int level);
+  void set(easyDomNode *parent, string name, AttributeList *attributes);
+  void printNode(ostream &out, int recurse_level, int level);
 
   void addChild(easyDomNode *child);
 
-  string Name() { return name ; }
+  string Name() { return name; }
 
-  void set_attribute(string name,string value) { attribute_map[name]=value; };
+  void set_attribute(string name, string value) { attribute_map[name] = value; };
 
   string attr_value(string attr_name);
   vector<easyDomNode *> subnodes;
 
- private:
+private:
   easyDomNode *parent;
   AttributeList *attributes;
 
-  map<string,string> attribute_map;
+  map<string, string> attribute_map;
 
   //vector<string> att_name;
   //vector<string> att_value;
@@ -70,194 +71,208 @@ class easyDomNode {
   string name;
 };
 
-typedef map<string,int> tagMap;
+typedef map<string, int> tagMap;
 
-class tagDomNode : public easyDomNode {
- public:
+class tagDomNode : public easyDomNode
+{
+public:
   int tag;
 
-  void Tag(tagMap *tagmap) { 
-    tag=(*tagmap)[Name()];
-    if(tag==0){
+  void Tag(tagMap *tagmap)
+  {
+    tag = (*tagmap)[Name()];
+    if (tag == 0)
+    {
       cout << "cannot translate tag " << Name() << endl;
     }
 
     vector<easyDomNode *>::const_iterator siter;
-  
-    for(siter= subnodes.begin() ; siter!=subnodes.end() ; siter++){
-      tagDomNode *tnode=(tagDomNode *)(*siter);
+
+    for (siter = subnodes.begin(); siter != subnodes.end(); siter++)
+    {
+      tagDomNode *tnode = (tagDomNode *)(*siter);
       tnode->Tag(tagmap);
     }
-
   };
-
 };
 
-
-template<class domNodeType> class easyDomFactory {
- public:
-  easyDomFactory() {};
+template <class domNodeType>
+class easyDomFactory
+{
+public:
+  easyDomFactory(){};
 
   void getColor(char *name, float color[4]);
-  char *getVariable(char *section,char *name);
+  char *getVariable(char *section, char *name);
 
-  void c_alike_to_xml(const char *filename);
+  struct easyDomFactoryXML
+  {
+  } * xml;
 
-  struct easyDomFactoryXML {
-  } *xml;
+  domNodeType *LoadXML(const char *filename)
+  {
 
-    domNodeType *LoadXML(const char *filename) {
+    const int chunk_size = 16384;
 
-  const int chunk_size = 16384;
-
-  FILE * inFile = fopen (filename, "r");
-  if(!inFile) {
-    //cout << "warning: could not open file: " << filename << endl;
-    //    assert(0);
-    return nullptr;
-  }
-
-  xml = new easyDomFactoryXML;
-
-  XML_Parser parser = XML_ParserCreate(nullptr);
-  XML_SetUserData(parser, this);
-  XML_SetElementHandler(parser, &easyDomFactory::beginElement, &easyDomFactory::endElement);
-  XML_SetCharacterDataHandler(parser,&easyDomFactory::charHandler);
-  
-  do {
-    char *buf = (XML_Char*)XML_GetBuffer(parser, chunk_size);
-    int length;
-
-    length = fread (buf,1, chunk_size,inFile);
-    //length = inFile.gcount();
-    XML_ParseBuffer(parser, length, feof(inFile));
-  } while(!feof(inFile));
-
-  fclose (inFile);
-  XML_ParserFree (parser);
-
-  return (domNodeType *)topnode;
-    };
-
-  static void charHandler(void *userData, const XML_Char *s, int len){
-  char buffer[2048];
-  strncpy(buffer,s,len);
-  // printf("XML-text: %s\n",buffer);
-}
-;
-
-
-domNodeType *LoadCalike(const char *filename) {
-
-  const int chunk_size = 16384;
-
-  string module_str=parseCalike(filename);
-  if(module_str.empty()) {
-    //cout << "warning: could not open file: " << filename << endl;
-    //    assert(0);
-    return nullptr;
-  }
-
-  xml = new easyDomFactoryXML;
-
-  XML_Parser parser = XML_ParserCreate(nullptr);
-  XML_SetUserData(parser, this);
-  XML_SetElementHandler(parser, &easyDomFactory::beginElement, &easyDomFactory::endElement);
-  XML_SetCharacterDataHandler(parser,&easyDomFactory::charHandler);
-  
-  int index=0;
-  int string_size=module_str.size();
-  int incr=chunk_size-2;
-  int is_final=false;
-
-  do {
-    char *buf = (XML_Char*)XML_GetBuffer(parser, chunk_size);
-
-    int max_index=index+incr;
-    int newlen=incr;
-
-    printf("max_index=%d,string_size=%d\n",max_index,string_size);
-    if(max_index>=string_size){
-      newlen=module_str.size()-index;
-      printf("getting string from %d length %d\n",index,newlen);
-      const char *strbuf=module_str.substr(index,newlen).c_str();
-      strncpy (buf,strbuf,newlen);
-    }
-    else{
-      printf("getting string from %d length %d\n",index,incr);
-      const char *strbuf=module_str.substr(index,incr).c_str();
-      strncpy (buf,strbuf,incr);
-      newlen=incr;
+    FILE *inFile = fopen(filename, "r");
+    if (!inFile)
+    {
+      //cout << "warning: could not open file: " << filename << endl;
+      //    assert(0);
+      return nullptr;
     }
 
-    index+=newlen;
+    xml = new easyDomFactoryXML;
 
-    if(index>=string_size){
-      is_final=true;
+    XML_Parser parser = XML_ParserCreate(nullptr);
+    XML_SetUserData(parser, this);
+    XML_SetElementHandler(parser, &easyDomFactory::beginElement, &easyDomFactory::endElement);
+    XML_SetCharacterDataHandler(parser, &easyDomFactory::charHandler);
+
+    do
+    {
+      char *buf = (XML_Char *)XML_GetBuffer(parser, chunk_size);
+      int length;
+
+      length = fread(buf, 1, chunk_size, inFile);
+      //length = inFile.gcount();
+      XML_ParseBuffer(parser, length, feof(inFile));
+    } while (!feof(inFile));
+
+    fclose(inFile);
+    XML_ParserFree(parser);
+
+    return (domNodeType *)topnode;
+  };
+
+  static void charHandler(void *userData, const XML_Char *s, int len)
+  {
+    char buffer[2048];
+    strncpy(buffer, s, len);
+    // printf("XML-text: %s\n",buffer);
+  };
+
+  domNodeType *LoadCalike(const char *filename)
+  {
+
+    const int chunk_size = 16384;
+
+    string module_str = parseCalike(filename);
+    if (module_str.empty())
+    {
+      //cout << "warning: could not open file: " << filename << endl;
+      //    assert(0);
+      return nullptr;
     }
 
-    XML_ParseBuffer(parser, newlen, is_final);
-  } while(!is_final);
+    xml = new easyDomFactoryXML;
 
-  XML_ParserFree (parser);
+    XML_Parser parser = XML_ParserCreate(nullptr);
+    XML_SetUserData(parser, this);
+    XML_SetElementHandler(parser, &easyDomFactory::beginElement, &easyDomFactory::endElement);
+    XML_SetCharacterDataHandler(parser, &easyDomFactory::charHandler);
 
-  return (domNodeType *)topnode;
-    };
+    int index = 0;
+    int string_size = module_str.size();
+    int incr = chunk_size - 2;
+    int is_final = false;
 
+    do
+    {
+      char *buf = (XML_Char *)XML_GetBuffer(parser, chunk_size);
 
+      int max_index = index + incr;
+      int newlen = incr;
 
+      printf("max_index=%d,string_size=%d\n", max_index, string_size);
+      if (max_index >= string_size)
+      {
+        newlen = module_str.size() - index;
+        printf("getting string from %d length %d\n", index, newlen);
+        const char *strbuf = module_str.substr(index, newlen).c_str();
+        strncpy(buf, strbuf, newlen);
+      }
+      else
+      {
+        printf("getting string from %d length %d\n", index, incr);
+        const char *strbuf = module_str.substr(index, incr).c_str();
+        strncpy(buf, strbuf, incr);
+        newlen = incr;
+      }
 
-  static void beginElement(void *userData, const XML_Char *name, const XML_Char **atts){
-  ((easyDomFactory*)userData)->beginElement(name, AttributeList(atts));
-};
-  static void endElement(void *userData, const XML_Char *name){
-  ((easyDomFactory*)userData)->endElement(name);
-}
-;
+      index += newlen;
 
-  void beginElement(const string &name, const AttributeList &attributes){
-  AttributeList::const_iterator iter;
+      if (index >= string_size)
+      {
+        is_final = true;
+      }
 
-  domNodeType *parent;
+      XML_ParseBuffer(parser, newlen, is_final);
+    } while (!is_final);
 
-  if(nodestack.empty()){
-    parent=nullptr;
-  }
-  else{
-    parent=nodestack.top();
-  }
+    XML_ParserFree(parser);
 
-  domNodeType *thisnode=new domNodeType();
-  thisnode->set(parent,name,(AttributeList *) &attributes);
+    return (domNodeType *)topnode;
+  };
 
-  for(iter = attributes.begin(); iter!=attributes.end(); iter++) {
-    //cout <<  name << "::" << (*iter).name << endl;
-  }
+  static void beginElement(void *userData, const XML_Char *name, const XML_Char **atts)
+  {
+    ((easyDomFactory *)userData)->beginElement(name, AttributeList(atts));
+  };
+  static void endElement(void *userData, const XML_Char *name)
+  {
+    ((easyDomFactory *)userData)->endElement(name);
+  };
 
-  if(parent==nullptr){
-    topnode=thisnode;
-  }
-  else{
-    parent->addChild(thisnode);
-  }
-  nodestack.push(thisnode);
+  void beginElement(const string &name, const AttributeList &attributes)
+  {
+    AttributeList::const_iterator iter;
 
-};
+    domNodeType *parent;
 
-  void endElement(const string &name){
+    if (nodestack.empty())
+    {
+      parent = nullptr;
+    }
+    else
+    {
+      parent = nodestack.top();
+    }
 
-  domNodeType *stacktop=nodestack.top();
+    domNodeType *thisnode = new domNodeType();
+    thisnode->set(parent, name, (AttributeList *)&attributes);
 
-  if(stacktop->Name()!=name){
-    cout << "error: expected " << stacktop->Name() << " , got " << name << endl;
-    exit(0);
-  }
-  else{
-    nodestack.pop();
-  }
-  
-}
-;
+    for (iter = attributes.begin(); iter != attributes.end(); iter++)
+    {
+      //cout <<  name << "::" << (*iter).name << endl;
+    }
+
+    if (parent == nullptr)
+    {
+      topnode = thisnode;
+    }
+    else
+    {
+      parent->addChild(thisnode);
+    }
+    nodestack.push(thisnode);
+  };
+
+  void endElement(const string &name)
+  {
+
+    domNodeType *stacktop = nodestack.top();
+
+    if (stacktop->Name() != name)
+    {
+      cout << "error: expected " << stacktop->Name() << " , got " << name << endl;
+      exit(0);
+    }
+    else
+    {
+      nodestack.pop();
+    }
+  };
 
   stack<domNodeType *> nodestack;
 
