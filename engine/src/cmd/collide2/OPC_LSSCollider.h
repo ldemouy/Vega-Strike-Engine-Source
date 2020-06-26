@@ -19,7 +19,7 @@
 // Include Guard
 #ifndef __OPC_LSSCOLLIDER_H__
 #define __OPC_LSSCOLLIDER_H__
-
+#include "Ice/IceContainer.h"
 struct LSSCache : VolumeCache
 {
 	LSSCache()
@@ -67,7 +67,7 @@ protected:
 	// LSS in model space
 	Segment mSeg;	//!< Segment
 	float mRadius2; //!< LSS radius squared
-		// Internal methods
+					// Internal methods
 	void _Collide(const AABBCollisionNode *node);
 	void _Collide(const AABBNoLeafNode *node);
 	void _Collide(const AABBQuantizedNode *node);

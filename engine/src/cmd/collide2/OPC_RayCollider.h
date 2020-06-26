@@ -20,6 +20,8 @@
 #ifndef __OPC_RAYCOLLIDER_H__
 #define __OPC_RAYCOLLIDER_H__
 
+#include "Ice/IceContainer.h"
+
 class CollisionFace
 {
 public:

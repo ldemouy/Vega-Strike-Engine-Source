@@ -19,7 +19,7 @@
 // Include Guard
 #ifndef __OPC_AABBCOLLIDER_H__
 #define __OPC_AABBCOLLIDER_H__
-
+#include "Ice/IceContainer.h"
 struct AABBCache : VolumeCache
 {
 	AABBCache() : FatCoeff(1.1f)

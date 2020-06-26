@@ -13,6 +13,7 @@
 #define __ICECONTAINER_H__
 
 #define CONTAINER_STATS
+#include <stdint.h>
 #include "IceMemoryMacros.h"
 
 enum FindMode

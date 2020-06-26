@@ -20,6 +20,8 @@
 #ifndef __OPC_OBBCOLLIDER_H__
 #define __OPC_OBBCOLLIDER_H__
 
+#include "Ice/IceContainer.h"
+
 struct OBBCache : VolumeCache
 {
 	OBBCache() : FatCoeff(1.1f)

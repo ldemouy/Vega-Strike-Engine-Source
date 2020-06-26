@@ -20,6 +20,8 @@
 #ifndef __OPC_VOLUMECOLLIDER_H__
 #define __OPC_VOLUMECOLLIDER_H__
 
+#include "Ice/IceContainer.h"
+
 struct VolumeCache
 {
 	VolumeCache() : Model(nullptr) {}

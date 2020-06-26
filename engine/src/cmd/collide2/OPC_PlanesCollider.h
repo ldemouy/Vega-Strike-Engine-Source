@@ -20,6 +20,8 @@
 #ifndef __OPC_PLANESCOLLIDER_H__
 #define __OPC_PLANESCOLLIDER_H__
 
+#include "Ice/IceContainer.h"
+
 struct PlanesCache : VolumeCache
 {
 	PlanesCache()
