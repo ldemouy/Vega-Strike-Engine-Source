@@ -4,7 +4,7 @@ data/
 ext/
 *.pyc
 build-engine-Desktop-Default/
-
+packages/
 
 # Created by https://www.toptal.com/developers/gitignore/api/cmake,c++,c,rust,kdevelop4,intellij+all,python
 # Edit at https://www.toptal.com/developers/gitignore?templates=cmake,c++,c,rust,kdevelop4,intellij+all,python
@@ -328,3 +328,4 @@ dmypy.json
 .vscode/*
 
 # End of https://www.toptal.com/developers/gitignore/api/cmake,c++,c,rust,kdevelop4,intellij+all
+
