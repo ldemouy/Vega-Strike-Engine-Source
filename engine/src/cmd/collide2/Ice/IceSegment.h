@@ -11,6 +11,7 @@
 // Include Guard
 #ifndef __ICESEGMENT_H__
 #define __ICESEGMENT_H__
+#include "IcePoint.h"
 
 class Segment
 {

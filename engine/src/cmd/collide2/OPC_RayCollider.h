@@ -21,6 +21,7 @@
 #define __OPC_RAYCOLLIDER_H__
 
 #include "Ice/IceContainer.h"
+#include "Ice/IcePoint.h"
 
 class CollisionFace
 {

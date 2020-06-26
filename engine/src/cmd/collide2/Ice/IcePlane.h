@@ -11,7 +11,7 @@
 // Include Guard
 #ifndef __ICEPLANE_H__
 #define __ICEPLANE_H__
-
+#include "IcePoint.h"
 class Plane
 {
 public:

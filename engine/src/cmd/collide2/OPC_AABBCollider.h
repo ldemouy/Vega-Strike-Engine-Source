@@ -20,6 +20,7 @@
 #ifndef __OPC_AABBCOLLIDER_H__
 #define __OPC_AABBCOLLIDER_H__
 #include "Ice/IceContainer.h"
+#include "Ice/IcePoint.h"
 struct AABBCache : VolumeCache
 {
 	AABBCache() : FatCoeff(1.1f)

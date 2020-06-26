@@ -13,6 +13,7 @@
 #define __ICEMATRIX3X3_H__
 #include "IceTypes.h"
 #include "IceMemoryMacros.h"
+#include "IcePoint.h"
 // Forward declarations
 class Quat;
 

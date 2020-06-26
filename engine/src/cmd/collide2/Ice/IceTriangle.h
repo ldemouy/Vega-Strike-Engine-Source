@@ -11,7 +11,7 @@
 // Include Guard
 #ifndef __ICETRIANGLE_H__
 #define __ICETRIANGLE_H__
-
+#include "IcePoint.h"
 // Forward declarations
 class Moment;
 

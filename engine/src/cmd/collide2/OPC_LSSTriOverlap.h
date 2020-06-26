@@ -1,6 +1,8 @@
 // Following code from Magic-Software (http://www.magic-software.com/)
 // A bit modified for Opcode
 
+#include "Ice/IcePoint.h"
+
 static const float gs_fTolerance = 1e-05f;
 
 static float OPC_PointTriangleSqrDist(const Point &point, const Point &p0, const Point &p1, const Point &p2)

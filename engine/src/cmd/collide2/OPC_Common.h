@@ -20,10 +20,12 @@
 #ifndef __OPC_COMMON_H__
 #define __OPC_COMMON_H__
 
+#include "Ice/IcePoint.h"
+
 // [GOTTFRIED]: Just a small change for readability.
 #define GREATER(x, y) fabsf(x) > (y)
 
-class  CollisionAABB
+class CollisionAABB
 {
 public:
 	//! Constructor
@@ -81,7 +83,7 @@ public:
 	Point mExtents; //!< Box extents
 };
 
-class  QuantizedAABB
+class QuantizedAABB
 {
 public:
 	//! Constructor

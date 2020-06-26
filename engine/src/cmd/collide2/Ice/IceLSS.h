@@ -12,6 +12,8 @@
 #ifndef __ICELSS_H__
 #define __ICELSS_H__
 
+#include "IcePoint.h"
+
 class LSS : public Segment
 {
 public:

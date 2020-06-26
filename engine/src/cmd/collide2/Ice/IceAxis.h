@@ -11,7 +11,7 @@
 // Include Guard
 #ifndef __ICEAXIS_H__
 #define __ICEAXIS_H__
-
+#include "IcePoint.h"
 enum PointComponent
 {
 	_X = 0,

@@ -20,6 +20,8 @@
 #ifndef __OPC_TREEBUILDERS_H__
 #define __OPC_TREEBUILDERS_H__
 
+#include "Ice/IcePoint.h"
+
 //! Tree splitting rules
 enum SplittingRules
 {

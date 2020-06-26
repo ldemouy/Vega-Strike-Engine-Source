@@ -11,6 +11,7 @@
 // Include Guard
 #ifndef __ICERAY_H__
 #define __ICERAY_H__
+#include "IcePoint.h"
 
 class Ray
 {

@@ -11,7 +11,7 @@
 // Include Guard
 #ifndef __ICEOBB_H__
 #define __ICEOBB_H__
-
+#include "IcePoint.h"
 // Forward declarations
 class LSS;
 

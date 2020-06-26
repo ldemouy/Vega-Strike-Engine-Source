@@ -12,6 +12,8 @@
 #ifndef __ICEINDEXEDTRIANGLE_H__
 #define __ICEINDEXEDTRIANGLE_H__
 
+#include "IcePoint.h"
+
 // An indexed triangle class.
 class IndexedTriangle
 {

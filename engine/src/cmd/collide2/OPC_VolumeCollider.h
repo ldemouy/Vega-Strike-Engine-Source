@@ -21,6 +21,7 @@
 #define __OPC_VOLUMECOLLIDER_H__
 
 #include "Ice/IceContainer.h"
+#include "Ice/IcePoint.h"
 
 struct VolumeCache
 {

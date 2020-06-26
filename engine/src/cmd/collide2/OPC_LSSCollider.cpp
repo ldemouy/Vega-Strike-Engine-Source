@@ -30,8 +30,6 @@
 // Precompiled Header
 #include "Stdafx.h"
 
-
-
 #include "OPC_LSSAABBOverlap.h"
 #include "OPC_LSSTriOverlap.h"
 

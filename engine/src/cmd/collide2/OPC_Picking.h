@@ -23,6 +23,7 @@
 #ifdef OPC_RAYHIT_CALLBACK
 
 #include <vector>
+#include "Ice/IcePoint.h"
 
 enum CullMode
 {
@@ -33,12 +34,12 @@ enum CullMode
 
 typedef CullMode (*CullModeCallback)(uint32_t triangle_index, void *user_data);
 
- bool SetupAllHits(RayCollider &collider, std::vector<CollisionFace> &contacts);
- bool SetupClosestHit(RayCollider &collider, std::vector<CollisionFace> &closest_contact);
- bool SetupShadowFeeler(RayCollider &collider);
- bool SetupInOutTest(RayCollider &collider);
+bool SetupAllHits(RayCollider &collider, std::vector<CollisionFace> &contacts);
+bool SetupClosestHit(RayCollider &collider, std::vector<CollisionFace> &closest_contact);
+bool SetupShadowFeeler(RayCollider &collider);
+bool SetupInOutTest(RayCollider &collider);
 
- bool Picking(
+bool Picking(
 	CollisionFace &picked_face,
 	const Ray &world_ray, const Model &model, const Matrix4x4 *world,
 	float min_dist, float max_dist, const Point &view_point, CullModeCallback callback, void *user_data);

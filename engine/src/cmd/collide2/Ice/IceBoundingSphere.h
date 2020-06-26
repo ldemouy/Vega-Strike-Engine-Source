@@ -11,7 +11,7 @@
 // Include Guard
 #ifndef __ICEBOUNDINGSPHERE_H__
 #define __ICEBOUNDINGSPHERE_H__
-
+#include "IcePoint.h"
 enum BSphereMethod
 {
 	BS_NONE,

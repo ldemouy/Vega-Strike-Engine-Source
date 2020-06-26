@@ -1,4 +1,5 @@
 
+#include "Ice/IcePoint.h"
 //! This macro quickly finds the min & max values among 3 variables
 #define FINDMINMAX(x0, x1, x2, min, max) \
 	min = max = x0;                      \

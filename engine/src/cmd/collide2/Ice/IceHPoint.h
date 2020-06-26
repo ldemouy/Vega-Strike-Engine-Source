@@ -13,6 +13,7 @@
 #define __ICEHPOINT_H__
 
 #include <algorithm>
+#include "IcePoint.h"
 
 class HPoint : public Point
 {

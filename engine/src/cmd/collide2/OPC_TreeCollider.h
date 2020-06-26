@@ -21,6 +21,7 @@
 #define __OPC_TREECOLLIDER_H__
 #include "Ice/IcePairs.h"
 #include "Ice/IceContainer.h"
+#include "Ice/IcePoint.h"
 
 //! This structure holds cached information used by the algorithm.
 //! Two model pointers and two colliding primitives are cached. Model pointers are assigned

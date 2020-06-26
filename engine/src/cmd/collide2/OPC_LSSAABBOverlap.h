@@ -2,6 +2,8 @@
 // Following code from Magic-Software (http://www.magic-software.com/)
 // A bit modified for Opcode
 
+#include "Ice/IcePoint.h"
+
 inline float OPC_PointAABBSqrDist(const Point &point, const Point &center, const Point &extents)
 {
     // Compute coordinates of point in box coordinate system

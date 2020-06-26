@@ -6,6 +6,7 @@
 // Overall this approach should run faster.
 
 // Original code by David Eberly in Magic.
+#include "Ice/IcePoint.h"
 bool SphereCollider::SphereTriOverlap(const Point &vert0, const Point &vert1, const Point &vert2)
 {
 	// Stats

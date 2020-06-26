@@ -21,6 +21,7 @@
 #define __OPC_SPHERECOLLIDER_H__
 
 #include "Ice/IceContainer.h"
+#include "Ice/IcePoint.h"
 
 struct SphereCache : VolumeCache
 {
@@ -66,7 +67,7 @@ protected:
 	// Sphere in model space
 	Point mCenter;	//!< Sphere center
 	float mRadius2; //!< Sphere radius squared
-		// Internal methods
+					// Internal methods
 	void _Collide(const AABBCollisionNode *node);
 	void _Collide(const AABBNoLeafNode *node);
 	void _Collide(const AABBQuantizedNode *node);

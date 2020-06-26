@@ -23,6 +23,8 @@
 #include "gfx/quaternion.h"
 #include <cmath>
 
+#include "cmd/collide2/Ice/IcePoint.h"
+
 /**
  * A 3D vector.
  */

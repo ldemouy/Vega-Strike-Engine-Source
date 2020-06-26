@@ -12,7 +12,7 @@
 #ifndef __ICEAABB_H__
 #define __ICEAABB_H__
 #include <cmath>
-
+#include "IcePoint.h"
 // Forward declarations
 class Sphere;
 

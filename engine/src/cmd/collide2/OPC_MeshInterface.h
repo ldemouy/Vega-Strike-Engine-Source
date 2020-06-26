@@ -20,6 +20,8 @@
 #ifndef __OPC_MESHINTERFACE_H__
 #define __OPC_MESHINTERFACE_H__
 
+#include "Ice/IcePoint.h"
+
 struct VertexPointers
 {
 	const Point *Vertex[3];

@@ -33,6 +33,7 @@
 #include "csgeom2/optransfrm.h"
 #include "basecollider.h"
 #include "gfx/mesh.h"
+#include "Ice/IcePoint.h"
 
 /*
  	How to use Collider. 
