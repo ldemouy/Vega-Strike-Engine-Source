@@ -368,7 +368,9 @@ static void Case00(int i0, int i1, int i2, Point &rkPnt, const Point &rkDir, con
     float fDelta;
 
     if (pfLParam)
+    {
         *pfLParam = (extents[i0] - rkPnt[i0]) / rkDir[i0];
+    }
 
     rkPnt[i0] = extents[i0];
 
@@ -467,16 +469,24 @@ static float SqrDistance(const Ray &rkLine, const Point &center, const Point &ex
         if (kDir.y > 0.0f)
         {
             if (kDir.z > 0.0f)
+            {
                 CaseNoZeros(kPnt, kDir, extents, pfLParam, fSqrDistance); // (+,+,+)
+            }
             else
+            {
                 Case0(0, 1, 2, kPnt, kDir, extents, pfLParam, fSqrDistance); // (+,+,0)
+            }
         }
         else
         {
             if (kDir.z > 0.0f)
+            {
                 Case0(0, 2, 1, kPnt, kDir, extents, pfLParam, fSqrDistance); // (+,0,+)
+            }
             else
+            {
                 Case00(0, 1, 2, kPnt, kDir, extents, pfLParam, fSqrDistance); // (+,0,0)
+            }
         }
     }
     else
@@ -484,19 +494,27 @@ static float SqrDistance(const Ray &rkLine, const Point &center, const Point &ex
         if (kDir.y > 0.0f)
         {
             if (kDir.z > 0.0f)
+            {
                 Case0(1, 2, 0, kPnt, kDir, extents, pfLParam, fSqrDistance); // (0,+,+)
+            }
             else
+            {
                 Case00(1, 0, 2, kPnt, kDir, extents, pfLParam, fSqrDistance); // (0,+,0)
+            }
         }
         else
         {
             if (kDir.z > 0.0f)
+            {
                 Case00(2, 0, 1, kPnt, kDir, extents, pfLParam, fSqrDistance); // (0,0,+)
+            }
             else
             {
                 Case000(kPnt, extents, fSqrDistance); // (0,0,0)
                 if (pfLParam)
+                {
                     *pfLParam = 0.0f;
+                }
             }
         }
     }
@@ -510,12 +528,18 @@ inline float OPC_SegmentOBBSqrDist(const Segment &segment, const Point &c0, cons
     if (fLP >= 0.0f)
     {
         if (fLP <= 1.0f)
+        {
             return fSqrDistance;
+        }
         else
+        {
             return OPC_PointAABBSqrDist(segment.mP1, c0, e0);
+        }
     }
     else
+    {
         return OPC_PointAABBSqrDist(segment.mP0, c0, e0);
+    }
 }
 
 inline bool LSSCollider::LSSAABBOverlap(const Point &center, const Point &extents)
