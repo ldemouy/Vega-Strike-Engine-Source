@@ -11,7 +11,7 @@
 // Include Guard
 #ifndef __ICEMATRIX3X3_H__
 #define __ICEMATRIX3X3_H__
-
+#include "IceTypes.h"
 // Forward declarations
 class Quat;
 

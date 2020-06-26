@@ -11,7 +11,7 @@
 // Include Guard
 #ifndef __ICEMATRIX4X4_H__
 #define __ICEMATRIX4X4_H__
-
+#include "IceTypes.h"
 // Forward declarations
 class PRS;
 class PR;
