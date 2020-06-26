@@ -18,7 +18,7 @@
 */
 
 #include <cmath>
-#include "cmd/collide2/opcodesysdef.h"
+#include "gfx/quaternion.h"
 #include "opvector3.h"
 
 //---------------------------------------------------------------------------
@@ -31,7 +31,7 @@ float csVector3::Norm() const
 void csVector3::Normalize()
 {
   float sqlen = x * x + y * y + z * z;
-  if (sqlen < SMALL_EPSILON)
+  if (sqlen < std::numeric_limits<float>::epsilon())
   {
     return;
   }

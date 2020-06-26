@@ -20,14 +20,6 @@
 #ifndef __OPC_SETTINGS_H__
 #define __OPC_SETTINGS_H__
 
-//! Use CPU comparisons (comment that line to use standard FPU compares)
-#if defined(CS_PROCESSOR_X86)
-// Defining this causes aliasing bugs. It is not legal C++ to do so.
-// i.e. the AIR() and IR() defines are very buggy and actually cause wrong
-// code in optimize.
-//#define OPC_CPU_COMPARE
-#endif
-
 //! Use FCOMI / FCMOV on Pentium-Pro based processors (comment that line to use plain C++)
 //	#define OPC_USE_FCOMI
 

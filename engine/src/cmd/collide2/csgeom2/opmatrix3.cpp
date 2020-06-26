@@ -18,7 +18,7 @@
 */
 
 #include <cmath>
-#include "cmd/collide2/opcodesysdef.h"
+#include "gfx/quaternion.h"
 #include "opmatrix3.h"
 #include "gfx/quaternion.h"
 

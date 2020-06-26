@@ -12,8 +12,6 @@
 #ifndef __ICEPLANE_H__
 #define __ICEPLANE_H__
 
-#define PLANE_EPSILON (1.0e-7f)
-
 class Plane
 {
 public:
@@ -57,7 +55,7 @@ public:
 	Plane &Set(const Point &p0, const Point &p1, const Point &p2);
 
 	inline float Distance(const Point &p) const { return (p | n) + d; }
-	inline bool Belongs(const Point &p) const { return fabsf(Distance(p)) < PLANE_EPSILON; }
+	inline bool Belongs(const Point &p) const { return fabsf(Distance(p)) < std::numeric_limits<float>::epsilon(); }
 
 	inline void Normalize()
 	{

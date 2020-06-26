@@ -1,5 +1,3 @@
-#define LOCAL_EPSILON 0.000001f
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /**
  *	Computes a ray-triangle intersection test.
@@ -30,7 +28,7 @@ inline bool RayCollider::RayTriOverlap(const Point &vert0, const Point &vert1, c
 
 	if (mCulling)
 	{
-		if (det < LOCAL_EPSILON)
+		if (det < std::numeric_limits<float>::epsilon())
 			return FALSE;
 		// From here, det is > 0. So we can use integer cmp.
 
@@ -72,7 +70,7 @@ inline bool RayCollider::RayTriOverlap(const Point &vert0, const Point &vert1, c
 	else
 	{
 		// the non-culling branch
-		if (det > -LOCAL_EPSILON && det < LOCAL_EPSILON)
+		if (det > -std::numeric_limits<float>::epsilon() && det < std::numeric_limits<float>::epsilon())
 			return FALSE;
 		float OneOverDet = 1.0f / det;
 

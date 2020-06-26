@@ -45,14 +45,14 @@
         if (root)                                                                \
         {                                                                        \
           free(root);                                                            \
-          root = nullptr;                                                           \
+          root = nullptr;                                                        \
         }                                                                        \
       }                                                                          \
     }                                                                            \
     Name()                                                                       \
     {                                                                            \
       limit = length = 0;                                                        \
-      root = nullptr;                                                               \
+      root = nullptr;                                                            \
       ExtraConstructor;                                                          \
     }                                                                            \
     ~Name()                                                                      \
@@ -72,22 +72,22 @@
     }                                                                            \
     ga_type &operator[](int n)                                                   \
     {                                                                            \
-      CS_ASSERT(n >= 0 && n < limit);                                            \
+      assert(n >= 0 && n < limit);                                               \
       return root[n];                                                            \
     }                                                                            \
     const ga_type &operator[](int n) const                                       \
     {                                                                            \
-      CS_ASSERT(n >= 0 && n < limit);                                            \
+      assert(n >= 0 && n < limit);                                               \
       return root[n];                                                            \
     }                                                                            \
     ga_type &Get(int n)                                                          \
     {                                                                            \
-      CS_ASSERT(n >= 0 && n < limit);                                            \
+      assert(n >= 0 && n < limit);                                               \
       return root[n];                                                            \
     }                                                                            \
     void Delete(int n)                                                           \
     {                                                                            \
-      CS_ASSERT(n >= 0 && n < limit);                                            \
+      assert(n >= 0 && n < limit);                                               \
       memmove(root + n, root + n + 1, (limit - n - 1) * sizeof(ga_type));        \
       SetLength(length - 1);                                                     \
     }                                                                            \
@@ -103,7 +103,7 @@
     }                                                                            \
     void Insert(int pos, const ga_type &val, int iGrowStep = 8)                  \
     {                                                                            \
-      CS_ASSERT(pos >= 0 && pos <= length);                                      \
+      assert(pos >= 0 && pos <= length);                                         \
       SetLength(length + 1, iGrowStep);                                          \
       memmove(root + pos + 1, root + pos, sizeof(ga_type) * (length - pos - 1)); \
       memcpy(root + pos, &val, sizeof(ga_type));                                 \

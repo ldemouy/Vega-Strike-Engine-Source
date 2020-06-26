@@ -1,6 +1,5 @@
 
 //! if OPC_TRITRI_EPSILON_TEST is true then we do a check (if |dv|<EPSILON then dv=0.0;) else no check is done (which is less robust, but faster)
-#define LOCAL_EPSILON 0.000001f
 
 //! sort so that a<=b
 #define SORT(a, b)         \
@@ -218,11 +217,11 @@ inline bool AABBTreeCollider::TriTriOverlap(const Point &V0, const Point &V1, co
 
 	// Coplanarity robustness check
 #ifdef OPC_TRITRI_EPSILON_TEST
-	if (fabsf(du0) < LOCAL_EPSILON)
+	if (fabsf(du0) < std::numeric_limits<float>::epsilon())
 		du0 = 0.0f;
-	if (fabsf(du1) < LOCAL_EPSILON)
+	if (fabsf(du1) < std::numeric_limits<float>::epsilon())
 		du1 = 0.0f;
-	if (fabsf(du2) < LOCAL_EPSILON)
+	if (fabsf(du2) < std::numeric_limits<float>::epsilon())
 		du2 = 0.0f;
 #endif
 	const float du0du1 = du0 * du1;
@@ -244,11 +243,11 @@ inline bool AABBTreeCollider::TriTriOverlap(const Point &V0, const Point &V1, co
 	float dv2 = (N2 | V2) + d2;
 
 #ifdef OPC_TRITRI_EPSILON_TEST
-	if (fabsf(dv0) < LOCAL_EPSILON)
+	if (fabsf(dv0) < std::numeric_limits<float>::epsilon())
 		dv0 = 0.0f;
-	if (fabsf(dv1) < LOCAL_EPSILON)
+	if (fabsf(dv1) < std::numeric_limits<float>::epsilon())
 		dv1 = 0.0f;
-	if (fabsf(dv2) < LOCAL_EPSILON)
+	if (fabsf(dv2) < std::numeric_limits<float>::epsilon())
 		dv2 = 0.0f;
 #endif
 

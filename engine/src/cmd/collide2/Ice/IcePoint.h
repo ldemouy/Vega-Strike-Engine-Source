@@ -20,8 +20,6 @@ class Matrix4x4;
 
 #define CROSS2D(a, b) (a.x * b.y - b.x * a.y)
 
-const float EPSILON2 = 1.0e-20f;
-
 class Point
 {
 public:
@@ -337,7 +335,7 @@ public:
 	inline float Volume() const { return x * y * z; }
 
 	//! Checks the point is near zero
-	inline bool ApproxZero() const { return SquareMagnitude() < EPSILON2; }
+	inline bool ApproxZero() const { return SquareMagnitude() < std::numeric_limits<float>::epsilon(); }
 
 	//! Tests for exact zero vector
 	inline bool IsZero() const

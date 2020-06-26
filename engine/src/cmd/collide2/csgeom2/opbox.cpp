@@ -18,7 +18,7 @@
 */
 #include <algorithm>
 #include <cmath>
-#include "cmd/collide2/opcodesysdef.h"
+#include "gfx/quaternion.h"
 #include "opbox.h"
 
 //---------------------------------------------------------------------------
@@ -158,8 +158,8 @@ void csBox3::SetSize(const csVector3 &s)
 
 bool csBox3::AdjacentX(const csBox3 &other) const
 {
-  if (std::abs(other.MinX() - MaxX()) < SMALL_EPSILON ||
-      std::abs(other.MaxX() - MinX()) < SMALL_EPSILON)
+  if (std::abs(other.MinX() - MaxX()) < std::numeric_limits<float>::epsilon() ||
+      std::abs(other.MaxX() - MinX()) < std::numeric_limits<float>::epsilon())
   {
     if (MaxY() < other.MinY() || MinY() > other.MaxY())
     {
@@ -176,8 +176,8 @@ bool csBox3::AdjacentX(const csBox3 &other) const
 
 bool csBox3::AdjacentY(const csBox3 &other) const
 {
-  if (std::abs(other.MinY() - MaxY()) < SMALL_EPSILON ||
-      std::abs(other.MaxY() - MinY()) < SMALL_EPSILON)
+  if (std::abs(other.MinY() - MaxY()) < std::numeric_limits<float>::epsilon() ||
+      std::abs(other.MaxY() - MinY()) < std::numeric_limits<float>::epsilon())
   {
     if (MaxX() < other.MinX() || MinX() > other.MaxX())
     {
@@ -194,8 +194,8 @@ bool csBox3::AdjacentY(const csBox3 &other) const
 
 bool csBox3::AdjacentZ(const csBox3 &other) const
 {
-  if (std::abs(other.MinZ() - MaxZ()) < SMALL_EPSILON ||
-      std::abs(other.MaxZ() - MinZ()) < SMALL_EPSILON)
+  if (std::abs(other.MinZ() - MaxZ()) < std::numeric_limits<float>::epsilon() ||
+      std::abs(other.MaxZ() - MinZ()) < std::numeric_limits<float>::epsilon())
   {
     if (MaxX() < other.MinX() || MinX() > other.MaxX())
     {

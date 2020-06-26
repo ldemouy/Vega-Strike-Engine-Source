@@ -108,7 +108,7 @@ Matrix4x4 &Matrix4x4::Invert()
 	float Det = Determinant();
 	Matrix4x4 Temp;
 
-	if (fabsf(Det) < MATRIX4X4_EPSILON)
+	if (fabsf(Det) < std::numeric_limits<float>::epsilon())
 		return *this; // The matrix is not invertible! Singular case!
 
 	float IDet = 1.0f / Det;

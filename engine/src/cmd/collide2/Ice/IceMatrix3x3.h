@@ -15,8 +15,6 @@
 // Forward declarations
 class Quat;
 
-#define MATRIX3X3_EPSILON (1.0e-7f)
-
 class Matrix3x3
 {
 public:

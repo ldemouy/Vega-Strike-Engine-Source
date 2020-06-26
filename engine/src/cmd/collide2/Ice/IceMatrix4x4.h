@@ -16,8 +16,6 @@
 class PRS;
 class PR;
 
-#define MATRIX4X4_EPSILON (1.0e-7f)
-
 class Matrix4x4
 {
 	//				void	LUBackwardSubstitution( sdword *indx, float* b );
