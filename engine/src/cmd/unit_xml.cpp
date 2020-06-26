@@ -18,7 +18,6 @@
 #include "unit_generic.h"
 #include "gfx/sphere.h"
 #include "role_bitmask.h"
-#include "cmd/collide2/Stdafx.h"
 #include "cmd/collide2/CSopcodecollider.h"
 #include "vs_math.h"
 

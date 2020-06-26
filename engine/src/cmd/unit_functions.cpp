@@ -1,18 +1,7 @@
 #include "unit.h"
-#include "gfx/vec.h"
-#include "gfx/animation.h"
-#include "gfx/cockpit_generic.h"
-#include "faction_generic.h"
-#include "savegame.h"
-#include "xml_support.h"
-#include "unit_factory.h"
-#include "gfx/halo.h"
 #include "gfx/mesh.h"
-#include "gfx/sphere.h"
 #include "gfx/sprite.h"
 #include "aldrv/audiolib.h"
-#include "collide2/CSopcodecollider.h"
-#include "unit_collide.h"
 #include <string>
 #include <set>
 

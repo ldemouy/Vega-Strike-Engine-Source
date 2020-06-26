@@ -6,7 +6,6 @@
 #include "xml_serializer.h"
 #include "gfx/sphere.h"
 #include "unit_collide.h"
-#include "collide2/Stdafx.h"
 #include "collide2/CSopcodecollider.h"
 #include "unit_factory.h"
 #include "aldrv/audiolib.h"

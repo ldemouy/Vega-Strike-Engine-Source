@@ -19,7 +19,7 @@
 
 #ifndef __CS_VECTOR3_H__
 #define __CS_VECTOR3_H__
-#include "cmd/collide2/Stdafx.h"
+
 #include "gfx/quaternion.h"
 #include <cmath>
 

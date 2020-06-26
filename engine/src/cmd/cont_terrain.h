@@ -1,4 +1,3 @@
-#include "cmd/collide2/Stdafx.h"
 #include "cmd/collide2/CSopcodecollider.h"
 #include "terrain.h"
 class StarSystem;

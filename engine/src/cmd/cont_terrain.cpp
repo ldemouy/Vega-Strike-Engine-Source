@@ -5,10 +5,6 @@
 #include "vegastrike.h"
 #include "gfx/mesh.h"
 #include "unit_generic.h"
-#include "collide2/Stdafx.h"
-#include "collide2/CSopcodecollider.h"
-#include "collide2/csgeom2/optransfrm.h"
-#include "collide2/basecollider.h"
 
 #include "unit_collide.h"
 #include "vs_globals.h"
