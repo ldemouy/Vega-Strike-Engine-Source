@@ -17,10 +17,6 @@
 #include "IceHPoint.h"
 #include <stdint.h>
 
-// Forward declarations
-class PRS;
-class PR;
-
 class Matrix4x4
 {
 	//				void	LUBackwardSubstitution( int32_t *indx, float* b );
@@ -365,10 +361,6 @@ public:
 			m[1][0], m[1][1], m[1][2],
 			m[2][0], m[2][1], m[2][2]);
 	}
-	//! Casts a Matrix4x4 to a Quat.
-	operator Quat() const;
-	//! Casts a Matrix4x4 to a PR.
-	operator PR() const;
 
 	// Arithmetic operators
 	//! Operator for Matrix4x4 Plus = Matrix4x4 + Matrix4x4;
@@ -590,6 +582,30 @@ public:
 		m[3][2] *= s;
 		m[3][3] *= s;
 		return *this;
+	}
+
+	HPoint inline friend operator*(const HPoint &point, const Matrix4x4 &mat)
+	{
+		return HPoint(
+			point.x * mat.m[0][0] + point.y * mat.m[1][0] + point.z * mat.m[2][0] + point.w * mat.m[3][0],
+			point.x * mat.m[0][1] + point.y * mat.m[1][1] + point.z * mat.m[2][1] + point.w * mat.m[3][1],
+			point.x * mat.m[0][2] + point.y * mat.m[1][2] + point.z * mat.m[2][2] + point.w * mat.m[3][2],
+			point.x * mat.m[0][3] + point.y * mat.m[1][3] + point.z * mat.m[2][3] + point.w * mat.m[3][3]);
+	}
+
+	HPoint inline friend operator*=(HPoint point, const Matrix4x4 &mat)
+	{
+		float xp = point.x * mat.m[0][0] + point.y * mat.m[1][0] + point.z * mat.m[2][0] + point.w * mat.m[3][0];
+		float yp = point.x * mat.m[0][1] + point.y * mat.m[1][1] + point.z * mat.m[2][1] + point.w * mat.m[3][1];
+		float zp = point.x * mat.m[0][2] + point.y * mat.m[1][2] + point.z * mat.m[2][2] + point.w * mat.m[3][2];
+		float wp = point.x * mat.m[0][3] + point.y * mat.m[1][3] + point.z * mat.m[2][3] + point.w * mat.m[3][3];
+
+		point.x = xp;
+		point.y = yp;
+		point.z = zp;
+		point.w = wp;
+
+		return point;
 	}
 
 	inline const HPoint &operator[](int row) const { return *(const HPoint *)&m[row][0]; }

@@ -14,9 +14,8 @@
 #include "IceTypes.h"
 #include "IceMemoryMacros.h"
 #include "IcePoint.h"
+#include "IceHPoint.h"
 #include <stdint.h>
-// Forward declarations
-class Quat;
 
 class Matrix3x3
 {
@@ -456,8 +455,8 @@ public:
 	//! this = exp(a)
 	Matrix3x3 &Exp(const Matrix3x3 &a);
 
-	void FromQuat(const Quat &q);
-	void FromQuatL2(const Quat &q, float l2);
+	//void FromQuat(const Quat &q);
+	//void FromQuatL2(const Quat &q, float l2);
 
 	// Arithmetic operators
 	//! Operator for Matrix3x3 Plus = Matrix3x3 + Matrix3x3;
@@ -514,6 +513,14 @@ public:
 			s * mat.m[0][0], s * mat.m[0][1], s * mat.m[0][2],
 			s * mat.m[1][0], s * mat.m[1][1], s * mat.m[1][2],
 			s * mat.m[2][0], s * mat.m[2][1], s * mat.m[2][2]);
+	}
+
+	inline friend Point operator*(const HPoint &point, const Matrix3x3 &mat)
+	{
+		return Point(
+			point.x * mat.m[0][0] + point.y * mat.m[1][0] + point.z * mat.m[2][0],
+			point.x * mat.m[0][1] + point.y * mat.m[1][1] + point.z * mat.m[2][1],
+			point.x * mat.m[0][2] + point.y * mat.m[1][2] + point.z * mat.m[2][2]);
 	}
 
 	//! Operator for Matrix3x3 Div = Matrix3x3 / float;
@@ -623,8 +630,6 @@ public:
 	// Cast operators
 	//! Cast a Matrix3x3 to a Matrix4x4.
 	operator Matrix4x4() const;
-	//! Cast a Matrix3x3 to a Quat.
-	operator Quat() const;
 
 	inline const Point &operator[](int row) const { return *(const Point *)&m[row][0]; }
 	inline Point &operator[](int row) { return *(Point *)&m[row][0]; }

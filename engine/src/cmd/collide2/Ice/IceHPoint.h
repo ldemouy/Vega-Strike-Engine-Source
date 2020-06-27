@@ -13,6 +13,7 @@
 #define __ICEHPOINT_H__
 
 #include <algorithm>
+#include <cmath>
 #include "IcePoint.h"
 
 class HPoint : public Point
@@ -264,15 +265,6 @@ public:
 	}
 
 	// Arithmetic operators
-
-	//! Operator for Point Mul = HPoint * Matrix3x3;
-	Point operator*(const Matrix3x3 &mat) const;
-	//! Operator for HPoint Mul = HPoint * Matrix4x4;
-	HPoint operator*(const Matrix4x4 &mat) const;
-
-	// HPoint *= Matrix3x3 doesn't exist, the matrix is first casted to a 4x4
-	//! Operator for HPoint *= Matrix4x4
-	HPoint &operator*=(const Matrix4x4 &mat);
 
 	// Logical operators
 

@@ -132,8 +132,7 @@ SET(LIBAI_SOURCES
 
 ADD_LIBRARY(OPcollide
     src/cmd/collide2/Ice/IceAABB.cpp
-    src/cmd/collide2/Ice/IceContainer.cpp
-    src/cmd/collide2/Ice/IceHPoint.cpp
+    src/cmd/collide2/Ice/IceContainer.cpp    
     src/cmd/collide2/Ice/IceIndexedTriangle.cpp
     src/cmd/collide2/Ice/IceMatrix3x3.cpp
     src/cmd/collide2/Ice/IceMatrix4x4.cpp
