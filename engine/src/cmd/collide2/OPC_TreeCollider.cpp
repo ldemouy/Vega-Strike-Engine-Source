@@ -31,8 +31,6 @@
 // Precompiled Header
 #include "Stdafx.h"
 
-
-
 #include "OPC_BoxBoxOverlap.h"
 #include "OPC_TriBoxOverlap.h"
 #include "OPC_TriTriOverlap.h"
@@ -100,7 +98,7 @@ bool AABBTreeCollider::Collide(BVTCache &cache, const Matrix4x4 *world0, const M
 	if (cache.Model0->IsQuantized() != cache.Model1->IsQuantized())
 		return false;
 
-		/*
+	/*
 	
 	  Rules:
 		- perform hull test
@@ -109,68 +107,6 @@ bool AABBTreeCollider::Collide(BVTCache &cache, const Matrix4x4 *world0, const M
 		- if countdown reaches 0, enable hull test
 
 	*/
-
-#ifdef __MESHMERIZER_H__
-	// Handle hulls
-	if (cache.HullTest)
-	{
-		if (cache.Model0->GetHull() && cache.Model1->GetHull())
-		{
-			struct Local
-			{
-				static Point *SVCallback(const Point &sv, uint32_t &previndex, uint32_t user_data)
-				{
-					CollisionHull *Hull = (CollisionHull *)user_data;
-					previndex = Hull->ComputeSupportingVertex(sv, previndex);
-					return (Point *)&Hull->GetVerts()[previndex];
-				}
-			};
-
-			bool Collide;
-
-			if (0)
-			{
-				static GJKEngine GJK;
-				static bool GJKInitDone = false;
-				if (!GJKInitDone)
-				{
-					GJK.Enable(GJK_BACKUP_PROCEDURE);
-					GJK.Enable(GJK_DEGENERATE);
-					GJK.Enable(GJK_HILLCLIMBING);
-					GJKInitDone = true;
-				}
-				GJK.SetCallbackObj0(Local::SVCallback);
-				GJK.SetCallbackObj1(Local::SVCallback);
-				GJK.SetUserData0(uint32_t(cache.Model0->GetHull()));
-				GJK.SetUserData1(uint32_t(cache.Model1->GetHull()));
-				Collide = GJK.Collide(*world0, *world1, &cache.SepVector);
-			}
-			else
-			{
-				static SVEngine SVE;
-				SVE.SetCallbackObj0(Local::SVCallback);
-				SVE.SetCallbackObj1(Local::SVCallback);
-				SVE.SetUserData0(uint32_t(cache.Model0->GetHull()));
-				SVE.SetUserData1(uint32_t(cache.Model1->GetHull()));
-				Collide = SVE.Collide(*world0, *world1, &cache.SepVector);
-			}
-
-			if (!Collide)
-			{
-				// Reset stats & contact status
-				mFlags &= ~OPC_CONTACT;
-				mNbBVBVTests = 0;
-				mNbPrimPrimTests = 0;
-				mNbBVPrimTests = 0;
-				mPairs.Reset();
-				return true;
-			}
-		}
-	}
-
-	// Here, hulls collide
-	cache.HullTest = false;
-#endif // __MESHMERIZER_H__
 
 	// Checkings
 	if (!Setup(cache.Model0->GetMeshInterface(), cache.Model1->GetMeshInterface()))
@@ -209,22 +145,6 @@ bool AABBTreeCollider::Collide(BVTCache &cache, const Matrix4x4 *world0, const M
 		}
 	}
 
-#ifdef __MESHMERIZER_H__
-	if (Status)
-	{
-		// Reset counter as long as overlap occurs
-		if (GetContactStatus())
-			cache.ResetCountDown();
-
-		// Enable hull test again when counter reaches zero
-		cache.CountDown--;
-		if (!cache.CountDown)
-		{
-			cache.ResetCountDown();
-			cache.HullTest = true;
-		}
-	}
-#endif
 	return Status;
 }
 
