@@ -223,13 +223,6 @@ bool AABBTreeCollider::CheckTemporalCoherence(Pair *cache)
 	return false;
 }
 
-#define UPDATE_CACHE                     \
-	if (cache && GetContactStatus())     \
-	{                                    \
-		cache->id0 = mPairs.GetEntry(0); \
-		cache->id1 = mPairs.GetEntry(1); \
-	}
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /**
  *	Collision query for normal AABB trees.
@@ -254,7 +247,11 @@ bool AABBTreeCollider::Collide(const AABBCollisionTree *tree0, const AABBCollisi
 	// Perform collision query
 	_Collide(tree0->GetNodes(), tree1->GetNodes());
 
-	UPDATE_CACHE
+	if (cache && GetContactStatus())
+	{
+		cache->id0 = mPairs.GetEntry(0);
+		cache->id1 = mPairs.GetEntry(1);
+	}
 
 	return true;
 }
@@ -283,7 +280,11 @@ bool AABBTreeCollider::Collide(const AABBNoLeafTree *tree0, const AABBNoLeafTree
 	// Perform collision query
 	_Collide(tree0->GetNodes(), tree1->GetNodes());
 
-	UPDATE_CACHE
+	if (cache && GetContactStatus())
+	{
+		cache->id0 = mPairs.GetEntry(0);
+		cache->id1 = mPairs.GetEntry(1);
+	}
 
 	return true;
 }
@@ -327,7 +328,11 @@ bool AABBTreeCollider::Collide(const AABBQuantizedTree *tree0, const AABBQuantiz
 	// Perform collision query
 	_Collide(N0, N1, a, Pa, b, Pb);
 
-	UPDATE_CACHE
+	if (cache && GetContactStatus())
+	{
+		cache->id0 = mPairs.GetEntry(0);
+		cache->id1 = mPairs.GetEntry(1);
+	}
 
 	return true;
 }
@@ -362,7 +367,11 @@ bool AABBTreeCollider::Collide(const AABBQuantizedNoLeafTree *tree0, const AABBQ
 	// Perform collision query
 	_Collide(tree0->GetNodes(), tree1->GetNodes());
 
-	UPDATE_CACHE
+	if (cache && GetContactStatus())
+	{
+		cache->id0 = mPairs.GetEntry(0);
+		cache->id1 = mPairs.GetEntry(1);
+	}
 
 	return true;
 }
@@ -372,47 +381,7 @@ bool AABBTreeCollider::Collide(const AABBQuantizedNoLeafTree *tree0, const AABBQ
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // The normal AABB tree can use 2 different descent rules (with different performances)
-//#define ORIGINAL_CODE			//!< UNC-like descent rules
-#define ALTERNATIVE_CODE //!< Alternative descent rules
 
-#ifdef ORIGINAL_CODE
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/**
- *	Recursive collision query for normal AABB trees.
- *	\param		b0		[in] collision node from first tree
- *	\param		b1		[in] collision node from second tree
- */
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void AABBTreeCollider::_Collide(const AABBCollisionNode *b0, const AABBCollisionNode *b1)
-{
-	// Perform BV-BV overlap test
-	if (!BoxBoxOverlap(b0->mAABB.mExtents, b0->mAABB.mCenter, b1->mAABB.mExtents, b1->mAABB.mCenter))
-		return;
-
-	if (b0->IsLeaf() && b1->IsLeaf())
-	{
-		PrimTest(b0->GetPrimitive(), b1->GetPrimitive());
-		return;
-	}
-
-	if (b1->IsLeaf() || (!b0->IsLeaf() && (b0->GetSize() > b1->GetSize())))
-	{
-		_Collide(b0->GetNeg(), b1);
-		if (ContactFound())
-			return;
-		_Collide(b0->GetPos(), b1);
-	}
-	else
-	{
-		_Collide(b0, b1->GetNeg());
-		if (ContactFound())
-			return;
-		_Collide(b0, b1->GetPos());
-	}
-}
-#endif
-
-#ifdef ALTERNATIVE_CODE
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /**
  *	Recursive collision query for normal AABB trees.
@@ -463,7 +432,6 @@ void AABBTreeCollider::_Collide(const AABBCollisionNode *b0, const AABBCollision
 		_Collide(b0->GetPos(), b1->GetPos());
 	}
 }
-#endif
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // No-leaf trees
