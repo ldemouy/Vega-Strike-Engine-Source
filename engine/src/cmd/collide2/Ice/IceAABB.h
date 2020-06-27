@@ -39,7 +39,6 @@ public:
 	float MakeCube(AABB &cube) const;
 	void MakeSphere(Sphere &sphere) const;
 	const int8_t *ComputeOutline(const Point &local_eye, int32_t &num) const;
-	float ComputeBoxArea(const Point &eye, const Matrix4x4 &mat, float width, float height, int32_t &num) const;
 	bool IsInside(const AABB &box) const;
 	bool ComputePlanes(Plane *planes) const;
 	bool ComputePoints(Point *pts) const;

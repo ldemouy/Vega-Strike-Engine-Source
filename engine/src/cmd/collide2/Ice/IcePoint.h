@@ -14,7 +14,6 @@
 #include <cmath>
 #include "IceAxis.h"
 // Forward declarations
-class HPoint;
 class Plane;
 class Matrix3x3;
 class Matrix4x4;
@@ -542,9 +541,6 @@ public:
 	//! Projects the point onto a plane
 	Point &ProjectToPlane(const Plane &p);
 
-	//! Projects the point onto the screen
-	void ProjectToScreen(float halfrenderwidth, float halfrenderheight, const Matrix4x4 &mat, HPoint &projected) const;
-
 	//! Unfolds the point onto a plane according to edge(a,b)
 	Point &Unfold(Plane &p, Point &a, Point &b);
 
@@ -753,9 +749,6 @@ public:
 	}
 
 	// Cast operators
-
-	//! Cast a Point to a HPoint. w is set to zero.
-	operator HPoint() const;
 
 	inline float operator[](int n) const { return *(&x + n); }
 	inline float &operator[](int n) { return *(&x + n); }

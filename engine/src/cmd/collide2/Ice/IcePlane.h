@@ -73,24 +73,6 @@ public:
 
 	// Cast operators
 	inline operator Point() const { return n; }
-	inline operator HPoint() const { return HPoint(n, d); }
-
-	// Arithmetic operators
-	inline Plane operator*(const Matrix4x4 &m) const
-	{
-		// Old code from Irion. Kept for reference.
-		Plane Ret(*this);
-		return Ret *= m;
-	}
-
-	inline Plane &operator*=(const Matrix4x4 &m)
-	{
-		// Old code from Irion. Kept for reference.
-		Point n2 = HPoint(n, 0.0f) * m;
-		d = -((Point)(HPoint(-d * n, 1.0f) * m) | n2);
-		n = n2;
-		return *this;
-	}
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

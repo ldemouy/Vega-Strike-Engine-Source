@@ -85,10 +85,6 @@ Point &Point::UnitRandomVector()
 	return *this;
 }
 
-// Cast operator
-// WARNING: not inlined
-Point::operator HPoint() const { return HPoint(x, y, z, 0.0f); }
-
 Point &Point::Refract(const Point &eye, const Point &n, float refractindex, Point &refracted)
 {
 	//	Point EyePt = eye position
@@ -115,21 +111,6 @@ Point &Point::ProjectToPlane(const Plane &p)
 {
 	*this -= (p.d + (*this | p.n)) * p.n;
 	return *this;
-}
-
-void Point::ProjectToScreen(float halfrenderwidth, float halfrenderheight, const Matrix4x4 &mat, HPoint &projected) const
-{
-	projected = HPoint(x, y, z, 1.0f) * mat;
-	projected.w = 1.0f / projected.w;
-
-	projected.x *= projected.w;
-	projected.y *= projected.w;
-	projected.z *= projected.w;
-
-	projected.x *= halfrenderwidth;
-	projected.x += halfrenderwidth;
-	projected.y *= -halfrenderheight;
-	projected.y += halfrenderheight;
 }
 
 void Point::SetNotUsed()

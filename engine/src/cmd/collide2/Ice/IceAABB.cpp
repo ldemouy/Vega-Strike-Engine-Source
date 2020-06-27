@@ -384,39 +384,3 @@ const int8_t *AABB::ComputeOutline(const Point &local_eye, int32_t &num) const
 
 	return &gIndexList[pos][0];
 }
-
-// calculateBoxArea: computes the screen-projected 2D area of an oriented 3D bounding box
-
-//const Point&		eye,		//eye point (in bbox object coordinates)
-//const AABB&			box,		//3d bbox
-//const Matrix4x4&	mat,		//free transformation for bbox
-//float width, float height, int& num)
-float AABB::ComputeBoxArea(const Point &eye, const Matrix4x4 &mat, float width, float height, int32_t &num) const
-{
-	const int8_t *Outline = ComputeOutline(eye, num);
-	if (!Outline)
-	{
-		return -1.0f;
-	}
-
-	// Compute box vertices
-	Point vertexBox[8], dst[8];
-	ComputePoints(vertexBox);
-
-	// Transform all outline corners into 2D screen space
-	for (uint32_t i = 0; i < num; i++)
-	{
-		HPoint Projected;
-		vertexBox[Outline[i]].ProjectToScreen(width, height, mat, Projected);
-		dst[i] = Projected;
-	}
-
-	float Sum = (dst[num - 1][0] - dst[0][0]) * (dst[num - 1][1] + dst[0][1]);
-
-	for (uint32_t i = 0; i < num - 1; i++)
-	{
-		Sum += (dst[i][0] - dst[i + 1][0]) * (dst[i][1] + dst[i + 1][1]);
-	}
-
-	return Sum * 0.5f; //return computed value corrected by 0.5
-}
