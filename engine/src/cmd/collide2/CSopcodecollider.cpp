@@ -29,8 +29,8 @@ static std::vector<csCollisionPair> pairs;
 
 csOPCODECollider::csOPCODECollider(const std::vector<mesh_polygon> &polygons)
 {
-	m_pCollisionModel = 0;
-	vertholder = 0;
+	m_pCollisionModel = nullptr;
+	vertholder = nullptr;
 	TreeCollider.SetFirstContact(true);
 	TreeCollider.SetFullBoxBoxTest(false);
 	TreeCollider.SetTemporalCoherence(false);
@@ -38,15 +38,6 @@ csOPCODECollider::csOPCODECollider(const std::vector<mesh_polygon> &polygons)
 	GeometryInitialize(polygons);
 	CollisionFace collFace;
 	rCollider.SetFirstContact(true);
-}
-
-inline float min3(float a, float b, float c)
-{
-	return std::min({a, b, c});
-}
-inline float max3(float a, float b, float c)
-{
-	return std::max({a, b, c});
 }
 
 void csOPCODECollider::GeometryInitialize(const std::vector<mesh_polygon> &polygons)
@@ -84,8 +75,8 @@ void csOPCODECollider::GeometryInitialize(const std::vector<mesh_polygon> &polyg
 				tmp.AddBoundingVertex(p->v[j]);
 			}
 		}
-		radius = max3(tmp.MaxX() - tmp.MinX(), tmp.MaxY() - tmp.MinY(),
-					  tmp.MaxZ() - tmp.MinZ());
+		radius = std::max({tmp.MaxX() - tmp.MinX(), tmp.MaxY() - tmp.MinY(),
+						   tmp.MaxZ() - tmp.MinZ()});
 		opcMeshInt.SetNbTriangles(tri_count);
 		opcMeshInt.SetNbVertices(last);
 

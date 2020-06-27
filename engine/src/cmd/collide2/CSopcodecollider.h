@@ -107,9 +107,6 @@ public:
 	csOPCODECollider(const std::vector<mesh_polygon> &polygons);
 	~csOPCODECollider();
 
-	/* Not used in 0.5 */
-	int32_t inline GetColliderType() const { return CS_MESH_COLLIDER; }
-
 	/* Collides the bolt or beam with this collider, returning true if it occurred */
 	bool rayCollide(const Ray &boltbeam, Vector &norm, float &distance);
 
@@ -136,11 +133,6 @@ public:
 		* contact is detected, rather than return the contacts for all 
 		* detected vertex collisions */
 	void SetOneHitOnly(bool fh);
-	inline bool GetOneHitOnly() const { return (TreeCollider.FirstContactEnabled()); }
-
-	/* Returns the radius of our collision mesh.  This is the max radius
-		* of the mesh we were initialized with */
-	inline float GetRadius() const { return radius; };
 
 	/* Function that returns the Vector given the vertex index 
 		* Used for displaying the annoying damage particles */
