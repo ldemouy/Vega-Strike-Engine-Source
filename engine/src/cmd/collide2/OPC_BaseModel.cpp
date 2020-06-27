@@ -30,8 +30,6 @@
 // Precompiled Header
 #include "Stdafx.h"
 
-
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /**
  *	Constructor.
@@ -44,9 +42,6 @@ OPCODECREATE::OPCODECREATE()
 	mSettings.mLimit = 1; // Mandatory for complete trees
 	mNoLeaf = true;
 	mQuantized = true;
-#ifdef __MESHMERIZER_H__
-	mCollisionHull = false;
-#endif // __MESHMERIZER_H__
 	mKeepOriginal = false;
 	mCanRemap = false;
 }

@@ -30,11 +30,8 @@ struct OPCODECREATE
 	BuildSettings mSettings; //!< Builder's settings
 	bool mNoLeaf;			 //!< true => discard leaf nodes (else use a normal tree)
 	bool mQuantized;		 //!< true => quantize the tree (else use a normal tree)
-#ifdef __MESHMERIZER_H__
-	bool mCollisionHull; //!< true => use convex hull + GJK
-#endif					 // __MESHMERIZER_H__
-	bool mKeepOriginal;	 //!< true => keep a copy of the original tree (debug purpose)
-	bool mCanRemap;		 //!< true => allows OPCODE to reorganize client arrays
+	bool mKeepOriginal;		 //!< true => keep a copy of the original tree (debug purpose)
+	bool mCanRemap;			 //!< true => allows OPCODE to reorganize client arrays
 
 	// (*) This pointer is saved internally and used by OPCODE until collision structures are released,
 	// so beware of the object's lifetime.
@@ -164,7 +161,7 @@ public:
 
 protected:
 	const MeshInterface *mIMesh; //!< User-defined mesh interface
-	uint32_t mModelCode;			 //!< Model code = combination of ModelFlag(s)
+	uint32_t mModelCode;		 //!< Model code = combination of ModelFlag(s)
 	AABBTree *mSource;			 //!< Original source tree
 	AABBOptimizedTree *mTree;	 //!< Optimized tree owned by the model
 								 // Internal methods

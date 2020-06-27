@@ -118,25 +118,13 @@
 // Precompiled Header
 #include "Stdafx.h"
 
-
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /**
  *	Constructor.
  */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-MeshInterface::MeshInterface() :
-#ifdef OPC_USE_CALLBACKS
-								 mUserData(nullptr),
+MeshInterface::MeshInterface() : mUserData(nullptr),
 								 mObjCallback(nullptr),
-#else
-								 mTris(nullptr),
-								 mVerts(nullptr),
-#ifdef OPC_USE_STRIDE
-								 mTriStride(sizeof(IndexedTriangle)),
-								 mVertexStride(sizeof(Point)),
-#endif
-#endif
 								 mNbTris(0),
 								 mNbVerts(0)
 {
@@ -161,13 +149,8 @@ bool MeshInterface::IsValid() const
 {
 	if (!mNbTris || !mNbVerts)
 		return false;
-#ifdef OPC_USE_CALLBACKS
 	if (!mObjCallback)
 		return false;
-#else
-	if (!mTris || !mVerts)
-		return false;
-#endif
 	return true;
 }
 
@@ -201,7 +184,6 @@ uint32_t MeshInterface::CheckTopology() const
 	return NbDegenerate;
 }
 
-#ifdef OPC_USE_CALLBACKS
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /**
  *	Callback control: setups object callback. Must provide triangle-vertices for a given triangle index.
@@ -219,47 +201,6 @@ bool MeshInterface::SetCallback(RequestCallback callback, void *user_data)
 	mUserData = user_data;
 	return true;
 }
-#else
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/**
- *	Pointers control: setups object pointers. Must provide access to faces and vertices for a given object.
- *	\param		tris	[in] pointer to triangles
- *	\param		verts	[in] pointer to vertices
- *	\return		true if success
- */
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool MeshInterface::SetPointers(const IndexedTriangle *tris, const Point *verts)
-{
-	//	if(!tris || !verts)	return SetIceError("MeshInterface::SetPointers: pointer is null", nullptr);
-	if (!tris || !verts)
-		return (false);
-
-	mTris = tris;
-	mVerts = verts;
-	return true;
-}
-#ifdef OPC_USE_STRIDE
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/**
- *	Strides control
- *	\param		tri_stride		[in] size of a triangle in bytes. The first sizeof(IndexedTriangle) bytes are used to get vertex indices.
- *	\param		vertex_stride	[in] size of a vertex in bytes. The first sizeof(Point) bytes are used to get vertex position.
- *	\return		true if success
- */
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool MeshInterface::SetStrides(uint32_t tri_stride, uint32_t vertex_stride)
-{
-	if (tri_stride < sizeof(IndexedTriangle))
-		return SetIceError("MeshInterface::SetStrides: invalid triangle stride", nullptr);
-	if (vertex_stride < sizeof(Point))
-		return SetIceError("MeshInterface::SetStrides: invalid vertex stride", nullptr);
-
-	mTriStride = tri_stride;
-	mVertexStride = vertex_stride;
-	return true;
-}
-#endif
-#endif
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /**
@@ -277,32 +218,6 @@ bool MeshInterface::RemapClient(uint32_t nb_indices, const uint32_t *permutation
 	if (nb_indices != mNbTris)
 		return false;
 
-#ifdef OPC_USE_CALLBACKS
 	// We can't really do that using callbacks
 	return false;
-#else
-	IndexedTriangle *Tmp = new IndexedTriangle[mNbTris];
-	CHECKALLOC(Tmp);
-
-#ifdef OPC_USE_STRIDE
-	uint32_t Stride = mTriStride;
-#else
-	uint32_t Stride = sizeof(IndexedTriangle);
-#endif
-
-	for (uint32_t i = 0; i < mNbTris; i++)
-	{
-		const IndexedTriangle *T = (const IndexedTriangle *)(((uint8_t *)mTris) + i * Stride);
-		Tmp[i] = *T;
-	}
-
-	for (uint32_t i = 0; i < mNbTris; i++)
-	{
-		IndexedTriangle *T = (IndexedTriangle *)(((uint8_t *)mTris) + i * Stride);
-		*T = Tmp[permutation[i]];
-	}
-
-	DELETEARRAY(Tmp);
-#endif
-	return true;
 }
