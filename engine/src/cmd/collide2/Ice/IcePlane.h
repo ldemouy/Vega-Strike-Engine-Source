@@ -12,6 +12,8 @@
 #ifndef __ICEPLANE_H__
 #define __ICEPLANE_H__
 #include "IcePoint.h"
+#include "IceMatrix3x3.h"
+#include "IceMatrix4x4.h"
 class Plane
 {
 public:

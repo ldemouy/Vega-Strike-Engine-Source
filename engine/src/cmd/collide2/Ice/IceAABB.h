@@ -13,8 +13,10 @@
 #define __ICEAABB_H__
 #include <cmath>
 #include "IcePoint.h"
-// Forward declarations
-class Sphere;
+#include "IceBoundingSphere.h"
+#include "IcePlane.h"
+#include "IceMatrix3x3.h"
+#include "IceMatrix4x4.h"
 
 //! Declarations of type-independent methods (most of them implemented in the .cpp)
 
