@@ -14,6 +14,9 @@
 #include "IceTypes.h"
 #include "IceMemoryMacros.h"
 #include "IcePoint.h"
+#include "IceHPoint.h"
+#include <stdint.h>
+
 // Forward declarations
 class PRS;
 class PR;

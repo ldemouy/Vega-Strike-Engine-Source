@@ -11,7 +11,9 @@
 // Include Guard
 #ifndef __ICEPOINT_H__
 #define __ICEPOINT_H__
+#include <algorithm>
 #include <cmath>
+#include <stdint.h>
 #include "IceAxis.h"
 // Forward declarations
 class Plane;

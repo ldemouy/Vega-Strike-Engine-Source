@@ -14,6 +14,7 @@
 #include "IceTypes.h"
 #include "IceMemoryMacros.h"
 #include "IcePoint.h"
+#include <stdint.h>
 // Forward declarations
 class Quat;
 
