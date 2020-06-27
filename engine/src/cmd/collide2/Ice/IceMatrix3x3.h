@@ -15,6 +15,7 @@
 #include "IceMemoryMacros.h"
 #include "IcePoint.h"
 #include "IceHPoint.h"
+//#include "IceMatrix4x4.h"
 #include <stdint.h>
 
 class Matrix3x3
@@ -629,7 +630,7 @@ public:
 
 	// Cast operators
 	//! Cast a Matrix3x3 to a Matrix4x4.
-	operator Matrix4x4() const;
+	//operator Matrix4x4() const;
 
 	inline const Point &operator[](int row) const { return *(const Point *)&m[row][0]; }
 	inline Point &operator[](int row) { return *(Point *)&m[row][0]; }

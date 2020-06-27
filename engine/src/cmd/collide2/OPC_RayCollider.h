@@ -22,6 +22,7 @@
 
 #include "Ice/IceContainer.h"
 #include "Ice/IcePoint.h"
+#include "Ice/IceRay.h"
 
 class CollisionFace
 {

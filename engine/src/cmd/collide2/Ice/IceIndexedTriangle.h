@@ -13,7 +13,7 @@
 #define __ICEINDEXEDTRIANGLE_H__
 
 #include "IcePoint.h"
-
+#include "IcePlane.h"
 // An indexed triangle class.
 class IndexedTriangle
 {

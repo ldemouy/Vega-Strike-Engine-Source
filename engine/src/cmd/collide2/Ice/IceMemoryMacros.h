@@ -13,7 +13,7 @@
 #define __ICEMEMORYMACROS_H__
 
 #include <cstring>
-
+#include <stdint.h>
 #undef ZeroMemory
 #undef CopyMemory
 #undef MoveMemory

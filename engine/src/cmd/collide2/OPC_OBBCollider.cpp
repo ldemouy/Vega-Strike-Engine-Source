@@ -30,8 +30,7 @@
 // Precompiled Header
 #include "Stdafx.h"
 
-
-
+#include "Ice/IceMatrixConverter.h"
 #include "OPC_BoxBoxOverlap.h"
 #include "OPC_TriBoxOverlap.h"
 
@@ -200,12 +199,12 @@ bool OBBCollider::InitQuery(OBBCache &cache, const OBB &box, const Matrix4x4 *wo
 
 	if (worldb)
 	{
-		WorldB = Matrix4x4(box.mRot * Matrix3x3(*worldb));
+		WorldB = ConvertMatrix3x3ToMatrix4x4(box.mRot * Matrix3x3(*worldb));
 		WorldB.SetTrans(box.mCenter * *worldb);
 	}
 	else
 	{
-		WorldB = box.mRot;
+		WorldB = ConvertMatrix3x3ToMatrix4x4(box.mRot);
 		WorldB.SetTrans(box.mCenter);
 	}
 

@@ -21,7 +21,7 @@
 #define __OPC_COMMON_H__
 
 #include "Ice/IcePoint.h"
-
+#include "Ice/IceAABB.h"
 // [GOTTFRIED]: Just a small change for readability.
 #define GREATER(x, y) fabsf(x) > (y)
 

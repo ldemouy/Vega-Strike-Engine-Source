@@ -24,6 +24,7 @@
 
 #include <vector>
 #include "Ice/IcePoint.h"
+#include "Ice/IceRay.h"
 
 enum CullMode
 {

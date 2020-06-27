@@ -12,8 +12,9 @@
 #ifndef __ICETRIANGLE_H__
 #define __ICETRIANGLE_H__
 #include "IcePoint.h"
+#include "IcePlane.h"
 // Forward declarations
-class Moment;
+//class Moment;
 
 // Partitioning values
 enum PartVal
@@ -63,7 +64,6 @@ public:
 
 	PartVal TestAgainstPlane(const Plane &plane, float epsilon) const;
 	//				float			Distance(Point& cp, Point& cq, Tri& tri);
-	void ComputeMoment(Moment &m);
 	float MinEdgeLength() const;
 	float MaxEdgeLength() const;
 	void ComputePoint(float u, float v, Point &pt, uint32_t *nearvtx = nullptr) const;

@@ -21,6 +21,7 @@
 #define __OPC_TREEBUILDERS_H__
 
 #include "Ice/IcePoint.h"
+#include "Ice/IceAABB.h"
 
 //! Tree splitting rules
 enum SplittingRules

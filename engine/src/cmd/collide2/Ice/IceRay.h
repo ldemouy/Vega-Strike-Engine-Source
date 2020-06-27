@@ -12,6 +12,9 @@
 #ifndef __ICERAY_H__
 #define __ICERAY_H__
 #include "IcePoint.h"
+#include "IceMatrix3x3.h"
+#include "IceMatrix4x4.h"
+#include "IcePlane.h"
 
 class Ray
 {

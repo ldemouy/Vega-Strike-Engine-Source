@@ -21,6 +21,8 @@
 #define __OPC_LSSCOLLIDER_H__
 #include "Ice/IceContainer.h"
 #include "Ice/IcePoint.h"
+#include "Ice/IceSegment.h"
+#include "Ice/IceLSS.h"
 struct LSSCache : VolumeCache
 {
 	LSSCache()

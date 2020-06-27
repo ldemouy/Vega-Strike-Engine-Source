@@ -15,6 +15,7 @@
 #include "IceMemoryMacros.h"
 #include "IcePoint.h"
 #include "IceHPoint.h"
+#include "IceMatrix3x3.h"
 #include <stdint.h>
 
 class Matrix4x4
