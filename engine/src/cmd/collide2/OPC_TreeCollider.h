@@ -32,7 +32,7 @@
 //! coherence. That is, in case temporal coherence is enabled, those two primitives are
 //! tested for overlap before everything else. If they still collide, we're done before
 //! even entering the recursive collision code.
-struct BVTCache : Pair
+struct BVTCache
 {
 	//! Constructor
 	BVTCache()
@@ -55,6 +55,8 @@ struct BVTCache : Pair
 
 	const Model *Model0; //!< Model for first object
 	const Model *Model1; //!< Model for second object
+	uint32_t id0;		 //!< First index of the pair
+	uint32_t id1;		 //!< Second index of the pair
 };
 
 class AABBTreeCollider : public Collider
@@ -82,10 +84,10 @@ public:
 	bool Collide(BVTCache &cache, const Matrix4x4 *world0 = nullptr, const Matrix4x4 *world1 = nullptr);
 
 	// Collision queries
-	bool Collide(const AABBCollisionTree *tree0, const AABBCollisionTree *tree1, const Matrix4x4 *world0 = nullptr, const Matrix4x4 *world1 = nullptr, Pair *cache = nullptr);
-	bool Collide(const AABBNoLeafTree *tree0, const AABBNoLeafTree *tree1, const Matrix4x4 *world0 = nullptr, const Matrix4x4 *world1 = nullptr, Pair *cache = nullptr);
-	bool Collide(const AABBQuantizedTree *tree0, const AABBQuantizedTree *tree1, const Matrix4x4 *world0 = nullptr, const Matrix4x4 *world1 = nullptr, Pair *cache = nullptr);
-	bool Collide(const AABBQuantizedNoLeafTree *tree0, const AABBQuantizedNoLeafTree *tree1, const Matrix4x4 *world0 = nullptr, const Matrix4x4 *world1 = nullptr, Pair *cache = nullptr);
+	bool Collide(const AABBCollisionTree *tree0, const AABBCollisionTree *tree1, const Matrix4x4 *world0 = nullptr, const Matrix4x4 *world1 = nullptr, BVTCache *cache = nullptr);
+	bool Collide(const AABBNoLeafTree *tree0, const AABBNoLeafTree *tree1, const Matrix4x4 *world0 = nullptr, const Matrix4x4 *world1 = nullptr, BVTCache *cache = nullptr);
+	bool Collide(const AABBQuantizedTree *tree0, const AABBQuantizedTree *tree1, const Matrix4x4 *world0 = nullptr, const Matrix4x4 *world1 = nullptr, BVTCache *cache = nullptr);
+	bool Collide(const AABBQuantizedNoLeafTree *tree0, const AABBQuantizedNoLeafTree *tree1, const Matrix4x4 *world0 = nullptr, const Matrix4x4 *world1 = nullptr, BVTCache *cache = nullptr);
 	// Settings
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -96,47 +98,6 @@ public:
 		 */
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	inline void SetFullBoxBoxTest(bool flag) { mFullBoxBoxTest = flag; }
-
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/**
-		 *	Settings: selects between full triangle-box tests or "SAT-lite" tests (where Class III axes are discarded)
-		 *	\param		flag		[in] true for full tests, false for coarse tests
-		 *	\see		SetFullBoxBoxTest(bool flag)
-		 */
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	void SetFullPrimBoxTest(bool flag) { mFullPrimBoxTest = flag; }
-
-	// Stats
-
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/**
-		 *	Stats: gets the number of BV-BV overlap tests after a collision query.
-		 *	\see		GetNbPrimPrimTests()
-		 *	\see		GetNbBVPrimTests()
-		 *	\return		the number of BV-BV tests performed during last query
-		 */
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	inline uint32_t GetNbBVBVTests() const { return mNbBVBVTests; }
-
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/**
-		 *	Stats: gets the number of Triangle-Triangle overlap tests after a collision query.
-		 *	\see		GetNbBVBVTests()
-		 *	\see		GetNbBVPrimTests()
-		 *	\return		the number of Triangle-Triangle tests performed during last query
-		 */
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	inline uint32_t GetNbPrimPrimTests() const { return mNbPrimPrimTests; }
-
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/**
-		 *	Stats: gets the number of BV-Triangle overlap tests after a collision query.
-		 *	\see		GetNbBVBVTests()
-		 *	\see		GetNbPrimPrimTests()
-		 *	\return		the number of BV-Triangle tests performed during last query
-		 */
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	inline uint32_t GetNbBVPrimTests() const { return mNbBVPrimTests; }
 
 	// Data access
 
@@ -219,7 +180,7 @@ protected:
 	inline bool TriTriOverlap(const Point &V0, const Point &V1, const Point &V2, const Point &U0, const Point &U1, const Point &U2);
 	// Init methods
 	void InitQuery(const Matrix4x4 *world0 = nullptr, const Matrix4x4 *world1 = nullptr);
-	bool CheckTemporalCoherence(Pair *cache);
+	bool CheckTemporalCoherence(BVTCache *cache);
 
 	inline bool Setup(const MeshInterface *mi0, const MeshInterface *mi1)
 	{

@@ -123,40 +123,10 @@ public:
 	inline uint32_t GetCount() const { return mCount; }
 	inline void SetNbInvalidSplits(uint32_t nb) { mNbInvalidSplits = nb; }
 	inline void IncreaseNbInvalidSplits() { mNbInvalidSplits++; }
-	inline uint32_t GetNbInvalidSplits() const { return mNbInvalidSplits; }
 
 private:
 	uint32_t mCount;		   //!< Stats: number of nodes created
 	uint32_t mNbInvalidSplits; //!< Stats: number of invalid splits
-};
-
-class AABBTreeOfVerticesBuilder : public AABBTreeBuilder
-{
-public:
-	//! Constructor
-	AABBTreeOfVerticesBuilder() : mVertexArray(nullptr) {}
-	//! Destructor
-	virtual ~AABBTreeOfVerticesBuilder() {}
-
-	virtual bool ComputeGlobalBox(const uint32_t *primitives, uint32_t nb_prims, AABB &global_box) const override;
-	virtual float GetSplittingValue(uint32_t index, uint32_t axis) const override;
-	virtual float GetSplittingValue(const uint32_t *primitives, uint32_t nb_prims, const AABB &global_box, uint32_t axis) const override;
-
-	const Point *mVertexArray; //!< Shortcut to an app-controlled array of vertices.
-};
-
-class AABBTreeOfAABBsBuilder : public AABBTreeBuilder
-{
-public:
-	//! Constructor
-	AABBTreeOfAABBsBuilder() : mAABBArray(nullptr) {}
-	//! Destructor
-	virtual ~AABBTreeOfAABBsBuilder() {}
-
-	virtual bool ComputeGlobalBox(const uint32_t *primitives, uint32_t nb_prims, AABB &global_box) const override;
-	virtual float GetSplittingValue(uint32_t index, uint32_t axis) const override;
-
-	const AABB *mAABBArray; //!< Shortcut to an app-controlled array of AABBs.
 };
 
 class AABBTreeOfTrianglesBuilder : public AABBTreeBuilder

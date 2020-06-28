@@ -22,40 +22,33 @@
 #include <functional>
 #include "OPC_TreeBuilders.h"
 
-//! TO BE DOCUMENTED
-#define IMPLEMENT_TREE(base_class, volume)                                                           \
-public:                                                                                              \
-	/* Constructor / Destructor */                                                                   \
-	base_class();                                                                                    \
-	~base_class();                                                                                   \
-	/* Data access */                                                                                \
-	inline const volume *Get##volume() const { return &mBV; }                                        \
-	/* Clear the last bit */                                                                         \
-	inline const base_class *GetPos() const { return (const base_class *)(mPos & ~1); }              \
-	inline const base_class *GetNeg() const                                                          \
-	{                                                                                                \
-		const base_class *P = GetPos();                                                              \
-		return P ? P + 1 : nullptr;                                                                  \
-	}                                                                                                \
-                                                                                                     \
-	/* We don't need to test both nodes since we can't have one without the other	*/                 \
-	inline bool IsLeaf() const { return !GetPos(); }                                                 \
-                                                                                                     \
-	/* Stats */                                                                                      \
-	inline uint32_t GetNodeSize() const { return SIZEOFOBJECT; }                                     \
-                                                                                                     \
-protected:                                                                                           \
-	/* Tree-independent data */                                                                      \
-	/* Following data always belong to the BV-tree, regardless of what the tree actually contains.*/ \
-	/* Whatever happens we need the two children and the enclosing volume.*/                         \
-	volume mBV;		/* Global bounding-volume enclosing all the node-related primitives */           \
-	uintptr_t mPos; /* "Positive" & "Negative" children */
-
 typedef std::function<void(uint32_t nb_primitives, uint32_t *node_primitives, bool need_clipping, void *user_data)> CullingCallback;
 
 class AABBTreeNode
 {
-	IMPLEMENT_TREE(AABBTreeNode, AABB)
+public:
+	/* Constructor / Destructor */
+	AABBTreeNode();
+	~AABBTreeNode();
+	/* Data access */
+	inline const AABB *GetAABB() const { return &mBV; }
+	/* Clear the last bit */
+	inline const AABBTreeNode *GetPos() const { return (const AABBTreeNode *)(mPos & ~1); }
+	inline const AABBTreeNode *GetNeg() const
+	{
+		const AABBTreeNode *P = GetPos();
+		return P ? P + 1 : nullptr;
+	}
+
+	/* We don't need to test both nodes since we can't have one without the other	*/
+	inline bool IsLeaf() const { return !GetPos(); }
+
+protected:
+	/* Tree-independent data */
+	/* Following data always belong to the BV-tree, regardless of what the tree actually contains.*/
+	/* Whatever happens we need the two children and the enclosing volume.*/
+	AABB mBV;		/* Global bounding-volume enclosing all the node-related primitives */
+	uintptr_t mPos; /* "Positive" & "Negative" children */
 public:
 	// Data access
 	inline const uint32_t *GetPrimitives() const { return mNodePrimitives; }
@@ -94,18 +87,7 @@ public:
 	void Release();
 
 	// Data access
-	inline const uint32_t *GetIndices() const { return mIndices; } //!< Catch the indices
-	inline uint32_t GetNbNodes() const { return mTotalNbNodes; }   //!< Catch the number of nodes
-
-	// Infos
-	bool IsComplete() const;
-	// Stats
-	uint32_t ComputeDepth() const;
-	uint32_t GetUsedBytes() const;
-	uint32_t Walk(WalkingCallback callback, void *user_data) const;
-
-	bool Refit(AABBTreeBuilder *builder);
-	bool Refit2(AABBTreeBuilder *builder);
+	inline uint32_t GetNbNodes() const { return mTotalNbNodes; } //!< Catch the number of nodes
 
 private:
 	uint32_t *mIndices;		//!< Indices in the app list. Indices are reorganized during build (permutation).

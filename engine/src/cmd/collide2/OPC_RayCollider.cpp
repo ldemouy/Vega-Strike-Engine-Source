@@ -414,49 +414,6 @@ bool RayCollider::InitQuery(const Ray &world_ray, const Matrix4x4 *world, uint32
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /**
- *	Stabbing query for vanilla AABB trees.
- *	\param		world_ray		[in] stabbing ray in world space
- *	\param		tree			[in] AABB tree
- *	\param		box_indices		[out] indices of stabbed boxes
- *	\return		true if success
- */
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool RayCollider::Collide(const Ray &world_ray, const AABBTree *tree, Container &box_indices)
-{
-	// ### bad design here
-
-	// This is typically called for a scene tree, full of -AABBs-, not full of triangles.
-	// So we don't really have "primitives" to deal with. Hence it doesn't work with
-	// "FirstContact" + "TemporalCoherence".
-
-	// Checkings
-	if (!tree)
-	{
-		return false;
-	}
-
-	// Init collision query
-	// Basically this is only called to initialize precomputed data
-	if (InitQuery(world_ray))
-	{
-		return true;
-	}
-
-	// Perform stabbing query
-	if (static_cast<uint32_t>(mMaxDist) != IEEE_MAX_FLOAT)
-	{
-		_SegmentStab(tree, box_indices);
-	}
-	else
-	{
-		_RayStab(tree, box_indices);
-	}
-
-	return true;
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/**
  *	Recursive stabbing query for normal AABB trees.
  *	\param		node	[in] current collision node
  */

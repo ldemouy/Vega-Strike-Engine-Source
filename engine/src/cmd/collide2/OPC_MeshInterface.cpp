@@ -200,22 +200,3 @@ bool MeshInterface::SetCallback(RequestCallback callback, void *user_data)
 	return true;
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/**
- *	Remaps client's mesh according to a permutation.
- *	\param		nb_indices	[in] number of indices in the permutation (will be checked against number of triangles)
- *	\param		permutation	[in] list of triangle indices
- *	\return		true if success
- */
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool MeshInterface::RemapClient(uint32_t nb_indices, const uint32_t *permutation) const
-{
-	// Checkings
-	if (!nb_indices || !permutation)
-		return false;
-	if (nb_indices != mNbTris)
-		return false;
-
-	// We can't really do that using callbacks
-	return false;
-}

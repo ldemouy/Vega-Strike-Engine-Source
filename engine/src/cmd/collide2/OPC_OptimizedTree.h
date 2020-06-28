@@ -66,20 +66,17 @@ public:                                                                         
 
 class AABBCollisionNode
 {
-	IMPLEMENT_IMPLICIT_NODE(AABBCollisionNode, CollisionAABB)
+public: /* Constructor / Destructor */
+	inline AABBCollisionNode() : mData(0) {}
+	inline ~AABBCollisionNode() {}					 /* Leaf test */
+	inline bool IsLeaf() const { return mData & 1; } /* Data access */
+	inline const AABBCollisionNode *GetPos() const { return (AABBCollisionNode *)mData; }
+	inline const AABBCollisionNode *GetNeg() const { return ((AABBCollisionNode *)mData) + 1; }
+	inline uint32_t GetPrimitive() const { return (uint32_t)(mData >> 1); } /* Stats */
+	inline uint32_t GetNodeSize() const { return SIZEOFOBJECT; }
 
-	inline float GetVolume() const { return mAABB.mExtents.x * mAABB.mExtents.y * mAABB.mExtents.z; }
-	inline float GetSize() const { return mAABB.mExtents.SquareMagnitude(); }
-	inline uint32_t GetRadius() const
-	{
-		uint32_t *Bits = (uint32_t *)&mAABB.mExtents.x;
-		uint32_t Max = Bits[0];
-		if (Bits[1] > Max)
-			Max = Bits[1];
-		if (Bits[2] > Max)
-			Max = Bits[2];
-		return Max;
-	}
+	CollisionAABB mAABB;
+	uintptr_t mData;
 
 	// NB: using the square-magnitude or the true volume of the box, seems to yield better results
 	// (assuming UNC-like informed traversal methods). I borrowed this idea from PQP. The usual "size"
@@ -179,7 +176,6 @@ public:
 
 	// Data access
 	virtual uint32_t GetUsedBytes() const = 0;
-	inline uint32_t GetNbNodes() const { return mNbNodes; }
 
 protected:
 	uint32_t mNbNodes;
