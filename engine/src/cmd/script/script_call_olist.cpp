@@ -84,7 +84,9 @@ varInst *Mission::call_olist(missionNode *node, int mode)
             debug(3, node, mode, "olist.push_back pushing variable");
             printVarInst(3, vi);
             if (mode == SCRIPT_RUN)
+            {
                 call_olist_push_back(node, mode, ovi, vi);
+            }
             deleteVarInst(vi);
             viret = newVarInst(VI_TEMP);
             viret->type = VAR_VOID;
@@ -93,7 +95,9 @@ varInst *Mission::call_olist(missionNode *node, int mode)
         {
             debug(3, node, mode, "olist.pop");
             if (mode == SCRIPT_RUN)
+            {
                 call_olist_pop_back(node, mode, ovi);
+            }
             viret = newVarInst(VI_TEMP);
             viret->type = VAR_VOID;
         }
@@ -149,7 +153,9 @@ varInst *Mission::call_olist(missionNode *node, int mode)
             viret = newVarInst(VI_TEMP);
             viret->type = VAR_VOID;
             if (mode == SCRIPT_RUN)
+            {
                 call_olist_set(node, mode, ovi, index, new_vi);
+            }
             //we have to delete the old - or not?
         }
         else if (method_id == CMT_OLIST_toxml)
@@ -161,7 +167,9 @@ varInst *Mission::call_olist(missionNode *node, int mode)
             }
             debug(3, node, mode, "olist.toxml");
             if (mode == SCRIPT_RUN)
+            {
                 call_olist_toxml(node, mode, ovi);
+            }
             viret = newVarInst(VI_TEMP);
             viret->type = VAR_VOID;
         }

@@ -15,6 +15,8 @@ Unit *Mission::getUnitObject(missionNode *node, int mode, varInst *ovi)
 {
     Unit *my_object = nullptr;
     if (mode == SCRIPT_RUN)
+    {
         my_object = (Unit *)ovi->object;
+    }
     return my_object;
 }

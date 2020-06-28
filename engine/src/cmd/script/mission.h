@@ -433,11 +433,6 @@ public:
 
 class missionNode;
 
-class NopeNadaNothingYoureLettingYourImaginationRunWild
-{
-public:
-    int i;
-};
 class missionThread
 {
 protected:

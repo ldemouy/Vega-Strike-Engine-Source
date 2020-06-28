@@ -70,7 +70,9 @@ varInst *Mission::call_order(missionNode *node, int mode)
         string intstr = getStringArgument(node, mode, 1);
         Order *my_order = nullptr;
         if (mode == SCRIPT_RUN)
+        {
             my_order = new Orders::AggressiveAI(filestr.c_str());
+        }
         viret = newVarInst(VI_TEMP);
         viret->type = VAR_OBJECT;
         viret->objectname = "order";
@@ -129,9 +131,13 @@ varInst *Mission::call_order(missionNode *node, int mode)
         if (mode == SCRIPT_RUN)
         {
             if (itts)
+            {
                 my_order = new Orders::FaceTargetITTS(fini, acc);
+            }
             else
+            {
                 my_order = new Orders::FaceTarget(fini, acc);
+            }
         }
         viret = newVarInst(VI_TEMP);
         viret->type = VAR_OBJECT;
@@ -145,7 +151,9 @@ varInst *Mission::call_order(missionNode *node, int mode)
         float aggr = checkFloatExpr(aggr_node, mode);
         Order *my_order = nullptr;
         if (mode == SCRIPT_RUN)
+        {
             my_order = new Orders::FireAt(aggr);
+        }
         viret = newVarInst(VI_TEMP);
         viret->type = VAR_OBJECT;
         viret->objectname = "order";
@@ -161,7 +169,9 @@ varInst *Mission::call_order(missionNode *node, int mode)
         float fortime = checkFloatExpr(time_node, mode);
         Order *my_order = nullptr;
         if (mode == SCRIPT_RUN)
+        {
             my_order = new Orders::ExecuteFor(enq_order, fortime);
+        }
         viret = newVarInst(VI_TEMP);
         viret->type = VAR_OBJECT;
         viret->objectname = "order";
@@ -177,7 +187,9 @@ varInst *Mission::call_order(missionNode *node, int mode)
         float fortime = checkFloatExpr(time_node, mode);
         Order *my_order = nullptr;
         if (mode == SCRIPT_RUN)
+        {
             my_order = new CloakFor(res, fortime);
+        }
         viret = newVarInst(VI_TEMP);
         viret->type = VAR_OBJECT;
         viret->objectname = "order";
@@ -344,7 +356,9 @@ varInst *Mission::call_order(missionNode *node, int mode)
         olist_t *orderlist = getOListObject(unit_node, mode, unit_vi);
         Order *my_order = nullptr;
         if (mode == SCRIPT_RUN)
+        {
             my_order = new AIOrderList(orderlist);
+        }
         viret = newVarInst(VI_TEMP);
         viret->type = VAR_OBJECT;
         viret->objectname = "order";
@@ -356,7 +370,9 @@ varInst *Mission::call_order(missionNode *node, int mode)
     {
         Order *my_order = nullptr;
         if (mode == SCRIPT_RUN)
+        {
             my_order = new AISuperiority();
+        }
         viret = newVarInst(VI_TEMP);
         viret->type = VAR_OBJECT;
         viret->objectname = "order";
@@ -527,7 +543,9 @@ varInst *Mission::call_order(missionNode *node, int mode)
         else if (method_id == CMT_ORDER_print)
         {
             if (mode == SCRIPT_RUN)
+            {
                 printf("print: order=%s\n", my_order->getOrderDescription().c_str());
+            }
             viret = newVarInst(VI_TEMP);
             viret->type = VAR_VOID;
         }
@@ -535,7 +553,9 @@ varInst *Mission::call_order(missionNode *node, int mode)
         {
             string astring = getStringArgument(node, mode, 1);
             if (mode == SCRIPT_RUN)
+            {
                 my_order->setActionString(astring);
+            }
             viret = newVarInst(VI_TEMP);
             viret->type = VAR_VOID;
         }

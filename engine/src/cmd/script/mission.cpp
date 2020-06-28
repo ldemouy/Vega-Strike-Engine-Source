@@ -93,7 +93,9 @@ void Mission::ConstructMission(const char *configfile, const std::string &script
         dontpanic = true;
     }
     if (top == nullptr)
+    {
         return;
+    }
 
     variables = nullptr;
     origin_node = nullptr;
@@ -116,7 +118,9 @@ Unit *Mission::Objective::getOwner()
     {
         Unit *ret = Owner.GetUnit();
         if (ret == nullptr)
+        {
             objective = ""; //unit died
+        }
         return ret;
     }
     return Owner.GetUnit();
@@ -125,9 +129,13 @@ MessageCenter *Mission::msgcenter = nullptr;
 void Mission::initMission(bool loadscripts)
 {
     if (!top)
+    {
         return;
+    }
     if (msgcenter == nullptr)
+    {
         msgcenter = new MessageCenter();
+    }
     checkMission(top, loadscripts);
     mission_name = getVariable("mission_name", "");
 }
@@ -159,7 +167,9 @@ bool Mission::checkMission(easyDomNode *node, bool loadscripts)
         else if (((*siter)->Name() == "module"))
         {
             if (loadscripts)
+            {
                 DirectorStart((missionNode *)*siter);
+            }
         }
         else if (((*siter)->Name() == "python") && (!this->nextpythonmission))
         {
@@ -214,16 +224,22 @@ int Mission::getPlayerMissionNumber()
     vector<Mission *>::iterator pl = active_missions->begin();
 
     if (pl == active_missions->end())
+    {
         return -1;
+    }
 
     for (; pl != active_missions->end(); ++pl)
     {
         if ((*pl)->player_num == this->player_num)
         {
             if (*pl == this)
+            {
                 return (int)num;
+            }
             else
+            {
                 num++;
+            }
         }
     }
 
@@ -238,11 +254,15 @@ Mission *Mission::getNthPlayerMission(int cp, int missionnum)
         int num = -1;
         vector<Mission *>::iterator pl = active_missions->begin();
         if (pl == active_missions->end())
+        {
             return nullptr;
+        }
         for (; pl != active_missions->end(); ++pl)
         {
             if ((*pl)->player_num == (unsigned int)cp)
+            {
                 num++;
+            }
             if (num == missionnum)
             {
                 //Found it!
@@ -287,8 +307,10 @@ void Mission::terminateMission()
 
         active_missions->erase(f);
     }
-    if (this != (*active_missions)[0])    //Shouldn't this always be true?
+    if (this != (*active_missions)[0]) //Shouldn't this always be true?
+    {
         Mission_delqueue.push_back(this); //only delete if we arent' the base mission
+    }
     //NETFIXME: This routine does not work properly yet.
     BOOST_LOG_TRIVIAL(info) << boost::format("Terminating mission %1% #%2%") % this->mission_name % queuenum;
     if (queuenum >= 0)
@@ -301,16 +323,22 @@ void Mission::terminateMission()
         vector<std::string> *scripts = &_Universe->AccessCockpit(player_num)->savegame->getMissionStringData("active_scripts");
         BOOST_LOG_TRIVIAL(info) << boost::format("Terminating mission #%1% - got %2% scripts") % queuenum % scripts->size();
         if (num < scripts->size())
+        {
             scripts->erase(scripts->begin() + num);
+        }
         vector<std::string> *missions = &_Universe->AccessCockpit(player_num)->savegame->getMissionStringData("active_missions");
         BOOST_LOG_TRIVIAL(info) << boost::format("Terminating mission #%1% - got %2% missions") % queuenum % missions->size();
         if (num < missions->size())
+        {
             missions->erase(missions->begin() + num);
+        }
         BOOST_LOG_TRIVIAL(info) << boost::format("Terminating mission #%1% - %2% scripts remain") % queuenum % scripts->size();
         BOOST_LOG_TRIVIAL(info) << boost::format("Terminating mission #%1% - %2% missions remain") % queuenum % missions->size();
     }
     if (runtime.pymissions)
+    {
         runtime.pymissions->Destroy();
+    }
     runtime.pymissions = nullptr;
 }
 
@@ -334,7 +362,9 @@ void Mission::GetOrigin(QVector &pos, string &planetname)
     }
     bool ok = doPosition(origin_node, &pos.i, nullptr);
     if (!ok)
+    {
         pos.i = pos.j = pos.k = 0.0;
+    }
     planetname = origin_node->attr_value("planet");
 }
 
@@ -348,7 +378,9 @@ void Mission::doSettings(easyDomNode *node)
     {
         easyDomNode *mnode = *siter;
         if (mnode->Name() == "origin")
+        {
             doOrigin(mnode);
+        }
     }
 }
 
@@ -365,7 +397,9 @@ void Mission::doVariables(easyDomNode *node)
 
     vector<easyDomNode *>::const_iterator siter;
     for (siter = node->subnodes.begin(); siter != node->subnodes.end(); siter++)
+    {
         checkVar(*siter);
+    }
 }
 
 /* *********************************************************** */
@@ -387,7 +421,9 @@ void Mission::doFlightgroups(easyDomNode *node)
 {
     vector<easyDomNode *>::const_iterator siter;
     for (siter = node->subnodes.begin(); siter != node->subnodes.end(); siter++)
+    {
         checkFlightgroup(*siter);
+    }
 }
 void Mission::AddFlightgroup(Flightgroup *fg)
 {
@@ -421,7 +457,9 @@ void Mission::checkFlightgroup(easyDomNode *node)
         return;
     }
     if (unittype.empty())
+    {
         unittype = string("unit");
+    }
     int waves_i = atoi(waves.c_str());
     int nr_ships_i = atoi(nr_ships.c_str());
 
@@ -437,14 +475,20 @@ void Mission::checkFlightgroup(easyDomNode *node)
     for (siter = node->subnodes.begin(); siter != node->subnodes.end(); siter++)
     {
         if ((*siter)->Name() == "pos")
+        {
             have_pos = doPosition(*siter, pos, &cf);
+        }
         //        else if ( (*siter)->Name() == "rot" )
         //            doRotation( *siter, rot, &cf );  This function isn't implemented yet
         else if ((*siter)->Name() == "order")
+        {
             doOrder(*siter, cf.fg);
+        }
     }
     if (!have_pos)
+    {
         cout << "don;t have a position in flightgroup " << name << endl;
+    }
     if (terrain_nr.empty())
     {
         cf.terrain_nr = -1;
@@ -452,15 +496,23 @@ void Mission::checkFlightgroup(easyDomNode *node)
     else
     {
         if (terrain_nr == "mission")
+        {
             cf.terrain_nr = -2;
+        }
         else
+        {
             cf.terrain_nr = atoi(terrain_nr.c_str());
+        }
     }
     cf.unittype = CreateFlightgroup::UNIT;
     if (unittype == "vehicle")
+    {
         cf.unittype = CreateFlightgroup::VEHICLE;
+    }
     if (unittype == "building")
+    {
         cf.unittype = CreateFlightgroup::BUILDING;
+    }
     cf.nr_ships = nr_ships_i;
     cf.domnode = (node); //don't hijack node
 
@@ -468,7 +520,9 @@ void Mission::checkFlightgroup(easyDomNode *node)
     cf.fg->pos.j = pos[1];
     cf.fg->pos.k = pos[2];
     for (int i = 0; i < 3; i++)
+    {
         cf.rot[i] = rot[i];
+    }
     cf.nr_ships = nr_ships_i;
     if (ainame[0] == '_')
     {
@@ -509,8 +563,12 @@ Flightgroup *Mission::findFlightgroup(const string &offset_name, const string &f
 {
     vector<Flightgroup *>::const_iterator siter;
     for (siter = flightgroups.begin(); siter != flightgroups.end(); siter++)
+    {
         if ((*siter)->name == offset_name && (fac.empty() || (*siter)->faction == fac))
+        {
             return *siter;
+        }
+    }
     return nullptr;
 }
 
@@ -548,7 +606,9 @@ string Mission::getVariable(string name, string defaultval)
     {
         string scan_name = (*siter)->attr_value("name");
         if (scan_name == name)
+        {
             return (*siter)->attr_value("value");
+        }
     }
     return defaultval;
 }

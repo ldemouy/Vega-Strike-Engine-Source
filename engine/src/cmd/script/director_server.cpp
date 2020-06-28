@@ -80,7 +80,9 @@ void Mission::DirectorLoop()
     try
     {
         if (runtime.pymissions)
+        {
             runtime.pymissions->Execute();
+        }
     }
     catch (...)
     {

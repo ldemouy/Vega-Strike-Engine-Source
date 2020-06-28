@@ -55,7 +55,9 @@ using std::endl;
 bool Mission::checkVarType(varInst *var, enum var_type check_type)
 {
     if (var->type == check_type)
+    {
         return true;
+    }
     return false;
 }
 
@@ -138,7 +140,9 @@ varInst *Mission::lookupLocalVariable(missionNode *asknode)
         varInstMap *map = context->varinsts;
         defnode = (*map)[asknode->script.name];
         if (defnode != nullptr)
+        {
             debug(5, defnode->defvar_node, SCRIPT_RUN, "FOUND local variable defined in that node");
+        }
     }
 #if 0
     //fast index lookup
@@ -152,7 +156,9 @@ varInst *Mission::lookupLocalVariable(missionNode *asknode)
         printf( "ERROR: wrong local variable lookup\n" );
 #endif
     if (defnode == nullptr)
+    {
         return nullptr;
+    }
     return defnode;
 }
 
@@ -192,8 +198,9 @@ varInst *Mission::lookupClassVariable(string modulename, string varname, unsigne
     missionNode *module = runtime.modules[modulename];
     string mname = module->script.name;
     if (classid == 0)
-        //no class instance
+    { //no class instance
         return nullptr;
+    }
     if (classid >= module->script.classvars.size())
     {
         fatalError(module, SCRIPT_RUN, "illegal classvar nr.");
@@ -212,8 +219,9 @@ varInst *Mission::lookupClassVariable(missionNode *asknode)
     string mname = module->script.name;
     string varname = asknode->script.name;
     if (classid == 0)
-        //no class instance
+    { //no class instance
         return nullptr;
+    }
     if (classid >= module->script.classvars.size())
     {
         fatalError(asknode, SCRIPT_RUN, "illegal classvar nr.");
@@ -243,7 +251,9 @@ varInst *Mission::lookupGlobalVariable(missionNode *asknode)
 {
     missionNode *varnode = runtime.global_variables[asknode->script.name];
     if (varnode == nullptr)
+    {
         return nullptr;
+    }
     return varnode->script.varinst;
 }
 
@@ -252,8 +262,9 @@ varInst *Mission::lookupGlobalVariable(missionNode *asknode)
 void Mission::doGlobals(missionNode *node, int mode)
 {
     if (mode == SCRIPT_RUN || (mode == SCRIPT_PARSE && parsemode == PARSE_FULL))
-        //nothing to do
+    { //nothing to do
         return;
+    }
     debug(3, node, mode, "doing global variables");
 
     vector<easyDomNode *>::const_iterator siter;
@@ -384,11 +395,17 @@ void Mission::doDefVar(missionNode *node, int mode, bool global_var)
     }
     varInst *vi = nullptr;
     if (global_var)
+    {
         vi = newVarInst(VI_GLOBAL);
+    }
     else if (scope->tag == DTAG_MODULE)
+    {
         vi = newVarInst(VI_MODULE);
+    }
     else
+    {
         vi = newVarInst(VI_LOCAL);
+    }
     vi->defvar_node = node;
     vi->block_node = scope;
     vi->type = node->script.vartype;
@@ -430,9 +447,7 @@ void Mission::doDefVar(missionNode *node, int mode, bool global_var)
             printVarInst(vi);
         }
     }
-    else
-        //local variable
-        if (!value.empty())
+    else if (!value.empty()) //local variable
     {
         fatalError(node, mode, "initvalue is not allowed for a local variable");
         assert(0);
@@ -492,7 +507,9 @@ void Mission::doSetVar(missionNode *node, int mode)
     {
         node->script.name = node->attr_value("name");
         if (node->script.name.empty())
+        {
             fatalError(node, mode, "you have to give a variable name");
+        }
     }
     debug(3, node, mode, "trying to set variable " + node->script.name);
     if (node->subnodes.size() != 1)
@@ -664,12 +681,16 @@ void Mission::assignVariable(varInst *v1, varInst *v2)
         }
     }
     if (v1->type == VAR_ANY)
+    {
         v1->type = v2->type;
+    }
     v1->float_val = v2->float_val;
     v1->int_val = v2->int_val;
     v1->bool_val = v2->bool_val;
     if (!(v2->objectname.empty()))
+    {
         v1->objectname = v2->objectname;
+    }
     v1->object = v2->object;
 }
 

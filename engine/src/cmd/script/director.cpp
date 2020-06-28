@@ -72,13 +72,19 @@ void Mission::DirectorLoop()
     double oldgametime = gametime;
     gametime += SIMULATION_ATOM; //elapsed;
     if (getTimeCompression() >= .1)
+    {
         if (gametime <= oldgametime)
+        {
             gametime = SIMULATION_ATOM;
+        }
+    }
     try
     {
         BriefingLoop();
         if (runtime.pymissions)
+        {
             runtime.pymissions->Execute();
+        }
     }
     catch (...)
     {
@@ -95,7 +101,9 @@ void Mission::DirectorLoop()
 void Mission::DirectorEnd()
 {
     if (director == nullptr)
+    {
         return;
+    }
     RunDirectorScript("endgame");
 }
 
@@ -117,10 +125,14 @@ void Mission::DirectorShipDestroyed(Unit *unit)
     char buf[512];
 
     if ((fg->faction.length() + fg->type.length() + fg->name.length() + 12 + 30) < sizeof(buf))
+    {
         sprintf(buf, "Ship destroyed: %s:%s:%s-%d", fg->faction.c_str(), fg->type.c_str(),
                 fg->name.c_str(), unit->getFgSubnumber());
+    }
     else
+    {
         sprintf(buf, "Ship destroyed: (ERROR)-%d", unit->getFgSubnumber());
+    }
 
     msgcenter->add("game", "all", buf);
 
@@ -165,22 +177,32 @@ bool Mission::BriefingInProgress()
 void Mission::BriefingStart()
 {
     if (briefing)
+    {
         BriefingEnd();
+    }
     briefing = new Briefing();
     if (runtime.pymissions)
+    {
         runtime.pymissions->callFunction("initbriefing");
+    }
 }
 void Mission::BriefingUpdate()
 {
     if (briefing)
+    {
         briefing->Update();
+    }
 }
 
 void Mission::BriefingLoop()
 {
     if (briefing)
+    {
         if (runtime.pymissions)
+        {
             runtime.pymissions->callFunction("loopbriefing");
+        }
+    }
 }
 class TextPlane *Mission::BriefingRender()
 {
@@ -191,9 +213,13 @@ class TextPlane *Mission::BriefingRender()
         string str1;
         gameMessage g1, g2;
         if (msgcenter->last(0, g1, who))
+        {
             str1 = g1.message;
+        }
         if (msgcenter->last(1, g2, who))
+        {
             str1 = str1 + string("\n") + g2.message;
+        }
         briefing->tp.SetText(str1);
         briefing->Render();
         return &briefing->tp;
@@ -206,7 +232,9 @@ void Mission::BriefingEnd()
     if (briefing)
     {
         if (runtime.pymissions)
+        {
             runtime.pymissions->callFunction("endbriefing");
+        }
         delete briefing;
         briefing = nullptr;
     }

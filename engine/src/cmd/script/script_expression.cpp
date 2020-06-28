@@ -132,7 +132,9 @@ varInst *Mission::doMath(missionNode *node, int mode)
     res_vi->type = res1_vi->type;
     assignVariable(res_vi, res1_vi);
     if (res_vi->type == VAR_ANY)
+    {
         res_vi->type = VAR_FLOAT;
+    }
     deleteVarInst(res1_vi);
     for (int i = 1; i < len; i++)
     {
@@ -596,9 +598,13 @@ bool Mission::doAndOr(missionNode *node, int mode)
     ok = true; //this line added temporarily by chuck_starchaser
     //no difference between parse/run
     if (node->tag == DTAG_AND_EXPR)
+    {
         ok = true;
+    }
     else if (node->tag == DTAG_OR_EXPR)
+    {
         ok = false;
+    }
     vector<easyDomNode *>::const_iterator siter;
 
     int i = 0;
@@ -607,13 +613,21 @@ bool Mission::doAndOr(missionNode *node, int mode)
         missionNode *snode = (missionNode *)*siter;
         bool res = checkBoolExpr(snode, mode);
         if (node->tag == DTAG_AND_EXPR)
+        {
             ok = ok && res;
+        }
         else if (node->tag == DTAG_OR_EXPR)
+        {
             ok = ok || res;
+        }
     }
     if (mode == SCRIPT_PARSE)
+    {
         if (i < 2)
+        {
             warning("less than two arguments for and/or");
+        }
+    }
     return ok; //FIXME ok not initialized by all paths --chuck_starchaser
 }
 

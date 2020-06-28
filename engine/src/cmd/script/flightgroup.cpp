@@ -17,27 +17,37 @@ Flightgroup *Flightgroup::newFlightgroup(const std::string &name,
     Flightgroup *fg = mis->findFlightgroup(name, faction);
     Flightgroup *fgtmp = fg;
     if (fg == nullptr)
+    {
         fg = new Flightgroup;
+    }
     fg->Init(fgtmp, name, type, faction, order, num_ships, num_waves, mis);
     if (!logo_tex.empty())
     {
         if (logo_alp.empty())
+        {
             fg->squadLogo = new Texture(logo_tex.c_str(), 0, MIPMAP);
+        }
         else
+        {
             fg->squadLogo = new Texture(logo_tex.c_str(), logo_alp.c_str(), 0, MIPMAP);
+        }
     }
     return fg;
 }
 Flightgroup::~Flightgroup()
 {
     if (squadLogo)
+    {
         delete squadLogo;
+    }
 }
 
 Flightgroup &Flightgroup::operator=(Flightgroup &other)
 {
     printf("warning: may not work properly");
     if (squadLogo)
+    {
         squadLogo = other.squadLogo->Clone();
+    }
     return other;
 }

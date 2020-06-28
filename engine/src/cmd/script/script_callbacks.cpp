@@ -65,18 +65,26 @@ string varToString(varInst *vi)
     case VAR_OBJECT:
     default:
         if (vi->objectname == "string")
+        {
             return *((string *)vi->object);
+        }
         else
+        {
             return XMLSupport::tostring((long)vi->object);
+        }
     }
 }
 
 void Mission::doCall_toxml(string module, varInst *ovi)
 {
     if (module == "_olist")
+    {
         call_olist_toxml(nullptr, SCRIPT_RUN, ovi);
+    }
     else if (module == "_unit")
+    {
         call_unit_toxml(nullptr, SCRIPT_RUN, ovi);
+    }
 }
 
 varInst *Mission::doCall(missionNode *node, int mode, string module, string method)
@@ -90,7 +98,9 @@ varInst *Mission::doCall(missionNode *node, int mode, string module, string meth
     else if (module_id == CMT_STD)
     {
         if (mode == SCRIPT_PARSE)
+        {
             node->script.method_id = module_std_map[method];
+        }
         callback_module_std_type method_id = (callback_module_std_type)node->script.method_id;
         if (method_id == CMT_STD_Rnd)
         {
@@ -166,7 +176,9 @@ varInst *Mission::doCall(missionNode *node, int mode, string module, string meth
         {
             float diff = getFloatArg(node, mode, 0);
             if (mode == SCRIPT_RUN)
+            {
                 g_game.difficulty = diff;
+            }
             vi = newVarInst(VI_TEMP);
             vi->type = VAR_VOID;
         }
@@ -233,15 +245,25 @@ varInst *Mission::doCall(missionNode *node, int mode, string module, string meth
     else if (module_id == CMT_IO)
     {
         if (method == "PrintFloats")
+        {
             vi = callPrintFloats(node, mode);
+        }
         else if (method == "printf")
+        {
             vi = call_io_printf(node, mode);
+        }
         else if (method == "sprintf")
+        {
             vi = call_io_sprintf(node, mode);
+        }
         else if (method == "message")
+        {
             vi = call_io_message(node, mode);
+        }
         else if (method == "printMsgList")
+        {
             vi = call_io_printmsglist(node, mode);
+        }
     }
     else if (module_id == CMT_BRIEFING)
     {
@@ -333,7 +355,9 @@ varInst *Mission::call_terminateMission(missionNode *node, int mode)
 {
     getBoolArg(node, mode, 0);
     if (mode == SCRIPT_RUN)
+    {
         terminateMission();
+    }
     varInst *viret = newVarInst(VI_TEMP);
     viret->type = VAR_VOID;
     return viret;
@@ -370,8 +394,12 @@ varInst *Mission::call_isequal(missionNode *node, int mode)
     if (mode == SCRIPT_RUN)
     {
         if (other_vi->objectname == ovi->objectname)
+        {
             if (other_vi->object == ovi->object)
+            {
                 res = true;
+            }
+        }
     }
     deleteVarInst(ovi);
     deleteVarInst(other_vi);
@@ -384,7 +412,9 @@ varInst *Mission::callGetGameTime(missionNode *node, int mode)
     varInst *vi = newVarInst(VI_TEMP);
     vi->type = VAR_FLOAT;
     if (mode == SCRIPT_RUN)
+    {
         vi->float_val = gametime;
+    }
     return vi;
 }
 
@@ -393,7 +423,9 @@ varInst *Mission::callResetTimeCompression(missionNode *node, int mode)
     varInst *vi = newVarInst(VI_TEMP);
     vi->type = VAR_VOID;
     if (mode == SCRIPT_RUN)
+    {
         setTimeCompression(1.0);
+    }
     return vi;
 }
 
@@ -421,7 +453,9 @@ varInst *Mission::callGetSystemFile(missionNode *node, int mode, StarSystem *ss)
     {
         deleteVarInst(vi);
         if (ss == nullptr)
+        {
             ss = _Universe->activeStarSystem();
+        }
         string sysname = ss->getFileName();
         vi = call_string_new(node, mode, sysname);
     }
@@ -465,7 +499,9 @@ varInst *Mission::callGetNumAdjacentSystems(missionNode *node, int mode)
     string sysname = getStringArgument(node, mode, 0);
     int ret = 0;
     if (mode == SCRIPT_RUN)
+    {
         ret = _Universe->getAdjacentStarSystems(sysname).size();
+    }
     varInst *vi = newVarInst(VI_TEMP);
     vi->type = VAR_INT;
     vi->int_val = ret;
@@ -500,7 +536,9 @@ varInst *Mission::call_io_message(missionNode *node, int mode)
         args[i] = getArgument(node, mode, i + 1);
         args_vi[i] = checkObjectExpr(args[i], mode);
         if (mode == SCRIPT_RUN)
+        {
             args_str[i] = call_string_getstring(node, mode, args_vi[i]);
+        }
         deleteVarInst(args_vi[i]);
     }
     if (mode == SCRIPT_RUN)
@@ -674,9 +712,13 @@ varInst *Mission::call_io_printf(missionNode *node, int mode)
             {
                 printf("%s", beforestring.c_str());
                 if (res == true)
+                {
                     printf("true");
+                }
                 else
+                {
                     printf("false");
+                }
             }
         }
         else if (breakstring[1] == 's')
@@ -701,7 +743,9 @@ varInst *Mission::call_io_printf(missionNode *node, int mode)
         current_arg++;
     }
     if (mode == SCRIPT_RUN)
+    {
         printf("%s", endstring.c_str());
+    }
     varInst *viret = newVarInst(VI_TEMP);
     viret->type = VAR_VOID;
     deleteVarInst(str_vi);
@@ -736,16 +780,22 @@ varInst *Mission::callPrintFloats(missionNode *node, int mode)
     string s1 = node->attr_value("s1");
     string s2 = node->attr_value("s2");
     if (mode == SCRIPT_RUN)
+    {
         cout << "print: " << s1;
+    }
     int len = node->subnodes.size();
     for (int i = 0; i < len; i++)
     {
         double res = checkFloatExpr((missionNode *)node->subnodes[i], mode);
         if (mode == SCRIPT_RUN)
+        {
             cout << " " << res << " ,";
+        }
     }
     if (mode == SCRIPT_RUN)
+    {
         cout << " " << s2 << endl;
+    }
     varInst *vi = newVarInst(VI_TEMP);
     vi->type = VAR_VOID;
 
@@ -855,7 +905,9 @@ QVector Mission::getVec3Arg(missionNode *node, int mode, int arg_nr)
 
     QVector vec3;
     if (mode == SCRIPT_RUN)
+    {
         vec3 = call_olist_tovector(pos_node, mode, pos_vi);
+    }
     deleteVarInst(pos_vi);
     return vec3;
 }

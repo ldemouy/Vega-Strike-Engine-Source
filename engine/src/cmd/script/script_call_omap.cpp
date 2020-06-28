@@ -112,7 +112,9 @@ varInst *Mission::call_omap(missionNode *node, int mode)
                 varInst *back_vi = (*my_object)[name];
                 assignVariable(viret, back_vi);
                 if (back_vi->type > 10)
+                {
                     assert(0);
+                }
                 deleteVarInst(back_vi); //this won't delete it
             }
         }

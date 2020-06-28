@@ -167,7 +167,9 @@ void Mission::removeContextStack()
     contextStack *cstack = runtime.cur_thread->exec_stack.back();
     runtime.cur_thread->exec_stack.pop_back();
     if (cstack->return_value != nullptr)
+    {
         deleteVarInst(cstack->return_value, true);
+    }
     delete cstack;
 }
 
@@ -226,7 +228,9 @@ varInst *Mission::doScript(missionNode *node, int mode, varInstMap *varmap)
         {
             node->script.name = node->attr_value("name");
             if (node->script.name.empty())
+            {
                 fatalError(node, mode, "you have to give a script name");
+            }
             current_module->script.scripts[node->script.name] = node;
             debug(5, node, mode, "added to module " + current_module->script.name + " : script =" + node->script.name);
 
@@ -234,9 +238,13 @@ varInst *Mission::doScript(missionNode *node, int mode, varInstMap *varmap)
 
             string retvalue = node->attr_value("type");
             if (retvalue.empty() || retvalue == "void")
+            {
                 node->script.vartype = VAR_VOID;
+            }
             else
+            {
                 node->script.vartype = vartypeFromString(retvalue);
+            }
         }
         scope_stack.push_back(node);
     }
@@ -259,7 +267,9 @@ varInst *Mission::doScript(missionNode *node, int mode, varInstMap *varmap)
         {
             doArguments(snode, mode, varmap);
             if (mode == SCRIPT_PARSE && parsemode == PARSE_DECL)
+            {
                 node->script.argument_node = snode;
+            }
             char buffer[200];
             sprintf(buffer, "nr of arguments=%d", node->script.nr_arguments);
             debug(3, node, mode, buffer);
@@ -460,9 +470,13 @@ void Mission::doBlock(missionNode *node, int mode)
 {
     trace(node, mode);
     if (mode == SCRIPT_PARSE)
+    {
         scope_stack.push_back(node);
+    }
     if (mode == SCRIPT_RUN)
+    {
         addContext(node);
+    }
     vector<easyDomNode *>::const_iterator siter;
     for (siter = node->subnodes.begin(); siter != node->subnodes.end() && !have_return(mode); siter++)
     {
@@ -470,9 +484,13 @@ void Mission::doBlock(missionNode *node, int mode)
         checkStatement(snode, mode);
     }
     if (mode == SCRIPT_RUN)
+    {
         removeContext();
+    }
     if (mode == SCRIPT_PARSE)
+    {
         scope_stack.pop_back();
+    }
 }
 
 /* *********************************************************** */
@@ -520,9 +538,13 @@ varInst *Mission::doExec(missionNode *node, int mode)
 
     int nr_arguments;
     if (arg_node == nullptr)
+    {
         nr_arguments = 0;
+    }
     else
+    {
         nr_arguments = arg_node->script.nr_arguments;
+    }
     int nr_exec_args = node->subnodes.size();
     if (nr_arguments != nr_exec_args)
     {
@@ -589,7 +611,9 @@ varInst *Mission::doExec(missionNode *node, int mode)
 
         unsigned int classid = 0;
         if (old_module == module)
+        {
             classid = runtime.cur_thread->classid_stack.back();
+        }
         runtime.cur_thread->module_stack.push_back(module);
         runtime.cur_thread->classid_stack.push_back(classid);
 
@@ -659,9 +683,13 @@ void Mission::deleteVarMap(varInstMap *vmap)
     {
         varInst *vi = (*iter).second;
         if (vi == nullptr)
+        {
             debug(12, nullptr, 0, "nullptrVAR " + (*iter).first + "\n");
+        }
         else
+        {
             deleteVarInst(vi, true);
+        }
     }
 }
 

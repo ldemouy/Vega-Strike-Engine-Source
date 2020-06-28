@@ -16,14 +16,20 @@ Flightgroup *Flightgroup::newFlightgroup(const std::string &name,
     Flightgroup *fg = mis->findFlightgroup(name, faction);
     Flightgroup *fgtmp = fg;
     if (fg == nullptr)
+    {
         fg = new Flightgroup;
+    }
     fg->Init(fgtmp, name, type, faction, order, num_ships, num_waves, mis);
     if (!logo_tex.empty())
     {
         if (logo_alp.empty())
+        {
             fg->squadLogoStr = logo_tex;
+        }
         else
+        {
             fg->squadLogoStr = logo_alp;
+        }
     }
     return fg;
 }

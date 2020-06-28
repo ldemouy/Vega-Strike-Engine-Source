@@ -76,7 +76,9 @@ varInst *Mission::call_string(missionNode *node, int mode)
         else if (method_id == CMT_STRING_print)
         {
             if (mode == SCRIPT_RUN)
+            {
                 call_string_print(node, mode, ovi);
+            }
             viret = newVarInst(VI_TEMP);
             viret->type = VAR_VOID;
         }
@@ -91,7 +93,9 @@ varInst *Mission::call_string(missionNode *node, int mode)
                 string s1 = call_string_getstring(node, mode, ovi);
                 string s2 = call_string_getstring(node, mode, other_vi);
                 if (s1 == s2)
+                {
                     res = true;
+                }
             }
             deleteVarInst(other_vi);
             viret = newVarInst(VI_TEMP);
@@ -110,7 +114,9 @@ varInst *Mission::call_string(missionNode *node, int mode)
                 string s1 = call_string_getstring(node, mode, ovi);
                 string s2 = call_string_getstring(node, mode, other_vi);
                 if (s1.find(s2, 0) == 0)
+                {
                     res = true;
+                }
             }
             deleteVarInst(other_vi);
             viret = newVarInst(VI_TEMP);
@@ -124,7 +130,7 @@ varInst *Mission::call_string(missionNode *node, int mode)
         }
         deleteVarInst(ovi);
         return viret;
-    }            //else objects
+    }               //else objects
     return nullptr; //never reach
 }
 
@@ -135,7 +141,9 @@ string Mission::getStringArgument(missionNode *node, int mode, int arg_nr)
 
     string retstr;
     if (mode == SCRIPT_RUN)
+    {
         retstr = call_string_getstring(arg_node, mode, arg_vi);
+    }
     return retstr;
 }
 

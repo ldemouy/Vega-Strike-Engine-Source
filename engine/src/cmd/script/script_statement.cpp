@@ -126,9 +126,13 @@ void Mission::doIf(missionNode *node, int mode)
     else
     {
         if (ok)
+        {
             checkStatement(node->script.if_block[1], mode);
+        }
         else
+        {
             checkStatement(node->script.if_block[2], mode);
+        }
     }
 }
 
@@ -149,6 +153,8 @@ void Mission::doWhile(missionNode *node, int mode)
     {
         //runtime
         while (checkBoolExpr(node->script.while_arg[0], mode))
+        {
             checkStatement(node->script.while_arg[1], mode);
+        }
     }
 }

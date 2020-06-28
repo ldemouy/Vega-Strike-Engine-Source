@@ -78,7 +78,7 @@ Best:
 _Universe->AccessCockpit()->GetParent();
 #endif
 
-static Unit *getIthUnit(auto uiter, int i);
+static Unit *getIthUnit(UnitCollection::UnitIterator uiter, int i);
 
 varInst *Mission::call_unit(missionNode *node, int mode)
 {
@@ -117,7 +117,9 @@ varInst *Mission::call_unit(missionNode *node, int mode)
     {
         Unit *my_unit = nullptr;
         if (mode == SCRIPT_RUN)
+        {
             my_unit = _Universe->AccessCockpit()->GetParent();
+        }
         viret = newVarInst(VI_TEMP);
         viret->type = VAR_OBJECT;
         viret->objectname = "unit";
@@ -177,7 +179,9 @@ varInst *Mission::call_unit(missionNode *node, int mode)
         {
             destination_vi = checkObjectExpr(faction_node, mode);
             if (mode == SCRIPT_RUN)
+            {
                 destinations = *((string *)destination_vi->object);
+            }
         }
         QVector pos(getFloatArg(node, mode, 6),
                     getFloatArg(node, mode, 7),
@@ -186,16 +190,22 @@ varInst *Mission::call_unit(missionNode *node, int mode)
         {
             logo_tex = getStringArgument(node, mode, 9);
             if (node->subnodes.size() > 10)
+            {
                 logo_alp = getStringArgument(node, mode, 10);
+            }
         }
         Unit *my_unit = nullptr;
         if (mode == SCRIPT_RUN)
         {
             clsptr clstyp = UNITPTR;
             if (method_id == CMT_UNIT_launchJumppoint || method_id == CMT_UNIT_launchPlanet)
+            {
                 clstyp = PLANETPTR;
+            }
             else if (method_id == CMT_UNIT_launchNebula)
+            {
                 clstyp = NEBULAPTR;
+            }
             string name_string = *((string *)name_vi->object);
             string faction_string = *((string *)faction_vi->object);
             string type_string = *((string *)type_vi->object);
@@ -216,7 +226,9 @@ varInst *Mission::call_unit(missionNode *node, int mode)
             cf.nr_ships = nr_of_ships;
             cf.fg->pos = pos;
             for (int i = 0; i < 3; i++)
+            {
                 cf.rot[i] = 0.0;
+            }
 #ifdef ORDERDEBUG
             VSFileSystem::vs_fprintf(stderr, "cunl%x", this);
             fflush(stderr);
@@ -224,7 +236,9 @@ varInst *Mission::call_unit(missionNode *node, int mode)
             Unit *tmp = call_unit_launch(&cf, clstyp, destinations);
             number_of_ships += nr_of_ships;
             if (!my_unit)
+            {
                 my_unit = tmp;
+            }
 #ifdef ORDERDEBUG
             VSFileSystem::vs_fprintf(stderr, "ecun");
             fflush(stderr);
@@ -246,7 +260,9 @@ varInst *Mission::call_unit(missionNode *node, int mode)
         int quantity = getIntArg(node, mode, 0);
         string category;
         if (node->subnodes.size() > 1)
+        {
             category = getStringArgument(node, mode, 1);
+        }
         varInst *vireturn = nullptr;
         vireturn = call_olist_new(node, mode);
         if (mode == SCRIPT_RUN)
@@ -272,7 +288,9 @@ varInst *Mission::call_unit(missionNode *node, int mode)
                     {
                         ret = &mpl->GetCargo(rand() % max);
                         if (ret->GetContent().find("mission") == string::npos)
+                        {
                             break;
+                        }
                     }
                 }
                 else
@@ -325,7 +343,9 @@ varInst *Mission::call_unit(missionNode *node, int mode)
         {
             UnitContainer *cont = nullptr;
             if (mode == SCRIPT_RUN)
+            {
                 cont = new UnitContainer(my_unit);
+            }
             viret = newVarInst(VI_TEMP);
             viret->type = VAR_OBJECT;
             viret->objectname = "unitContainer";
@@ -335,7 +355,9 @@ varInst *Mission::call_unit(missionNode *node, int mode)
         {
             Unit *ret = nullptr;
             if (mode == SCRIPT_RUN)
+            {
                 ret = ((UnitContainer *)my_unit)->GetUnit();
+            }
             viret = newVarInst(VI_TEMP);
             viret->type = VAR_OBJECT;
             viret->objectname = "unit";
@@ -345,7 +367,9 @@ varInst *Mission::call_unit(missionNode *node, int mode)
         {
             UnitContainer *cont = (UnitContainer *)my_unit;
             if (mode == SCRIPT_RUN)
+            {
                 delete cont;
+            }
             viret = newVarInst(VI_TEMP);
             viret->type = VAR_VOID;
         }
@@ -423,7 +447,9 @@ varInst *Mission::call_unit(missionNode *node, int mode)
         {
             Unit *res_unit = nullptr;
             if (mode == SCRIPT_RUN)
+            {
                 res_unit = my_unit->Target();
+            }
             viret = newVarInst(VI_TEMP);
             viret->type = VAR_OBJECT;
             viret->objectname = "unit";
@@ -448,7 +474,9 @@ varInst *Mission::call_unit(missionNode *node, int mode)
         {
             string s = getStringArgument(node, mode, 1);
             if (mode == SCRIPT_RUN)
+            {
                 my_unit->name = s;
+            }
             viret = newVarInst(VI_TEMP);
             viret->type = VAR_VOID;
         }
@@ -456,7 +484,9 @@ varInst *Mission::call_unit(missionNode *node, int mode)
         {
             Unit *res_unit = nullptr;
             if (mode == SCRIPT_RUN)
+            {
                 res_unit = my_unit->Threat();
+            }
             viret = newVarInst(VI_TEMP);
             viret->type = VAR_OBJECT;
             viret->objectname = "unit";
@@ -466,7 +496,9 @@ varInst *Mission::call_unit(missionNode *node, int mode)
         {
             Unit *other_unit = getUnitArg(node, mode, 1);
             if (mode == SCRIPT_RUN)
+            {
                 my_unit->Target(other_unit);
+            }
             viret = newVarInst(VI_TEMP);
             viret->type = VAR_VOID;
         }
@@ -482,7 +514,9 @@ varInst *Mission::call_unit(missionNode *node, int mode)
             float dist = 0.0;
             Unit *un = getUnitArg(node, mode, 1);
             if (mode == SCRIPT_RUN)
+            {
                 dist = (my_unit->Position() - un->Position()).Magnitude() - my_unit->rSize() - un->rSize();
+            }
             viret = newVarInst(VI_TEMP);
             viret->type = VAR_FLOAT;
             viret->float_val = dist;
@@ -492,7 +526,9 @@ varInst *Mission::call_unit(missionNode *node, int mode)
             QVector vec3 = getVec3Arg(node, mode, 1);
             double dist = 0.0;
             if (mode == SCRIPT_RUN)
+            {
                 dist = (my_unit->Position() - vec3).Magnitude() - my_unit->rSize();
+            }
             viret = newVarInst(VI_TEMP);
             viret->type = VAR_FLOAT;
             viret->float_val = dist;
@@ -533,7 +569,9 @@ varInst *Mission::call_unit(missionNode *node, int mode)
         {
             float res = 0.0;
             if (mode == SCRIPT_RUN)
+            {
                 res = my_unit->FShieldData();
+            }
             viret = newVarInst(VI_TEMP);
             viret->type = VAR_FLOAT;
             viret->float_val = res;
@@ -542,7 +580,9 @@ varInst *Mission::call_unit(missionNode *node, int mode)
         {
             float res = 0.0;
             if (mode == SCRIPT_RUN)
+            {
                 res = my_unit->RShieldData();
+            }
             viret = newVarInst(VI_TEMP);
             viret->type = VAR_FLOAT;
             viret->float_val = res;
@@ -551,7 +591,9 @@ varInst *Mission::call_unit(missionNode *node, int mode)
         {
             float res = 0.0;
             if (mode == SCRIPT_RUN)
+            {
                 res = my_unit->LShieldData();
+            }
             viret = newVarInst(VI_TEMP);
             viret->type = VAR_FLOAT;
             viret->float_val = res;
@@ -560,7 +602,9 @@ varInst *Mission::call_unit(missionNode *node, int mode)
         {
             float res = 0.0;
             if (mode == SCRIPT_RUN)
+            {
                 res = my_unit->BShieldData();
+            }
             viret = newVarInst(VI_TEMP);
             viret->type = VAR_FLOAT;
             viret->float_val = res;
@@ -569,7 +613,9 @@ varInst *Mission::call_unit(missionNode *node, int mode)
         {
             float res = 0.0;
             if (mode == SCRIPT_RUN)
+            {
                 res = my_unit->EnergyData();
+            }
             viret = newVarInst(VI_TEMP);
             viret->type = VAR_FLOAT;
             viret->float_val = res;
@@ -578,7 +624,9 @@ varInst *Mission::call_unit(missionNode *node, int mode)
         {
             float res = 0.0;
             if (mode == SCRIPT_RUN)
+            {
                 res = my_unit->GetHull();
+            }
             viret = newVarInst(VI_TEMP);
             viret->type = VAR_FLOAT;
             viret->float_val = res;
@@ -587,7 +635,9 @@ varInst *Mission::call_unit(missionNode *node, int mode)
         {
             float res = 0.0;
             if (mode == SCRIPT_RUN)
+            {
                 res = my_unit->rSize();
+            }
             viret = newVarInst(VI_TEMP);
             viret->type = VAR_FLOAT;
             viret->float_val = res;
@@ -596,7 +646,9 @@ varInst *Mission::call_unit(missionNode *node, int mode)
         {
             bool res = false;
             if (mode == SCRIPT_RUN)
+            {
                 res = my_unit->isStarShip();
+            }
             viret = newVarInst(VI_TEMP);
             viret->type = VAR_BOOL;
             viret->bool_val = res;
@@ -638,7 +690,9 @@ varInst *Mission::call_unit(missionNode *node, int mode)
         {
             bool res = false;
             if (mode == SCRIPT_RUN)
+            {
                 res = my_unit->isJumppoint();
+            }
             viret = newVarInst(VI_TEMP);
             viret->type = VAR_BOOL;
             viret->bool_val = res;
@@ -648,7 +702,9 @@ varInst *Mission::call_unit(missionNode *node, int mode)
             float res = 0.0;
             Unit *other_unit = getUnitArg(node, mode, 1);
             if (mode == SCRIPT_RUN)
+            {
                 res = my_unit->getRelation(other_unit);
+            }
             viret = newVarInst(VI_TEMP);
             viret->type = VAR_FLOAT;
             viret->float_val = res;
@@ -662,7 +718,9 @@ varInst *Mission::call_unit(missionNode *node, int mode)
             {
                 Cockpit *tmp;
                 if ((tmp = _Universe->isPlayerStarship(my_unit)))
+                {
                     viret->float_val = tmp->credits;
+                }
             }
             return viret;
         }
@@ -674,7 +732,9 @@ varInst *Mission::call_unit(missionNode *node, int mode)
             {
                 Cockpit *tmp;
                 if ((tmp = _Universe->isPlayerStarship(my_unit)))
+                {
                     tmp->credits += credits;
+                }
             }
             viret = newVarInst(VI_TEMP);
             viret->type = VAR_VOID;
@@ -683,7 +743,9 @@ varInst *Mission::call_unit(missionNode *node, int mode)
         else if (method_id == CMT_UNIT_Jump)
         {
             if (mode == SCRIPT_RUN)
+            {
                 my_unit->ActivateJumpDrive();
+            }
             viret = newVarInst(VI_TEMP);
             viret->type = VAR_VOID;
         }
@@ -692,7 +754,7 @@ varInst *Mission::call_unit(missionNode *node, int mode)
 #if 0
             //TODO
             if (mode == SCRIPT_RUN)
-                res = my_unit->FShieldData();
+                {res = my_unit->FShieldData();}
             viret = newVarInst( VI_TEMP );
             viret->type = VAR_VOID;
             viret->float_val = res;
@@ -702,7 +764,9 @@ varInst *Mission::call_unit(missionNode *node, int mode)
         {
             Order *my_order = nullptr;
             if (mode == SCRIPT_RUN)
+            {
                 my_order = my_unit->getAIState();
+            }
             viret = newVarInst(VI_TEMP);
             viret->type = VAR_OBJECT;
             viret->objectname = "order";
@@ -712,7 +776,9 @@ varInst *Mission::call_unit(missionNode *node, int mode)
         {
             bool ret = false;
             if (mode == SCRIPT_RUN)
+            {
                 ret = my_unit->InCorrectStarSystem(_Universe->activeStarSystem());
+            }
             viret = newVarInst(VI_TEMP);
             viret->type = VAR_BOOL;
             viret->bool_val = ret;
@@ -720,7 +786,9 @@ varInst *Mission::call_unit(missionNode *node, int mode)
         else if (method_id == CMT_UNIT_removeFromGame)
         {
             if (mode == SCRIPT_RUN)
+            {
                 my_unit->Kill();
+            }
             viret = newVarInst(VI_TEMP);
             viret->type = VAR_VOID;
         }
@@ -731,9 +799,13 @@ varInst *Mission::call_unit(missionNode *node, int mode)
                 string fgname;
                 Flightgroup *fg = my_unit->getFlightgroup();
                 if (fg)
+                {
                     fgname = fg->name;
+                }
                 if (fgname.empty())
+                {
                     fgname = "-none-";
+                }
                 varInst *str_vi = call_string_new(node, mode, fgname);
                 viret = str_vi;
             }
@@ -751,7 +823,9 @@ varInst *Mission::call_unit(missionNode *node, int mode)
             {
                 ret_unit = (my_unit->getFlightgroup() != nullptr) ? my_unit->getFlightgroup()->leader.GetUnit() : my_unit;
                 if (ret_unit == nullptr)
+                {
                     ret_unit = my_unit;
+                }
             }
             viret = newVarInst(VI_TEMP);
             viret->type = VAR_OBJECT;
@@ -762,8 +836,12 @@ varInst *Mission::call_unit(missionNode *node, int mode)
         {
             Unit *un = getUnitArg(node, mode, 1);
             if (mode == SCRIPT_RUN)
+            {
                 if (my_unit->getFlightgroup() != nullptr)
+                {
                     my_unit->getFlightgroup()->leader.SetUnit(un);
+                }
+            }
             viret = newVarInst(VI_TEMP);
             viret->type = VAR_VOID;
         }
@@ -771,15 +849,21 @@ varInst *Mission::call_unit(missionNode *node, int mode)
         {
             string fgdir("b");
             if (mode == SCRIPT_RUN)
+            {
                 fgdir = (my_unit->getFlightgroup() != nullptr) ? my_unit->getFlightgroup()->directive : string("b");
+            }
             viret = call_string_new(node, mode, fgdir);
         }
         else if (method_id == CMT_UNIT_setFgDirective)
         {
             string inp = getStringArgument(node, mode, 1);
             if (mode == SCRIPT_RUN)
+            {
                 if (my_unit->getFlightgroup() != nullptr)
+                {
                     my_unit->getFlightgroup()->directive = inp;
+                }
+            }
             viret = newVarInst(VI_TEMP);
             viret->type = VAR_VOID;
         }
@@ -787,7 +871,9 @@ varInst *Mission::call_unit(missionNode *node, int mode)
         {
             int num = 0;
             if (mode == SCRIPT_RUN)
+            {
                 num = my_unit->getFgSubnumber();
+            }
             viret = newVarInst(VI_TEMP);
             viret->type = VAR_INT;
             viret->int_val = num;
@@ -795,7 +881,9 @@ varInst *Mission::call_unit(missionNode *node, int mode)
         else if (method_id == CMT_UNIT_scanSystem)
         {
             if (mode == SCRIPT_RUN)
+            {
                 assert(0);
+            }
             viret = newVarInst(VI_TEMP);
             viret->type = VAR_VOID;
         }
@@ -803,7 +891,9 @@ varInst *Mission::call_unit(missionNode *node, int mode)
         {
             Unit *ret_unit = nullptr;
             if (mode == SCRIPT_RUN)
+            {
                 assert(0);
+            }
             viret = newVarInst(VI_TEMP);
             viret->type = VAR_OBJECT;
             viret->objectname = "unit";
@@ -813,7 +903,9 @@ varInst *Mission::call_unit(missionNode *node, int mode)
         {
             Unit *ret_unit = nullptr;
             if (mode == SCRIPT_RUN)
+            {
                 assert(0);
+            }
             viret = newVarInst(VI_TEMP);
             viret->type = VAR_OBJECT;
             viret->objectname = "unit";
@@ -823,7 +915,9 @@ varInst *Mission::call_unit(missionNode *node, int mode)
         {
             Unit *ret_unit = nullptr;
             if (mode == SCRIPT_RUN)
+            {
                 assert(0);
+            }
             viret = newVarInst(VI_TEMP);
             viret->type = VAR_OBJECT;
             viret->objectname = "unit";
@@ -833,7 +927,9 @@ varInst *Mission::call_unit(missionNode *node, int mode)
         {
             Unit *ret_unit = nullptr;
             if (mode == SCRIPT_RUN)
+            {
                 assert(0);
+            }
             viret = newVarInst(VI_TEMP);
             viret->type = VAR_OBJECT;
             viret->objectname = "unit";
@@ -843,7 +939,9 @@ varInst *Mission::call_unit(missionNode *node, int mode)
         {
             float ret = 9999999.0;
             if (mode == SCRIPT_RUN)
+            {
                 assert(0);
+            }
             viret = newVarInst(VI_TEMP);
             viret->type = VAR_FLOAT;
             viret->float_val = ret;
@@ -852,7 +950,9 @@ varInst *Mission::call_unit(missionNode *node, int mode)
         {
             float ret = 9999999.0;
             if (mode == SCRIPT_RUN)
+            {
                 assert(0);
+            }
             viret = newVarInst(VI_TEMP);
             viret->type = VAR_FLOAT;
             viret->float_val = ret;
@@ -861,7 +961,9 @@ varInst *Mission::call_unit(missionNode *node, int mode)
         {
             float ret = 9999999.0;
             if (mode == SCRIPT_RUN)
+            {
                 assert(0);
+            }
             viret = newVarInst(VI_TEMP);
             viret->type = VAR_FLOAT;
             viret->float_val = ret;
@@ -889,7 +991,9 @@ varInst *Mission::call_unit(missionNode *node, int mode)
             {
                 string fgname = my_unit->getFgID();
                 if (fgname.empty())
+                {
                     fgname = "-unknown";
+                }
                 varInst *str_vi = call_string_new(node, mode, fgname);
 
                 viret = str_vi;
@@ -911,9 +1015,13 @@ varInst *Mission::call_unit(missionNode *node, int mode)
             {
                 unsigned int index;
                 if (my_unit->GetCargo(s, index))
+                {
                     quantity = my_unit->RemoveCargo(index, quantity, erasezero);
+                }
                 else
+                {
                     quantity = 0;
+                }
             }
             viret = newVarInst(VI_TEMP);
             viret->type = VAR_INT;
@@ -932,7 +1040,9 @@ varInst *Mission::call_unit(missionNode *node, int mode)
             {
                 int i;
                 for (i = carg.quantity; i > 0 && !my_unit->CanAddCargo(carg); i--)
+                {
                     carg.quantity = i;
+                }
                 if (i > 0)
                 {
                     carg.quantity = i;
@@ -953,7 +1063,9 @@ varInst *Mission::call_unit(missionNode *node, int mode)
             double y = getFloatArg(node, mode, 2);
             double z = getFloatArg(node, mode, 3);
             if (mode == SCRIPT_RUN)
+            {
                 my_unit->SetCurPosition(QVector(x, y, z));
+            }
             viret = newVarInst(VI_TEMP);
             viret->type = VAR_VOID;
         }
@@ -970,7 +1082,9 @@ varInst *Mission::call_unit(missionNode *node, int mode)
             {
                 force = getBoolArg(node, mode, 4);
                 if (siz > 5)
+                {
                     loop_through_mounts = getBoolArg(node, mode, 5);
+                }
             }
             if (mode == SCRIPT_RUN)
             {
@@ -1017,7 +1131,9 @@ varInst *Mission::call_unit(missionNode *node, int mode)
                     unsigned int index;
                     index = rand() % my_unit->numCargo();
                     if (my_unit->RemoveCargo(index, 1, false))
+                    {
                         my_unit->GetCargo(index).price *= percentagechange;
+                    }
                 }
             }
             viret = newVarInst(VI_TEMP);
@@ -1032,7 +1148,9 @@ varInst *Mission::call_unit(missionNode *node, int mode)
             {
                 Cockpit *tmp;
                 if ((tmp = _Universe->isPlayerStarship(my_unit)))
+                {
                     my_obj = (void *)&tmp->savegame->getMissionData(magic_num);
+                }
             }
             viret = newVarInst(VI_TEMP);
             viret->type = VAR_OBJECT;
@@ -1042,7 +1160,9 @@ varInst *Mission::call_unit(missionNode *node, int mode)
         else if (method_id == CMT_UNIT_toxml)
         {
             if (mode == SCRIPT_RUN)
+            {
                 call_unit_toxml(node, mode, ovi);
+            }
             viret = newVarInst(VI_TEMP);
             viret->type = VAR_VOID;
         }
@@ -1074,7 +1194,9 @@ varInst *Mission::call_unit(missionNode *node, int mode)
         {
             Unit *other_unit = getUnitArg(node, mode, 1);
             if (mode == SCRIPT_RUN)
+            {
                 my_unit->VelocityReference(other_unit);
+            }
             viret = newVarInst(VI_TEMP);
             viret->type = VAR_VOID;
         }
@@ -1090,7 +1212,9 @@ varInst *Mission::call_unit(missionNode *node, int mode)
                 {
                     Animation *ani = other_unit->pilot->getCommFace(other_unit, mood, sex);
                     if (nullptr != ani)
+                    {
                         tmp->SetCommAnimation(ani, nullptr);
+                    }
                 }
             }
             viret = newVarInst(VI_TEMP);
@@ -1146,7 +1270,9 @@ Unit *Mission::call_unit_launch(CreateFlightgroup *fg, int type, const string &d
         _Universe->scriptStarSystem()->collidemap[Unit::UNIT_BOLT]->begin()};
     CollideMap::iterator *hint = metahint;
     if (par && !is_null(par->location[Unit::UNIT_ONLY]) && !is_null(par->location[Unit::UNIT_BOLT]) && par->activeStarSystem == _Universe->scriptStarSystem())
+    {
         hint = par->location;
+    }
     for (u = 0; u < fg->nr_ships; u++)
     {
         Unit *my_unit;
@@ -1167,9 +1293,13 @@ Unit *Mission::call_unit_launch(CreateFlightgroup *fg, int type, const string &d
             BLENDFUNC s = ONE;
             BLENDFUNC d = ZERO;
             if (bdst[0] != '\0')
+            {
                 d = parse_alpha(bdst);
+            }
             if (bsrc[0] != '\0')
+            {
                 s = parse_alpha(bsrc);
+            }
             my_unit = UnitFactory::createPlanet(QVector(0, 0, 0), QVector(0, 0, 0), 0, Vector(0, 0, 0),
                                                 0, 0, radius, tex, "", "", s,
                                                 d, ParseDestinations(destinations),
@@ -1224,7 +1354,9 @@ Unit *Mission::call_unit_launch(CreateFlightgroup *fg, int type, const string &d
     }
     my_unit = units[0];
     if (!_Universe->isPlayerStarship(fg->fg->leader.GetUnit()))
+    {
         fg->fg->leader.SetUnit(my_unit);
+    }
     delete[] units;
     return my_unit;
 }
@@ -1236,20 +1368,26 @@ void Mission::findNextEnemyTarget(Unit *my_unit)
     Unit *unit;
     Unit *target_unit = nullptr;
     for (; (unit = *uiter); ++uiter)
+    {
         if (my_unit->getRelation(unit) < 0.0)
         {
             target_unit = *uiter;
             break;
         }
+    }
     if (target_unit)
         my_unit->Target(target_unit);
 }
 
-static Unit *getIthUnit(auto uiter, int unit_nr)
+static Unit *getIthUnit(UnitCollection::UnitIterator uiter, int unit_nr)
 {
     Unit *unit = nullptr;
     for (int i = 0; (unit = *uiter); ++uiter, ++i)
+    {
         if (i == unit_nr)
+        {
             return unit;
+        }
+    }
     return nullptr;
 }
