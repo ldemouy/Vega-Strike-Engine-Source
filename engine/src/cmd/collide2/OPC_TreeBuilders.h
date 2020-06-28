@@ -109,7 +109,9 @@ public:
 	{
 		// Check the user-defined limit
 		if (nb_prims <= mSettings.mLimit)
+		{
 			return false;
+		}
 
 		return true;
 	}

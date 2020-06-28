@@ -74,59 +74,6 @@ static bool gFixQuantized = true;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /**
- *	Builds an implicit tree from a standard one. An implicit tree is a complete tree (2*N-1 nodes) whose negative
- *	box pointers and primitive pointers have been made implicit, hence packing 3 pointers in one.
- *
- *	Layout for implicit trees:
- *	Node:
- *			- box
- *			- data (32-bits value)
- *
- *	if data's LSB = 1 =>	remaining bits are a primitive pointer
- *	else					remaining bits are a P-node pointer, and N = P + 1
- *
- *	\relates	AABBCollisionNode
- *	\fn			_BuildCollisionTree(AABBCollisionNode* linear, const uint32_t box_id, uint32_t& current_id, const AABBTreeNode* current_node)
- *	\param		linear			[in] base address of destination nodes
- *	\param		box_id			[in] index of destination node
- *	\param		current_id		[in] current running index
- *	\param		current_node	[in] current node from input tree
- */
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-static void _BuildCollisionTree(AABBCollisionNode *linear, const uint32_t box_id, uint32_t &current_id, const AABBTreeNode *current_node)
-{
-	// Current node from input tree is "current_node". Must be flattened into "linear[boxid]".
-
-	// Store the AABB
-	current_node->GetAABB()->GetCenter(linear[box_id].mAABB.mCenter);
-	current_node->GetAABB()->GetExtents(linear[box_id].mAABB.mExtents);
-	// Store remaining info
-	if (current_node->IsLeaf())
-	{
-		// The input tree must be complete => i.e. one primitive/leaf
-
-		// Get the primitive index from the input tree
-		uint32_t PrimitiveIndex = current_node->GetPrimitives()[0];
-		// Setup box data as the primitive index, marked as leaf
-		linear[box_id].mData = (PrimitiveIndex << 1) | 1;
-	}
-	else
-	{
-		// To make the negative one implicit, we must store P and N in successive order
-		uint32_t PosID = current_id++; // Get a new id for positive child
-		uint32_t NegID = current_id++; // Get a new id for negative child
-		// Setup box data as the forthcoming new P pointer
-		linear[box_id].mData = (uintptr_t)&linear[PosID];
-		// Make sure it's not marked as leaf
-
-		// Recurse with new IDs
-		_BuildCollisionTree(linear, PosID, current_id, current_node->GetPos());
-		_BuildCollisionTree(linear, NegID, current_id, current_node->GetNeg());
-	}
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/**
  *	Builds a "no-leaf" tree from a standard one. This is a tree whose leaf nodes have been removed.
  *
  *	Layout for no-leaf trees:
@@ -197,269 +144,6 @@ static void _BuildNoLeafTree(AABBNoLeafNode *linear, const uint32_t box_id, uint
 	}
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/**
- *	Constructor.
- */
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-AABBCollisionTree::AABBCollisionTree() : mNodes(nullptr)
-{
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/**
- *	Destructor.
- */
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-AABBCollisionTree::~AABBCollisionTree()
-{
-	DELETEARRAY(mNodes);
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/**
- *	Builds the collision tree from a generic AABB tree.
- *	\param		tree			[in] generic AABB tree
- *	\return		true if success
- */
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool AABBCollisionTree::Build(AABBTree *tree)
-{
-	// Checkings
-	if (!tree)
-		return false;
-	// Check the input tree is complete
-	uint32_t NbTriangles = tree->GetNbPrimitives();
-	uint32_t NbNodes = tree->GetNbNodes();
-	if (NbNodes != NbTriangles * 2 - 1)
-		return false;
-
-	// Get nodes
-	if (mNbNodes != NbNodes) // Same number of nodes => keep moving
-	{
-		mNbNodes = NbNodes;
-		DELETEARRAY(mNodes);
-		mNodes = new AABBCollisionNode[mNbNodes];
-		CHECKALLOC(mNodes);
-	}
-
-	// Build the tree
-	uint32_t CurID = 1;
-	_BuildCollisionTree(mNodes, 0, CurID, tree);
-
-	return true;
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/**
- *	Refits the collision tree after vertices have been modified.
- *	\param		mesh_interface	[in] mesh interface for current model
- *	\return		true if success
- */
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool AABBCollisionTree::Refit(const MeshInterface * /*mesh_interface*/)
-{
-
-	return false;
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/**
- *	Walks the tree and call the user back for each node.
- *	\param		callback	[in] walking callback
- *	\param		user_data	[in] callback's user data
- *	\return		true if success
- */
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool AABBCollisionTree::Walk(GenericWalkingCallback callback, void *user_data) const
-{
-	if (!callback)
-		return false;
-
-	struct Local
-	{
-		static void _Walk(const AABBCollisionNode *current_node, GenericWalkingCallback callback, void *user_data)
-		{
-			if (!current_node || !(callback)(current_node, user_data))
-				return;
-
-			if (!current_node->IsLeaf())
-			{
-				_Walk(current_node->GetPos(), callback, user_data);
-				_Walk(current_node->GetNeg(), callback, user_data);
-			}
-		}
-	};
-	Local::_Walk(mNodes, callback, user_data);
-	return true;
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/**
- *	Constructor.
- */
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-AABBNoLeafTree::AABBNoLeafTree() : mNodes(nullptr)
-{
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/**
- *	Destructor.
- */
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-AABBNoLeafTree::~AABBNoLeafTree()
-{
-	DELETEARRAY(mNodes);
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/**
- *	Builds the collision tree from a generic AABB tree.
- *	\param		tree			[in] generic AABB tree
- *	\return		true if success
- */
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool AABBNoLeafTree::Build(AABBTree *tree)
-{
-	// Checkings
-	if (!tree)
-		return false;
-	// Check the input tree is complete
-	uint32_t NbTriangles = tree->GetNbPrimitives();
-	uint32_t NbNodes = tree->GetNbNodes();
-	if (NbNodes != NbTriangles * 2 - 1)
-		return false;
-
-	// Get nodes
-	if (mNbNodes != NbTriangles - 1) // Same number of nodes => keep moving
-	{
-		mNbNodes = NbTriangles - 1;
-		DELETEARRAY(mNodes);
-		mNodes = new AABBNoLeafNode[mNbNodes];
-		CHECKALLOC(mNodes);
-	}
-
-	// Build the tree
-	uint32_t CurID = 1;
-	_BuildNoLeafTree(mNodes, 0, CurID, tree);
-
-	return true;
-}
-
-inline void OPComputeMinMax(Point &min, Point &max, const VertexPointers &vp)
-{
-	// Compute triangle's AABB = a leaf box
-#ifdef OPC_USE_FCOMI // a 15% speedup on my machine, not much
-	min.x = FCMin3(vp.Vertex[0]->x, vp.Vertex[1]->x, vp.Vertex[2]->x);
-	max.x = FCMax3(vp.Vertex[0]->x, vp.Vertex[1]->x, vp.Vertex[2]->x);
-
-	min.y = FCMin3(vp.Vertex[0]->y, vp.Vertex[1]->y, vp.Vertex[2]->y);
-	max.y = FCMax3(vp.Vertex[0]->y, vp.Vertex[1]->y, vp.Vertex[2]->y);
-
-	min.z = FCMin3(vp.Vertex[0]->z, vp.Vertex[1]->z, vp.Vertex[2]->z);
-	max.z = FCMax3(vp.Vertex[0]->z, vp.Vertex[1]->z, vp.Vertex[2]->z);
-#else
-	min = *vp.Vertex[0];
-	max = *vp.Vertex[0];
-	min.Min(*vp.Vertex[1]);
-	max.Max(*vp.Vertex[1]);
-	min.Min(*vp.Vertex[2]);
-	max.Max(*vp.Vertex[2]);
-#endif
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/**
- *	Refits the collision tree after vertices have been modified.
- *	\param		mesh_interface	[in] mesh interface for current model
- *	\return		true if success
- */
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool AABBNoLeafTree::Refit(const MeshInterface *mesh_interface)
-{
-	// Checkings
-	if (!mesh_interface)
-		return false;
-
-	// Bottom-up update
-	VertexPointers VP;
-	Point Min, Max;
-	Point Min_, Max_;
-	uint32_t Index = mNbNodes;
-	while (Index--)
-	{
-		AABBNoLeafNode &Current = mNodes[Index];
-
-		if (Current.HasPosLeaf())
-		{
-			mesh_interface->GetTriangle(VP, Current.GetPosPrimitive());
-			OPComputeMinMax(Min, Max, VP);
-		}
-		else
-		{
-			const CollisionAABB &CurrentBox = Current.GetPos()->mAABB;
-			CurrentBox.GetMin(Min);
-			CurrentBox.GetMax(Max);
-		}
-
-		if (Current.HasNegLeaf())
-		{
-			mesh_interface->GetTriangle(VP, Current.GetNegPrimitive());
-			OPComputeMinMax(Min_, Max_, VP);
-		}
-		else
-		{
-			const CollisionAABB &CurrentBox = Current.GetNeg()->mAABB;
-			CurrentBox.GetMin(Min_);
-			CurrentBox.GetMax(Max_);
-		}
-#ifdef OPC_USE_FCOMI
-		Min.x = FCMin2(Min.x, Min_.x);
-		Max.x = FCMax2(Max.x, Max_.x);
-		Min.y = FCMin2(Min.y, Min_.y);
-		Max.y = FCMax2(Max.y, Max_.y);
-		Min.z = FCMin2(Min.z, Min_.z);
-		Max.z = FCMax2(Max.z, Max_.z);
-#else
-		Min.Min(Min_);
-		Max.Max(Max_);
-#endif
-		Current.mAABB.SetMinMax(Min, Max);
-	}
-	return true;
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/**
- *	Walks the tree and call the user back for each node.
- *	\param		callback	[in] walking callback
- *	\param		user_data	[in] callback's user data
- *	\return		true if success
- */
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool AABBNoLeafTree::Walk(GenericWalkingCallback callback, void *user_data) const
-{
-	if (!callback)
-		return false;
-
-	struct Local
-	{
-		static void _Walk(const AABBNoLeafNode *current_node, GenericWalkingCallback callback, void *user_data)
-		{
-			if (!current_node || !(callback)(current_node, user_data))
-				return;
-
-			if (!current_node->HasPosLeaf())
-				_Walk(current_node->GetPos(), callback, user_data);
-			if (!current_node->HasNegLeaf())
-				_Walk(current_node->GetNeg(), callback, user_data);
-		}
-	};
-	Local::_Walk(mNodes, callback, user_data);
-	return true;
-}
-
 // Quantization notes:
 // - We could use the highest bits of mData to store some more quantized bits. Dequantization code
 //   would be slightly more complex, but number of overlap tests would be reduced (and anyhow those
@@ -484,24 +168,38 @@ bool AABBNoLeafTree::Walk(GenericWalkingCallback callback, void *user_data) cons
 	for (i = 0; i < mNbNodes; i++)                                                                                       \
 	{                                                                                                                    \
 		if (fabsf(Nodes[i].mAABB.mCenter.x) > CMax.x)                                                                    \
+		{                                                                                                                \
 			CMax.x = fabsf(Nodes[i].mAABB.mCenter.x);                                                                    \
+		}                                                                                                                \
 		if (fabsf(Nodes[i].mAABB.mCenter.y) > CMax.y)                                                                    \
+		{                                                                                                                \
 			CMax.y = fabsf(Nodes[i].mAABB.mCenter.y);                                                                    \
+		}                                                                                                                \
 		if (fabsf(Nodes[i].mAABB.mCenter.z) > CMax.z)                                                                    \
+		{                                                                                                                \
 			CMax.z = fabsf(Nodes[i].mAABB.mCenter.z);                                                                    \
+		}                                                                                                                \
 		if (fabsf(Nodes[i].mAABB.mExtents.x) > EMax.x)                                                                   \
+		{                                                                                                                \
 			EMax.x = fabsf(Nodes[i].mAABB.mExtents.x);                                                                   \
+		}                                                                                                                \
 		if (fabsf(Nodes[i].mAABB.mExtents.y) > EMax.y)                                                                   \
+		{                                                                                                                \
 			EMax.y = fabsf(Nodes[i].mAABB.mExtents.y);                                                                   \
+		}                                                                                                                \
 		if (fabsf(Nodes[i].mAABB.mExtents.z) > EMax.z)                                                                   \
+		{                                                                                                                \
 			EMax.z = fabsf(Nodes[i].mAABB.mExtents.z);                                                                   \
+		}                                                                                                                \
 	}
 
 #define INIT_QUANTIZATION                                                   \
 	uint32_t nbc = 15; /* Keep one bit for sign */                          \
 	uint32_t nbe = 15; /* Keep one bit for fix */                           \
 	if (!gFixQuantized)                                                     \
+	{                                                                       \
 		nbe++;                                                              \
+	}                                                                       \
                                                                             \
 	/* Compute quantization coeffs */                                       \
 	Point CQuantCoeff, EQuantCoeff;                                         \
@@ -549,9 +247,13 @@ bool AABBNoLeafTree::Walk(GenericWalkingCallback callback, void *user_data) cons
 					float qe = float(mNodes[i].mAABB.mExtents[j]) * mExtentsCoeff[j];  \
 					/* Compare real & dequantized values */                            \
 					if (qc + qe < Max[j] || qc - qe > Min[j])                          \
+					{                                                                  \
 						mNodes[i].mAABB.mExtents[j]++;                                 \
+					}                                                                  \
 					else                                                               \
+					{                                                                  \
 						FixMe = false;                                                 \
+					}                                                                  \
 					/* Prevent wrapping */                                             \
 					if (!mNodes[i].mAABB.mExtents[j])                                  \
 					{                                                                  \
@@ -574,123 +276,6 @@ bool AABBNoLeafTree::Walk(GenericWalkingCallback callback, void *user_data) cons
 	}                                                                     \
 	/* ...remapped */                                                     \
 	mNodes[i].member = Data;
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/**
- *	Constructor.
- */
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-AABBQuantizedTree::AABBQuantizedTree() : mNodes(nullptr)
-{
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/**
- *	Destructor.
- */
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-AABBQuantizedTree::~AABBQuantizedTree()
-{
-	DELETEARRAY(mNodes);
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/**
- *	Builds the collision tree from a generic AABB tree.
- *	\param		tree			[in] generic AABB tree
- *	\return		true if success
- */
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool AABBQuantizedTree::Build(AABBTree *tree)
-{
-	// Checkings
-	if (!tree)
-		return false;
-	// Check the input tree is complete
-	uint32_t NbTriangles = tree->GetNbPrimitives();
-	uint32_t NbNodes = tree->GetNbNodes();
-	if (NbNodes != NbTriangles * 2 - 1)
-		return false;
-
-	// Get nodes
-	mNbNodes = NbNodes;
-	DELETEARRAY(mNodes);
-	AABBCollisionNode *Nodes = new AABBCollisionNode[mNbNodes];
-	CHECKALLOC(Nodes);
-
-	// Build the tree
-	uint32_t CurID = 1;
-	_BuildCollisionTree(Nodes, 0, CurID, tree);
-
-	// Quantize
-	{
-		mNodes = new AABBQuantizedNode[mNbNodes];
-		CHECKALLOC(mNodes);
-
-		uint32_t i;
-		// Get max values
-		FIND_MAX_VALUES
-
-		// Quantization
-		INIT_QUANTIZATION
-
-		// Quantize
-		uintptr_t Data;
-		for (i = 0; i < mNbNodes; i++)
-		{
-			PERFORM_QUANTIZATION
-			REMAP_DATA(mData)
-		}
-
-		DELETEARRAY(Nodes);
-	}
-
-	return true;
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/**
- *	Refits the collision tree after vertices have been modified.
- *	\param		mesh_interface	[in] mesh interface for current model
- *	\return		true if success
- */
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool AABBQuantizedTree::Refit(const MeshInterface * /*mesh_interface*/)
-{
-
-	return false;
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/**
- *	Walks the tree and call the user back for each node.
- *	\param		callback	[in] walking callback
- *	\param		user_data	[in] callback's user data
- *	\return		true if success
- */
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool AABBQuantizedTree::Walk(GenericWalkingCallback callback, void *user_data) const
-{
-	if (!callback)
-		return false;
-
-	struct Local
-	{
-		static void _Walk(const AABBQuantizedNode *current_node, GenericWalkingCallback callback, void *user_data)
-		{
-			if (!current_node || !(callback)(current_node, user_data))
-				return;
-
-			if (!current_node->IsLeaf())
-			{
-				_Walk(current_node->GetPos(), callback, user_data);
-				_Walk(current_node->GetNeg(), callback, user_data);
-			}
-		}
-	};
-	Local::_Walk(mNodes, callback, user_data);
-	return true;
-}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /**
@@ -722,12 +307,16 @@ bool AABBQuantizedNoLeafTree::Build(AABBTree *tree)
 {
 	// Checkings
 	if (!tree)
+	{
 		return false;
+	}
 	// Check the input tree is complete
 	uint32_t NbTriangles = tree->GetNbPrimitives();
 	uint32_t NbNodes = tree->GetNbNodes();
 	if (NbNodes != NbTriangles * 2 - 1)
+	{
 		return false;
+	}
 
 	// Get nodes
 	mNbNodes = NbTriangles - 1;
@@ -790,19 +379,27 @@ bool AABBQuantizedNoLeafTree::Refit(const MeshInterface * /*mesh_interface*/)
 bool AABBQuantizedNoLeafTree::Walk(GenericWalkingCallback callback, void *user_data) const
 {
 	if (!callback)
+	{
 		return false;
+	}
 
 	struct Local
 	{
 		static void _Walk(const AABBQuantizedNoLeafNode *current_node, GenericWalkingCallback callback, void *user_data)
 		{
 			if (!current_node || !(callback)(current_node, user_data))
+			{
 				return;
+			}
 
 			if (!current_node->HasPosLeaf())
+			{
 				_Walk(current_node->GetPos(), callback, user_data);
+			}
 			if (!current_node->HasNegLeaf())
+			{
 				_Walk(current_node->GetNeg(), callback, user_data);
+			}
 		}
 	};
 	Local::_Walk(mNodes, callback, user_data);

@@ -169,7 +169,9 @@ protected:
 		mIMesh1 = mi1;
 
 		if (!mIMesh0 || !mIMesh1)
+		{
 			return false;
+		}
 
 		return true;
 	}

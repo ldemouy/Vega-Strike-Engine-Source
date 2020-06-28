@@ -64,47 +64,6 @@ public:                                                                         
 	uintptr_t mPosData;                                                           \
 	uintptr_t mNegData;
 
-class AABBCollisionNode
-{
-public: /* Constructor / Destructor */
-	inline AABBCollisionNode() : mData(0) {}
-	inline ~AABBCollisionNode() {}					 /* Leaf test */
-	inline bool IsLeaf() const { return mData & 1; } /* Data access */
-	inline const AABBCollisionNode *GetPos() const { return (AABBCollisionNode *)mData; }
-	inline const AABBCollisionNode *GetNeg() const { return ((AABBCollisionNode *)mData) + 1; }
-	inline uint32_t GetPrimitive() const { return (uint32_t)(mData >> 1); } /* Stats */
-	inline uint32_t GetNodeSize() const { return SIZEOFOBJECT; }
-
-	CollisionAABB mAABB;
-	uintptr_t mData;
-
-	// NB: using the square-magnitude or the true volume of the box, seems to yield better results
-	// (assuming UNC-like informed traversal methods). I borrowed this idea from PQP. The usual "size"
-	// otherwise, is the largest box extent. In SOLID that extent is computed on-the-fly each time it's
-	// needed (the best approach IMHO). In RAPID the rotation matrix is permuted so that Extent[0] is
-	// always the greatest, which saves looking for it at runtime. On the other hand, it yields matrices
-	// whose determinant is not 1, i.e. you can't encode them anymore as unit quaternions. Not a very
-	// good strategy.
-};
-
-class AABBQuantizedNode
-{
-	IMPLEMENT_IMPLICIT_NODE(AABBQuantizedNode, QuantizedAABB)
-
-	inline uint16_t GetSize() const
-	{
-		const uint16_t *Bits = mAABB.mExtents;
-		uint16_t Max = Bits[0];
-		if (Bits[1] > Max)
-			Max = Bits[1];
-		if (Bits[2] > Max)
-			Max = Bits[2];
-		return Max;
-	}
-	// NB: for quantized nodes I don't feel like computing a square-magnitude with integers all
-	// over the place.......!
-};
-
 class AABBNoLeafNode
 {
 	IMPLEMENT_NOLEAF_NODE(AABBNoLeafNode, CollisionAABB)
@@ -179,25 +138,6 @@ public:
 
 protected:
 	uint32_t mNbNodes;
-};
-
-class AABBCollisionTree : public AABBOptimizedTree
-{
-	IMPLEMENT_COLLISION_TREE(AABBCollisionTree, AABBCollisionNode)
-};
-
-class AABBNoLeafTree : public AABBOptimizedTree
-{
-	IMPLEMENT_COLLISION_TREE(AABBNoLeafTree, AABBNoLeafNode)
-};
-
-class AABBQuantizedTree : public AABBOptimizedTree
-{
-	IMPLEMENT_COLLISION_TREE(AABBQuantizedTree, AABBQuantizedNode)
-
-public:
-	Point mCenterCoeff;
-	Point mExtentsCoeff;
 };
 
 class AABBQuantizedNoLeafTree : public AABBOptimizedTree

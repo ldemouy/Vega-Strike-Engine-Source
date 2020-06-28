@@ -394,7 +394,9 @@ void AABBTreeCollider::_Collide(const AABBQuantizedNoLeafNode *a, const AABBQuan
 
 	// Perform BV-BV overlap test
 	if (!BoxBoxOverlap(ea, Pa, eb, Pb))
+	{
 		return;
+	}
 
 	// Catch leaf status
 	bool BHasPosLeaf = b->HasPosLeaf();
@@ -405,17 +407,27 @@ void AABBTreeCollider::_Collide(const AABBQuantizedNoLeafNode *a, const AABBQuan
 		FETCH_LEAF(a->GetPosPrimitive(), mIMesh0, mR0to1, mT0to1)
 
 		if (BHasPosLeaf)
+		{
 			PrimTestTriIndex(b->GetPosPrimitive());
+		}
 		else
+		{
 			_CollideTriBox(b->GetPos());
+		}
 
 		if (ContactFound())
+		{
 			return;
+		}
 
 		if (BHasNegLeaf)
+		{
 			PrimTestTriIndex(b->GetNegPrimitive());
+		}
 		else
+		{
 			_CollideTriBox(b->GetNeg());
+		}
 	}
 	else
 	{
@@ -426,10 +438,14 @@ void AABBTreeCollider::_Collide(const AABBQuantizedNoLeafNode *a, const AABBQuan
 			_CollideBoxTri(a->GetPos());
 		}
 		else
+		{
 			_Collide(a->GetPos(), b->GetPos());
+		}
 
 		if (ContactFound())
+		{
 			return;
+		}
 
 		if (BHasNegLeaf)
 		{
@@ -438,28 +454,42 @@ void AABBTreeCollider::_Collide(const AABBQuantizedNoLeafNode *a, const AABBQuan
 			_CollideBoxTri(a->GetPos());
 		}
 		else
+		{
 			_Collide(a->GetPos(), b->GetNeg());
+		}
 	}
 
 	if (ContactFound())
+	{
 		return;
+	}
 
 	if (a->HasNegLeaf())
 	{
 		FETCH_LEAF(a->GetNegPrimitive(), mIMesh0, mR0to1, mT0to1)
 
 		if (BHasPosLeaf)
+		{
 			PrimTestTriIndex(b->GetPosPrimitive());
+		}
 		else
+		{
 			_CollideTriBox(b->GetPos());
+		}
 
 		if (ContactFound())
+		{
 			return;
+		}
 
 		if (BHasNegLeaf)
+		{
 			PrimTestTriIndex(b->GetNegPrimitive());
+		}
 		else
+		{
 			_CollideTriBox(b->GetNeg());
+		}
 	}
 	else
 	{
@@ -471,10 +501,14 @@ void AABBTreeCollider::_Collide(const AABBQuantizedNoLeafNode *a, const AABBQuan
 			_CollideBoxTri(a->GetNeg());
 		}
 		else
+		{
 			_Collide(a->GetNeg(), b->GetPos());
+		}
 
 		if (ContactFound())
+		{
 			return;
+		}
 
 		if (BHasNegLeaf)
 		{
@@ -484,7 +518,9 @@ void AABBTreeCollider::_Collide(const AABBQuantizedNoLeafNode *a, const AABBQuan
 			_CollideBoxTri(a->GetNeg());
 		}
 		else
+		{
 			_Collide(a->GetNeg(), b->GetNeg());
+		}
 	}
 }
 
@@ -499,33 +535,45 @@ inline bool AABBTreeCollider::BoxBoxOverlap(const Point &ea, const Point &ca, co
 	float Tx = (mR1to0.m[0][0] * cb.x + mR1to0.m[1][0] * cb.y + mR1to0.m[2][0] * cb.z) + mT1to0.x - ca.x;
 	t = ea.x + eb.x * mAR.m[0][0] + eb.y * mAR.m[1][0] + eb.z * mAR.m[2][0];
 	if (GREATER(Tx, t))
+	{
 		return false;
+	}
 
 	float Ty = (mR1to0.m[0][1] * cb.x + mR1to0.m[1][1] * cb.y + mR1to0.m[2][1] * cb.z) + mT1to0.y - ca.y;
 	t = ea.y + eb.x * mAR.m[0][1] + eb.y * mAR.m[1][1] + eb.z * mAR.m[2][1];
 	if (GREATER(Ty, t))
+	{
 		return false;
+	}
 
 	float Tz = (mR1to0.m[0][2] * cb.x + mR1to0.m[1][2] * cb.y + mR1to0.m[2][2] * cb.z) + mT1to0.z - ca.z;
 	t = ea.z + eb.x * mAR.m[0][2] + eb.y * mAR.m[1][2] + eb.z * mAR.m[2][2];
 	if (GREATER(Tz, t))
+	{
 		return false;
+	}
 
 	// Class II : B's basis vectors
 	t = Tx * mR1to0.m[0][0] + Ty * mR1to0.m[0][1] + Tz * mR1to0.m[0][2];
 	t2 = ea.x * mAR.m[0][0] + ea.y * mAR.m[0][1] + ea.z * mAR.m[0][2] + eb.x;
 	if (GREATER(t, t2))
+	{
 		return false;
+	}
 
 	t = Tx * mR1to0.m[1][0] + Ty * mR1to0.m[1][1] + Tz * mR1to0.m[1][2];
 	t2 = ea.x * mAR.m[1][0] + ea.y * mAR.m[1][1] + ea.z * mAR.m[1][2] + eb.y;
 	if (GREATER(t, t2))
+	{
 		return false;
+	}
 
 	t = Tx * mR1to0.m[2][0] + Ty * mR1to0.m[2][1] + Tz * mR1to0.m[2][2];
 	t2 = ea.x * mAR.m[2][0] + ea.y * mAR.m[2][1] + ea.z * mAR.m[2][2] + eb.z;
 	if (GREATER(t, t2))
+	{
 		return false;
+	}
 
 	// Class III : 9 cross products
 	// Cool trick: always perform the full test for first level, regardless of settings.
@@ -535,39 +583,57 @@ inline bool AABBTreeCollider::BoxBoxOverlap(const Point &ea, const Point &ca, co
 		t = Tz * mR1to0.m[0][1] - Ty * mR1to0.m[0][2];
 		t2 = ea.y * mAR.m[0][2] + ea.z * mAR.m[0][1] + eb.y * mAR.m[2][0] + eb.z * mAR.m[1][0];
 		if (GREATER(t, t2))
+		{
 			return false; // L = A0 x B0
+		}
 		t = Tz * mR1to0.m[1][1] - Ty * mR1to0.m[1][2];
 		t2 = ea.y * mAR.m[1][2] + ea.z * mAR.m[1][1] + eb.x * mAR.m[2][0] + eb.z * mAR.m[0][0];
 		if (GREATER(t, t2))
+		{
 			return false; // L = A0 x B1
+		}
 		t = Tz * mR1to0.m[2][1] - Ty * mR1to0.m[2][2];
 		t2 = ea.y * mAR.m[2][2] + ea.z * mAR.m[2][1] + eb.x * mAR.m[1][0] + eb.y * mAR.m[0][0];
 		if (GREATER(t, t2))
+		{
 			return false; // L = A0 x B2
+		}
 		t = Tx * mR1to0.m[0][2] - Tz * mR1to0.m[0][0];
 		t2 = ea.x * mAR.m[0][2] + ea.z * mAR.m[0][0] + eb.y * mAR.m[2][1] + eb.z * mAR.m[1][1];
 		if (GREATER(t, t2))
+		{
 			return false; // L = A1 x B0
+		}
 		t = Tx * mR1to0.m[1][2] - Tz * mR1to0.m[1][0];
 		t2 = ea.x * mAR.m[1][2] + ea.z * mAR.m[1][0] + eb.x * mAR.m[2][1] + eb.z * mAR.m[0][1];
 		if (GREATER(t, t2))
+		{
 			return false; // L = A1 x B1
+		}
 		t = Tx * mR1to0.m[2][2] - Tz * mR1to0.m[2][0];
 		t2 = ea.x * mAR.m[2][2] + ea.z * mAR.m[2][0] + eb.x * mAR.m[1][1] + eb.y * mAR.m[0][1];
 		if (GREATER(t, t2))
+		{
 			return false; // L = A1 x B2
+		}
 		t = Ty * mR1to0.m[0][0] - Tx * mR1to0.m[0][1];
 		t2 = ea.x * mAR.m[0][1] + ea.y * mAR.m[0][0] + eb.y * mAR.m[2][2] + eb.z * mAR.m[1][2];
 		if (GREATER(t, t2))
+		{
 			return false; // L = A2 x B0
+		}
 		t = Ty * mR1to0.m[1][0] - Tx * mR1to0.m[1][1];
 		t2 = ea.x * mAR.m[1][1] + ea.y * mAR.m[1][0] + eb.x * mAR.m[2][2] + eb.z * mAR.m[0][2];
 		if (GREATER(t, t2))
+		{
 			return false; // L = A2 x B1
+		}
 		t = Ty * mR1to0.m[2][0] - Tx * mR1to0.m[2][1];
 		t2 = ea.x * mAR.m[2][1] + ea.y * mAR.m[2][0] + eb.x * mAR.m[1][2] + eb.y * mAR.m[0][2];
 		if (GREATER(t, t2))
+		{
 			return false; // L = A2 x B2
+		}
 	}
 	return true;
 }
@@ -576,13 +642,21 @@ inline bool AABBTreeCollider::BoxBoxOverlap(const Point &ea, const Point &ca, co
 #define FINDMINMAX(x0, x1, x2, min, max) \
 	min = max = x0;                      \
 	if (x1 < min)                        \
+	{                                    \
 		min = x1;                        \
+	}                                    \
 	if (x1 > max)                        \
+	{                                    \
 		max = x1;                        \
+	}                                    \
 	if (x2 < min)                        \
+	{                                    \
 		min = x2;                        \
+	}                                    \
 	if (x2 > max)                        \
-		max = x2;
+	{                                    \
+		max = x2;                        \
+	}
 
 //! TO BE DOCUMENTED
 inline bool planeBoxOverlap(const Point &normal, const float d, const Point &maxbox)
@@ -602,9 +676,13 @@ inline bool planeBoxOverlap(const Point &normal, const float d, const Point &max
 		}
 	}
 	if ((normal | vmin) + d > 0.0f)
+	{
 		return false;
+	}
 	if ((normal | vmax) + d >= 0.0f)
+	{
 		return true;
+	}
 
 	return false;
 }
@@ -621,7 +699,9 @@ inline bool planeBoxOverlap(const Point &normal, const float d, const Point &max
 	}                                      \
 	rad = fa * extents.y + fb * extents.z; \
 	if (min > rad || max < -rad)           \
-		return false;
+	{                                      \
+		return false;                      \
+	}
 
 //! TO BE DOCUMENTED
 #define AXISTEST_X2(a, b, fa, fb)          \
@@ -635,7 +715,9 @@ inline bool planeBoxOverlap(const Point &normal, const float d, const Point &max
 	}                                      \
 	rad = fa * extents.y + fb * extents.z; \
 	if (min > rad || max < -rad)           \
-		return false;
+	{                                      \
+		return false;                      \
+	}
 
 //! TO BE DOCUMENTED
 #define AXISTEST_Y02(a, b, fa, fb)         \
@@ -649,7 +731,9 @@ inline bool planeBoxOverlap(const Point &normal, const float d, const Point &max
 	}                                      \
 	rad = fa * extents.x + fb * extents.z; \
 	if (min > rad || max < -rad)           \
-		return false;
+	{                                      \
+		return false;                      \
+	}
 
 //! TO BE DOCUMENTED
 #define AXISTEST_Y1(a, b, fa, fb)          \
@@ -663,7 +747,9 @@ inline bool planeBoxOverlap(const Point &normal, const float d, const Point &max
 	}                                      \
 	rad = fa * extents.x + fb * extents.z; \
 	if (min > rad || max < -rad)           \
-		return false;
+	{                                      \
+		return false;                      \
+	}
 
 //! TO BE DOCUMENTED
 #define AXISTEST_Z12(a, b, fa, fb)         \
@@ -677,7 +763,9 @@ inline bool planeBoxOverlap(const Point &normal, const float d, const Point &max
 	}                                      \
 	rad = fa * extents.x + fb * extents.y; \
 	if (min > rad || max < -rad)           \
-		return false;
+	{                                      \
+		return false;                      \
+	}
 
 //! TO BE DOCUMENTED
 #define AXISTEST_Z0(a, b, fa, fb)          \
@@ -691,7 +779,9 @@ inline bool planeBoxOverlap(const Point &normal, const float d, const Point &max
 	}                                      \
 	rad = fa * extents.x + fb * extents.y; \
 	if (min > rad || max < -rad)           \
-		return false;
+	{                                      \
+		return false;                      \
+	}
 
 // compute triangle edges
 // - edges lazy evaluated to take advantage of early exits
@@ -758,38 +848,14 @@ inline bool AABBTreeCollider::TriBoxOverlap(const Point &center, const Point &ex
 	v2.x = mLeafVerts[2].x - center.x;
 
 	// First, test overlap in the {x,y,z}-directions
-#ifdef OPC_USE_FCOMI
-	// find min, max of the triangle in x-direction, and test for overlap in X
-	if (FCMin3(v0.x, v1.x, v2.x) > extents.x)
-		return false;
-	if (FCMax3(v0.x, v1.x, v2.x) < -extents.x)
-		return false;
 
-	// same for Y
-	v0.y = mLeafVerts[0].y - center.y;
-	v1.y = mLeafVerts[1].y - center.y;
-	v2.y = mLeafVerts[2].y - center.y;
-
-	if (FCMin3(v0.y, v1.y, v2.y) > extents.y)
-		return false;
-	if (FCMax3(v0.y, v1.y, v2.y) < -extents.y)
-		return false;
-
-	// same for Z
-	v0.z = mLeafVerts[0].z - center.z;
-	v1.z = mLeafVerts[1].z - center.z;
-	v2.z = mLeafVerts[2].z - center.z;
-
-	if (FCMin3(v0.z, v1.z, v2.z) > extents.z)
-		return false;
-	if (FCMax3(v0.z, v1.z, v2.z) < -extents.z)
-		return false;
-#else
 	float min, max;
 	// Find min, max of the triangle in x-direction, and test for overlap in X
 	FINDMINMAX(v0.x, v1.x, v2.x, min, max);
 	if (min > extents.x || max < -extents.x)
+	{
 		return false;
+	}
 
 	// Same for Y
 	v0.y = mLeafVerts[0].y - center.y;
@@ -798,7 +864,9 @@ inline bool AABBTreeCollider::TriBoxOverlap(const Point &center, const Point &ex
 
 	FINDMINMAX(v0.y, v1.y, v2.y, min, max);
 	if (min > extents.y || max < -extents.y)
+	{
 		return false;
+	}
 
 	// Same for Z
 	v0.z = mLeafVerts[0].z - center.z;
@@ -807,8 +875,10 @@ inline bool AABBTreeCollider::TriBoxOverlap(const Point &center, const Point &ex
 
 	FINDMINMAX(v0.z, v1.z, v2.z, min, max);
 	if (min > extents.z || max < -extents.z)
+	{
 		return false;
-#endif
+	}
+
 	// 2) Test if the box intersects the plane of the triangle
 	// compute plane equation of triangle: normal*x+d=0
 	// ### could be precomputed since we use the same leaf triangle several times
@@ -817,7 +887,9 @@ inline bool AABBTreeCollider::TriBoxOverlap(const Point &center, const Point &ex
 	const Point normal = e0 ^ e1;
 	const float d = -normal | v0;
 	if (!planeBoxOverlap(normal, d, extents))
+	{
 		return false;
+	}
 
 	// 3) "Class III" tests
 	if (mFullPrimBoxTest)
@@ -851,12 +923,16 @@ inline bool AABBTreeCollider::TriBoxOverlap(const Point &center, const Point &ex
 		if (f > 0.0f)                                                           \
 		{                                                                       \
 			if (e >= 0.0f && e <= f)                                            \
+			{                                                                   \
 				return true;                                                    \
+			}                                                                   \
 		}                                                                       \
 		else                                                                    \
 		{                                                                       \
 			if (e <= 0.0f && e >= f)                                            \
+			{                                                                   \
 				return true;                                                    \
+			}                                                                   \
 		}                                                                       \
 	}
 
@@ -896,7 +972,9 @@ inline bool AABBTreeCollider::TriBoxOverlap(const Point &center, const Point &ex
 		if (d0 * d1 > 0.0f)                           \
 		{                                             \
 			if (d0 * d2 > 0.0f)                       \
+			{                                         \
 				return true;                          \
+			}                                         \
 		}                                             \
 	}
 
@@ -1045,16 +1123,24 @@ inline bool AABBTreeCollider::TriTriOverlap(const Point &V0, const Point &V1, co
 	// Coplanarity robustness check
 
 	if (fabsf(du0) < std::numeric_limits<float>::epsilon())
+	{
 		du0 = 0.0f;
+	}
 	if (fabsf(du1) < std::numeric_limits<float>::epsilon())
+	{
 		du1 = 0.0f;
+	}
 	if (fabsf(du2) < std::numeric_limits<float>::epsilon())
+	{
 		du2 = 0.0f;
+	}
 	const float du0du1 = du0 * du1;
 	const float du0du2 = du0 * du2;
 
 	if (du0du1 > 0.0f && du0du2 > 0.0f) // same sign on all of them + not equal 0 ?
-		return false;					// no intersection occurs
+	{
+		return false; // no intersection occurs
+	}
 
 	// Compute plane of triangle (U0,U1,U2)
 	E1 = U1 - U0;
@@ -1069,17 +1155,25 @@ inline bool AABBTreeCollider::TriTriOverlap(const Point &V0, const Point &V1, co
 	float dv2 = (N2 | V2) + d2;
 
 	if (fabsf(dv0) < std::numeric_limits<float>::epsilon())
+	{
 		dv0 = 0.0f;
+	}
 	if (fabsf(dv1) < std::numeric_limits<float>::epsilon())
+	{
 		dv1 = 0.0f;
+	}
 	if (fabsf(dv2) < std::numeric_limits<float>::epsilon())
+	{
 		dv2 = 0.0f;
+	}
 
 	const float dv0dv1 = dv0 * dv1;
 	const float dv0dv2 = dv0 * dv2;
 
 	if (dv0dv1 > 0.0f && dv0dv2 > 0.0f) // same sign on all of them + not equal 0 ?
-		return false;					// no intersection occurs
+	{
+		return false; // no intersection occurs
+	}
 
 	// Compute direction of intersection line
 	const Point D = N1 ^ N2;
@@ -1090,9 +1184,13 @@ inline bool AABBTreeCollider::TriTriOverlap(const Point &V0, const Point &V1, co
 	float bb = fabsf(D[1]);
 	float cc = fabsf(D[2]);
 	if (bb > max)
+	{
 		max = bb, index = 1;
+	}
 	if (cc > max)
+	{
 		max = cc, index = 2;
+	}
 
 	// This is the simplified projection onto L
 	const float vp0 = V0[index];
@@ -1129,6 +1227,8 @@ inline bool AABBTreeCollider::TriTriOverlap(const Point &V0, const Point &V1, co
 	SORT(isect2[0], isect2[1]);
 
 	if (isect1[1] < isect2[0] || isect2[1] < isect1[0])
+	{
 		return false;
+	}
 	return true;
 }

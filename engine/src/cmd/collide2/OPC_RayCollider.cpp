@@ -124,7 +124,9 @@
 	SET_CONTACT(prim_index, flag)                \
                                                  \
 	if (mHitCallback)                            \
+	{                                            \
 		(mHitCallback)(mStabbedFace, mUserData); \
+	}                                            \
 	else                                         \
 	{                                            \
 	}
@@ -213,11 +215,15 @@ bool RayCollider::Collide(const Ray &world_ray, const Model &model, const Matrix
 {
 	// Checkings
 	if (!Setup(&model))
+	{
 		return false;
+	}
 
 	// Init collision query
 	if (InitQuery(world_ray, world, cache))
+	{
 		return true;
+	}
 
 	const AABBQuantizedNoLeafTree *Tree = (const AABBQuantizedNoLeafTree *)model.GetTree();
 
@@ -340,95 +346,6 @@ bool RayCollider::InitQuery(const Ray &world_ray, const Matrix4x4 *world, uint32
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /**
- *	Recursive stabbing query for normal AABB trees.
- *	\param		node	[in] current collision node
- */
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void RayCollider::_SegmentStab(const AABBCollisionNode *node)
-{
-	// Perform Segment-AABB overlap test
-	if (!SegmentAABBOverlap(node->mAABB.mCenter, node->mAABB.mExtents))
-		return;
-
-	if (node->IsLeaf())
-	{
-		SEGMENT_PRIM(node->GetPrimitive(), OPC_CONTACT)
-	}
-	else
-	{
-		_SegmentStab(node->GetPos());
-
-		if (ContactFound())
-			return;
-
-		_SegmentStab(node->GetNeg());
-	}
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/**
- *	Recursive stabbing query for quantized AABB trees.
- *	\param		node	[in] current collision node
- */
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void RayCollider::_SegmentStab(const AABBQuantizedNode *node)
-{
-	// Dequantize box
-	const QuantizedAABB &Box = node->mAABB;
-	const Point Center(float(Box.mCenter[0]) * mCenterCoeff.x, float(Box.mCenter[1]) * mCenterCoeff.y, float(Box.mCenter[2]) * mCenterCoeff.z);
-	const Point Extents(float(Box.mExtents[0]) * mExtentsCoeff.x, float(Box.mExtents[1]) * mExtentsCoeff.y, float(Box.mExtents[2]) * mExtentsCoeff.z);
-
-	// Perform Segment-AABB overlap test
-	if (!SegmentAABBOverlap(Center, Extents))
-		return;
-
-	if (node->IsLeaf())
-	{
-		SEGMENT_PRIM(node->GetPrimitive(), OPC_CONTACT)
-	}
-	else
-	{
-		_SegmentStab(node->GetPos());
-
-		if (ContactFound())
-			return;
-
-		_SegmentStab(node->GetNeg());
-	}
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/**
- *	Recursive stabbing query for no-leaf AABB trees.
- *	\param		node	[in] current collision node
- */
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void RayCollider::_SegmentStab(const AABBNoLeafNode *node)
-{
-	// Perform Segment-AABB overlap test
-	if (!SegmentAABBOverlap(node->mAABB.mCenter, node->mAABB.mExtents))
-		return;
-
-	if (node->HasPosLeaf())
-	{
-		SEGMENT_PRIM(node->GetPosPrimitive(), OPC_CONTACT)
-	}
-	else
-		_SegmentStab(node->GetPos());
-
-	if (ContactFound())
-		return;
-
-	if (node->HasNegLeaf())
-	{
-		SEGMENT_PRIM(node->GetNegPrimitive(), OPC_CONTACT)
-	}
-	else
-		_SegmentStab(node->GetNeg());
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/**
  *	Recursive stabbing query for quantized no-leaf AABB trees.
  *	\param		node	[in] current collision node
  */
@@ -442,24 +359,32 @@ void RayCollider::_SegmentStab(const AABBQuantizedNoLeafNode *node)
 
 	// Perform Segment-AABB overlap test
 	if (!SegmentAABBOverlap(Center, Extents))
+	{
 		return;
+	}
 
 	if (node->HasPosLeaf())
 	{
 		SEGMENT_PRIM(node->GetPosPrimitive(), OPC_CONTACT)
 	}
 	else
+	{
 		_SegmentStab(node->GetPos());
+	}
 
 	if (ContactFound())
+	{
 		return;
+	}
 
 	if (node->HasNegLeaf())
 	{
 		SEGMENT_PRIM(node->GetNegPrimitive(), OPC_CONTACT)
 	}
 	else
+	{
 		_SegmentStab(node->GetNeg());
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -476,7 +401,9 @@ void RayCollider::_SegmentStab(const AABBTreeNode *node, Container &box_indices)
 	node->GetAABB()->GetCenter(Center);
 	node->GetAABB()->GetExtents(Extents);
 	if (!SegmentAABBOverlap(Center, Extents))
+	{
 		return;
+	}
 
 	if (node->IsLeaf())
 	{
@@ -487,95 +414,6 @@ void RayCollider::_SegmentStab(const AABBTreeNode *node, Container &box_indices)
 		_SegmentStab(node->GetPos(), box_indices);
 		_SegmentStab(node->GetNeg(), box_indices);
 	}
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/**
- *	Recursive stabbing query for normal AABB trees.
- *	\param		node	[in] current collision node
- */
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void RayCollider::_RayStab(const AABBCollisionNode *node)
-{
-	// Perform Ray-AABB overlap test
-	if (!RayAABBOverlap(node->mAABB.mCenter, node->mAABB.mExtents))
-		return;
-
-	if (node->IsLeaf())
-	{
-		RAY_PRIM(node->GetPrimitive(), OPC_CONTACT)
-	}
-	else
-	{
-		_RayStab(node->GetPos());
-
-		if (ContactFound())
-			return;
-
-		_RayStab(node->GetNeg());
-	}
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/**
- *	Recursive stabbing query for quantized AABB trees.
- *	\param		node	[in] current collision node
- */
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void RayCollider::_RayStab(const AABBQuantizedNode *node)
-{
-	// Dequantize box
-	const QuantizedAABB &Box = node->mAABB;
-	const Point Center(float(Box.mCenter[0]) * mCenterCoeff.x, float(Box.mCenter[1]) * mCenterCoeff.y, float(Box.mCenter[2]) * mCenterCoeff.z);
-	const Point Extents(float(Box.mExtents[0]) * mExtentsCoeff.x, float(Box.mExtents[1]) * mExtentsCoeff.y, float(Box.mExtents[2]) * mExtentsCoeff.z);
-
-	// Perform Ray-AABB overlap test
-	if (!RayAABBOverlap(Center, Extents))
-		return;
-
-	if (node->IsLeaf())
-	{
-		RAY_PRIM(node->GetPrimitive(), OPC_CONTACT)
-	}
-	else
-	{
-		_RayStab(node->GetPos());
-
-		if (ContactFound())
-			return;
-
-		_RayStab(node->GetNeg());
-	}
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/**
- *	Recursive stabbing query for no-leaf AABB trees.
- *	\param		node	[in] current collision node
- */
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void RayCollider::_RayStab(const AABBNoLeafNode *node)
-{
-	// Perform Ray-AABB overlap test
-	if (!RayAABBOverlap(node->mAABB.mCenter, node->mAABB.mExtents))
-		return;
-
-	if (node->HasPosLeaf())
-	{
-		RAY_PRIM(node->GetPosPrimitive(), OPC_CONTACT)
-	}
-	else
-		_RayStab(node->GetPos());
-
-	if (ContactFound())
-		return;
-
-	if (node->HasNegLeaf())
-	{
-		RAY_PRIM(node->GetNegPrimitive(), OPC_CONTACT)
-	}
-	else
-		_RayStab(node->GetNeg());
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -593,24 +431,32 @@ void RayCollider::_RayStab(const AABBQuantizedNoLeafNode *node)
 
 	// Perform Ray-AABB overlap test
 	if (!RayAABBOverlap(Center, Extents))
+	{
 		return;
+	}
 
 	if (node->HasPosLeaf())
 	{
 		RAY_PRIM(node->GetPosPrimitive(), OPC_CONTACT)
 	}
 	else
+	{
 		_RayStab(node->GetPos());
+	}
 
 	if (ContactFound())
+	{
 		return;
+	}
 
 	if (node->HasNegLeaf())
 	{
 		RAY_PRIM(node->GetNegPrimitive(), OPC_CONTACT)
 	}
 	else
+	{
 		_RayStab(node->GetNeg());
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -627,7 +473,9 @@ void RayCollider::_RayStab(const AABBTreeNode *node, Container &box_indices)
 	node->GetAABB()->GetCenter(Center);
 	node->GetAABB()->GetExtents(Extents);
 	if (!RayAABBOverlap(Center, Extents))
+	{
 		return;
+	}
 	if (node->IsLeaf())
 	{
 		mFlags |= OPC_CONTACT;
@@ -647,24 +495,36 @@ inline bool RayCollider::SegmentAABBOverlap(const Point &center, const Point &ex
 
 	float Dx = mData2.x - center.x;
 	if (fabsf(Dx) > extents.x + mFDir.x)
+	{
 		return false;
+	}
 	float Dy = mData2.y - center.y;
 	if (fabsf(Dy) > extents.y + mFDir.y)
+	{
 		return false;
+	}
 	float Dz = mData2.z - center.z;
 	if (fabsf(Dz) > extents.z + mFDir.z)
+	{
 		return false;
+	}
 
 	float f;
 	f = mData.y * Dz - mData.z * Dy;
 	if (fabsf(f) > extents.y * mFDir.z + extents.z * mFDir.y)
+	{
 		return false;
+	}
 	f = mData.z * Dx - mData.x * Dz;
 	if (fabsf(f) > extents.x * mFDir.z + extents.z * mFDir.x)
+	{
 		return false;
+	}
 	f = mData.x * Dy - mData.y * Dx;
 	if (fabsf(f) > extents.x * mFDir.y + extents.y * mFDir.x)
+	{
 		return false;
+	}
 
 	return true;
 }
@@ -688,13 +548,19 @@ inline bool RayCollider::RayAABBOverlap(const Point &center, const Point &extent
 
 	float Dx = mOrigin.x - center.x;
 	if (GREATER(Dx, extents.x) && Dx * mDir.x >= 0.0f)
+	{
 		return false;
+	}
 	float Dy = mOrigin.y - center.y;
 	if (GREATER(Dy, extents.y) && Dy * mDir.y >= 0.0f)
+	{
 		return false;
+	}
 	float Dz = mOrigin.z - center.z;
 	if (GREATER(Dz, extents.z) && Dz * mDir.z >= 0.0f)
+	{
 		return false;
+	}
 
 	//	float Dx = mOrigin.x - center.x;	if(GREATER(Dx, extents.x) && ((SIR(Dx)-1)^SIR(mDir.x))>=0.0f)	return false;
 	//	float Dy = mOrigin.y - center.y;	if(GREATER(Dy, extents.y) && ((SIR(Dy)-1)^SIR(mDir.y))>=0.0f)	return false;
@@ -703,13 +569,19 @@ inline bool RayCollider::RayAABBOverlap(const Point &center, const Point &extent
 	float f;
 	f = mDir.y * Dz - mDir.z * Dy;
 	if (fabsf(f) > extents.y * mFDir.z + extents.z * mFDir.y)
+	{
 		return false;
+	}
 	f = mDir.z * Dx - mDir.x * Dz;
 	if (fabsf(f) > extents.x * mFDir.z + extents.z * mFDir.x)
+	{
 		return false;
+	}
 	f = mDir.x * Dy - mDir.y * Dx;
 	if (fabsf(f) > extents.x * mFDir.y + extents.y * mFDir.x)
+	{
 		return false;
+	}
 
 	return true;
 }
@@ -732,7 +604,9 @@ inline bool RayCollider::RayTriOverlap(const Point &vert0, const Point &vert1, c
 	if (mCulling)
 	{
 		if (det < std::numeric_limits<float>::epsilon())
+		{
 			return false;
+		}
 		// From here, det is > 0. So we can use integer cmp.
 
 		// Calculate distance from vert0 to ray origin
@@ -774,7 +648,9 @@ inline bool RayCollider::RayTriOverlap(const Point &vert0, const Point &vert1, c
 	{
 		// the non-culling branch
 		if (det > -std::numeric_limits<float>::epsilon() && det < std::numeric_limits<float>::epsilon())
+		{
 			return false;
+		}
 		float OneOverDet = 1.0f / det;
 
 		// Calculate distance from vert0 to ray origin
@@ -784,7 +660,9 @@ inline bool RayCollider::RayTriOverlap(const Point &vert0, const Point &vert1, c
 		mStabbedFace.mU = (tvec | pvec) * OneOverDet;
 		//		if(IR(u)&0x80000000 || u>1.0f)					return false;
 		if ((mStabbedFace.mU < 0.0f) || (mStabbedFace.mU > 1.0f))
+		{
 			return false;
+		}
 
 		// prepare to test V parameter
 		Point qvec = tvec ^ edge1;
@@ -792,13 +670,17 @@ inline bool RayCollider::RayTriOverlap(const Point &vert0, const Point &vert1, c
 		// Calculate V parameter and test bounds
 		mStabbedFace.mV = (mDir | qvec) * OneOverDet;
 		if ((mStabbedFace.mV < 0.0f) || mStabbedFace.mU + mStabbedFace.mV > 1.0f)
+		{
 			return false;
+		}
 
 		// Calculate t, ray intersects triangle
 		mStabbedFace.mDistance = (edge2 | qvec) * OneOverDet;
 		// Intersection point is valid if distance is positive (else it can just be a face behind the orig point)
 		if ((mStabbedFace.mDistance < 0.0f))
+		{
 			return false;
+		}
 	}
 	return true;
 }

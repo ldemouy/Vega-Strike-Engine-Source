@@ -96,15 +96,11 @@ protected:
 	// Settings
 	float mMaxDist; //!< Valid segment on the ray
 	bool mCulling;	//!< Stab culled faces or not
-		// Internal methods
-	void _SegmentStab(const AABBCollisionNode *node);
-	void _SegmentStab(const AABBNoLeafNode *node);
-	void _SegmentStab(const AABBQuantizedNode *node);
+	// Internal methods
+
 	void _SegmentStab(const AABBQuantizedNoLeafNode *node);
 	void _SegmentStab(const AABBTreeNode *node, Container &box_indices);
-	void _RayStab(const AABBCollisionNode *node);
-	void _RayStab(const AABBNoLeafNode *node);
-	void _RayStab(const AABBQuantizedNode *node);
+
 	void _RayStab(const AABBQuantizedNoLeafNode *node);
 	void _RayStab(const AABBTreeNode *node, Container &box_indices);
 	// Overlap tests
