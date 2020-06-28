@@ -131,12 +131,16 @@ bool Model::Build(const OPCODECREATE &create)
 {
 	// 1) Checkings
 	if (!create.mIMesh || !create.mIMesh->IsValid())
+	{
 		return false;
+	}
 
 	// For this model, we only support complete trees
 	//	if(create.mSettings.mLimit!=1)	return SetIceError ("OPCODE WARNING: supports complete trees only! Use mLimit = 1.", nullptr);
 	if (create.mSettings.mLimit != 1)
+	{
 		return (false);
+	}
 	// Look for degenerate faces.
 	create.mIMesh->CheckTopology();
 	// We continue nonetheless....
@@ -168,16 +172,22 @@ bool Model::Build(const OPCODECREATE &create)
 		TB.mSettings = create.mSettings;
 		TB.mNbPrimitives = NbTris;
 		if (!mSource->Build(&TB))
+		{
 			return false;
+		}
 	}
 
 	// 3) Create an optimized tree according to user-settings
 	if (!CreateTree(create.mNoLeaf, create.mQuantized))
+	{
 		return false;
+	}
 
 	// 3-2) Create optimized tree
 	if (!mTree->Build(mSource))
+	{
 		return false;
+	}
 
 	// 3-3) Delete generic tree if needed
 	if (!create.mKeepOriginal)

@@ -99,9 +99,13 @@ public:
 	inline void SetFirstContact(bool flag)
 	{
 		if (flag)
+		{
 			mFlags |= OPC_FIRST_CONTACT;
+		}
 		else
+		{
 			mFlags &= ~OPC_FIRST_CONTACT;
+		}
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -115,9 +119,13 @@ public:
 	inline void SetTemporalCoherence(bool flag)
 	{
 		if (flag)
+		{
 			mFlags |= OPC_TEMPORAL_COHERENCE;
+		}
 		else
+		{
 			mFlags &= ~OPC_TEMPORAL_COHERENCE;
+		}
 	}
 
 protected:
@@ -139,7 +147,9 @@ protected:
 		// Keep track of current model
 		mCurrentModel = model;
 		if (!mCurrentModel)
+		{
 			return false;
+		}
 
 		mIMesh = model->GetMeshInterface();
 		return mIMesh != nullptr;

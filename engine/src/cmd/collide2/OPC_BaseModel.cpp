@@ -85,34 +85,7 @@ void BaseModel::ReleaseBase()
 bool BaseModel::CreateTree(bool no_leaf, bool quantized)
 {
 	DELETESINGLE(mTree);
-
-	// Setup model code
-	if (no_leaf)
-		mModelCode |= OPC_NO_LEAF;
-	else
-		mModelCode &= ~OPC_NO_LEAF;
-
-	if (quantized)
-		mModelCode |= OPC_QUANTIZED;
-	else
-		mModelCode &= ~OPC_QUANTIZED;
-
-	// Create the correct class
-	if (mModelCode & OPC_NO_LEAF)
-	{
-		if (mModelCode & OPC_QUANTIZED)
-			mTree = new AABBQuantizedNoLeafTree;
-		else
-			mTree = new AABBNoLeafTree;
-	}
-	else
-	{
-		if (mModelCode & OPC_QUANTIZED)
-			mTree = new AABBQuantizedTree;
-		else
-			mTree = new AABBCollisionTree;
-	}
+	mTree = new AABBQuantizedNoLeafTree;
 	CHECKALLOC(mTree);
-
 	return true;
 }

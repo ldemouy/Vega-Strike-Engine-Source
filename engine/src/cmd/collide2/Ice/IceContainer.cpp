@@ -105,7 +105,9 @@ bool Container::Resize(uint32_t needed)
 	// Get more entries
 	mMaxNbEntries = mMaxNbEntries ? uint32_t(float(mMaxNbEntries) * mGrowthFactor) : 2; // Default nb Entries = 2
 	if (mMaxNbEntries < mCurNbEntries + needed)
+	{
 		mMaxNbEntries = mCurNbEntries + needed;
+	}
 
 	// Get some bytes for new entries
 	uint32_t *NewEntries = new uint32_t[mMaxNbEntries];
@@ -118,7 +120,9 @@ bool Container::Resize(uint32_t needed)
 
 	// Copy old data if needed
 	if (mCurNbEntries)
+	{
 		CopyMemory(NewEntries, mEntries, mCurNbEntries * sizeof(uint32_t));
+	}
 
 	// Delete old data
 	DELETEARRAY(mEntries);

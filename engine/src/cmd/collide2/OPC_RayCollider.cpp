@@ -219,75 +219,20 @@ bool RayCollider::Collide(const Ray &world_ray, const Model &model, const Matrix
 	if (InitQuery(world_ray, world, cache))
 		return true;
 
-	if (!model.HasLeafNodes())
+	const AABBQuantizedNoLeafTree *Tree = (const AABBQuantizedNoLeafTree *)model.GetTree();
+
+	// Setup dequantization coeffs
+	mCenterCoeff = Tree->mCenterCoeff;
+	mExtentsCoeff = Tree->mExtentsCoeff;
+
+	// Perform stabbing query
+	if (static_cast<uint32_t>(mMaxDist) != IEEE_MAX_FLOAT)
 	{
-		if (model.IsQuantized())
-		{
-			const AABBQuantizedNoLeafTree *Tree = (const AABBQuantizedNoLeafTree *)model.GetTree();
-
-			// Setup dequantization coeffs
-			mCenterCoeff = Tree->mCenterCoeff;
-			mExtentsCoeff = Tree->mExtentsCoeff;
-
-			// Perform stabbing query
-			if (static_cast<uint32_t>(mMaxDist) != IEEE_MAX_FLOAT)
-			{
-				_SegmentStab(Tree->GetNodes());
-			}
-			else
-			{
-				_RayStab(Tree->GetNodes());
-			}
-		}
-		else
-		{
-			const AABBNoLeafTree *Tree = (const AABBNoLeafTree *)model.GetTree();
-
-			// Perform stabbing query
-			if (static_cast<uint32_t>(mMaxDist) != IEEE_MAX_FLOAT)
-			{
-				_SegmentStab(Tree->GetNodes());
-			}
-			else
-			{
-				_RayStab(Tree->GetNodes());
-			}
-		}
+		_SegmentStab(Tree->GetNodes());
 	}
 	else
 	{
-		if (model.IsQuantized())
-		{
-			const AABBQuantizedTree *Tree = (const AABBQuantizedTree *)model.GetTree();
-
-			// Setup dequantization coeffs
-			mCenterCoeff = Tree->mCenterCoeff;
-			mExtentsCoeff = Tree->mExtentsCoeff;
-
-			// Perform stabbing query
-			if (static_cast<uint32_t>(mMaxDist) != IEEE_MAX_FLOAT)
-			{
-				_SegmentStab(Tree->GetNodes());
-			}
-			else
-			{
-				_RayStab(Tree->GetNodes());
-			}
-		}
-		else
-		{
-			const AABBCollisionTree *Tree = (const AABBCollisionTree *)model.GetTree();
-
-			// Perform stabbing query
-			if (static_cast<uint32_t>(mMaxDist) != IEEE_MAX_FLOAT)
-			{
-				_SegmentStab(Tree->GetNodes());
-			}
-			else
-			{
-				_RayStab(Tree->GetNodes());
-			}
-		}
+		_RayStab(Tree->GetNodes());
 	}
 
 	// Update cache if needed

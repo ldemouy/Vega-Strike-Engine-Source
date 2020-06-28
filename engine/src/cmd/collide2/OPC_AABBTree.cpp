@@ -71,7 +71,9 @@ AABBTreeNode::~AABBTreeNode()
 	const AABBTreeNode *Pos = GetPos();
 
 	if (!(mPos & 1))
+	{
 		DELETEARRAY(Pos);
+	}
 	mNodePrimitives = nullptr; // This was just a shortcut to the global list => no release
 	mNbPrimitives = 0;
 }
@@ -296,7 +298,9 @@ bool AABBTreeNode::Subdivide(AABBTreeBuilder *builder)
 		NbPos = mNbPrimitives >> 1;
 	}
 	else
+	{
 		return false; // Unknown splitting rules
+	}
 
 	// Check the subdivision has been successful
 	if (!ValidSplit)

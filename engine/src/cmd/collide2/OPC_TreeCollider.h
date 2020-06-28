@@ -84,9 +84,6 @@ public:
 	bool Collide(BVTCache &cache, const Matrix4x4 *world0 = nullptr, const Matrix4x4 *world1 = nullptr);
 
 	// Collision queries
-	bool Collide(const AABBCollisionTree *tree0, const AABBCollisionTree *tree1, const Matrix4x4 *world0 = nullptr, const Matrix4x4 *world1 = nullptr, BVTCache *cache = nullptr);
-	bool Collide(const AABBNoLeafTree *tree0, const AABBNoLeafTree *tree1, const Matrix4x4 *world0 = nullptr, const Matrix4x4 *world1 = nullptr, BVTCache *cache = nullptr);
-	bool Collide(const AABBQuantizedTree *tree0, const AABBQuantizedTree *tree1, const Matrix4x4 *world0 = nullptr, const Matrix4x4 *world1 = nullptr, BVTCache *cache = nullptr);
 	bool Collide(const AABBQuantizedNoLeafTree *tree0, const AABBQuantizedNoLeafTree *tree1, const Matrix4x4 *world0 = nullptr, const Matrix4x4 *world1 = nullptr, BVTCache *cache = nullptr);
 	// Settings
 
@@ -150,14 +147,6 @@ protected:
 	bool mFullPrimBoxTest; //!< Perform full Primitive-BV tests (true) or SAT-lite tests (false)
 						   // Internal methods
 
-	// Standard AABB trees
-	void _Collide(const AABBCollisionNode *b0, const AABBCollisionNode *b1);
-	// Quantized AABB trees
-	void _Collide(const AABBQuantizedNode *b0, const AABBQuantizedNode *b1, const Point &a, const Point &Pa, const Point &b, const Point &Pb);
-	// No-leaf AABB trees
-	void _CollideTriBox(const AABBNoLeafNode *b);
-	void _CollideBoxTri(const AABBNoLeafNode *b);
-	void _Collide(const AABBNoLeafNode *a, const AABBNoLeafNode *b);
 	// Quantized no-leaf AABB trees
 	void _CollideTriBox(const AABBQuantizedNoLeafNode *b);
 	void _CollideBoxTri(const AABBQuantizedNoLeafNode *b);

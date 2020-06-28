@@ -65,9 +65,13 @@ public:
 		const float *Vals = &x;
 		PointComponent m = _X;
 		if (Vals[_Y] > Vals[m])
+		{
 			m = _Y;
+		}
 		if (Vals[_Z] > Vals[m])
+		{
 			m = _Z;
+		}
 		return m;
 	}
 	//! Unary operator for Point Negate = - Point

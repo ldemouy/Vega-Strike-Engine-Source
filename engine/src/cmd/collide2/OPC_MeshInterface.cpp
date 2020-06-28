@@ -146,9 +146,13 @@ MeshInterface::~MeshInterface()
 bool MeshInterface::IsValid() const
 {
 	if (!mNbTris || !mNbVerts)
+	{
 		return false;
+	}
 	if (!mObjCallback)
+	{
 		return false;
+	}
 	return true;
 }
 
@@ -176,7 +180,9 @@ uint32_t MeshInterface::CheckTopology() const
 		GetTriangle(VP, i);
 
 		if ((VP.Vertex[0] == VP.Vertex[1]) || (VP.Vertex[1] == VP.Vertex[2]) || (VP.Vertex[2] == VP.Vertex[0]))
+		{
 			NbDegenerate++;
+		}
 	}
 
 	return NbDegenerate;
@@ -194,9 +200,10 @@ bool MeshInterface::SetCallback(RequestCallback callback, void *user_data)
 {
 	//	if(!callback)	return SetIceError("MeshInterface::SetCallback: callback pointer is null");
 	if (!callback)
+	{
 		return (false);
+	}
 	mObjCallback = callback;
 	mUserData = user_data;
 	return true;
 }
-

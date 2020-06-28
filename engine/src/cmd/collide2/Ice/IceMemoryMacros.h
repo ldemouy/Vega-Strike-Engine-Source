@@ -56,7 +56,9 @@ inline void CopyMemory(void *dest, const void *src, uint32_t size) { memcpy(dest
 #else
 #define CHECKALLOC(x) \
 	if (!x)           \
-		return false;
+	{                 \
+		return false; \
+	}
 #endif
 
 #endif // __ICEMEMORYMACROS_H__

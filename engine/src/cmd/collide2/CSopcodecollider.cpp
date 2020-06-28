@@ -89,7 +89,9 @@ void csOPCODECollider::GeometryInitialize(const std::vector<mesh_polygon> &polyg
 		OPCC.mQuantized = true;
 	}
 	else
+	{
 		return;
+	}
 
 	//bool status = m_pCollisionModel->Build (OPCC);
 	m_pCollisionModel->Build(OPCC);
@@ -243,7 +245,9 @@ bool csOPCODECollider::Collide(csOPCODECollider &otherCollider,
 		return (status);
 	}
 	else
+	{
 		return (false);
+	}
 }
 
 void csOPCODECollider::ResetCollisionPairs()

@@ -41,7 +41,9 @@ public:
 	{
 		// Resize if needed
 		if (mCurNbEntries == mMaxNbEntries)
+		{
 			Resize();
+		}
 
 		// Add new entry
 		mEntries[mCurNbEntries++] = entry;
@@ -52,7 +54,9 @@ public:
 	{
 		// Resize if needed
 		if (mCurNbEntries + nb > mMaxNbEntries)
+		{
 			Resize(nb);
+		}
 
 		// Add new entry
 		CopyMemory(&mEntries[mCurNbEntries], entries, nb * sizeof(uint32_t));
