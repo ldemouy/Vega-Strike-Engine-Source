@@ -14,8 +14,6 @@
 #include "IceTypes.h"
 #include "IceMemoryMacros.h"
 #include "IcePoint.h"
-#include "IceHPoint.h"
-//#include "IceMatrix4x4.h"
 #include <stdint.h>
 
 class Matrix3x3
@@ -514,14 +512,6 @@ public:
 			s * mat.m[0][0], s * mat.m[0][1], s * mat.m[0][2],
 			s * mat.m[1][0], s * mat.m[1][1], s * mat.m[1][2],
 			s * mat.m[2][0], s * mat.m[2][1], s * mat.m[2][2]);
-	}
-
-	inline friend Point operator*(const HPoint &point, const Matrix3x3 &mat)
-	{
-		return Point(
-			point.x * mat.m[0][0] + point.y * mat.m[1][0] + point.z * mat.m[2][0],
-			point.x * mat.m[0][1] + point.y * mat.m[1][1] + point.z * mat.m[2][1],
-			point.x * mat.m[0][2] + point.y * mat.m[1][2] + point.z * mat.m[2][2]);
 	}
 
 	//! Operator for Matrix3x3 Div = Matrix3x3 / float;

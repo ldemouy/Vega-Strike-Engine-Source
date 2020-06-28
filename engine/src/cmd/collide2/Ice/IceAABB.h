@@ -13,7 +13,6 @@
 #define __ICEAABB_H__
 #include <cmath>
 #include "IcePoint.h"
-#include "IceBoundingSphere.h"
 #include "IcePlane.h"
 #include "IceMatrix3x3.h"
 #include "IceMatrix4x4.h"
@@ -39,7 +38,6 @@ public:
 	//! Type-independent methods
 	AABB &Add(const AABB &aabb);
 	float MakeCube(AABB &cube) const;
-	void MakeSphere(Sphere &sphere) const;
 	const int8_t *ComputeOutline(const Point &local_eye, int32_t &num) const;
 	bool IsInside(const AABB &box) const;
 	bool ComputePlanes(Plane *planes) const;

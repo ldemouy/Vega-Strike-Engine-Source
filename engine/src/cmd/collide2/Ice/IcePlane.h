@@ -77,39 +77,4 @@ public:
 	inline operator Point() const { return n; }
 };
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/**
-	 *	Transforms a plane by a 4x4 matrix. Same as Plane * Matrix4x4 operator, but faster.
-	 *	\param		transformed	[out] transformed plane
-	 *	\param		plane		[in] source plane
-	 *	\param		transform	[in] transform matrix
-	 *	\warning	the plane normal must be unit-length
-	 */
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-inline void TransformPlane(Plane &transformed, const Plane &plane, const Matrix4x4 &transform)
-{
-	// Rotate the normal using the rotation part of the 4x4 matrix
-	transformed.n = plane.n * Matrix3x3(transform);
-
-	// Compute new d
-	transformed.d = plane.d - (Point(transform.GetTrans()) | transformed.n);
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/**
-	 *	Transforms a plane by a 4x4 matrix. Same as Plane * Matrix4x4 operator, but faster.
-	 *	\param		plane		[in/out] source plane (transformed on return)
-	 *	\param		transform	[in] transform matrix
-	 *	\warning	the plane normal must be unit-length
-	 */
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-inline void TransformPlane(Plane &plane, const Matrix4x4 &transform)
-{
-	// Rotate the normal using the rotation part of the 4x4 matrix
-	plane.n *= Matrix3x3(transform);
-
-	// Compute new d
-	plane.d -= Point(transform.GetTrans()) | plane.n;
-}
-
 #endif // __ICEPLANE_H__

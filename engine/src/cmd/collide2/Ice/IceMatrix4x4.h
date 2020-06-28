@@ -14,7 +14,6 @@
 #include "IceTypes.h"
 #include "IceMemoryMacros.h"
 #include "IcePoint.h"
-#include "IceHPoint.h"
 #include "IceMatrix3x3.h"
 #include <stdint.h>
 
@@ -99,14 +98,7 @@ public:
 	inline void Copy(const Matrix4x4 &source) { CopyMemory(m, source.m, 16 * sizeof(float)); }
 
 	// Row-column access
-	//! Returns a row.
-	inline void GetRow(const uint32_t r, HPoint &p) const
-	{
-		p.x = m[r][0];
-		p.y = m[r][1];
-		p.z = m[r][2];
-		p.w = m[r][3];
-	}
+
 	//! Returns a row.
 	inline void GetRow(const uint32_t r, Point &p) const
 	{
@@ -114,18 +106,7 @@ public:
 		p.y = m[r][1];
 		p.z = m[r][2];
 	}
-	//! Returns a row.
-	inline const HPoint &GetRow(const uint32_t r) const { return *(const HPoint *)&m[r][0]; }
-	//! Returns a row.
-	inline HPoint &GetRow(const uint32_t r) { return *(HPoint *)&m[r][0]; }
-	//! Sets a row.
-	inline void SetRow(const uint32_t r, const HPoint &p)
-	{
-		m[r][0] = p.x;
-		m[r][1] = p.y;
-		m[r][2] = p.z;
-		m[r][3] = p.w;
-	}
+
 	//! Sets a row.
 	inline void SetRow(const uint32_t r, const Point &p)
 	{
@@ -134,14 +115,7 @@ public:
 		m[r][2] = p.z;
 		m[r][3] = (r != 3) ? 0.0f : 1.0f;
 	}
-	//! Returns a column.
-	inline void GetCol(const uint32_t c, HPoint &p) const
-	{
-		p.x = m[0][c];
-		p.y = m[1][c];
-		p.z = m[2][c];
-		p.w = m[3][c];
-	}
+
 	//! Returns a column.
 	inline void GetCol(const uint32_t c, Point &p) const
 	{
@@ -149,14 +123,7 @@ public:
 		p.y = m[1][c];
 		p.z = m[2][c];
 	}
-	//! Sets a column.
-	inline void SetCol(const uint32_t c, const HPoint &p)
-	{
-		m[0][c] = p.x;
-		m[1][c] = p.y;
-		m[2][c] = p.z;
-		m[3][c] = p.w;
-	}
+
 	//! Sets a column.
 	inline void SetCol(const uint32_t c, const Point &p)
 	{
@@ -167,8 +134,7 @@ public:
 	}
 
 	// Translation
-	//! Returns the translation part of the matrix.
-	inline const HPoint &GetTrans() const { return GetRow(3); }
+
 	//! Gets the translation part of the matrix
 	inline void GetTrans(Point &p) const
 	{
@@ -183,14 +149,7 @@ public:
 		m[3][1] = p.y;
 		m[3][2] = p.z;
 	}
-	//! Sets the translation part of the matrix, from a HPoint.
-	inline void SetTrans(const HPoint &p)
-	{
-		m[3][0] = p.x;
-		m[3][1] = p.y;
-		m[3][2] = p.z;
-		m[3][3] = p.w;
-	}
+
 	//! Sets the translation part of the matrix, from floats.
 	inline void SetTrans(float tx, float ty, float tz)
 	{
@@ -409,9 +368,6 @@ public:
 			m[3][0] * mat.m[0][3] + m[3][1] * mat.m[1][3] + m[3][2] * mat.m[2][3] + m[3][3] * mat.m[3][3]);
 	}
 
-	//! Operator for HPoint Mul = Matrix4x4 * HPoint;
-	inline HPoint operator*(const HPoint &v) const { return HPoint(GetRow(0) | v, GetRow(1) | v, GetRow(2) | v, GetRow(3) | v); }
-
 	//! Operator for Point Mul = Matrix4x4 * Point;
 	inline Point operator*(const Point &v) const
 	{
@@ -507,38 +463,6 @@ public:
 		return *this;
 	}
 
-	//! Operator for Matrix4x4 *= Matrix4x4;
-	Matrix4x4 &operator*=(const Matrix4x4 &mat)
-	{
-		HPoint TempRow;
-
-		GetRow(0, TempRow);
-		m[0][0] = TempRow.x * mat.m[0][0] + TempRow.y * mat.m[1][0] + TempRow.z * mat.m[2][0] + TempRow.w * mat.m[3][0];
-		m[0][1] = TempRow.x * mat.m[0][1] + TempRow.y * mat.m[1][1] + TempRow.z * mat.m[2][1] + TempRow.w * mat.m[3][1];
-		m[0][2] = TempRow.x * mat.m[0][2] + TempRow.y * mat.m[1][2] + TempRow.z * mat.m[2][2] + TempRow.w * mat.m[3][2];
-		m[0][3] = TempRow.x * mat.m[0][3] + TempRow.y * mat.m[1][3] + TempRow.z * mat.m[2][3] + TempRow.w * mat.m[3][3];
-
-		GetRow(1, TempRow);
-		m[1][0] = TempRow.x * mat.m[0][0] + TempRow.y * mat.m[1][0] + TempRow.z * mat.m[2][0] + TempRow.w * mat.m[3][0];
-		m[1][1] = TempRow.x * mat.m[0][1] + TempRow.y * mat.m[1][1] + TempRow.z * mat.m[2][1] + TempRow.w * mat.m[3][1];
-		m[1][2] = TempRow.x * mat.m[0][2] + TempRow.y * mat.m[1][2] + TempRow.z * mat.m[2][2] + TempRow.w * mat.m[3][2];
-		m[1][3] = TempRow.x * mat.m[0][3] + TempRow.y * mat.m[1][3] + TempRow.z * mat.m[2][3] + TempRow.w * mat.m[3][3];
-
-		GetRow(2, TempRow);
-		m[2][0] = TempRow.x * mat.m[0][0] + TempRow.y * mat.m[1][0] + TempRow.z * mat.m[2][0] + TempRow.w * mat.m[3][0];
-		m[2][1] = TempRow.x * mat.m[0][1] + TempRow.y * mat.m[1][1] + TempRow.z * mat.m[2][1] + TempRow.w * mat.m[3][1];
-		m[2][2] = TempRow.x * mat.m[0][2] + TempRow.y * mat.m[1][2] + TempRow.z * mat.m[2][2] + TempRow.w * mat.m[3][2];
-		m[2][3] = TempRow.x * mat.m[0][3] + TempRow.y * mat.m[1][3] + TempRow.z * mat.m[2][3] + TempRow.w * mat.m[3][3];
-
-		GetRow(3, TempRow);
-		m[3][0] = TempRow.x * mat.m[0][0] + TempRow.y * mat.m[1][0] + TempRow.z * mat.m[2][0] + TempRow.w * mat.m[3][0];
-		m[3][1] = TempRow.x * mat.m[0][1] + TempRow.y * mat.m[1][1] + TempRow.z * mat.m[2][1] + TempRow.w * mat.m[3][1];
-		m[3][2] = TempRow.x * mat.m[0][2] + TempRow.y * mat.m[1][2] + TempRow.z * mat.m[2][2] + TempRow.w * mat.m[3][2];
-		m[3][3] = TempRow.x * mat.m[0][3] + TempRow.y * mat.m[1][3] + TempRow.z * mat.m[2][3] + TempRow.w * mat.m[3][3];
-
-		return *this;
-	}
-
 	//! Operator for Matrix4x4 *= float;
 	inline Matrix4x4 &operator*=(float s)
 	{
@@ -584,33 +508,6 @@ public:
 		m[3][3] *= s;
 		return *this;
 	}
-
-	HPoint inline friend operator*(const HPoint &point, const Matrix4x4 &mat)
-	{
-		return HPoint(
-			point.x * mat.m[0][0] + point.y * mat.m[1][0] + point.z * mat.m[2][0] + point.w * mat.m[3][0],
-			point.x * mat.m[0][1] + point.y * mat.m[1][1] + point.z * mat.m[2][1] + point.w * mat.m[3][1],
-			point.x * mat.m[0][2] + point.y * mat.m[1][2] + point.z * mat.m[2][2] + point.w * mat.m[3][2],
-			point.x * mat.m[0][3] + point.y * mat.m[1][3] + point.z * mat.m[2][3] + point.w * mat.m[3][3]);
-	}
-
-	HPoint inline friend operator*=(HPoint point, const Matrix4x4 &mat)
-	{
-		float xp = point.x * mat.m[0][0] + point.y * mat.m[1][0] + point.z * mat.m[2][0] + point.w * mat.m[3][0];
-		float yp = point.x * mat.m[0][1] + point.y * mat.m[1][1] + point.z * mat.m[2][1] + point.w * mat.m[3][1];
-		float zp = point.x * mat.m[0][2] + point.y * mat.m[1][2] + point.z * mat.m[2][2] + point.w * mat.m[3][2];
-		float wp = point.x * mat.m[0][3] + point.y * mat.m[1][3] + point.z * mat.m[2][3] + point.w * mat.m[3][3];
-
-		point.x = xp;
-		point.y = yp;
-		point.z = zp;
-		point.w = wp;
-
-		return point;
-	}
-
-	inline const HPoint &operator[](int row) const { return *(const HPoint *)&m[row][0]; }
-	inline HPoint &operator[](int row) { return *(HPoint *)&m[row][0]; }
 
 public:
 	float m[4][4];
