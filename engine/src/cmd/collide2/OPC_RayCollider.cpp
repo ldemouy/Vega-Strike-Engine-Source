@@ -113,9 +113,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #include "OPC_RayCollider.h"
 
-#include "OPC_RayAABBOverlap.h"
-#include "OPC_RayTriOverlap.h"
-
 #define SET_CONTACT(prim_index, flag)                                          \
 	mNbIntersections++;                                                        \
 	/* Set contact status */                                                   \
@@ -758,4 +755,167 @@ void RayCollider::_RayStab(const AABBTreeNode *node, Container &box_indices)
 		_RayStab(node->GetPos(), box_indices);
 		_RayStab(node->GetNeg(), box_indices);
 	}
+}
+
+inline bool RayCollider::SegmentAABBOverlap(const Point &center, const Point &extents)
+{
+	// Stats
+	mNbRayBVTests++;
+
+	float Dx = mData2.x - center.x;
+	if (fabsf(Dx) > extents.x + mFDir.x)
+		return false;
+	float Dy = mData2.y - center.y;
+	if (fabsf(Dy) > extents.y + mFDir.y)
+		return false;
+	float Dz = mData2.z - center.z;
+	if (fabsf(Dz) > extents.z + mFDir.z)
+		return false;
+
+	float f;
+	f = mData.y * Dz - mData.z * Dy;
+	if (fabsf(f) > extents.y * mFDir.z + extents.z * mFDir.y)
+		return false;
+	f = mData.z * Dx - mData.x * Dz;
+	if (fabsf(f) > extents.x * mFDir.z + extents.z * mFDir.x)
+		return false;
+	f = mData.x * Dy - mData.y * Dx;
+	if (fabsf(f) > extents.x * mFDir.y + extents.y * mFDir.x)
+		return false;
+
+	return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/**
+ *	Computes a ray-AABB overlap test using the separating axis theorem. Ray is cached within the class.
+ *	\param		center	[in] AABB center
+ *	\param		extents	[in] AABB extents
+ *	\return		true on overlap
+ */
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+inline bool RayCollider::RayAABBOverlap(const Point &center, const Point &extents)
+{
+	// Stats
+	mNbRayBVTests++;
+
+	//	float Dx = mOrigin.x - center.x;	if(fabsf(Dx) > extents.x && Dx*mDir.x>=0.0f)	return false;
+	//	float Dy = mOrigin.y - center.y;	if(fabsf(Dy) > extents.y && Dy*mDir.y>=0.0f)	return false;
+	//	float Dz = mOrigin.z - center.z;	if(fabsf(Dz) > extents.z && Dz*mDir.z>=0.0f)	return false;
+
+	float Dx = mOrigin.x - center.x;
+	if (GREATER(Dx, extents.x) && Dx * mDir.x >= 0.0f)
+		return false;
+	float Dy = mOrigin.y - center.y;
+	if (GREATER(Dy, extents.y) && Dy * mDir.y >= 0.0f)
+		return false;
+	float Dz = mOrigin.z - center.z;
+	if (GREATER(Dz, extents.z) && Dz * mDir.z >= 0.0f)
+		return false;
+
+	//	float Dx = mOrigin.x - center.x;	if(GREATER(Dx, extents.x) && ((SIR(Dx)-1)^SIR(mDir.x))>=0.0f)	return false;
+	//	float Dy = mOrigin.y - center.y;	if(GREATER(Dy, extents.y) && ((SIR(Dy)-1)^SIR(mDir.y))>=0.0f)	return false;
+	//	float Dz = mOrigin.z - center.z;	if(GREATER(Dz, extents.z) && ((SIR(Dz)-1)^SIR(mDir.z))>=0.0f)	return false;
+
+	float f;
+	f = mDir.y * Dz - mDir.z * Dy;
+	if (fabsf(f) > extents.y * mFDir.z + extents.z * mFDir.y)
+		return false;
+	f = mDir.z * Dx - mDir.x * Dz;
+	if (fabsf(f) > extents.x * mFDir.z + extents.z * mFDir.x)
+		return false;
+	f = mDir.x * Dy - mDir.y * Dx;
+	if (fabsf(f) > extents.x * mFDir.y + extents.y * mFDir.x)
+		return false;
+
+	return true;
+}
+
+inline bool RayCollider::RayTriOverlap(const Point &vert0, const Point &vert1, const Point &vert2)
+{
+	// Stats
+	mNbRayPrimTests++;
+
+	// Find vectors for two edges sharing vert0
+	Point edge1 = vert1 - vert0;
+	Point edge2 = vert2 - vert0;
+
+	// Begin calculating determinant - also used to calculate U parameter
+	Point pvec = mDir ^ edge2;
+
+	// If determinant is near zero, ray lies in plane of triangle
+	float det = edge1 | pvec;
+
+	if (mCulling)
+	{
+		if (det < std::numeric_limits<float>::epsilon())
+			return false;
+		// From here, det is > 0. So we can use integer cmp.
+
+		// Calculate distance from vert0 to ray origin
+		Point tvec = mOrigin - vert0;
+
+		// Calculate U parameter and test bounds
+		mStabbedFace.mU = tvec | pvec;
+		//		if(IR(u)&0x80000000 || u>det)					return false;
+		if ((mStabbedFace.mU < 0.0f) || static_cast<uint32_t>(mStabbedFace.mU) > static_cast<uint32_t>(det))
+		{
+			return false;
+		}
+
+		// Prepare to test V parameter
+		Point qvec = tvec ^ edge1;
+
+		// Calculate V parameter and test bounds
+		mStabbedFace.mV = mDir | qvec;
+		if ((mStabbedFace.mV < 0.0f) || mStabbedFace.mU + mStabbedFace.mV > det)
+		{
+			return false;
+		}
+
+		// Calculate t, scale parameters, ray intersects triangle
+		mStabbedFace.mDistance = edge2 | qvec;
+		// Det > 0 so we can early exit here
+		// Intersection point is valid if distance is positive (else it can just be a face behind the orig point)
+		if ((mStabbedFace.mDistance < 0.0f))
+		{
+			return false;
+		}
+		// Else go on
+		float OneOverDet = 1.0f / det;
+		mStabbedFace.mDistance *= OneOverDet;
+		mStabbedFace.mU *= OneOverDet;
+		mStabbedFace.mV *= OneOverDet;
+	}
+	else
+	{
+		// the non-culling branch
+		if (det > -std::numeric_limits<float>::epsilon() && det < std::numeric_limits<float>::epsilon())
+			return false;
+		float OneOverDet = 1.0f / det;
+
+		// Calculate distance from vert0 to ray origin
+		Point tvec = mOrigin - vert0;
+
+		// Calculate U parameter and test bounds
+		mStabbedFace.mU = (tvec | pvec) * OneOverDet;
+		//		if(IR(u)&0x80000000 || u>1.0f)					return false;
+		if ((mStabbedFace.mU < 0.0f) || (mStabbedFace.mU > 1.0f))
+			return false;
+
+		// prepare to test V parameter
+		Point qvec = tvec ^ edge1;
+
+		// Calculate V parameter and test bounds
+		mStabbedFace.mV = (mDir | qvec) * OneOverDet;
+		if ((mStabbedFace.mV < 0.0f) || mStabbedFace.mU + mStabbedFace.mV > 1.0f)
+			return false;
+
+		// Calculate t, ray intersects triangle
+		mStabbedFace.mDistance = (edge2 | qvec) * OneOverDet;
+		// Intersection point is valid if distance is positive (else it can just be a face behind the orig point)
+		if ((mStabbedFace.mDistance < 0.0f))
+			return false;
+	}
+	return true;
 }

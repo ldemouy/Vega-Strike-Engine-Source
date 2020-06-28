@@ -137,15 +137,13 @@ ADD_LIBRARY(OPcollide
     src/cmd/collide2/Ice/IceMatrix4x4.cpp    
     src/cmd/collide2/Ice/IcePlane.cpp
     src/cmd/collide2/Ice/IcePoint.cpp    
-    src/cmd/collide2/Ice/IceRay.cpp
-    src/cmd/collide2/Ice/IceRevisitedRadix.cpp    
+    src/cmd/collide2/Ice/IceRay.cpp    
     src/cmd/collide2/csgeom2/opbox.cpp
     src/cmd/collide2/csgeom2/opmatrix3.cpp
     src/cmd/collide2/csgeom2/opvector3.cpp    
     src/cmd/collide2/OPC_AABBTree.cpp
     src/cmd/collide2/OPC_BaseModel.cpp    
-    src/cmd/collide2/OPC_Collider.cpp
-    src/cmd/collide2/OPC_HybridModel.cpp    
+    src/cmd/collide2/OPC_Collider.cpp    
     src/cmd/collide2/OPC_MeshInterface.cpp
     src/cmd/collide2/OPC_Model.cpp
     src/cmd/collide2/OPC_OptimizedTree.cpp
