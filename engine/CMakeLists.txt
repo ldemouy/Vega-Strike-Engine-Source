@@ -133,33 +133,25 @@ SET(LIBAI_SOURCES
 ADD_LIBRARY(OPcollide
     src/cmd/collide2/Ice/IceAABB.cpp
     src/cmd/collide2/Ice/IceContainer.cpp    
-    src/cmd/collide2/Ice/IceIndexedTriangle.cpp
     src/cmd/collide2/Ice/IceMatrix3x3.cpp
-    src/cmd/collide2/Ice/IceMatrix4x4.cpp
-    src/cmd/collide2/Ice/IceOBB.cpp
+    src/cmd/collide2/Ice/IceMatrix4x4.cpp    
     src/cmd/collide2/Ice/IcePlane.cpp
     src/cmd/collide2/Ice/IcePoint.cpp    
     src/cmd/collide2/Ice/IceRay.cpp
-    src/cmd/collide2/Ice/IceRevisitedRadix.cpp
-    src/cmd/collide2/Ice/IceSegment.cpp
-    src/cmd/collide2/Ice/IceTriangle.cpp    
+    src/cmd/collide2/Ice/IceRevisitedRadix.cpp    
     src/cmd/collide2/csgeom2/opbox.cpp
     src/cmd/collide2/csgeom2/opmatrix3.cpp
     src/cmd/collide2/csgeom2/opvector3.cpp    
     src/cmd/collide2/OPC_AABBTree.cpp
-    src/cmd/collide2/OPC_BaseModel.cpp
-    src/cmd/collide2/OPC_BoxPruning.cpp
+    src/cmd/collide2/OPC_BaseModel.cpp    
     src/cmd/collide2/OPC_Collider.cpp
     src/cmd/collide2/OPC_HybridModel.cpp    
     src/cmd/collide2/OPC_MeshInterface.cpp
     src/cmd/collide2/OPC_Model.cpp
     src/cmd/collide2/OPC_OptimizedTree.cpp
-    src/cmd/collide2/OPC_Picking.cpp    
     src/cmd/collide2/OPC_RayCollider.cpp
-    src/cmd/collide2/OPC_SphereCollider.cpp    
     src/cmd/collide2/OPC_TreeBuilders.cpp
-    src/cmd/collide2/OPC_TreeCollider.cpp
-    src/cmd/collide2/OPC_VolumeCollider.cpp
+    src/cmd/collide2/OPC_TreeCollider.cpp    
     src/cmd/collide2/CSopcodecollider.cpp
 )
 
