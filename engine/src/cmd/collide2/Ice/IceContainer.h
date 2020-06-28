@@ -16,14 +16,6 @@
 #include <stdint.h>
 #include "IceMemoryMacros.h"
 
-enum FindMode
-{
-	FIND_CLAMP,
-	FIND_WRAP,
-
-	FIND_FORCE_DWORD = 0x7fffffff
-};
-
 class Container
 {
 public:
@@ -92,32 +84,10 @@ public:
 			mCurNbEntries = 0;
 	}
 
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/**
-		 *	Sets the initial size of the container. If it already contains something, it's discarded.
-		 *	\param		nb		[in] Number of entries
-		 *	\return		true if success
-		 */
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	bool SetSize(uint32_t nb);
-
-	//! Deletes the very last entry.
-	inline void DeleteLastEntry()
-	{
-		if (mCurNbEntries)
-			mCurNbEntries--;
-	}
-
 	// Data access.
 	inline uint32_t GetNbEntries() const { return mCurNbEntries; }	   //!< Returns the current number of entries.
 	inline uint32_t GetEntry(uint32_t i) const { return mEntries[i]; } //!< Returns ith entry
 	inline uint32_t *GetEntries() const { return mEntries; }		   //!< Returns the list of entries.
-
-	//inline uint32_t GetFirst() const { return mEntries[0]; }
-	//inline uint32_t GetLast() const { return mEntries[mCurNbEntries - 1]; }
-
-	// Growth control
-	inline bool IsNotEmpty() const { return mCurNbEntries; } //!< Checks the container is empty
 
 	// Stats
 	uint32_t GetUsedRam() const;

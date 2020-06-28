@@ -33,13 +33,6 @@ public:
 	//! Destructor
 	inline ~Point() {}
 
-	//! Clears the vector
-	inline Point &Zero()
-	{
-		x = y = z = 0.0f;
-		return *this;
-	}
-
 	//! Assignment from values
 	inline Point &Set(float _x, float _y, float _z)
 	{
@@ -65,9 +58,6 @@ public:
 		z = std::max(z, p.z);
 		return *this;
 	}
-
-	//! Computes square magnitude
-	inline float SquareMagnitude() const { return x * x + y * y + z * z; }
 
 	//! Returns largest axis
 	inline PointComponent LargestAxis() const

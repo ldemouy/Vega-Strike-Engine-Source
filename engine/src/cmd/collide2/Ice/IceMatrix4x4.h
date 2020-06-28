@@ -69,17 +69,6 @@ public:
 		m[0][0] = m[1][1] = m[2][2] = m[3][3] = 1.0f;
 	}
 
-	//! Makes a rotation matrix about an arbitrary axis
-	Matrix4x4 &Rot(float angle, Point &p1, Point &p2);
-
-	//! Computes a cofactor. Used for matrix inversion.
-	float CoFactor(uint32_t row, uint32_t col) const;
-	//! Computes the determinant of the matrix.
-	float Determinant() const;
-	//! Inverts the matrix. Determinant must be different from zero, else matrix can't be inverted.
-	Matrix4x4 &Invert();
-	//				Matrix&	ComputeAxisMatrix(Point& axis, float angle);
-
 	// Cast operators
 	//! Casts a Matrix4x4 to a Matrix3x3.
 	inline operator Matrix3x3() const

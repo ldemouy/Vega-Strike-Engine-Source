@@ -131,7 +131,6 @@ SET(LIBAI_SOURCES
 )
 
 ADD_LIBRARY(OPcollide
-    src/cmd/collide2/Ice/IceAABB.cpp
     src/cmd/collide2/Ice/IceContainer.cpp        
     src/cmd/collide2/Ice/IceMatrix4x4.cpp        
     src/cmd/collide2/csgeom2/opbox.cpp

@@ -11,7 +11,7 @@
 // Include Guard
 #ifndef __ICEPAIRS_H__
 #define __ICEPAIRS_H__
-#include "IceContainer.h"
+#include <stdint.h>
 //! A generic couple structure
 struct Pair
 {

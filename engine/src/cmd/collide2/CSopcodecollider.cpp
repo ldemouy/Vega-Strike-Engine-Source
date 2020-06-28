@@ -261,12 +261,6 @@ size_t csOPCODECollider::GetCollisionPairCount()
 	return (pairs.size());
 }
 
-void csOPCODECollider::SetOneHitOnly(bool on)
-{
-	TreeCollider.SetFirstContact(on);
-	rCollider.SetFirstContact(on);
-}
-
 Vector csOPCODECollider::getVertex(unsigned int which) const
 {
 	// This function is used to position the damage particles

@@ -129,12 +129,6 @@ public:
 	/* Returns the size of the pair array */
 	static size_t GetCollisionPairCount();
 
-	/* Sets First contact to argument. 
-		* This means that Collide will return true as soon as the first
-		* contact is detected, rather than return the contacts for all 
-		* detected vertex collisions */
-	void SetOneHitOnly(bool fh);
-
 	/* Function that returns the Vector given the vertex index 
 		* Used for displaying the annoying damage particles */
 	Vector getVertex(unsigned int which) const;
