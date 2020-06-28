@@ -117,17 +117,16 @@ Point &Point::ProjectToPlane(const Plane &p)
 
 void Point::SetNotUsed()
 {
-	// We use a particular integer pattern : 0xffffffff everywhere. This is a NAN.
-	(uint32_t &)(x) = 0xffffffff;
-	(uint32_t &)(y) = 0xffffffff;
-	(uint32_t &)(z) = 0xffffffff;
+	x = std::numeric_limits<float>::quiet_NaN();
+	y = std::numeric_limits<float>::quiet_NaN();
+	z = std::numeric_limits<float>::quiet_NaN();
 }
 
 bool Point::IsNotUsed() const
 {
-	return !(static_cast<uint32_t>(x) != 0xffffffff) &&
-		   !(static_cast<uint32_t>(y) != 0xffffffff) &&
-		   !(static_cast<uint32_t>(z) != 0xffffffff);
+	return !(x != std::numeric_limits<float>::quiet_NaN()) &&
+		   !(y != std::numeric_limits<float>::quiet_NaN()) &&
+		   !(z != std::numeric_limits<float>::quiet_NaN());
 }
 
 Point &Point::Mult(const Matrix3x3 &mat, const Point &a)

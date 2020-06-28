@@ -280,30 +280,6 @@ public:
 	//! Makes a rotation matrix about an arbitrary axis
 	Matrix4x4 &Rot(float angle, Point &p1, Point &p2);
 
-	//! Transposes the matrix.
-	void Transpose()
-	{
-		//TODO: Figure out why this is being casted to ints
-		(uint32_t &)(m[1][0]) ^= static_cast<uint32_t>(m[0][1]);
-		(uint32_t &)(m[0][1]) ^= static_cast<uint32_t>(m[1][0]);
-		(uint32_t &)(m[1][0]) ^= static_cast<uint32_t>(m[0][1]);
-		(uint32_t &)(m[2][0]) ^= static_cast<uint32_t>(m[0][2]);
-		(uint32_t &)(m[0][2]) ^= static_cast<uint32_t>(m[2][0]);
-		(uint32_t &)(m[2][0]) ^= static_cast<uint32_t>(m[0][2]);
-		(uint32_t &)(m[3][0]) ^= static_cast<uint32_t>(m[0][3]);
-		(uint32_t &)(m[0][3]) ^= static_cast<uint32_t>(m[3][0]);
-		(uint32_t &)(m[3][0]) ^= static_cast<uint32_t>(m[0][3]);
-		(uint32_t &)(m[1][2]) ^= static_cast<uint32_t>(m[2][1]);
-		(uint32_t &)(m[2][1]) ^= static_cast<uint32_t>(m[1][2]);
-		(uint32_t &)(m[1][2]) ^= static_cast<uint32_t>(m[2][1]);
-		(uint32_t &)(m[1][3]) ^= static_cast<uint32_t>(m[3][1]);
-		(uint32_t &)(m[3][1]) ^= static_cast<uint32_t>(m[1][3]);
-		(uint32_t &)(m[1][3]) ^= static_cast<uint32_t>(m[3][1]);
-		(uint32_t &)(m[2][3]) ^= static_cast<uint32_t>(m[3][2]);
-		(uint32_t &)(m[3][2]) ^= static_cast<uint32_t>(m[2][3]);
-		(uint32_t &)(m[2][3]) ^= static_cast<uint32_t>(m[3][2]);
-	}
-
 	//! Computes a cofactor. Used for matrix inversion.
 	float CoFactor(uint32_t row, uint32_t col) const;
 	//! Computes the determinant of the matrix.

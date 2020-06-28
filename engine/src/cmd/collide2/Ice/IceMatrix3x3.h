@@ -385,21 +385,6 @@ public:
 	//! Make a rotation matrix about an arbitrary axis
 	Matrix3x3 &Rot(float angle, const Point &axis);
 
-	//! Transpose the matrix.
-	void Transpose()
-	{
-		//TODO: Investigate why this is being casted to ints
-		(uint32_t &)(m[1][0]) ^= static_cast<uint32_t>(m[0][1]);
-		(uint32_t &)(m[0][1]) ^= static_cast<uint32_t>(m[1][0]);
-		(uint32_t &)(m[1][0]) ^= static_cast<uint32_t>(m[0][1]);
-		(uint32_t &)(m[2][0]) ^= static_cast<uint32_t>(m[0][2]);
-		(uint32_t &)(m[0][2]) ^= static_cast<uint32_t>(m[2][0]);
-		(uint32_t &)(m[2][0]) ^= static_cast<uint32_t>(m[0][2]);
-		(uint32_t &)(m[2][1]) ^= static_cast<uint32_t>(m[1][2]);
-		(uint32_t &)(m[1][2]) ^= static_cast<uint32_t>(m[2][1]);
-		(uint32_t &)(m[2][1]) ^= static_cast<uint32_t>(m[1][2]);
-	}
-
 	//! this = Transpose(a)
 	void Transpose(const Matrix3x3 &a)
 	{
