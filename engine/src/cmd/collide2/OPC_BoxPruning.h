@@ -20,6 +20,7 @@
 #ifndef __OPC_BOXPRUNING_H__
 #define __OPC_BOXPRUNING_H__
 #include "Ice/IcePairs.h"
+#include "Ice/IceAABB.h"
 // Optimized versions
 extern "C" bool CompleteBoxPruning(uint32_t nb, const AABB **array, Pairs &pairs, const Axis &axes);
 extern "C" bool BipartiteBoxPruning(uint32_t nb0, const AABB **array0, uint32_t nb1, const AABB **array1, Pairs &pairs, const Axis &axes);

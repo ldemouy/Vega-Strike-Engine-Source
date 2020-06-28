@@ -111,8 +111,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Precompiled Header
-#include "Stdafx.h"
+#include "OPC_RayCollider.h"
 
 #include "OPC_RayAABBOverlap.h"
 #include "OPC_RayTriOverlap.h"
@@ -123,8 +122,6 @@
 	mFlags |= flag;                                                            \
 	/* In any case the contact has been found and recorded in mStabbedFace  */ \
 	mStabbedFace.mFaceID = prim_index;
-
-#ifdef OPC_RAYHIT_CALLBACK
 
 #define HANDLE_CONTACT(prim_index, flag)         \
 	SET_CONTACT(prim_index, flag)                \
@@ -143,46 +140,6 @@
 	else                               \
 	{                                  \
 	}
-#else
-
-#define HANDLE_CONTACT(prim_index, flag)                                                     \
-	SET_CONTACT(prim_index, flag)                                                            \
-                                                                                             \
-	/* Now we can also record it in mStabbedFaces if available */                            \
-	if (mStabbedFaces)                                                                       \
-	{                                                                                        \
-		/* If we want all faces or if that's the first one we hit */                         \
-		if (!mClosestHit || !mStabbedFaces->GetNbFaces())                                    \
-		{                                                                                    \
-			mStabbedFaces->AddFace(mStabbedFace);                                            \
-		}                                                                                    \
-		else                                                                                 \
-		{                                                                                    \
-			/* We only keep closest hit */                                                   \
-			CollisionFace *Current = const_cast<CollisionFace *>(mStabbedFaces->GetFaces()); \
-			if (Current && mStabbedFace.mDistance < Current->mDistance)                      \
-			{                                                                                \
-				*Current = mStabbedFace;                                                     \
-			}                                                                                \
-		}                                                                                    \
-	}                                                                                        \
-	else                                                                                     \
-	{                                                                                        \
-	}
-
-#define UPDATE_CACHE                                              \
-	if (cache && GetContactStatus() && mStabbedFaces)             \
-	{                                                             \
-		const CollisionFace *Current = mStabbedFaces->GetFaces(); \
-		if (Current)                                              \
-			*cache = Current->mFaceID;                            \
-		else                                                      \
-			*cache = INVALID_ID;                                  \
-	}                                                             \
-	else                                                          \
-	{                                                             \
-	}
-#endif
 
 #define SEGMENT_PRIM(prim_index, flag)                                                       \
 	/* Request vertices from the app */                                                      \
@@ -222,20 +179,12 @@
  *	Constructor.
  */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-RayCollider::RayCollider() :
-#ifdef OPC_RAYHIT_CALLBACK
-							 mHitCallback(nullptr),
+RayCollider::RayCollider() : mHitCallback(nullptr),
 							 mUserData(0),
-#else
-							 mStabbedFaces(null),
-#endif
 							 mNbRayBVTests(0),
 							 mNbRayPrimTests(0),
 							 mNbIntersections(0),
 							 mMaxDist(std::numeric_limits<float>::max()),
-#ifndef OPC_RAYHIT_CALLBACK
-							 mClosestHit(false),
-#endif
 							 mCulling(true)
 {
 }
@@ -263,14 +212,6 @@ const char *RayCollider::ValidateSettings()
 		return "Temporal coherence only works with "
 			   "First contact"
 			   " mode!";
-#ifndef OPC_RAYHIT_CALLBACK
-	if (mClosestHit && FirstContactEnabled())
-		return "Closest hit doesn't work with "
-			   "First contact"
-			   " mode!";
-	if (TemporalCoherenceEnabled() && mClosestHit)
-		return "Temporal coherence can't guarantee to report closest hit!";
-#endif
 	if (SkipPrimitiveTests())
 		return "SkipPrimitiveTests not possible for RayCollider ! (not implemented)";
 	return nullptr;
@@ -397,10 +338,6 @@ bool RayCollider::InitQuery(const Ray &world_ray, const Matrix4x4 *world, uint32
 	mNbRayBVTests = 0;
 	mNbRayPrimTests = 0;
 	mNbIntersections = 0;
-#ifndef OPC_RAYHIT_CALLBACK
-	if (mStabbedFaces)
-		mStabbedFaces->Reset();
-#endif
 
 	// Compute ray in local space
 	// The (Origin/Dir) form is needed for the ray-triangle test anyway (even for segment tests)
@@ -438,37 +375,6 @@ bool RayCollider::InitQuery(const Ray &world_ray, const Matrix4x4 *world, uint32
 	// Test previously colliding primitives first
 	if (TemporalCoherenceEnabled() && FirstContactEnabled() && face_id && *face_id != INVALID_ID)
 	{
-#ifdef OLD_CODE
-#ifndef OPC_RAYHIT_CALLBACK
-		if (!mClosestHit)
-#endif
-		{
-			// Request vertices from the app
-			VertexPointers VP;
-			mIMesh->GetTriangle(VP, *face_id);
-			// Perform ray-cached tri overlap test
-			if (RayTriOverlap(*VP.Vertex[0], *VP.Vertex[1], *VP.Vertex[2]))
-			{
-				// Intersection point is valid if:
-				// - distance is positive (else it can just be a face behind the orig point)
-				// - distance is smaller than a given max distance (useful for shadow feelers)
-				//				if(mStabbedFace.mDistance>0.0f && mStabbedFace.mDistance<mMaxDist)
-				if (static_cast<uint32_t>(mStabbedFace.mDistance) < static_cast<uint32_t>(mMaxDist)) // The other test is already performed in RayTriOverlap
-				{
-					// Set contact status
-					mFlags |= OPC_TEMPORAL_CONTACT;
-
-					mStabbedFace.mFaceID = *face_id;
-
-#ifndef OPC_RAYHIT_CALLBACK
-					if (mStabbedFaces)
-						mStabbedFaces->AddFace(mStabbedFace);
-#endif
-					return true;
-				}
-			}
-		}
-#else
 		// New code
 		// We handle both Segment/ray queries with the same segment code, and a possible infinite limit
 		SEGMENT_PRIM(*face_id, OPC_TEMPORAL_CONTACT)
@@ -476,7 +382,6 @@ bool RayCollider::InitQuery(const Ray &world_ray, const Matrix4x4 *world, uint32
 		// Return immediately if possible
 		if (GetContactStatus())
 			return true;
-#endif
 	}
 
 	// Precompute data (moved after temporal coherence since only needed for ray-AABB)

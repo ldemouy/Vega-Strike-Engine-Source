@@ -25,7 +25,6 @@
 */
 
 #ifndef __VS_OPCODECOL_H__
-#include "Stdafx.h"
 #define __VS_OPCODECOL_H__
 #include "csgeom2/opmatrix3.h"
 #include "csgeom2/opvector3.h"
@@ -34,6 +33,8 @@
 #include "basecollider.h"
 #include "gfx/mesh.h"
 #include "Ice/IcePoint.h"
+#include "OPC_RayCollider.h"
+#include "OPC_TreeCollider.h"
 
 /*
  	How to use Collider. 

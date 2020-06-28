@@ -20,6 +20,11 @@
 #ifndef __OPC_BASEMODEL_H__
 #define __OPC_BASEMODEL_H__
 
+#include "OPC_MeshInterface.h"
+#include "OPC_TreeBuilders.h"
+#include "OPC_AABBTree.h"
+#include "OPC_OptimizedTree.h"
+
 //! Model creation structure
 struct OPCODECREATE
 {

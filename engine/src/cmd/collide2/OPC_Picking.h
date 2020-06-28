@@ -20,11 +20,11 @@
 #ifndef __OPC_PICKING_H__
 #define __OPC_PICKING_H__
 
-#ifdef OPC_RAYHIT_CALLBACK
-
 #include <vector>
 #include "Ice/IcePoint.h"
 #include "Ice/IceRay.h"
+#include "OPC_Model.h"
+#include "OPC_RayCollider.h"
 
 enum CullMode
 {
@@ -44,6 +44,5 @@ bool Picking(
 	CollisionFace &picked_face,
 	const Ray &world_ray, const Model &model, const Matrix4x4 *world,
 	float min_dist, float max_dist, const Point &view_point, CullModeCallback callback, void *user_data);
-#endif
 
 #endif //__OPC_PICKING_H__

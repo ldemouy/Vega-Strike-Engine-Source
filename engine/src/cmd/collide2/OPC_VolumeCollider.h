@@ -22,7 +22,9 @@
 
 #include "Ice/IceContainer.h"
 #include "Ice/IcePoint.h"
-
+#include "OPC_OptimizedTree.h"
+#include "OPC_BaseModel.h"
+#include "OPC_Collider.h"
 struct VolumeCache
 {
 	VolumeCache() : Model(nullptr) {}

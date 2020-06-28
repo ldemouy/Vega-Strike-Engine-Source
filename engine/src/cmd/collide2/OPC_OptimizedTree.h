@@ -21,6 +21,9 @@
 #define __OPC_OPTIMIZEDTREE_H__
 #include "Ice/IceMemoryMacros.h"
 #include "Ice/IcePoint.h"
+#include "OPC_Common.h"
+#include "OPC_MeshInterface.h"
+#include "OPC_AABBTree.h"
 
 //! Common interface for a node of an implicit tree
 #define IMPLEMENT_IMPLICIT_NODE(base_class, volume)                               \

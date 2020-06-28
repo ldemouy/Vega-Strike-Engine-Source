@@ -17,6 +17,9 @@
  */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #include "Ice/IcePoint.h"
+#include "Ice/IceMatrix3x3.h"
+#include "OPC_TreeCollider.h"
+
 inline bool AABBTreeCollider::BoxBoxOverlap(const Point &ea, const Point &ca, const Point &eb, const Point &cb)
 {
 	// Stats
@@ -101,107 +104,3 @@ inline bool AABBTreeCollider::BoxBoxOverlap(const Point &ea, const Point &ca, co
 	return true;
 }
 
-//! A dedicated version when one box is constant
-inline bool OBBCollider::BoxBoxOverlap(const Point &extents, const Point &center)
-{
-	// Stats
-	mNbVolumeBVTests++;
-
-	float t, t2;
-
-	// Class I : A's basis vectors
-	float Tx = mTBoxToModel.x - center.x;
-	t = extents.x + mBBx1;
-	if (GREATER(Tx, t))
-		return false;
-	float Ty = mTBoxToModel.y - center.y;
-	t = extents.y + mBBy1;
-	if (GREATER(Ty, t))
-		return false;
-	float Tz = mTBoxToModel.z - center.z;
-	t = extents.z + mBBz1;
-	if (GREATER(Tz, t))
-		return false;
-
-	// Class II : B's basis vectors
-	t = Tx * mRBoxToModel.m[0][0] + Ty * mRBoxToModel.m[0][1] + Tz * mRBoxToModel.m[0][2];
-	t2 = extents.x * mAR.m[0][0] + extents.y * mAR.m[0][1] + extents.z * mAR.m[0][2] + mBoxExtents.x;
-	if (GREATER(t, t2))
-		return false;
-
-	t = Tx * mRBoxToModel.m[1][0] + Ty * mRBoxToModel.m[1][1] + Tz * mRBoxToModel.m[1][2];
-	t2 = extents.x * mAR.m[1][0] + extents.y * mAR.m[1][1] + extents.z * mAR.m[1][2] + mBoxExtents.y;
-	if (GREATER(t, t2))
-		return false;
-
-	t = Tx * mRBoxToModel.m[2][0] + Ty * mRBoxToModel.m[2][1] + Tz * mRBoxToModel.m[2][2];
-	t2 = extents.x * mAR.m[2][0] + extents.y * mAR.m[2][1] + extents.z * mAR.m[2][2] + mBoxExtents.z;
-	if (GREATER(t, t2))
-		return false;
-
-	// Class III : 9 cross products
-	// Cool trick: always perform the full test for first level, regardless of settings.
-	// That way pathological cases (such as the pencils scene) are quickly rejected anyway !
-	if (mFullBoxBoxTest || mNbVolumeBVTests == 1)
-	{
-		t = Tz * mRBoxToModel.m[0][1] - Ty * mRBoxToModel.m[0][2];
-		t2 = extents.y * mAR.m[0][2] + extents.z * mAR.m[0][1] + mBB_1;
-		if (GREATER(t, t2))
-			return false; // L = A0 x B0
-		t = Tz * mRBoxToModel.m[1][1] - Ty * mRBoxToModel.m[1][2];
-		t2 = extents.y * mAR.m[1][2] + extents.z * mAR.m[1][1] + mBB_2;
-		if (GREATER(t, t2))
-			return false; // L = A0 x B1
-		t = Tz * mRBoxToModel.m[2][1] - Ty * mRBoxToModel.m[2][2];
-		t2 = extents.y * mAR.m[2][2] + extents.z * mAR.m[2][1] + mBB_3;
-		if (GREATER(t, t2))
-			return false; // L = A0 x B2
-		t = Tx * mRBoxToModel.m[0][2] - Tz * mRBoxToModel.m[0][0];
-		t2 = extents.x * mAR.m[0][2] + extents.z * mAR.m[0][0] + mBB_4;
-		if (GREATER(t, t2))
-			return false; // L = A1 x B0
-		t = Tx * mRBoxToModel.m[1][2] - Tz * mRBoxToModel.m[1][0];
-		t2 = extents.x * mAR.m[1][2] + extents.z * mAR.m[1][0] + mBB_5;
-		if (GREATER(t, t2))
-			return false; // L = A1 x B1
-		t = Tx * mRBoxToModel.m[2][2] - Tz * mRBoxToModel.m[2][0];
-		t2 = extents.x * mAR.m[2][2] + extents.z * mAR.m[2][0] + mBB_6;
-		if (GREATER(t, t2))
-			return false; // L = A1 x B2
-		t = Ty * mRBoxToModel.m[0][0] - Tx * mRBoxToModel.m[0][1];
-		t2 = extents.x * mAR.m[0][1] + extents.y * mAR.m[0][0] + mBB_7;
-		if (GREATER(t, t2))
-			return false; // L = A2 x B0
-		t = Ty * mRBoxToModel.m[1][0] - Tx * mRBoxToModel.m[1][1];
-		t2 = extents.x * mAR.m[1][1] + extents.y * mAR.m[1][0] + mBB_8;
-		if (GREATER(t, t2))
-			return false; // L = A2 x B1
-		t = Ty * mRBoxToModel.m[2][0] - Tx * mRBoxToModel.m[2][1];
-		t2 = extents.x * mAR.m[2][1] + extents.y * mAR.m[2][0] + mBB_9;
-		if (GREATER(t, t2))
-			return false; // L = A2 x B2
-	}
-	return true;
-}
-
-//! A special version for 2 axis-aligned boxes
-inline bool AABBCollider::AABBAABBOverlap(const Point &extents, const Point &center)
-{
-	// Stats
-	mNbVolumeBVTests++;
-
-	float tx = mBox.mCenter.x - center.x;
-	float ex = extents.x + mBox.mExtents.x;
-	if (GREATER(tx, ex))
-		return false;
-	float ty = mBox.mCenter.y - center.y;
-	float ey = extents.y + mBox.mExtents.y;
-	if (GREATER(ty, ey))
-		return false;
-	float tz = mBox.mCenter.z - center.z;
-	float ez = extents.z + mBox.mExtents.z;
-	if (GREATER(tz, ez))
-		return false;
-
-	return true;
-}

@@ -216,14 +216,13 @@ inline bool AABBTreeCollider::TriTriOverlap(const Point &V0, const Point &V1, co
 	float du2 = (N1 | U2) + d1;
 
 	// Coplanarity robustness check
-#ifdef OPC_TRITRI_EPSILON_TEST
+
 	if (fabsf(du0) < std::numeric_limits<float>::epsilon())
 		du0 = 0.0f;
 	if (fabsf(du1) < std::numeric_limits<float>::epsilon())
 		du1 = 0.0f;
 	if (fabsf(du2) < std::numeric_limits<float>::epsilon())
 		du2 = 0.0f;
-#endif
 	const float du0du1 = du0 * du1;
 	const float du0du2 = du0 * du2;
 
@@ -242,14 +241,12 @@ inline bool AABBTreeCollider::TriTriOverlap(const Point &V0, const Point &V1, co
 	float dv1 = (N2 | V1) + d2;
 	float dv2 = (N2 | V2) + d2;
 
-#ifdef OPC_TRITRI_EPSILON_TEST
 	if (fabsf(dv0) < std::numeric_limits<float>::epsilon())
 		dv0 = 0.0f;
 	if (fabsf(dv1) < std::numeric_limits<float>::epsilon())
 		dv1 = 0.0f;
 	if (fabsf(dv2) < std::numeric_limits<float>::epsilon())
 		dv2 = 0.0f;
-#endif
 
 	const float dv0dv1 = dv0 * dv1;
 	const float dv0dv2 = dv0 * dv2;

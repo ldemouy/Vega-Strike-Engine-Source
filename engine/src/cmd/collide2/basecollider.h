@@ -5,7 +5,6 @@
 #define CS_TERRAFORMER_COLLIDER 1
 #define CS_TERRAIN_COLLIDER 2
 
-#include "cmd/collide2/Stdafx.h"
 #include "Ice/IcePoint.h"
 /**
  * A structure used to return collision pairs.

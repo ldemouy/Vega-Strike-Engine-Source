@@ -14,6 +14,7 @@
 
 #include "IcePoint.h"
 #include "IceSegment.h"
+#include "IceBoundingSphere.h"
 class LSS : public Segment
 {
 public:

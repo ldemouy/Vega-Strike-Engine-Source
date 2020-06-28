@@ -20,8 +20,8 @@
 #ifndef __OPC_AABBTREE_H__
 #define __OPC_AABBTREE_H__
 #include <functional>
+#include "OPC_TreeBuilders.h"
 
-#ifdef OPC_NO_NEG_VANILLA_TREE
 //! TO BE DOCUMENTED
 #define IMPLEMENT_TREE(base_class, volume)                                                           \
 public:                                                                                              \
@@ -50,33 +50,6 @@ protected:                                                                      
 	/* Whatever happens we need the two children and the enclosing volume.*/                         \
 	volume mBV;		/* Global bounding-volume enclosing all the node-related primitives */           \
 	uintptr_t mPos; /* "Positive" & "Negative" children */
-#else
-//! TO BE DOCUMENTED
-#define IMPLEMENT_TREE(base_class, volume) \
-public:                                    \
-	/* Constructor / Destructor */         \
-	base_class();                          \
-	~base_class();
-
-/* Data access */
-inline const volume *Get##volume() const
-{
-	return &mBV;
-} /* Clear the last bit */
-inline const base_class *GetPos() const { return (const base_class *)(mPos & ~1); }
-inline const base_class *GetNeg() const { return (const base_class *)(mNeg & ~1); }
-
-/*		inline	bool				IsLeaf()		const	{ return (!GetPos() && !GetNeg());	}	*/ /* We don't need to test both nodes since we can't have one without the other	*/
-inline bool IsLeaf() const { return !GetPos(); }
-
-/* Stats */
-inline uint32_t GetNodeSize() const { return SIZEOFOBJECT; }
-
-protected: /* Tree-independent data */ /* Following data always belong to the BV-tree, regardless of what the tree actually contains.*/ /* Whatever happens we need the two children and the enclosing volume.*/
-volume mBV;																																/* Global bounding-volume enclosing all the node-related primitives */
-uintptr_t mPos;																															/* "Positive" child */
-uintptr_t mNeg;																															/* "Negative" child */
-#endif
 
 typedef std::function<void(uint32_t nb_primitives, uint32_t *node_primitives, bool need_clipping, void *user_data)> CullingCallback;
 

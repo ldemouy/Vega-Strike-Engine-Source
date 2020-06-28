@@ -43,8 +43,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Precompiled Header
-#include "Stdafx.h"
+#include "OPC_AABBTree.h"
 #include "Ice/IcePoint.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -53,9 +52,6 @@
  */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 AABBTreeNode::AABBTreeNode() : mPos(0),
-#ifndef OPC_NO_NEG_VANILLA_TREE
-							   mNeg(null),
-#endif
 							   mNodePrimitives(nullptr),
 							   mNbPrimitives(0)
 {
@@ -73,16 +69,9 @@ AABBTreeNode::~AABBTreeNode()
 {
 	// Opcode 1.3:
 	const AABBTreeNode *Pos = GetPos();
-#ifndef OPC_NO_NEG_VANILLA_TREE
-	const AABBTreeNode *Neg = GetNeg();
-	if (!(mPos & 1))
-		DELETESINGLE(Pos);
-	if (!(mNeg & 1))
-		DELETESINGLE(Neg);
-#else
+
 	if (!(mPos & 1))
 		DELETEARRAY(Pos);
-#endif
 	mNodePrimitives = nullptr; // This was just a shortcut to the global list => no release
 	mNbPrimitives = 0;
 }
@@ -336,23 +325,13 @@ bool AABBTreeNode::Subdivide(AABBTreeBuilder *builder)
 		// Set last bit to tell it shouldn't be freed ### pretty ugly, find a better way. Maybe one bit in mNbPrimitives
 
 		mPos = uintptr_t(&Pool[Count + 0]) | 1;
-#ifndef OPC_NO_NEG_VANILLA_TREE
-		mNeg = uintptr_t(&Pool[Count + 1]) | 1;
-#endif
 	}
 	else
 	{
 		// Non-complete trees and/or Opcode 1.2 allocate nodes on-the-fly
-#ifndef OPC_NO_NEG_VANILLA_TREE
-		mPos = (uintptr_t) new AABBTreeNode;
-		CHECKALLOC(mPos);
-		mNeg = (uintptr_t) new AABBTreeNode;
-		CHECKALLOC(mNeg);
-#else
 		AABBTreeNode *PosNeg = new AABBTreeNode[2];
 		CHECKALLOC(PosNeg);
 		mPos = (uintptr_t)PosNeg;
-#endif
 	}
 
 	// Update stats

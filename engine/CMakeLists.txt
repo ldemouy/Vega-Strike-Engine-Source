@@ -145,24 +145,18 @@ ADD_LIBRARY(OPcollide
     src/cmd/collide2/Ice/IceTriangle.cpp    
     src/cmd/collide2/csgeom2/opbox.cpp
     src/cmd/collide2/csgeom2/opmatrix3.cpp
-    src/cmd/collide2/csgeom2/opvector3.cpp
-    src/cmd/collide2/OPC_AABBCollider.cpp
+    src/cmd/collide2/csgeom2/opvector3.cpp    
     src/cmd/collide2/OPC_AABBTree.cpp
     src/cmd/collide2/OPC_BaseModel.cpp
     src/cmd/collide2/OPC_BoxPruning.cpp
     src/cmd/collide2/OPC_Collider.cpp
-    src/cmd/collide2/OPC_Common.cpp
-    src/cmd/collide2/OPC_HybridModel.cpp
-    src/cmd/collide2/OPC_LSSCollider.cpp
+    src/cmd/collide2/OPC_HybridModel.cpp    
     src/cmd/collide2/OPC_MeshInterface.cpp
     src/cmd/collide2/OPC_Model.cpp
-    src/cmd/collide2/OPC_OBBCollider.cpp
     src/cmd/collide2/OPC_OptimizedTree.cpp
-    src/cmd/collide2/OPC_Picking.cpp
-    src/cmd/collide2/OPC_PlanesCollider.cpp
+    src/cmd/collide2/OPC_Picking.cpp    
     src/cmd/collide2/OPC_RayCollider.cpp
-    src/cmd/collide2/OPC_SphereCollider.cpp
-    src/cmd/collide2/OPC_SweepAndPrune.cpp
+    src/cmd/collide2/OPC_SphereCollider.cpp    
     src/cmd/collide2/OPC_TreeBuilders.cpp
     src/cmd/collide2/OPC_TreeCollider.cpp
     src/cmd/collide2/OPC_VolumeCollider.cpp

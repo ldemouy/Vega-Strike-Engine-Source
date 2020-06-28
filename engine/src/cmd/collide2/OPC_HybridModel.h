@@ -19,7 +19,7 @@
 // Include Guard
 #ifndef __OPC_HYBRIDMODEL_H__
 #define __OPC_HYBRIDMODEL_H__
-
+#include "OPC_BaseModel.h"
 //! Leaf descriptor
 struct LeafTriangles
 {

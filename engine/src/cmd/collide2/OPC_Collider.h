@@ -20,6 +20,9 @@
 #ifndef __OPC_COLLIDER_H__
 #define __OPC_COLLIDER_H__
 
+#include "OPC_MeshInterface.h"
+#include "OPC_BaseModel.h"
+
 enum CollisionFlag
 {
 	OPC_FIRST_CONTACT = (1 << 0),	   //!< Report all contacts (false) or only first one (true)
@@ -148,7 +151,7 @@ public:
 	virtual const char *ValidateSettings() = 0;
 
 protected:
-	uint32_t mFlags;					//!< Bit flags
+	uint32_t mFlags;				//!< Bit flags
 	const BaseModel *mCurrentModel; //!< Current model for collision query (owner of touched faces)
 									// User mesh interface
 	const MeshInterface *mIMesh;	//!< User-defined mesh interface

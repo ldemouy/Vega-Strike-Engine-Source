@@ -23,6 +23,8 @@
 #include "Ice/IceContainer.h"
 #include "Ice/IcePoint.h"
 #include "Ice/IceRay.h"
+#include "OPC_Collider.h"
+#include "OPC_Model.h"
 
 class CollisionFace
 {
@@ -37,7 +39,6 @@ public:
 	float mU, mV;	  //!< Impact barycentric coordinates
 };
 
-#ifdef OPC_RAYHIT_CALLBACK
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /**
 	 *	User-callback, called by OPCODE to record a hit.
@@ -46,7 +47,6 @@ public:
 	 */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 typedef void (*HitCallback)(const CollisionFace &hit, void *user_data);
-#endif
 
 class RayCollider : public Collider
 {
@@ -74,18 +74,6 @@ public:
 	bool Collide(const Ray &world_ray, const AABBTree *tree, Container &box_indices);
 	// Settings
 
-#ifndef OPC_RAYHIT_CALLBACK
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/**
-		 *	Settings: enable or disable "closest hit" mode.
-		 *	\param		flag		[in] true to report closest hit only
-		 *	\see		SetCulling(bool flag)
-		 *	\see		SetMaxDist(float max_dist)
-		 *	\see		SetDestination(StabbedFaces* sf)
-		 */
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	inline void SetClosestHit(bool flag) { mClosestHit = flag; }
-#endif
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/**
 		 *	Settings: enable or disable backface culling.
@@ -108,24 +96,12 @@ public:
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	inline void SetMaxDist(float max_dist = std::numeric_limits<float>::max()) { mMaxDist = max_dist; }
 
-#ifdef OPC_RAYHIT_CALLBACK
 	inline void SetHitCallback(HitCallback cb)
 	{
 		mHitCallback = cb;
 	}
 	inline void SetUserData(void *user_data) { mUserData = user_data; }
-#else
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/**
-		 *	Settings: sets the destination array for stabbed faces.
-		 *	\param		cf			[in] destination array, filled during queries
-		 *	\see		SetClosestHit(bool flag)
-		 *	\see		SetCulling(bool flag)
-		 *	\see		SetMaxDist(float max_dist)
-		 */
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	inline void SetDestination(CollisionFaces *cf) { mStabbedFaces = cf; }
-#endif
+
 	// Stats
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/**
@@ -174,12 +150,9 @@ protected:
 	Point mData, mData2;
 	// Stabbed faces
 	CollisionFace mStabbedFace; //!< Current stabbed face
-#ifdef OPC_RAYHIT_CALLBACK
-	HitCallback mHitCallback; //!< Callback used to record a hit
-	void *mUserData;		  //!< User-defined data
-#else
-	CollisionFaces *mStabbedFaces; //!< List of stabbed faces
-#endif
+	HitCallback mHitCallback;	//!< Callback used to record a hit
+	void *mUserData;			//!< User-defined data
+
 	// Stats
 	uint32_t mNbRayBVTests;	   //!< Number of Ray-BV tests
 	uint32_t mNbRayPrimTests;  //!< Number of Ray-Primitive tests
@@ -190,11 +163,8 @@ protected:
 	Point mExtentsCoeff;
 	// Settings
 	float mMaxDist; //!< Valid segment on the ray
-#ifndef OPC_RAYHIT_CALLBACK
-	bool mClosestHit; //!< Report closest hit only
-#endif
-	bool mCulling; //!< Stab culled faces or not
-				   // Internal methods
+	bool mCulling;	//!< Stab culled faces or not
+					// Internal methods
 	void _SegmentStab(const AABBCollisionNode *node);
 	void _SegmentStab(const AABBNoLeafNode *node);
 	void _SegmentStab(const AABBQuantizedNode *node);

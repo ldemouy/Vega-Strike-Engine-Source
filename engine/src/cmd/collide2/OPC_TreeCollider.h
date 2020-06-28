@@ -22,7 +22,10 @@
 #include "Ice/IcePairs.h"
 #include "Ice/IceContainer.h"
 #include "Ice/IcePoint.h"
-
+#include "OPC_OptimizedTree.h"
+#include "OPC_Model.h"
+#include "OPC_Collider.h"
+#include "OPC_Model.h"
 //! This structure holds cached information used by the algorithm.
 //! Two model pointers and two colliding primitives are cached. Model pointers are assigned
 //! to their respective meshes, and the pair of colliding primitives is used for temporal

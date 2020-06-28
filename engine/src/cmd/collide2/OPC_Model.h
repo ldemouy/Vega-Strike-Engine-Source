@@ -19,6 +19,7 @@
 // Include Guard
 #ifndef __OPC_MODEL_H__
 #define __OPC_MODEL_H__
+#include "OPC_BaseModel.h"
 
 class Model : public BaseModel
 {

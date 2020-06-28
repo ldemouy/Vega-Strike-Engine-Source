@@ -22,6 +22,7 @@
 
 #include "Ice/IcePoint.h"
 #include "Ice/IceAABB.h"
+#include "OPC_MeshInterface.h"
 
 //! Tree splitting rules
 enum SplittingRules
