@@ -8,8 +8,8 @@ Flightgroup *Flightgroup::newFlightgroup(const std::string &name,
                                          const std::string &type,
                                          const std::string &faction,
                                          const std::string &order,
-                                         int num_ships,
-                                         int num_waves,
+                                         int32_t num_ships,
+                                         int32_t num_waves,
                                          const std::string &logo_tex,
                                          const std::string &logo_alp,
                                          Mission *mis)
@@ -18,7 +18,7 @@ Flightgroup *Flightgroup::newFlightgroup(const std::string &name,
     Flightgroup *fgtmp = fg;
     if (fg == nullptr)
     {
-        fg = new Flightgroup;
+        fg = new Flightgroup();
     }
     fg->Init(fgtmp, name, type, faction, order, num_ships, num_waves, mis);
     if (!logo_tex.empty())

@@ -57,7 +57,7 @@ Mission::~Mission()
     //do not delete msgcenter...could be vital
 }
 double Mission::gametime = 0.0;
-int Mission::number_of_ships = 0;
+int32_t Mission::number_of_ships = 0;
 
 vector<Flightgroup *> Mission::flightgroups;
 
@@ -106,9 +106,7 @@ void Mission::ConstructMission(const char *configfile, const std::string &script
 #ifndef VS_MIS_SEL
     if (loadscripts)
     {
-
         initTagMap();
-
         top->Tag(&tagmap);
     }
 #endif
@@ -173,7 +171,7 @@ bool Mission::checkMission(easyDomNode *node, bool loadscripts)
             //I need to get rid of an extra whitespace at the end that expat may have added... Python is VERY strict about that... :(
             string locals = (*siter)->attr_value(textAttr);
             const char *constdumbstr = locals.c_str(); //get the text XML attribute
-            int i = strlen(constdumbstr);              //constdumbstr is the string I wish to copy... i is its length.
+            size_t i = strlen(constdumbstr);           //constdumbstr is the string I wish to copy... i is its length.
             char *dumbstr = new char[i + 2];           //allocate 2 extra bytes for a double-null-terminated string.
             strncpy(dumbstr, constdumbstr, i);         //i copy constdumbstr to dumbstr.
             dumbstr[i] = '\0';                         //I make sure that it has 2 null bytes at the end.
@@ -205,25 +203,24 @@ bool Mission::checkMission(easyDomNode *node, bool loadscripts)
 
 static std::vector<Mission *> Mission_delqueue;
 
-int Mission::getPlayerMissionNumber()
+int32_t Mission::getPlayerMissionNumber()
 {
-    int num = 0;
+    int32_t num = 0;
 
     vector<Mission *> *active_missions = ::active_missions.Get();
-    vector<Mission *>::iterator pl = active_missions->begin();
 
-    if (pl == active_missions->end())
+    if (active_missions->begin() == active_missions->end())
     {
         return -1;
     }
 
-    for (; pl != active_missions->end(); ++pl)
+    for (auto pl = active_missions->begin(); pl != active_missions->end(); ++pl)
     {
         if ((*pl)->player_num == this->player_num)
         {
             if (*pl == this)
             {
-                return (int)num;
+                return num;
             }
             else
             {
@@ -234,22 +231,21 @@ int Mission::getPlayerMissionNumber()
 
     return -1;
 }
-Mission *Mission::getNthPlayerMission(int cp, int missionnum)
+Mission *Mission::getNthPlayerMission(uint32_t player, int32_t missionnum)
 {
 
     vector<Mission *> *active_missions = ::active_missions.Get();
     Mission *activeMis = nullptr;
     if (missionnum >= 0)
     {
-        int num = -1;
-        vector<Mission *>::iterator pl = active_missions->begin();
-        if (pl == active_missions->end())
+        int32_t num = -1;
+        if (active_missions->begin() == active_missions->end())
         {
             return nullptr;
         }
-        for (; pl != active_missions->end(); ++pl)
+        for (auto pl = active_missions->begin(); pl != active_missions->end(); ++pl)
         {
-            if ((*pl)->player_num == (unsigned int)cp)
+            if ((*pl)->player_num == player)
             {
                 num++;
             }
@@ -266,20 +262,19 @@ Mission *Mission::getNthPlayerMission(int cp, int missionnum)
 void Mission::terminateMission()
 {
     vector<Mission *> *active_missions = ::active_missions.Get();
-    vector<Mission *>::iterator f;
 
-    f = std::find(Mission_delqueue.begin(), Mission_delqueue.end(), this);
-    if (f != Mission_delqueue.end())
+    auto mission = std::find(Mission_delqueue.begin(), Mission_delqueue.end(), this);
+    if (mission != Mission_delqueue.end())
     {
         BOOST_LOG_TRIVIAL(info) << boost::format("Not deleting mission twice: %1%") % this->mission_name;
     }
 
-    f = std::find(active_missions->begin(), active_missions->end(), this);
+    mission = std::find(active_missions->begin(), active_missions->end(), this);
 
     // Debugging aid for persistent missions bug
     if (g_game.vsdebug >= 1)
     {
-        int misnum = -1;
+        int32_t misnum = -1;
         for (vector<Mission *>::iterator i = active_missions->begin(); i != active_missions->end(); ++i)
         {
             if ((*i)->player_num == player_num)
@@ -290,12 +285,12 @@ void Mission::terminateMission()
         }
     }
 
-    int queuenum = -1;
-    if (f != active_missions->end())
+    int32_t queuenum = -1;
+    if (mission != active_missions->end())
     {
         queuenum = getPlayerMissionNumber(); //-1 used as error code, 0 is first player mission
 
-        active_missions->erase(f);
+        active_missions->erase(mission);
     }
     if (this != (*active_missions)[0]) //Shouldn't this always be true?
     {
@@ -308,7 +303,7 @@ void Mission::terminateMission()
         // queuenum - 1 since mission #0 is the base mission (main_menu) and is persisted
         // in savegame.cpp:LoadSavedMissions, and it has no correspondin active_scripts/active_missions entry,
         // meaning the actual active_scripts index is offset by 1.
-        unsigned int num = queuenum - 1;
+        uint32_t num = queuenum - 1;
 
         vector<std::string> *scripts = &_Universe->AccessCockpit(player_num)->savegame->getMissionStringData("active_scripts");
         BOOST_LOG_TRIVIAL(info) << boost::format("Terminating mission #%1% - got %2% scripts") % queuenum % scripts->size();
@@ -363,8 +358,7 @@ void Mission::GetOrigin(QVector &pos, string &planetname)
 
 void Mission::doSettings(easyDomNode *node)
 {
-    vector<easyDomNode *>::const_iterator siter;
-    for (siter = node->subnodes.begin(); siter != node->subnodes.end(); siter++)
+    for (auto siter = node->subnodes.begin(); siter != node->subnodes.end(); siter++)
     {
         easyDomNode *mnode = *siter;
         if (mnode->Name() == "origin")
@@ -385,8 +379,7 @@ void Mission::doVariables(easyDomNode *node)
     }
     variables = node;
 
-    vector<easyDomNode *>::const_iterator siter;
-    for (siter = node->subnodes.begin(); siter != node->subnodes.end(); siter++)
+    for (auto siter = node->subnodes.begin(); siter != node->subnodes.end(); siter++)
     {
         checkVar(*siter);
     }
@@ -448,8 +441,8 @@ void Mission::checkFlightgroup(easyDomNode *node)
     {
         unittype = string("unit");
     }
-    int waves_i = atoi(waves.c_str());
-    int nr_ships_i = atoi(nr_ships.c_str());
+    int32_t waves_i = atoi(waves.c_str());
+    int32_t nr_ships_i = atoi(nr_ships.c_str());
 
     bool have_pos = false;
 
@@ -459,8 +452,8 @@ void Mission::checkFlightgroup(easyDomNode *node)
     rot[0] = rot[1] = rot[2] = 0.0;
     CreateFlightgroup cf;
     cf.fg = Flightgroup::newFlightgroup(name, type, faction, ainame, nr_ships_i, waves_i, texture, texture_alpha, this);
-    vector<easyDomNode *>::const_iterator siter;
-    for (siter = node->subnodes.begin(); siter != node->subnodes.end(); siter++)
+
+    for (auto siter = node->subnodes.begin(); siter != node->subnodes.end(); siter++)
     {
         if ((*siter)->Name() == "pos")
         {
@@ -507,7 +500,7 @@ void Mission::checkFlightgroup(easyDomNode *node)
     cf.fg->pos.i = pos[0];
     cf.fg->pos.j = pos[1];
     cf.fg->pos.k = pos[2];
-    for (int i = 0; i < 3; i++)
+    for (uint8_t i = 0; i < 3; i++)
     {
         cf.rot[i] = rot[i];
     }
@@ -628,7 +621,7 @@ void Mission::DirectorInitgame()
             tmp++;
         }
 #endif
-        runtime.pymissions = (pythonMission::FactoryString(nextpythonmission));
+        runtime.pymissions = pythonMission::FactoryString(nextpythonmission);
         delete[] nextpythonmission; //delete the allocated memory
         nextpythonmission = nullptr;
         if (!this->unpickleData.empty())
@@ -716,11 +709,7 @@ void Mission::DirectorShipDestroyed(Unit *unit)
 
             Order *order = nullptr;
             order = unit->getAIState() ? unit->getAIState()->findOrderList() : nullptr;
-            fg->orderlist = nullptr;
-            if (order)
-            {
-                fg->orderlist = order->getOrderList();
-            }
+
             CreateFlightgroup cf;
             cf.fg = fg;
             cf.unittype = CreateFlightgroup::UNIT;
@@ -769,11 +758,11 @@ void Mission::BriefingEnd()
     }
 }
 
-Unit *Mission::call_unit_launch(CreateFlightgroup *fg, int type, const string &destinations)
+Unit *Mission::call_unit_launch(CreateFlightgroup *fg, int32_t type, const string &destinations)
 {
-    int faction_nr = FactionUtil::GetFactionIndex(fg->fg->faction);
+    int32_t faction_nr = FactionUtil::GetFactionIndex(fg->fg->faction);
     Unit **units = new Unit *[fg->nr_ships];
-    int u;
+
     Unit *par = _Universe->AccessCockpit()->GetParent();
     CollideMap::iterator metahint[2] = {
         _Universe->scriptStarSystem()->collidemap[Unit::UNIT_ONLY]->begin(),
@@ -783,7 +772,7 @@ Unit *Mission::call_unit_launch(CreateFlightgroup *fg, int type, const string &d
     {
         hint = par->location;
     }
-    for (u = 0; u < fg->nr_ships; u++)
+    for (int32_t u = 0; u < fg->nr_ships; u++)
     {
         Unit *my_unit;
         if (type == PLANETPTR)
@@ -839,7 +828,7 @@ Unit *Mission::call_unit_launch(CreateFlightgroup *fg, int type, const string &d
     }
     float fg_radius = units[0]->rSize();
     Unit *my_unit;
-    for (u = 0; u < fg->nr_ships; u++)
+    for (int32_t u = 0; u < fg->nr_ships; u++)
     {
         my_unit = units[u];
         QVector pox;
@@ -859,7 +848,9 @@ Unit *Mission::call_unit_launch(CreateFlightgroup *fg, int type, const string &d
         _Universe->scriptStarSystem()->AddUnit(my_unit);
         my_unit->UpdateCollideQueue(_Universe->scriptStarSystem(), hint);
         if (!is_null(my_unit->location[Unit::UNIT_ONLY]) && !is_null(my_unit->location[Unit::UNIT_BOLT]))
+        {
             hint = my_unit->location;
+        }
         my_unit->Target(nullptr);
     }
     my_unit = units[0];

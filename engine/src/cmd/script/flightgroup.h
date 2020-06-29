@@ -14,22 +14,22 @@ private:
     std::string squadLogoStr;
 
 public:
-    UnitContainer leader;  //I'm on the leader
-    UnitContainer target;  //this is my target, what i'm doing with it depends on things
-    int leader_decision;   //-1 if decision is made
-    Texture *squadLogo;    //null if not there
-    std::string directive; //"a" for attack target "b" for attack at will "h" for help out "f" for form up.... missions can get this..and set this
-    std::string name;      //flightgroup name
+    UnitContainer leader;    //I'm on the leader
+    UnitContainer target;    //this is my target, what i'm doing with it depends on things
+    int32_t leader_decision; //-1 if decision is made
+    Texture *squadLogo;      //null if not there
+    std::string directive;   //"a" for attack target "b" for attack at will "h" for help out "f" for form up.... missions can get this..and set this
+    std::string name;        //flightgroup name
     std::string type;
     std::string ainame; //.agg.xml and .int.xml get appended to this
     std::string faction;
-    int flightgroup_nr; //running fg number
-    int nr_ships;       //total ships nr
+    int32_t flightgroup_nr; //running fg number
+    int32_t nr_ships;       //total ships nr
     QVector pos;
-    int nr_ships_left;
-    int nr_waves_left;
+    int32_t nr_ships_left;
+    int32_t nr_waves_left;
     vsUMap<std::string, std::string> ordermap;
-    std::vector<class varInst *> *orderlist;
+    //std::vector<class varInst *> *orderlist;
     //removes a ship from the flightgroup below
     void Decrement(Unit *trashed)
     {
@@ -42,8 +42,8 @@ public:
                                        const std::string &type,
                                        const std::string &faction,
                                        const std::string &order,
-                                       int num_ships,
-                                       int num_waves,
+                                       int32_t num_ships,
+                                       int32_t num_waves,
                                        const std::string &texname,
                                        const std::string &alphname,
                                        class Mission *mis);
@@ -51,7 +51,7 @@ public:
     {
         //betterto have a flightgroup constructor
         //fprintf (stderr,"constructing FG 0x%x\n",this);
-        orderlist = nullptr;
+        //orderlist = nullptr;
         nr_waves_left = nr_ships_left = nr_ships = flightgroup_nr = 0;
         leader_decision = -1;
         squadLogo = nullptr;
@@ -61,8 +61,8 @@ public:
               const std::string &type,
               const std::string &faction,
               const std::string &order,
-              int num_ships,
-              int num_waves,
+              int32_t num_ships,
+              int32_t num_waves,
               Mission *mis)
     {
         bool new_fg = false;
@@ -101,7 +101,7 @@ class CreateFlightgroup
 {
 public:
     Flightgroup *fg;
-    int terrain_nr; //which terrain to use. -1 for normal unit -2 for mission ter
+    int32_t terrain_nr; //which terrain to use. -1 for normal unit -2 for mission ter
     enum
     {
         UNIT,

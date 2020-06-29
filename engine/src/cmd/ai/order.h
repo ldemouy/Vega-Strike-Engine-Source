@@ -40,7 +40,6 @@
  */
 
 class Animation;
-typedef std::vector<class varInst *> olist_t;
 class Order
 {
 private:
@@ -167,11 +166,7 @@ public:
     void eraseOrder(Order *ord);
     /// enqueue order as first order
     Order *EnqueueOrderFirst(Order *ord);
-    /// returns the orderlist (nullptr for orders that haven't got any)
-    virtual olist_t *getOrderList()
-    {
-        return nullptr;
-    }
+
     virtual void AdjustRelationTo(Unit *un, float factor);
 
     virtual std::string getOrderDescription()
