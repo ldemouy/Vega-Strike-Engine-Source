@@ -47,7 +47,6 @@
 #include "savegame.h"
 #include "xml_serializer.h"
 #include "python/python_class.h"
-#include "cmd/ai/missionscript.h"
 #include "gfx/particle.h"
 #include "cmd/ai/aggressive.h"
 #include "cmd/base.h"

@@ -38,14 +38,19 @@
 #include "cmd/unit_generic.h"
 #include "mission.h"
 #include "flightgroup.h"
-
+#include "cmd/briefing.h"
 #include "python/python_class.h"
 #include "savegame.h"
+#include "cmd/unit_factory.h"
+#include "cmd/asteroid_generic.h"
+#include "cmd/nebula_generic.h"
 
 /* *********************************************************** */
 using std::cerr;
 using std::cout;
 using std::endl;
+extern const vector<string> &ParseDestinations(const string &value);
+extern BLENDFUNC parse_alpha(const char *);
 Mission::~Mission()
 {
     VSFileSystem::vs_fprintf(stderr, "Mission Cleanup Not Yet Implemented");
@@ -53,8 +58,7 @@ Mission::~Mission()
 }
 double Mission::gametime = 0.0;
 int Mission::number_of_ships = 0;
-int Mission::number_of_flightgroups = 0;
-int Mission::total_nr_frames = 0;
+
 vector<Flightgroup *> Mission::flightgroups;
 
 Mission::Mission(const char *filename, const std::string &script, bool loadscripts)
@@ -70,7 +74,6 @@ void Mission::ConstructMission(const char *configfile, const std::string &script
     player_autopilot = global_autopilot = AUTO_NORMAL;
     player_num = 0;
     briefing = nullptr;
-    director = nullptr;
     runtime.pymissions = nullptr;
     nextpythonmission = nullptr;
     if (script.length() > 0)
@@ -101,11 +104,10 @@ void Mission::ConstructMission(const char *configfile, const std::string &script
     origin_node = nullptr;
 
 #ifndef VS_MIS_SEL
-    director = nullptr;
     if (loadscripts)
     {
+
         initTagMap();
-        initCallbackMaps();
 
         top->Tag(&tagmap);
     }
@@ -128,6 +130,7 @@ Unit *Mission::Objective::getOwner()
 MessageCenter *Mission::msgcenter = nullptr;
 void Mission::initMission(bool loadscripts)
 {
+
     if (!top)
     {
         return;
@@ -144,6 +147,7 @@ void Mission::initMission(bool loadscripts)
 
 bool Mission::checkMission(easyDomNode *node, bool loadscripts)
 {
+
     if (node->Name() != "mission")
     {
         cout << "this is no Vegastrike mission file" << endl;
@@ -163,13 +167,6 @@ bool Mission::checkMission(easyDomNode *node, bool loadscripts)
         else if (((*siter)->Name() == "settings"))
         {
             doSettings(*siter);
-        }
-        else if (((*siter)->Name() == "module"))
-        {
-            if (loadscripts)
-            {
-                DirectorStart((missionNode *)*siter);
-            }
         }
         else if (((*siter)->Name() == "python") && (!this->nextpythonmission))
         {
@@ -207,14 +204,6 @@ bool Mission::checkMission(easyDomNode *node, bool loadscripts)
 }
 
 static std::vector<Mission *> Mission_delqueue;
-void Mission::wipeDeletedMissions()
-{
-    while (!Mission_delqueue.empty())
-    {
-        delete Mission_delqueue.back();
-        Mission_delqueue.pop_back();
-    }
-}
 
 int Mission::getPlayerMissionNumber()
 {
@@ -247,6 +236,7 @@ int Mission::getPlayerMissionNumber()
 }
 Mission *Mission::getNthPlayerMission(int cp, int missionnum)
 {
+
     vector<Mission *> *active_missions = ::active_missions.Get();
     Mission *activeMis = nullptr;
     if (missionnum >= 0)
@@ -406,13 +396,12 @@ void Mission::doVariables(easyDomNode *node)
 
 void Mission::checkVar(easyDomNode *node)
 {
+
     if (node->Name() != "var")
     {
         cout << "not a variable" << endl;
         return;
     }
-    string name = node->attr_value("name");
-    string value = node->attr_value("value");
 }
 
 /* *********************************************************** */
@@ -429,7 +418,6 @@ void Mission::AddFlightgroup(Flightgroup *fg)
 {
     fg->flightgroup_nr = flightgroups.size();
     flightgroups.push_back(fg);
-    number_of_flightgroups = flightgroups.size();
 }
 /* *********************************************************** */
 
@@ -524,12 +512,6 @@ void Mission::checkFlightgroup(easyDomNode *node)
         cf.rot[i] = rot[i];
     }
     cf.nr_ships = nr_ships_i;
-    if (ainame[0] == '_')
-    {
-#ifndef VS_MIS_SEL
-        addModule(ainame.substr(1));
-#endif
-    }
     number_of_ships += nr_ships_i;
 }
 
@@ -574,14 +556,6 @@ Flightgroup *Mission::findFlightgroup(const string &offset_name, const string &f
 
 /* *********************************************************** */
 
-/* void Mission::doRotation( easyDomNode *node, float rot[3], class CreateFlightgroup* )
-{
-    //not yet
-    //return true;
-}
-*/
-/* *********************************************************** */
-
 void Mission::doOrder(easyDomNode *node, Flightgroup *fg)
 {
     //nothing yet
@@ -611,4 +585,313 @@ string Mission::getVariable(string name, string defaultval)
         }
     }
     return defaultval;
+}
+
+double Mission::getGametime()
+{
+    return gametime;
+}
+
+std::string Mission::Pickle()
+{
+    if (!runtime.pymissions)
+    {
+        return "";
+    }
+    else
+    {
+        return runtime.pymissions->Pickle();
+    }
+}
+void Mission::UnPickle(string pickled)
+{
+    if (runtime.pymissions)
+    {
+        runtime.pymissions->UnPickle(pickled);
+    }
+}
+
+void Mission::DirectorInitgame()
+{
+    this->player_num = _Universe->CurrentCockpit();
+    if (nextpythonmission)
+    {
+        //CAUSES AN UNRESOLVED EXTERNAL SYMBOL FOR PythonClass::last_instance ?!?!
+#ifndef _WIN32
+        char *tmp = nextpythonmission;
+        while (*tmp)
+        {
+            if (tmp[0] == '\r')
+            {
+                tmp[0] = '\n';
+            }
+            tmp++;
+        }
+#endif
+        runtime.pymissions = (pythonMission::FactoryString(nextpythonmission));
+        delete[] nextpythonmission; //delete the allocated memory
+        nextpythonmission = nullptr;
+        if (!this->unpickleData.empty())
+        {
+            if (runtime.pymissions)
+            {
+                runtime.pymissions->UnPickle(unpickleData);
+                unpickleData = "";
+            }
+        }
+    }
+}
+
+void Mission::DirectorLoop()
+{
+    double oldgametime = gametime;
+    gametime += SIMULATION_ATOM; //elapsed;
+    if (getTimeCompression() >= .1)
+    {
+        if (gametime <= oldgametime)
+        {
+            gametime = SIMULATION_ATOM;
+        }
+    }
+    try
+    {
+        BriefingLoop();
+        if (runtime.pymissions)
+        {
+            runtime.pymissions->Execute();
+        }
+    }
+    catch (...)
+    {
+        if (PyErr_Occurred())
+        {
+            PyErr_Print();
+            PyErr_Clear();
+            fflush(stderr);
+            fflush(stdout);
+        }
+        throw;
+    }
+}
+
+void Mission::DirectorShipDestroyed(Unit *unit)
+{
+    Flightgroup *fg = unit->getFlightgroup();
+    if (fg == nullptr)
+    {
+        printf("ship destroyed-no flightgroup\n");
+        return;
+    }
+    if (fg->nr_ships_left <= 0 && fg->nr_waves_left > 0)
+    {
+        printf("WARNING: nr_ships_left<=0\n");
+        return;
+    }
+    fg->nr_ships_left -= 1;
+
+    char buf[512];
+
+    if ((fg->faction.length() + fg->type.length() + fg->name.length() + 12 + 30) < sizeof(buf))
+    {
+        sprintf(buf, "Ship destroyed: %s:%s:%s-%d", fg->faction.c_str(), fg->type.c_str(),
+                fg->name.c_str(), unit->getFgSubnumber());
+    }
+    else
+    {
+        sprintf(buf, "Ship destroyed: (ERROR)-%d", unit->getFgSubnumber());
+    }
+
+    msgcenter->add("game", "all", buf);
+
+    if (fg->nr_ships_left == 0)
+    {
+        BOOST_LOG_TRIVIAL(debug) << boost::format("no ships left in fg %1%") % fg->name;
+        if (fg->nr_waves_left > 0)
+        {
+            BOOST_LOG_TRIVIAL(info) << boost::format("Relaunching %1% wave") % fg->name;
+
+            //launch new wave
+            fg->nr_waves_left -= 1;
+            fg->nr_ships_left = fg->nr_ships;
+
+            Order *order = nullptr;
+            order = unit->getAIState() ? unit->getAIState()->findOrderList() : nullptr;
+            fg->orderlist = nullptr;
+            if (order)
+            {
+                fg->orderlist = order->getOrderList();
+            }
+            CreateFlightgroup cf;
+            cf.fg = fg;
+            cf.unittype = CreateFlightgroup::UNIT;
+            cf.fg->pos = unit->Position();
+            cf.waves = fg->nr_waves_left;
+            cf.nr_ships = fg->nr_ships;
+
+            call_unit_launch(&cf, UNITPTR, string(""));
+        }
+        else
+        {
+            mission->msgcenter->add("game", "all", "Flightgroup " + fg->name + " destroyed");
+        }
+    }
+}
+
+void Mission::BriefingUpdate()
+{
+    if (briefing)
+    {
+        briefing->Update();
+    }
+}
+
+void Mission::BriefingLoop()
+{
+    if (briefing)
+    {
+        if (runtime.pymissions)
+        {
+            runtime.pymissions->callFunction("loopbriefing");
+        }
+    }
+}
+
+void Mission::BriefingEnd()
+{
+    if (briefing)
+    {
+        if (runtime.pymissions)
+        {
+            runtime.pymissions->callFunction("endbriefing");
+        }
+        delete briefing;
+        briefing = nullptr;
+    }
+}
+
+Unit *Mission::call_unit_launch(CreateFlightgroup *fg, int type, const string &destinations)
+{
+    int faction_nr = FactionUtil::GetFactionIndex(fg->fg->faction);
+    Unit **units = new Unit *[fg->nr_ships];
+    int u;
+    Unit *par = _Universe->AccessCockpit()->GetParent();
+    CollideMap::iterator metahint[2] = {
+        _Universe->scriptStarSystem()->collidemap[Unit::UNIT_ONLY]->begin(),
+        _Universe->scriptStarSystem()->collidemap[Unit::UNIT_BOLT]->begin()};
+    CollideMap::iterator *hint = metahint;
+    if (par && !is_null(par->location[Unit::UNIT_ONLY]) && !is_null(par->location[Unit::UNIT_BOLT]) && par->activeStarSystem == _Universe->scriptStarSystem())
+    {
+        hint = par->location;
+    }
+    for (u = 0; u < fg->nr_ships; u++)
+    {
+        Unit *my_unit;
+        if (type == PLANETPTR)
+        {
+            float radius = 1;
+            char *tex = strdup(fg->fg->type.c_str());
+            char *nam = strdup(fg->fg->type.c_str());
+            char *bsrc = strdup(fg->fg->type.c_str());
+            char *bdst = strdup(fg->fg->type.c_str());
+            char *citylights = strdup(fg->fg->type.c_str());
+            tex[0] = '\0';
+            bsrc[0] = '\0'; //have at least 1 char
+            bdst[0] = '\0';
+            citylights[0] = '\0';
+            GFXMaterial mat;
+            GFXGetMaterial(0, mat);
+            BLENDFUNC s = ONE;
+            BLENDFUNC d = ZERO;
+            if (bdst[0] != '\0')
+            {
+                d = parse_alpha(bdst);
+            }
+            if (bsrc[0] != '\0')
+            {
+                s = parse_alpha(bsrc);
+            }
+            my_unit = UnitFactory::createPlanet(QVector(0, 0, 0), QVector(0, 0, 0), 0, Vector(0, 0, 0),
+                                                0, 0, radius, tex, "", "", s,
+                                                d, ParseDestinations(destinations),
+                                                QVector(0, 0, 0), nullptr, mat,
+                                                vector<GFXLightLocal>(), faction_nr, nam);
+            free(bsrc);
+            free(bdst);
+            free(tex);
+            free(nam);
+            free(citylights);
+        }
+        else if (type == NEBULAPTR)
+        {
+            my_unit = UnitFactory::createNebula(
+                fg->fg->type.c_str(), false, faction_nr, fg->fg, u + fg->fg->nr_ships - fg->nr_ships);
+        }
+        else if (type == ASTEROIDPTR)
+        {
+            my_unit = UnitFactory::createAsteroid(
+                fg->fg->type.c_str(), faction_nr, fg->fg, u + fg->fg->nr_ships - fg->nr_ships, .01);
+        }
+        else
+        {
+            my_unit = UnitFactory::createUnit(fg->fg->type.c_str(), false, faction_nr, string(""), fg->fg, u + fg->fg->nr_ships - fg->nr_ships, nullptr);
+        }
+        units[u] = my_unit;
+    }
+    float fg_radius = units[0]->rSize();
+    Unit *my_unit;
+    for (u = 0; u < fg->nr_ships; u++)
+    {
+        my_unit = units[u];
+        QVector pox;
+        pox.i = fg->fg->pos.i + u * fg_radius * 3;
+        pox.j = fg->fg->pos.j + u * fg_radius * 3;
+        pox.k = fg->fg->pos.k + u * fg_radius * 3;
+        my_unit->SetPosAndCumPos(pox);
+        if (type == ASTEROIDPTR || type == NEBULAPTR)
+        {
+            my_unit->PrimeOrders();
+        }
+        else
+        {
+            my_unit->LoadAIScript(fg->fg->ainame);
+            my_unit->SetTurretAI();
+        }
+        _Universe->scriptStarSystem()->AddUnit(my_unit);
+        my_unit->UpdateCollideQueue(_Universe->scriptStarSystem(), hint);
+        if (!is_null(my_unit->location[Unit::UNIT_ONLY]) && !is_null(my_unit->location[Unit::UNIT_BOLT]))
+            hint = my_unit->location;
+        my_unit->Target(nullptr);
+    }
+    my_unit = units[0];
+    if (!_Universe->isPlayerStarship(fg->fg->leader.GetUnit()))
+    {
+        fg->fg->leader.SetUnit(my_unit);
+    }
+    delete[] units;
+    return my_unit;
+}
+
+void Mission::initTagMap()
+{
+    tagmap["module"] = DTAG_MODULE;
+    tagmap["script"] = DTAG_SCRIPT;
+    tagmap["if"] = DTAG_IF;
+    tagmap["block"] = DTAG_BLOCK;
+    tagmap["setvar"] = DTAG_SETVAR;
+    tagmap["exec"] = DTAG_EXEC;
+    tagmap["call"] = DTAG_CALL;
+    tagmap["while"] = DTAG_WHILE;
+    tagmap["and"] = DTAG_AND_EXPR;
+    tagmap["or"] = DTAG_OR_EXPR;
+    tagmap["not"] = DTAG_NOT_EXPR;
+    tagmap["test"] = DTAG_TEST_EXPR;
+    tagmap["fmath"] = DTAG_FMATH;
+    tagmap["vmath"] = DTAG_VMATH;
+    tagmap["var"] = DTAG_VAR_EXPR;
+    tagmap["defvar"] = DTAG_DEFVAR;
+    tagmap["const"] = DTAG_CONST;
+    tagmap["arguments"] = DTAG_ARGUMENTS;
+    tagmap["globals"] = DTAG_GLOBALS;
+    tagmap["return"] = DTAG_RETURN;
+    tagmap["import"] = DTAG_IMPORT;
 }

@@ -9,7 +9,6 @@
 #include "gfx/cockpit_generic.h"
 #include "cmd/ai/aggressive.h"
 #include "cmd/ai/script.h"
-#include "cmd/ai/missionscript.h"
 #include "cmd/script/flightgroup.h"
 #include "python/python_class.h"
 #include "savegame.h"

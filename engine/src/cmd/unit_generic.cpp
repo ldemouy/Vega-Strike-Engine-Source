@@ -18,7 +18,6 @@
 #include "cmd/ai/communication.h"
 #include "cmd/ai/navigation.h"
 #include "cmd/ai/script.h"
-#include "cmd/ai/missionscript.h"
 #include "cmd/ai/flybywire.h"
 #include "cmd/ai/aggressive.h"
 #include "python/python_class.h"
@@ -1926,32 +1925,23 @@ void Unit::LoadAIScript(const std::string &s)
         PrimeOrders(ai);
         return;
     }
-    else
+
+    if (s.length() > 0)
     {
-        if (s.length() > 0)
+
+        if (s == "ikarus")
         {
-            if (*s.begin() == '_')
-            {
-                mission->addModule(s.substr(1));
-                PrimeOrders(new AImissionScript(s.substr(1)));
-            }
-            else
-            {
-                if (s == "ikarus")
-                {
-                    PrimeOrders(new Orders::Ikarus());
-                }
-                else
-                {
-                    string ai_agg = s + ".agg.xml";
-                    PrimeOrders(new Orders::AggressiveAI(ai_agg.c_str()));
-                }
-            }
+            PrimeOrders(new Orders::Ikarus());
         }
         else
         {
-            PrimeOrders();
+            string ai_agg = s + ".agg.xml";
+            PrimeOrders(new Orders::AggressiveAI(ai_agg.c_str()));
         }
+    }
+    else
+    {
+        PrimeOrders();
     }
 }
 

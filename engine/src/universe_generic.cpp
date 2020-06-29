@@ -298,8 +298,7 @@ void Universe::Generate2(StarSystem *ss)
         VSFileSystem::vs_fprintf(stderr, " Next To: %s\n", adjacent[i].c_str());
     }
     static bool first = true;
-    if (!first)
-        mission->DirectorStartStarSystem(ss);
+
     first = false;
     script_system = old_script_system;
     popActiveStarSystem();

@@ -50,8 +50,6 @@ using std::vector;
 
 using XMLSupport::AttributeList;
 
-extern string parseCalike(char const *filename);
-
 class easyDomNode
 {
 public:
@@ -79,8 +77,6 @@ private:
     easyDomNode *parent;
     AttributeList *attributes;
     vsUMap<string, string> attribute_map;
-    //vector<string> att_name;
-    //vector<string> att_value;
 
     string name;
 };
@@ -217,61 +213,6 @@ public:
         }
         strncpy(xml->buffer + xml->currentindex, s, len);
         xml->currentindex += len;
-    }
-
-    domNodeType *LoadCalike(const char *filename)
-    {
-        const uint32_t chunk_size = 262144;
-
-        string module_str = parseCalike(filename);
-        if (module_str.empty())
-        {
-            //cout << "warning: could not open file: " << filename << endl;
-            //assert(0);
-            return nullptr;
-        }
-        xml = new easyDomFactoryXML;
-
-        XML_Parser parser = XML_ParserCreate(nullptr);
-        XML_SetUserData(parser, this);
-        XML_SetElementHandler(parser, &easyDomFactory::beginElement, &easyDomFactory::endElement);
-        XML_SetCharacterDataHandler(parser, &easyDomFactory::charHandler);
-
-        int32_t index = 0;
-        int32_t string_size = module_str.size();
-        int32_t incr = chunk_size - 2;
-        int32_t is_final = false;
-        do
-        {
-            char buf[chunk_size];
-
-            int max_index = index + incr;
-            int newlen = incr;
-            //printf("max_index=%d,string_size=%d\n",max_index,string_size);
-            if (max_index >= string_size)
-            {
-                newlen = module_str.size() - index;
-                //printf("getting string from %d length %d\n",index,newlen);
-                const char *strbuf = module_str.c_str();
-                memcpy(buf, strbuf + index, sizeof(char) * newlen);
-            }
-            else
-            {
-                //printf("getting string from %d length %d\n",index,incr);
-                const char *strbuf = module_str.c_str();
-                memcpy(buf, strbuf + index, sizeof(char) * incr);
-                newlen = incr;
-            }
-            index += newlen;
-            if (index >= string_size)
-            {
-                is_final = true;
-            }
-            XML_Parse(parser, buf, newlen, is_final);
-        } while (!is_final);
-        XML_ParserFree(parser);
-        delete xml;
-        return (domNodeType *)topnode;
     }
 
     static void beginElement(void *userData, const XML_Char *name, const XML_Char **atts)

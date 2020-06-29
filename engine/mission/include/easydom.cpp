@@ -23,70 +23,78 @@
   easyDom - easy DOM for expat - written by Alexander Rawass <alexannika@users.sourceforge.net>
 */
 
-
 #include <expat.h>
 #include "xml_support.h"
 #include "easydom.h"
 
-#include <assert.h>	/// needed for assert() calls.
+#include <assert.h> /// needed for assert() calls.
 
-using XMLSupport::EnumMap;
 using XMLSupport::Attribute;
 using XMLSupport::AttributeList;
+using XMLSupport::EnumMap;
 
-
-easyDomNode::easyDomNode(){
+easyDomNode::easyDomNode()
+{
 }
 
-void easyDomNode::set(easyDomNode *_parent,string _name, AttributeList  *_attributes){
-  parent=_parent;
-  attributes=_attributes;
+void easyDomNode::set(easyDomNode *_parent, string _name, AttributeList *_attributes)
+{
+  parent = _parent;
+  attributes = _attributes;
 
-  if(_attributes!=nullptr){
-    for(AttributeList::const_iterator iter = _attributes->begin(); iter!=_attributes->end(); iter++) {
-    //    cout <<  _name << "::" << (*iter).name << endl;
-    //    printf("iter=%x *iter=%x\n",iter,*iter);
-    //cout << " " << (*iter).name << "=\"" << (*iter).value << "\"" << endl;
+  if (_attributes != nullptr)
+  {
+    for (AttributeList::const_iterator iter = _attributes->begin(); iter != _attributes->end(); iter++)
+    {
+      //    cout <<  _name << "::" << (*iter).name << endl;
+      //    printf("iter=%x *iter=%x\n",iter,*iter);
+      //cout << " " << (*iter).name << "=\"" << (*iter).value << "\"" << endl;
 #if 0
       att_name.push_back((*iter).name);
       att_value.push_back((*iter).value);
 #endif
-      attribute_map[(*iter).name]=(*iter).value;
+      attribute_map[(*iter).name] = (*iter).value;
     }
   }
 
-  name=_name;
+  name = _name;
 }
 
-void easyDomNode::addChild(easyDomNode *child){
+void easyDomNode::addChild(easyDomNode *child)
+{
   subnodes.push_back(child);
 }
 
-string easyDomNode::attr_value(string search_name){
+string easyDomNode::attr_value(string search_name)
+{
   return attribute_map[search_name];
 }
 
-void easyDomNode::printNode(ostream& out,int recurse_level,int level){
- map<string,string>::const_iterator iter;
- //vector<string>::const_iterator iter2;
+void easyDomNode::printNode(ostream &out, int recurse_level, int level)
+{
+  map<string, string>::const_iterator iter;
+  //vector<string>::const_iterator iter2;
 
- out << "<" << name ;
+  out << "<" << name;
 
- for(iter = attribute_map.begin(); iter!=attribute_map.end(); iter++){
-       out << " " << (*iter).first << "=\"" << (*iter).second << "\"" ;
+  for (iter = attribute_map.begin(); iter != attribute_map.end(); iter++)
+  {
+    out << " " << (*iter).first << "=\"" << (*iter).second << "\"";
   }
   out << ">" << endl;
 
   vector<easyDomNode *>::const_iterator siter;
-  
-  if(recurse_level>0){
-    for(siter= subnodes.begin() ; siter!=subnodes.end() ; siter++){
-      (*siter)->printNode(out,recurse_level-1,level+1);
+
+  if (recurse_level > 0)
+  {
+    for (siter = subnodes.begin(); siter != subnodes.end(); siter++)
+    {
+      (*siter)->printNode(out, recurse_level - 1, level + 1);
     }
   }
 
-  if(!(recurse_level==0 && level==0)){
+  if (!(recurse_level == 0 && level == 0))
+  {
     out << "</" << name << ">" << endl;
   }
 }
-

@@ -46,7 +46,6 @@
 #include "cmd/script/mission.h"
 #include "xml_support.h"
 #include "config_xml.h"
-#include "cmd/ai/missionscript.h"
 #include "cmd/enhancement.h"
 #include "cmd/cont_terrain.h"
 #include "cmd/script/flightgroup.h"
@@ -267,10 +266,9 @@ namespace CockpitKeys
         {
             cleanexit = true;
             if (game_options.write_savegame_on_exit)
+            {
                 _Universe->WriteSaveGame(true); //gotta do important stuff first
-            for (unsigned int i = 0; i < active_missions.size(); i++)
-                if (active_missions[i])
-                    active_missions[i]->DirectorEnd();
+            }
             if (forcefeedback)
             {
                 delete forcefeedback;

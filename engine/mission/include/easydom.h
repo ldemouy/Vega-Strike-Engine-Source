@@ -40,8 +40,6 @@ using std::vector;
 
 using XMLSupport::AttributeList;
 
-extern string parseCalike(char const *filename);
-
 class easyDomNode
 {
 public:
@@ -150,69 +148,6 @@ public:
     char buffer[2048];
     strncpy(buffer, s, len);
     // printf("XML-text: %s\n",buffer);
-  };
-
-  domNodeType *LoadCalike(const char *filename)
-  {
-
-    const int chunk_size = 16384;
-
-    string module_str = parseCalike(filename);
-    if (module_str.empty())
-    {
-      //cout << "warning: could not open file: " << filename << endl;
-      //    assert(0);
-      return nullptr;
-    }
-
-    xml = new easyDomFactoryXML;
-
-    XML_Parser parser = XML_ParserCreate(nullptr);
-    XML_SetUserData(parser, this);
-    XML_SetElementHandler(parser, &easyDomFactory::beginElement, &easyDomFactory::endElement);
-    XML_SetCharacterDataHandler(parser, &easyDomFactory::charHandler);
-
-    int index = 0;
-    int string_size = module_str.size();
-    int incr = chunk_size - 2;
-    int is_final = false;
-
-    do
-    {
-      char *buf = (XML_Char *)XML_GetBuffer(parser, chunk_size);
-
-      int max_index = index + incr;
-      int newlen = incr;
-
-      printf("max_index=%d,string_size=%d\n", max_index, string_size);
-      if (max_index >= string_size)
-      {
-        newlen = module_str.size() - index;
-        printf("getting string from %d length %d\n", index, newlen);
-        const char *strbuf = module_str.substr(index, newlen).c_str();
-        strncpy(buf, strbuf, newlen);
-      }
-      else
-      {
-        printf("getting string from %d length %d\n", index, incr);
-        const char *strbuf = module_str.substr(index, incr).c_str();
-        strncpy(buf, strbuf, incr);
-        newlen = incr;
-      }
-
-      index += newlen;
-
-      if (index >= string_size)
-      {
-        is_final = true;
-      }
-
-      XML_ParseBuffer(parser, newlen, is_final);
-    } while (!is_final);
-
-    XML_ParserFree(parser);
-
-    return (domNodeType *)topnode;
   };
 
   static void beginElement(void *userData, const XML_Char *name, const XML_Char **atts)

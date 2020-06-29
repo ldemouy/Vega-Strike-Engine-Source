@@ -84,22 +84,11 @@ SET(LIBPYTHON_SOURCES
 )
 
 SET(LIBSCRIPT_SOURCES
-    src/cmd/script/director_generic.cpp
-    src/cmd/script/mission_script.cpp
+    src/cmd/script/director_generic.cpp    
     src/cmd/script/mission.cpp
     src/cmd/script/msgcenter.cpp
-    src/cmd/script/pythonmission.cpp
-    src/cmd/script/script_call_olist.cpp
-    src/cmd/script/script_call_omap.cpp
-    src/cmd/script/script_call_order.cpp
-    src/cmd/script/script_call_string.cpp
-    src/cmd/script/script_call_unit_generic.cpp
-    src/cmd/script/script_callbacks.cpp
-    src/cmd/script/script_expression.cpp
-    src/cmd/script/script_generic.cpp
-    src/cmd/script/script_statement.cpp
-    src/cmd/script/script_util.cpp
-    src/cmd/script/script_variables.cpp
+    src/cmd/script/pythonmission.cpp    
+    src/cmd/script/script_call_unit_generic.cpp                
 )
 
 SET(LIBCMDSCRIPTSERVER_SOURCES
@@ -119,8 +108,7 @@ SET(LIBAI_SOURCES
     src/cmd/ai/fireall.cpp
     src/cmd/ai/flybywire.cpp
     src/cmd/ai/hard_coded_scripts.cpp
-    src/cmd/ai/ikarus.cpp
-    src/cmd/ai/missionscript.cpp
+    src/cmd/ai/ikarus.cpp    
     src/cmd/ai/navigation.cpp    
     src/cmd/ai/order.cpp
     src/cmd/ai/script.cpp
@@ -424,9 +412,7 @@ SET(VEGASTRIKE_SOURCES
     src/cmd/music.cpp
     src/cmd/nebula.cpp
     src/cmd/planet.cpp    
-    src/cmd/script/director.cpp
-    src/cmd/script/flightgroup.cpp
-    src/cmd/script/script_call_briefing.cpp
+    src/cmd/script/flightgroup.cpp    
     src/cmd/script/script_call_unit.cpp
     src/cmd/terrain.cpp
     src/cmd/unit_factory.cpp
