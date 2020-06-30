@@ -4447,7 +4447,7 @@ string buildShipDescription(Cargo &item, std::string &texturedescription)
         newModifications = _Universe->AccessCockpit()->GetUnitModifications();
     }
     Flightgroup *flightGroup = new Flightgroup();
-    int fgsNumber = 0;
+    int32_t fgsNumber = 0;
     current_unit_load_mode = NO_MESH;
     Unit *newPart = UnitFactory::createUnit(item.GetContent().c_str(), false, 0, newModifications,
                                             flightGroup, fgsNumber);
@@ -4489,7 +4489,7 @@ string buildUpgradeDescription(Cargo &item)
     //load the Unit
     string blnk;                                  //modifications to an upgrade item???
     Flightgroup *flightGroup = new Flightgroup(); //sigh
-    int fgsNumber = 0;
+    int32_t fgsNumber = 0;
     current_unit_load_mode = NO_MESH;
     Unit *newPart = UnitFactory::createUnit(item.GetContent().c_str(), false,
                                             FactionUtil::GetUpgradeFaction(), blnk, flightGroup, fgsNumber);
