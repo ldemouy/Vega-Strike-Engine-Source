@@ -54,7 +54,7 @@ const Unit *getUnitFromUpgradeName(const string &upgradeName, int myUnitFaction 
     return partUnit;
 }
 
-int SelectDockPort(Unit *utdw, Unit *parent)
+int32_t SelectDockPort(Unit *utdw, Unit *parent)
 {
     const vector<DockingPorts> *dp = &utdw->DockingPortLocations();
     float dist = FLT_MAX;

@@ -5,16 +5,11 @@
 #include <memory>
 #include <string>
 #include <boost/version.hpp>
-#if BOOST_VERSION != 102800
+
 #include <boost/python/object.hpp>
 #include <boost/python/dict.hpp>
 typedef boost::python::dict BoostPythonDictionary;
-#else
-#include <boost/python/objects.hpp>
-typedef boost::python::dictionary BoostPythonDictionary;
-#endif
 
-#if defined(HAVE_PYTHON)
 namespace boost
 {
         namespace python
@@ -22,38 +17,28 @@ namespace boost
                 class dict;
         }
 } // namespace boost
-#else
-#include <map>
-#endif
 
 #include "audio/Types.h"
 #include "audio/Stream.h"
 
 namespace BaseUtil
 {
-#if defined(HAVE_PYTHON)
-#if BOOST_VERSION != 102800
-        typedef boost::python::dict Dictionary;
-#else
-        typedef boost::python::dictionary Dictionary;
-#endif
-#else
-        typedef std::map<std::string, std::string> Dictionary;
-#endif
 
-        int Room(std::string text);
-        void Texture(int room, std::string index, std::string file, float x, float y);
-        bool Video(int room, std::string index, std::string vfile, std::string afile, float x, float y);
-        bool VideoStream(int room, std::string index, std::string streamfile, float x, float y, float w, float h);
-        void SetTexture(int room, std::string index, std::string file);
-        void SetTextureSize(int room, std::string index, float w, float h);
-        void SetTexturePos(int room, std::string index, float x, float y);
-        void PlayVideo(int room, std::string index);
-        void StopVideo(int room, std::string index);
-        void SetVideoCallback(int room, std::string index, std::string callback);
+        typedef boost::python::dict Dictionary;
+
+        int32_t Room(std::string text);
+        void Texture(int32_t room, std::string index, std::string file, float x, float y);
+        bool Video(int32_t room, std::string index, std::string vfile, std::string afile, float x, float y);
+        bool VideoStream(int32_t room, std::string index, std::string streamfile, float x, float y, float w, float h);
+        void SetTexture(int32_t room, std::string index, std::string file);
+        void SetTextureSize(int32_t room, std::string index, float w, float h);
+        void SetTexturePos(int32_t room, std::string index, float x, float y);
+        void PlayVideo(int32_t room, std::string index);
+        void StopVideo(int32_t room, std::string index);
+        void SetVideoCallback(int32_t room, std::string index, std::string callback);
         void SetDJEnabled(bool enabled);
-        void Ship(int room, std::string index, QVector pos, Vector R, Vector Q);
-        void LinkPython(int room,
+        void Ship(int32_t room, std::string index, QVector pos, Vector R, Vector Q);
+        void LinkPython(int32_t room,
                         std::string index,
                         std::string pythonfile,
                         float x,
@@ -61,8 +46,8 @@ namespace BaseUtil
                         float wid,
                         float hei,
                         std::string text,
-                        int to);
-        void LaunchPython(int room,
+                        int32_t to);
+        void LaunchPython(int32_t room,
                           std::string index,
                           std::string pythonfile,
                           float x,
@@ -70,8 +55,8 @@ namespace BaseUtil
                           float wid,
                           float hei,
                           std::string text);
-        void EjectPython(int room, std::string index, std::string pythonfile, float x, float y, float wid, float hei, std::string text);
-        void CompPython(int room,
+        void EjectPython(int32_t room, std::string index, std::string pythonfile, float x, float y, float wid, float hei, std::string text);
+        void CompPython(int32_t room,
                         std::string index,
                         std::string pythonfile,
                         float x,
@@ -82,10 +67,10 @@ namespace BaseUtil
                         std::string modes);
         void GlobalKeyPython(std::string pythonfile);
 
-        void Link(int room, std::string index, float x, float y, float wid, float hei, std::string text, int to);
-        void Launch(int room, std::string index, float x, float y, float wid, float hei, std::string text);
-        void Comp(int room, std::string index, float x, float y, float wid, float hei, std::string text, std::string modes);
-        void Python(int room,
+        void Link(int32_t room, std::string index, float x, float y, float wid, float hei, std::string text, int32_t to);
+        void Launch(int32_t room, std::string index, float x, float y, float wid, float hei, std::string text);
+        void Comp(int32_t room, std::string index, float x, float y, float wid, float hei, std::string text, std::string modes);
+        void Python(int32_t room,
                     std::string index,
                     float x,
                     float y,
@@ -94,12 +79,12 @@ namespace BaseUtil
                     std::string text,
                     std::string pythonfile,
                     bool front = false);
-        void MessageToRoom(int room, std::string text);
-        void EnqueueMessageToRoom(int room, std::string text);
+        void MessageToRoom(int32_t room, std::string text);
+        void EnqueueMessageToRoom(int32_t room, std::string text);
         void Message(std::string text);
         void EnqueueMessage(std::string text);
-        void RunScript(int room, std::string ind, std::string pythonfile, float time);
-        void TextBox(int room,
+        void RunScript(int32_t room, std::string ind, std::string pythonfile, float time);
+        void TextBox(int32_t room,
                      std::string ind,
                      std::string text,
                      float x,
@@ -108,18 +93,18 @@ namespace BaseUtil
                      Vector backcol,
                      float backalp,
                      Vector forecol);
-        void SetTextBoxText(int room, std::string ind, std::string text);
-        void SetLinkArea(int room, std::string index, float x, float y, float wid, float hei);
-        void SetLinkText(int room, std::string index, std::string text);
-        void SetLinkPython(int room, std::string index, std::string python);
-        void SetLinkRoom(int room, std::string index, int to);
-        void SetLinkEventMask(int room, std::string index, std::string maskdef); //c=click, u=up, d=down, e=enter, l=leave, m=move
-        void EraseLink(int room, std::string index);
-        void EraseObj(int room, std::string index);
+        void SetTextBoxText(int32_t room, std::string ind, std::string text);
+        void SetLinkArea(int32_t room, std::string index, float x, float y, float wid, float hei);
+        void SetLinkText(int32_t room, std::string index, std::string text);
+        void SetLinkPython(int32_t room, std::string index, std::string python);
+        void SetLinkRoom(int32_t room, std::string index, int to);
+        void SetLinkEventMask(int32_t room, std::string index, std::string maskdef); //c=click, u=up, d=down, e=enter, l=leave, m=move
+        void EraseLink(int32_t room, std::string index);
+        void EraseObj(int32_t room, std::string index);
         int GetCurRoom();
-        void SetCurRoom(int room);
-        bool HasObject(int room, std::string index);
-        int GetNumRoom();
+        void SetCurRoom(int32_t room);
+        bool HasObject(int32_t room, std::string index);
+        int32_t GetNumRoom();
         bool BuyShip(std::string name, bool my_fleet, bool force_base_inventory);
         bool SellShip(std::string name);
 
@@ -129,9 +114,9 @@ namespace BaseUtil
 
         //GUI events
         void SetEventData(Dictionary data);
-        void SetMouseEventData(std::string type, float x, float y, int buttonMask); //[type], [mousex], [mousey], [mousebuttons]
-        void SetKeyEventData(std::string type, unsigned int keycode, unsigned int modmask = ~0);
-        void SetKeyStatusEventData(unsigned int modmask = ~0);
+        void SetMouseEventData(std::string type, float x, float y, int32_t buttonMask); //[type], [mousex], [mousey], [mousebuttons]
+        void SetKeyEventData(std::string type, uint32_t keycode, uint32_t modmask = ~0);
+        void SetKeyStatusEventData(uint32_t modmask = ~0);
         const Dictionary &GetEventData();
 
         //GUI events (engine internals)

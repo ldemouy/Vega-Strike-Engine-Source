@@ -1,19 +1,12 @@
 #include <math.h>
 
 #include <boost/version.hpp>
-#if BOOST_VERSION != 102800
+
 #include <boost/python.hpp>
 typedef boost::python::dict BoostPythonDictionary;
-#else
-#include <boost/python/objects.hpp>
-typedef boost::python::dictionary BoostPythonDictionary;
-#endif
-#if BOOST_VERSION != 102800
+
 #include <boost/python/object.hpp>
 #include <boost/python/dict.hpp>
-#else
-#include <boost/python/objects.hpp>
-#endif
 
 #include <Python.h>
 #include "python/python_class.h"
@@ -29,7 +22,7 @@ static BoostPythonDictionary GetEventDataPython()
 static boost::python::tuple GetRandomBarMessage()
 {
     gameMessage last;
-    int i = 0;
+    int32_t i = 0;
     vector<std::string> who;
     vector<std::string> say;
     vector<std::string> sounds;
@@ -54,7 +47,7 @@ static boost::python::tuple GetRandomBarMessage()
     }
     if (say.size())
     {
-        int index = rand() % say.size();
+        int32_t index = rand() % say.size();
         return VS_BOOST_MAKE_TUPLE_2(say[index], sounds[index]);
     }
     else

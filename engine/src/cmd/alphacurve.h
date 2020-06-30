@@ -12,13 +12,13 @@
 //tail_mode_start = overriding slope value for start		negative = standard, 0=flat, high=vertical
 //tail_mode_end = overriding slope value for start		negative = standard, 0=flat, high=vertical
 
-int get_alpha(int _query,
-              int _maxrez_x,
-              int _min,
-              int _max,
-              double _focus,
-              double _concavity,
-              int _tail_mode_start,
-              int _tail_mode_end);
+int32_t get_alpha(int32_t query,
+                  int32_t maxrez_x,
+                  int32_t min,
+                  int32_t max,
+                  double focus,
+                  double concavity,
+                  int32_t tail_mode_start,
+                  int32_t tail_mode_end);
 
 #endif

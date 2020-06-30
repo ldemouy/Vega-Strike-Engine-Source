@@ -30,20 +30,21 @@
 
 #include "ai/communication.h"
 #include "audio/SceneManager.h"
+#include <utility>
 
 using std::cerr;
 using std::endl;
 
-static unsigned int &getMouseButtonMask()
+static uint32_t &getMouseButtonMask()
 {
-    static unsigned int mask = 0;
+    static uint32_t mask = 0;
     return mask;
 }
 
-static void biModifyMouseSensitivity(int &x, int &y, bool invert)
+static void biModifyMouseSensitivity(int32_t &x, int32_t &y, bool invert)
 {
-    int xrez = g_game.x_resolution;
-    static int whentodouble = XMLSupport::parse_int(vs_config->getVariable("joystick", "double_mouse_position", "1280"));
+    int32_t xrez = g_game.x_resolution;
+    static int32_t whentodouble = XMLSupport::parse_int(vs_config->getVariable("joystick", "double_mouse_position", "1280"));
     static float factor = XMLSupport::parse_float(vs_config->getVariable("joystick", "double_mouse_factor", "2"));
     if (xrez >= whentodouble)
     {
@@ -51,24 +52,32 @@ static void biModifyMouseSensitivity(int &x, int &y, bool invert)
         y -= g_game.y_resolution / 2;
         if (invert)
         {
-            x = int(x / factor);
-            y = int(y / factor);
+            x = int32_t(x / factor);
+            y = int32_t(y / factor);
         }
         else
         {
-            x = int(x * factor);
-            y = int(y * factor);
+            x = int32_t(x * factor);
+            y = int32_t(y * factor);
         }
         x += g_game.x_resolution / 2;
         y += g_game.y_resolution / 2;
         if (x > g_game.x_resolution)
+        {
             x = g_game.x_resolution;
+        }
         if (y > g_game.y_resolution)
+        {
             y = g_game.y_resolution;
+        }
         if (x < 0)
+        {
             x = 0;
+        }
         if (y < 0)
+        {
             y = 0;
+        }
     }
 }
 
@@ -106,30 +115,38 @@ static void CalculateRealXAndY(int xbeforecalc, int ybeforecalc, float *x, float
     (*x) = (((float)(xbeforecalc * 2)) / g_game.x_resolution) - 1;
     (*y) = -(((float)(ybeforecalc * 2)) / g_game.y_resolution) + 1;
 }
-#define mymin(a, b) (((a) < (b)) ? (a) : (b))
+
 static void SetupViewport()
 {
-    static int base_max_width = XMLSupport::parse_int(vs_config->getVariable("graphics", "base_max_width", "0"));
-    static int base_max_height = XMLSupport::parse_int(vs_config->getVariable("graphics", "base_max_height", "0"));
+    static int32_t base_max_width = XMLSupport::parse_int(vs_config->getVariable("graphics", "base_max_width", "0"));
+    static int32_t base_max_height = XMLSupport::parse_int(vs_config->getVariable("graphics", "base_max_height", "0"));
     if (base_max_width && base_max_height)
     {
-        int xrez = mymin(g_game.x_resolution, base_max_width);
-        int yrez = mymin(g_game.y_resolution, base_max_height);
-        int offsetx = (g_game.x_resolution - xrez) / 2;
-        int offsety = (g_game.y_resolution - yrez) / 2;
+        int32_t xrez = std::min(g_game.x_resolution, base_max_width);
+        int32_t yrez = std::min(g_game.y_resolution, base_max_height);
+        int32_t offsetx = (g_game.x_resolution - xrez) / 2;
+        int32_t offsety = (g_game.y_resolution - yrez) / 2;
         glViewport(offsetx, offsety, xrez, yrez);
     }
 }
-#undef mymin
+
 BaseInterface::Room::~Room()
 {
-    size_t i;
-    for (i = 0; i < links.size(); i++)
+
+    for (size_t i = 0; i < links.size(); i++)
+    {
         if (links[i])
+        {
             delete links[i];
-    for (i = 0; i < objs.size(); i++)
+        }
+    }
+    for (size_t i = 0; i < objs.size(); i++)
+    {
         if (objs[i])
+        {
             delete objs[i];
+        }
+    }
 }
 
 BaseInterface::Room::Room()
@@ -155,7 +172,9 @@ BaseInterface::Room::BaseVSSprite::BaseVSSprite(const std::string &spritefile, c
 BaseInterface::Room::BaseVSSprite::~BaseVSSprite()
 {
     if (soundsource.get() != nullptr)
+    {
         BaseUtil::DestroyVideoSoundStream(soundsource, soundscene);
+    }
     spr.ClearTimeSource();
 }
 
@@ -207,7 +226,9 @@ void BaseInterface::Room::BaseVSMovie::SetMovie(const std::string &moviefile)
     spr.SetRotation(rot);
 
     if (soundsource.get() != nullptr)
+    {
         BaseUtil::DestroyVideoSoundStream(soundsource, soundscene);
+    }
     soundscene = "video";
     playing = false;
     if (g_game.sound_enabled)
@@ -245,7 +266,9 @@ void BaseInterface::Room::BaseVSSprite::Draw(BaseInterface *base)
     if (soundsource.get() != nullptr)
     {
         if (!soundsource->isPlaying())
+        {
             soundsource->startPlaying();
+        }
     }
 }
 
@@ -327,7 +350,7 @@ void BaseInterface::Room::BaseShip::Draw(BaseInterface *base)
         GFXEnable(DEPTHTEST);
         GFXEnable(DEPTHWRITE);
         GFXEnable(LIGHTING);
-        int light = 0;
+        int32_t light = 0;
         GFXCreateLight(light,
                        GFXLight(true,
                                 GFXColor(1, 1, 1, 1),
@@ -357,13 +380,15 @@ void BaseInterface::Room::BaseShip::Draw(BaseInterface *base)
 
 void BaseInterface::Room::Draw(BaseInterface *base)
 {
-    size_t i;
-    for (i = 0; i < objs.size(); i++)
+
+    for (size_t i = 0; i < objs.size(); i++)
+    {
         if (objs[i])
         {
             GFXBlendMode(SRCALPHA, INVSRCALPHA);
             objs[i]->Draw(base);
         }
+    }
     GFXBlendMode(SRCALPHA, INVSRCALPHA);
     //draw location markers
     //<!-- config options in the "graphics" section -->
@@ -406,7 +431,9 @@ void BaseInterface::Room::Draw(BaseInterface *base)
                 if ((links[i]->alpha < 1) || (draw_always))
                 {
                     if (draw_always)
-                        links[i]->alpha = 1;                 //set all alphas to visible
+                    {
+                        links[i]->alpha = 1; //set all alphas to visible
+                    }
                     x = (links[i]->x + (links[i]->wid / 2)); //get the center of the location
                     y = (links[i]->y + (links[i]->hei / 2)); //get the center of the location
 
@@ -419,13 +446,21 @@ void BaseInterface::Room::Draw(BaseInterface *base)
                         spr_marker->GetSize(wid, hei);
                         //check if the sprite is near a screenedge and correct its position if necessary
                         if ((x + (wid / 2)) >= 1)
+                        {
                             x = (1 - (wid / 2));
+                        }
                         if ((y + (hei / 2)) >= 1)
+                        {
                             y = (1 - (hei / 2));
+                        }
                         if ((x - (wid / 2)) <= -1)
+                        {
                             x = (-1 + (wid / 2));
+                        }
                         if ((y - (hei / 2)) <= y_lower)
+                        {
                             y = (y_lower + (hei / 2));
+                        }
                         spr_marker->SetPosition(x, y);
                         GFXDisable(TEXTURE1);
                         GFXEnable(TEXTURE0);
@@ -437,16 +472,22 @@ void BaseInterface::Room::Draw(BaseInterface *base)
                         GFXDisable(TEXTURE0);
                         TextPlane text_marker;
                         text_marker.SetText(links[i]->text);
-                        text_marker.GetCharSize(text_wid, text_hei);            //get average charactersize
-                        float text_pos_x = x + text_offset_x;                   //align right ...
-                        float text_pos_y = y + text_offset_y + text_hei;        //...and on top
-                        text_wid = text_wid * links[i]->text.length() * 0.25;   //calc ~width of text (=multiply the average characterwidth with the number of characters)
-                        if ((text_pos_x + text_offset_x + text_wid) >= 1)       //check right screenborder
-                            text_pos_x = (x - fabs(text_offset_x) - text_wid);  //align left
-                        if ((text_pos_y + text_offset_y) >= 1)                  //check upper screenborder
-                            text_pos_y = (y - fabs(text_offset_y));             //align on bottom
+                        text_marker.GetCharSize(text_wid, text_hei);          //get average charactersize
+                        float text_pos_x = x + text_offset_x;                 //align right ...
+                        float text_pos_y = y + text_offset_y + text_hei;      //...and on top
+                        text_wid = text_wid * links[i]->text.length() * 0.25; //calc ~width of text (=multiply the average characterwidth with the number of characters)
+                        if ((text_pos_x + text_offset_x + text_wid) >= 1)     //check right screenborder
+                        {
+                            text_pos_x = (x - fabs(text_offset_x) - text_wid); //align left
+                        }
+                        if ((text_pos_y + text_offset_y) >= 1) //check upper screenborder
+                        {
+                            text_pos_y = (y - fabs(text_offset_y)); //align on bottom
+                        }
                         if ((text_pos_y + text_offset_y - text_hei) <= y_lower) //check lower screenborder
-                            text_pos_y = (y + fabs(text_offset_y) + text_hei);  //align on top
+                        {
+                            text_pos_y = (y + fabs(text_offset_y) + text_hei); //align on top
+                        }
                         text_marker.col = GFXColor(text_color_r, text_color_g, text_color_b, links[i]->alpha);
                         text_marker.SetPos(text_pos_x, text_pos_y);
                         if (links[i]->pythonfile != "#" && text_marker.GetText().find("XXX") != 0)
@@ -454,7 +495,9 @@ void BaseInterface::Room::Draw(BaseInterface *base)
                             GFXColor tmpbg = text_marker.bgcol;
                             bool automatte = (0 == tmpbg.a);
                             if (automatte)
+                            {
                                 text_marker.bgcol = GFXColor(0, 0, 0, base_text_background_alpha);
+                            }
                             text_marker.Draw(text_marker.GetText(), 0, true, false, automatte);
                             text_marker.bgcol = tmpbg;
                         }
@@ -477,6 +520,7 @@ void BaseInterface::Room::Draw(BaseInterface *base)
         static float text_offset_y =
             XMLSupport::parse_float(vs_config->getVariable("graphics", "base_locationmarker_textoffset_y", "0"));
         for (size_t i = 0; i < links.size(); i++) //loop through all links and draw a marker for each
+        {
             if (links[i])
             {
                 //Debug marker
@@ -487,18 +531,26 @@ void BaseInterface::Room::Draw(BaseInterface *base)
                     y = (links[i]->y + (links[i]->hei / 2)); //get the center of the location
                     TextPlane text_marker;
                     text_marker.SetText(links[i]->index);
-                    text_marker.GetCharSize(text_wid, text_hei);            //get average charactersize
-                    float text_pos_x = x + text_offset_x;                   //align right ...
-                    float text_pos_y = y + text_offset_y + text_hei;        //...and on top
-                    text_wid = text_wid * links[i]->text.length() * 0.25;   //calc ~width of text (=multiply the average characterwidth with the number of characters)
-                    if ((text_pos_x + text_offset_x + text_wid) >= 1)       //check right screenborder
-                        text_pos_x = (x - fabs(text_offset_x) - text_wid);  //align left
-                    if ((text_pos_y + text_offset_y) >= 1)                  //check upper screenborder
-                        text_pos_y = (y - fabs(text_offset_y));             //align on bottom
+                    text_marker.GetCharSize(text_wid, text_hei);          //get average charactersize
+                    float text_pos_x = x + text_offset_x;                 //align right ...
+                    float text_pos_y = y + text_offset_y + text_hei;      //...and on top
+                    text_wid = text_wid * links[i]->text.length() * 0.25; //calc ~width of text (=multiply the average characterwidth with the number of characters)
+                    if ((text_pos_x + text_offset_x + text_wid) >= 1)     //check right screenborder
+                    {
+                        text_pos_x = (x - fabs(text_offset_x) - text_wid); //align left
+                    }
+                    if ((text_pos_y + text_offset_y) >= 1) //check upper screenborder
+                    {
+                        text_pos_y = (y - fabs(text_offset_y)); //align on bottom
+                    }
                     if ((text_pos_y + text_offset_y - text_hei) <= y_lower) //check lower screenborder
-                        text_pos_y = (y + fabs(text_offset_y) + text_hei);  //align on top
+                    {
+                        text_pos_y = (y + fabs(text_offset_y) + text_hei); //align on top
+                    }
                     if (enable_markers)
+                    {
                         text_pos_y += text_hei;
+                    }
                     text_marker.col = GFXColor(1, 1, 1, 1);
                     text_marker.SetPos(text_pos_x, text_pos_y);
 
@@ -506,7 +558,9 @@ void BaseInterface::Room::Draw(BaseInterface *base)
                     GFXColor tmpbg = text_marker.bgcol;
                     bool automatte = (0 == tmpbg.a);
                     if (automatte)
+                    {
                         text_marker.bgcol = GFXColor(0, 0, 0, base_text_background_alpha);
+                    }
                     text_marker.Draw(text_marker.GetText(), 0, true, false, automatte);
                     text_marker.bgcol = tmpbg;
                     GFXEnable(TEXTURE0);
@@ -538,6 +592,7 @@ void BaseInterface::Room::Draw(BaseInterface *base)
                 GFXDraw(GFXLINESTRIP, verts, 5);
                 GFXEnable(TEXTURE0);
             }
+        }
         //if link
         //for i
     } //if draw_borders
@@ -547,29 +602,37 @@ static std::vector<BaseInterface::Room::BaseTalk *> active_talks;
 BaseInterface::Room::BaseTalk::BaseTalk(const std::string &msg, const std::string &ind, bool only_one) : BaseObj(ind), curchar(0), curtime(0), message(msg)
 {
     if (only_one)
+    {
         active_talks.clear();
+    }
     active_talks.push_back(this);
 }
 
 void BaseInterface::Room::BaseText::Draw(BaseInterface *base)
 {
-    int tmpx = g_game.x_resolution;
-    int tmpy = g_game.y_resolution;
-    static int base_max_width = XMLSupport::parse_int(vs_config->getVariable("graphics", "base_max_width", "0"));
-    static int base_max_height = XMLSupport::parse_int(vs_config->getVariable("graphics", "base_max_height", "0"));
+    int32_t tmpx = g_game.x_resolution;
+    int32_t tmpy = g_game.y_resolution;
+    static int32_t base_max_width = XMLSupport::parse_int(vs_config->getVariable("graphics", "base_max_width", "0"));
+    static int32_t base_max_height = XMLSupport::parse_int(vs_config->getVariable("graphics", "base_max_height", "0"));
     if (base_max_width && base_max_height)
     {
         if (base_max_width < tmpx)
+        {
             g_game.x_resolution = base_max_width;
+        }
         if (base_max_height < tmpy)
+        {
             g_game.y_resolution = base_max_height;
+        }
     }
     static float base_text_background_alpha =
         XMLSupport::parse_float(vs_config->getVariable("graphics", "base_text_background_alpha", "0.0625"));
     GFXColor tmpbg = text.bgcol;
     bool automatte = (0 == tmpbg.a);
     if (automatte)
+    {
         text.bgcol = GFXColor(0, 0, 0, base_text_background_alpha);
+    }
     if (!automatte && text.GetText().empty())
     {
         float posx, posy, wid, hei;
@@ -643,7 +706,9 @@ void BaseInterface::Room::BaseTalk::Draw(BaseInterface *base)
 {
     //FIXME: should be called from draw()
     if (hastalked)
+    {
         return;
+    }
     curtime += GetElapsedTime() / getTimeCompression();
     static float delay = XMLSupport::parse_float(vs_config->getVariable("graphics", "text_delay", ".05"));
     if ((std::find(active_talks.begin(), active_talks.end(),
@@ -655,10 +720,14 @@ void BaseInterface::Room::BaseTalk::Draw(BaseInterface *base)
                                                          base->rooms[base->curroom]->objs.end(),
                                                          this);
         if (ind != base->rooms[base->curroom]->objs.end())
+        {
             *ind = nullptr;
+        }
         std::vector<BaseTalk *>::iterator ind2 = std::find(active_talks.begin(), active_talks.end(), this);
         if (ind2 != active_talks.end())
+        {
             *ind2 = nullptr;
+        }
         base->othtext.SetText("");
         delete this;
         return; //do not do ANYTHING with 'this' after the previous statement...
@@ -678,11 +747,13 @@ void BaseInterface::Room::BaseTalk::Draw(BaseInterface *base)
 int BaseInterface::Room::MouseOver(BaseInterface *base, float x, float y)
 {
     for (size_t i = 0; i < links.size(); i++)
+    {
         if (links[i])
         {
             if (x >= links[i]->x && x <= (links[i]->x + links[i]->wid) && y >= links[i]->y && y <= (links[i]->y + links[i]->hei))
                 return i;
         }
+    }
     return -1;
 }
 
@@ -755,110 +826,6 @@ void BaseInterface::Room::Click(BaseInterface *base, float x, float y, int butto
     }
     else
     {
-#ifdef BASE_MAKER
-        if (state == WS_MOUSE_UP)
-        {
-            char input[201];
-            char *str;
-            if (button == WS_RIGHT_BUTTON)
-                str = "Please create a file named stdin.txt and type\nin the sprite file that you wish to use.";
-            else if (button == WS_MIDDLE_BUTTON)
-                str =
-                    "Please create a file named stdin.txt and type\nin the type of room followed by arguments for the room followed by text in quotations:\n1 ROOM# \"TEXT\"\n2 \"TEXT\"\n3 vector<MODES>.size vector<MODES> \"TEXT\"";
-            else
-                return;
-#ifdef _WIN32
-            int ret = MessageBox(nullptr, str, "Input", MB_OKCANCEL);
-#else
-            printf("\n%s\n", str);
-            int ret = 1;
-#endif
-            int index;
-            int rmtyp;
-            if (ret == 1)
-            {
-                if (button == WS_RIGHT_BUTTON)
-                {
-#ifdef _WIN32
-                    FILE *fp = VSFileSystem::vs_open("stdin.txt", "rt");
-#else
-                    FILE *fp = stdin;
-#endif
-                    VSFileSystem::vs_fscanf(fp, "%200s", input);
-#ifdef _WIN32
-                    VSFileSystem::vs_close(fp);
-#endif
-                }
-                else if (button == WS_MIDDLE_BUTTON && makingstate == 0)
-                {
-                    int i;
-#ifdef _WIN32
-                    FILE *fp = VSFileSystem::vs_open("stdin.txt", "rt");
-#else
-                    FILE *fp = stdin;
-#endif
-                    VSFileSystem::vs_fscanf(fp, "%d", &rmtyp);
-                    switch (rmtyp)
-                    {
-                    case 1:
-                        links.push_back(new Goto("linkind", "link"));
-                        VSFileSystem::vs_fscanf(fp, "%d", &((Goto *)links.back())->index);
-                        break;
-                    case 2:
-                        links.push_back(new Launch("launchind", "launch"));
-                        break;
-                    case 3:
-                        links.push_back(new Comp("compind", "comp"));
-                        VSFileSystem::vs_fscanf(fp, "%d", &index);
-                        for (i = 0; i < index && (!VSFileSystem::vs_feof(fp)); i++)
-                        {
-                            VSFileSystem::vs_fscanf(fp, "%d", &ret);
-                            ((Comp *)links.back())->modes.push_back((BaseComputer::DisplayMode)ret);
-                        }
-                        break;
-                    default:
-#ifdef _WIN32
-                        VSFileSystem::vs_close(fp);
-                        MessageBox(nullptr, "warning: invalid basemaker option", "Error", MB_OK);
-#endif
-                        printf("warning: invalid basemaker option: %d", rmtyp);
-                        return;
-                    }
-                    VSFileSystem::vs_fscanf(fp, "%200s", input);
-                    input[200] = input[199] = '\0';
-                    links.back()->text = string(input);
-#ifdef _WIN32
-                    VSFileSystem::vs_close(fp);
-#endif
-                }
-                if (button == WS_RIGHT_BUTTON)
-                {
-                    input[200] = input[199] = '\0';
-                    objs.push_back(new BaseVSSprite(input, "tex"));
-                    ((BaseVSSprite *)objs.back())->texfile = string(input);
-                    ((BaseVSSprite *)objs.back())->spr.SetPosition(x, y);
-                }
-                else if (button == WS_MIDDLE_BUTTON && makingstate == 0)
-                {
-                    links.back()->x = x;
-                    links.back()->y = y;
-                    links.back()->wid = 0;
-                    links.back()->hei = 0;
-                    makingstate = 1;
-                }
-                else if (button == WS_MIDDLE_BUTTON && makingstate == 1)
-                {
-                    links.back()->wid = x - links.back()->x;
-                    if (links.back()->wid < 0)
-                        links.back()->wid = -links.back()->wid;
-                    links.back()->hei = y - links.back()->y;
-                    if (links.back()->hei < 0)
-                        links.back()->hei = -links.back()->hei;
-                    makingstate = 0;
-                }
-            }
-        }
-#else
         if (state == WS_MOUSE_UP && links.size())
         {
             size_t count = 0;
@@ -867,8 +834,8 @@ void BaseInterface::Room::Click(BaseInterface *base, float x, float y, int butto
                 Link *curlink = links[base->curlinkindex++ % links.size()];
                 if (curlink)
                 {
-                    int x = int((((curlink->x + (curlink->wid / 2)) + 1) / 2) * g_game.x_resolution);
-                    int y = -int((((curlink->y + (curlink->hei / 2)) - 1) / 2) * g_game.y_resolution);
+                    int32_t x = int32_t((((curlink->x + (curlink->wid / 2)) + 1) / 2) * g_game.x_resolution);
+                    int32_t y = -int32_t((((curlink->y + (curlink->hei / 2)) - 1) / 2) * g_game.y_resolution);
                     biModifyMouseSensitivity(x, y, true);
                     winsys_warp_pointer(x, y);
                     PassiveMouseOverWin(x, y);
@@ -876,34 +843,47 @@ void BaseInterface::Room::Click(BaseInterface *base, float x, float y, int butto
                 }
             }
         }
-#endif
     }
 }
 
-void BaseInterface::MouseOver(int xbeforecalc, int ybeforecalc)
+void BaseInterface::MouseOver(int32_t xbeforecalc, int32_t ybeforecalc)
 {
     float x, y;
     CalculateRealXAndY(xbeforecalc, ybeforecalc, &x, &y);
-    int i = rooms[curroom]->MouseOver(this, x, y); //FIXME Whatever this is, it shouldn't be named just "i"; & possibly should be size_t
+    int32_t i = rooms[curroom]->MouseOver(this, x, y); //FIXME Whatever this is, it shouldn't be named just "i"; & possibly should be size_t
     Room::Link *link = 0;
     Room::Link *hotlink = 0;
     if (i >= 0)
+    {
         link = rooms[curroom]->links[i];
+    }
     if (lastmouseindex >= 0 && lastmouseindex < static_cast<int>(rooms[curroom]->links.size()))
+    {
         hotlink = rooms[curroom]->links[lastmouseindex];
+    }
     if (hotlink && (lastmouseindex != i))
+    {
         hotlink->MouseLeave(this, x, y, getMouseButtonMask());
+    }
     if (link && (lastmouseindex != i))
+    {
         link->MouseEnter(this, x, y, getMouseButtonMask());
+    }
     if (link)
+    {
         link->MouseMove(this, x, y, getMouseButtonMask());
+    }
     lastmouseindex = i;
     static float overcolor[4] = {1, .666666667, 0, 1};
     static float inactivecolor[4] = {0, 1, 0, 1};
     if (link)
+    {
         curtext.SetText(link->text);
+    }
     else
+    {
         curtext.SetText(rooms[curroom]->deftext);
+    }
     if (link && link->pythonfile != "#")
     {
         curtext.col = GFXColor(overcolor[0], overcolor[1], overcolor[2], overcolor[3]);
@@ -928,9 +908,13 @@ void BaseInterface::MouseOver(int xbeforecalc, int ybeforecalc)
             cy = (rooms[curroom]->links[i]->y + (rooms[curroom]->links[i]->hei / 2)); //get the y center of the location
             dist_cur2link = sqrt(pow((cx - x), 2) + pow((cy - y), 2));
             if (dist_cur2link < defined_distance)
+            {
                 rooms[curroom]->links[i]->alpha = (1 - (dist_cur2link / defined_distance));
+            }
             else
+            {
                 rooms[curroom]->links[i]->alpha = 1;
+            }
         }
     }
 }
@@ -946,20 +930,19 @@ void BaseInterface::ClickWin(int button, int state, int x, int y)
 {
     ModifyMouseSensitivity(x, y);
     if (state == WS_MOUSE_DOWN)
+    {
         getMouseButtonMask() |= (1 << (button - 1));
+    }
 
     else if (state == WS_MOUSE_UP)
+    {
         getMouseButtonMask() &= ~(1 << (button - 1));
+    }
     if (CurrentBase)
     {
         if (CurrentBase->CallComp)
         {
-#ifdef NEW_GUI
-            EventManager::
-#else
-            UpgradingInfo::
-#endif
-                ProcessMouseClick(button, state, x, y);
+            EventManager::ProcessMouseClick(button, state, x, y);
         }
         else
         {
@@ -980,12 +963,8 @@ void BaseInterface::PassiveMouseOverWin(int x, int y)
     {
         if (CurrentBase->CallComp)
         {
-#ifdef NEW_GUI
-            EventManager::
-#else
-            UpgradingInfo::
-#endif
-                ProcessMousePassive(x, y);
+
+            EventManager::ProcessMousePassive(x, y);
         }
         else
         {
@@ -1006,12 +985,8 @@ void BaseInterface::ActiveMouseOverWin(int x, int y)
     {
         if (CurrentBase->CallComp)
         {
-#ifdef NEW_GUI
-            EventManager::
-#else
-            UpgradingInfo::
-#endif
-                ProcessMouseActive(x, y);
+
+            EventManager::ProcessMouseActive(x, y);
         }
         else
         {
@@ -1056,64 +1031,51 @@ void BaseInterface::GotoLink(int linknum)
     }
     else
     {
-#ifndef BASE_MAKER
         VSFileSystem::vs_fprintf(stderr, "\nWARNING: base room #%d tried to go to an invalid index: #%d", curroom, linknum);
         assert(0);
-#else
-        while (rooms.size() <= linknum)
-        {
-            rooms.push_back(new Room());
-            char roomnum[50];
-            sprintf(roomnum, "Room #%d", linknum);
-            rooms.back()->deftext = roomnum;
-        }
-        GotoLink(linknum);
-#endif
     }
 }
 
 BaseInterface::~BaseInterface()
 {
-#ifdef BASE_MAKER
-    FILE *fp = VSFileSystem::vs_open("bases/NEW_BASE" BASE_EXTENSION, "wt");
-    if (fp)
-    {
-        EndXML(fp);
-        VSFileSystem::vs_close(fp);
-    }
-#endif
     CurrentBase = 0;
     restore_main_loop();
     for (size_t i = 0; i < rooms.size(); i++)
+    {
         delete rooms[i];
+    }
 }
 
 void base_main_loop();
-int shiftup(int);
+int32_t shiftup(int32_t);
 
-static void base_keyboard_cb(unsigned int ch, unsigned int mod, bool release, int x, int y)
+static void base_keyboard_cb(uint32_t ch, uint32_t mod, bool release, int32_t x, int32_t y)
 {
     //Set modifiers
-    unsigned int amods = 0;
+    uint32_t amods = 0;
     amods |= (mod & (WSK_MOD_LSHIFT | WSK_MOD_RSHIFT)) ? KB_MOD_SHIFT : 0;
     amods |= (mod & (WSK_MOD_LCTRL | WSK_MOD_RCTRL)) ? KB_MOD_CTRL : 0;
     amods |= (mod & (WSK_MOD_LALT | WSK_MOD_RALT)) ? KB_MOD_ALT : 0;
     setActiveModifiers(amods);
-    unsigned int shiftedch =
+    uint32_t shiftedch =
         ((WSK_MOD_LSHIFT == (mod & WSK_MOD_LSHIFT)) || (WSK_MOD_RSHIFT == (mod & WSK_MOD_RSHIFT))) ? shiftup(ch) : ch;
     if (BaseInterface::CurrentBase && !BaseInterface::CurrentBase->CallComp)
     {
         //Flush buffer
         if (base_keyboard_queue.size())
+        {
             BaseInterface::ProcessKeyboardBuffer();
+        }
         //Send directly to base interface handlers
         BaseInterface::CurrentBase->Key(shiftedch, amods, release, x, y);
     }
     else
+    {
         //Queue keystroke
         if (!release)
-    {
-        base_keyboard_queue.push_back(shiftedch);
+        {
+            base_keyboard_queue.push_back(shiftedch);
+        }
     }
 }
 
@@ -1128,14 +1090,15 @@ void BaseInterface::InitCallbacks()
     static bool simulate_while_at_base =
         XMLSupport::parse_bool(vs_config->getVariable("physics", "simulate_while_docked", "false"));
     if (!(simulate_while_at_base || _Universe->numPlayers() > 1))
+    {
         GFXLoop(base_main_loop);
+    }
 }
 
 BaseInterface::Room::Talk::Talk(const std::string &ind, const std::string &pythonfile) : BaseInterface::Room::Link(ind, pythonfile), index(-1)
 {
-#ifndef BASE_MAKER
     gameMessage last;
-    int i = 0;
+    int32_t i = 0;
     vector<std::string> who;
     string newmsg;
     string newsound;
@@ -1156,7 +1119,6 @@ BaseInterface::Room::Talk::Talk(const std::string &ind, const std::string &pytho
         this->say.push_back(newmsg);
         this->soundfiles.push_back(newsound);
     }
-#endif
 }
 
 double compute_light_dot(Unit *base, Unit *un)
@@ -1168,8 +1130,9 @@ double compute_light_dot(Unit *base, Unit *un)
     if (ss)
     {
         _Universe->pushActiveStarSystem(ss);
-        auto ui = ss->getUnitList().createIterator();
-        for (; (st = *ui); ++ui)
+
+        for (auto ui = ss->getUnitList().createIterator(); (st = *ui); ++ui)
+        {
             if (st->isPlanet())
             {
                 if (((Planet *)st)->hasLights())
@@ -1191,10 +1154,15 @@ double compute_light_dot(Unit *base, Unit *un)
                     auto ui = ((Planet *)st)->satellites.createIterator();
                     Unit *ownz = nullptr;
                     for (; (ownz = *ui); ++ui)
+                    {
                         if (ownz == base)
+                        {
                             base_owner = st;
+                        }
+                    }
                 }
             }
+        }
         _Universe->popActiveStarSystem();
     }
     else
@@ -1202,20 +1170,30 @@ double compute_light_dot(Unit *base, Unit *un)
         return 1;
     }
     if (base_owner == nullptr || base->isUnit() == PLANETPTR)
+    {
         return ret;
+    }
     else
+    {
         return compute_light_dot(base_owner, un);
+    }
 }
 
 const char *compute_time_of_day(Unit *base, Unit *un)
 {
     if (!base || !un)
+    {
         return "day";
+    }
     float rez = compute_light_dot(base, un);
     if (rez > .2)
+    {
         return "day";
+    }
     if (rez < -.1)
+    {
         return "night";
+    }
     return "sunset";
 }
 
@@ -1248,16 +1226,20 @@ BaseInterface::BaseInterface(const char *basefile, Unit *base, Unit *un) : curte
 
     std::string fac = base ? FactionUtil::GetFaction(base->faction) : "neutral";
     if (base && fac == "neutral")
+    {
         fac = UniverseUtil::GetGalaxyFaction(UnitUtil::getUnitSystemFile(base));
+    }
     Load(basefile, compute_time_of_day(base, un), fac.c_str());
     createdmusic = AUDHighestSoundPlaying();
     if (base && un)
     {
         vector<string> vec;
         vec.push_back(base->name);
-        int cpt = UnitUtil::isPlayerStarship(un);
+        int32_t cpt = UnitUtil::isPlayerStarship(un);
         if (cpt >= 0)
+        {
             saveStringList(cpt, mission_key, vec);
+        }
     }
     if (!rooms.size())
     {
@@ -1268,17 +1250,18 @@ BaseInterface::BaseInterface(const char *basefile, Unit *base, Unit *un) : curte
                                  BASE_EXTENSION);
         rooms.push_back(new Room());
         rooms.back()->deftext = "ERROR: No rooms specified...";
-#ifndef BASE_MAKER
+
         rooms.back()->objs.push_back(new Room::BaseShip(-1, 0, 0, 0, 0, -1, 0, 1, 0, QVector(0, 0, 2), "default room"));
         BaseUtil::Launch(0, "default room", -1, -1, 1, 2, "ERROR: No rooms specified... - Launch");
         BaseUtil::Comp(0, "default room", 0, -1, 1, 2, "ERROR: No rooms specified... - Computer",
                        "Cargo Upgrade Info ShipDealer News Missions");
-#endif
     }
     GotoLink(0);
     {
-        for (unsigned int i = 0; i < 16; ++i)
+        for (uint32_t i = 0; i < 16; ++i)
+        {
             ExecuteDirector();
+        }
     }
 }
 
@@ -1286,7 +1269,9 @@ BaseInterface::BaseInterface(const char *basefile, Unit *base, Unit *un) : curte
 void InitCallbacks(void)
 {
     if (BaseInterface::CurrentBase)
+    {
         BaseInterface::CurrentBase->InitCallbacks();
+    }
 }
 
 void TerminateCurrentBase(void)
@@ -1301,7 +1286,9 @@ void TerminateCurrentBase(void)
 void CurrentBaseUnitSet(Unit *un)
 {
     if (BaseInterface::CurrentBase)
+    {
         BaseInterface::CurrentBase->caller.SetUnit(un);
+    }
 }
 //end NEW_GUI.
 
@@ -1315,13 +1302,9 @@ void BaseInterface::Room::Comp::Click(BaseInterface *base, float x, float y, int
         if (un && baseun)
         {
             base->CallComp = true;
-#ifdef NEW_GUI
             BaseComputer *bc = new BaseComputer(un, baseun, modes);
             bc->init();
             bc->run();
-#else
-            UpgradeCompInterface(un, baseun, modes);
-#endif //NEW_GUI
         }
     }
 }
@@ -1358,24 +1341,29 @@ void BaseInterface::Room::Launch::Click(BaseInterface *base, float x, float y, i
         static bool auto_undock_var = XMLSupport::parse_bool(vs_config->getVariable("physics", "AutomaticUnDock", "true"));
         bool auto_undock = auto_undock_var;
         Unit *bas = base->baseun.GetUnit();
-        Unit *playa = base->caller.GetUnit();
+        Unit *player = base->caller.GetUnit();
 
-        if (playa && bas)
+        if (player && bas)
         {
-            if (((playa->name == "eject") || (playa->name == "ejecting") || (playa->name == "pilot") || (playa->name == "Pilot") || (playa->name == "Eject")) && (bas->faction == playa->faction))
-                playa->name = "return_to_cockpit";
+            if (((player->name == "eject") || (player->name == "ejecting") || (player->name == "pilot") || (player->name == "Pilot") || (player->name == "Eject")) && (bas->faction == player->faction))
+            {
+                player->name = "return_to_cockpit";
+            }
         }
-        if ((playa && bas) && (auto_undock || (playa->name == "return_to_cockpit")))
+        if ((player && bas) && (auto_undock || (player->name == "return_to_cockpit")))
         {
-            playa->UnDock(bas);
-            CommunicationMessage c(bas, playa, nullptr, 0);
+            player->UnDock(bas);
+            CommunicationMessage c(bas, player, nullptr, 0);
             c.SetCurrentState(c.fsm->GetUnDockNode(), nullptr, 0);
-            if (playa->getAIState())
-                playa->getAIState()->Communicate(c);
+            if (player->getAIState())
+            {
+                player->getAIState()->Communicate(c);
+            }
             abletodock(5);
-            if (playa->name == "return_to_cockpit")
-                if (playa->faction == playa->faction)
-                    playa->owner = bas;
+            if (player->name == "return_to_cockpit")
+            {
+                player->owner = bas;
+            }
         }
         base->Terminate();
     }
@@ -1400,35 +1388,41 @@ void BaseInterface::Room::Eject::Click(BaseInterface *base, float x, float y, in
         Link::Click(base, x, y, button, state);
         XMLSupport::parse_bool(vs_config->getVariable("physics", "AutomaticUnDock", "true"));
         Unit *bas = base->baseun.GetUnit();
-        Unit *playa = base->caller.GetUnit();
-        if (playa && bas)
+        Unit *player = base->caller.GetUnit();
+        if (player && bas)
         {
-            if (playa->name == "return_to_cockpit")
+            if (player->name == "return_to_cockpit")
             {
-                playa->name = "ejecting";
+                player->name = "ejecting";
                 Vector tmpvel = bas->Velocity * -1;
                 if (tmpvel.MagnitudeSquared() < .00001)
                 {
                     tmpvel = randyVector(-(bas->rSize()), bas->rSize()).Cast();
                     if (tmpvel.MagnitudeSquared() < .00001)
+                    {
                         tmpvel = Vector(1, 1, 1);
+                    }
                 }
                 tmpvel.Normalize();
-                playa->SetPosAndCumPos(bas->Position() + tmpvel * 1.5 * bas->rSize() + randyVector(-.5 * bas->rSize(), .5 * bas->rSize()));
-                playa->SetAngularVelocity(bas->AngularVelocity);
-                playa->SetOwner(bas);
+                player->SetPosAndCumPos(bas->Position() + tmpvel * 1.5 * bas->rSize() + randyVector(-.5 * bas->rSize(), .5 * bas->rSize()));
+                player->SetAngularVelocity(bas->AngularVelocity);
+                player->SetOwner(bas);
                 static float velmul = XMLSupport::parse_float(vs_config->getVariable("physics", "eject_cargo_speed", "1"));
-                playa->SetVelocity(bas->Velocity * velmul + randyVector(-.25, .25).Cast());
+                player->SetVelocity(bas->Velocity * velmul + randyVector(-.25, .25).Cast());
             }
-            playa->UnDock(bas);
-            CommunicationMessage c(bas, playa, nullptr, 0);
+            player->UnDock(bas);
+            CommunicationMessage c(bas, player, nullptr, 0);
             c.SetCurrentState(c.fsm->GetUnDockNode(), nullptr, 0);
-            if (playa->getAIState())
-                playa->getAIState()->Communicate(c);
+            if (player->getAIState())
+            {
+                player->getAIState()->Communicate(c);
+            }
             abletodock(5);
-            playa->EjectCargo((unsigned int)-1);
-            if ((playa->name == "return_to_cockpit") || (playa->name == "ejecting") || (playa->name == "eject") || (playa->name == "Eject") || (playa->name == "Pilot") || (playa->name == "pilot"))
-                playa->Kill();
+            player->EjectCargo((unsigned int)-1);
+            if ((player->name == "return_to_cockpit") || (player->name == "ejecting") || (player->name == "eject") || (player->name == "Eject") || (player->name == "Pilot") || (player->name == "pilot"))
+            {
+                player->Kill();
+            }
         }
         base->Terminate();
     }
@@ -1557,54 +1551,9 @@ void BaseInterface::Room::Link::Relink(const std::string &pfile)
 
 struct BaseColor
 {
-    unsigned char r, g, b, a;
+    uint8_t r, g, b, a;
 };
-static void AnimationDraw()
-{
-#ifdef RENDER_FROM_TEXTURE
-    static StreamTexture T(512, 256, NEAREST, nullptr);
-    BaseColor(*data)[512] = reinterpret_cast<BaseColor(*)[512]>(T.Map());
-    bool counter = false;
-    srand(time(nullptr));
-    for (int i = 0; i < 256; ++i)
-        for (int j = 0; j < 512; ++j)
-        {
-            data[i][j].r = rand() & 0xff;
-            data[i][j].g = rand() & 0xff;
-            data[i][j].b = rand() & 0xff;
-            data[i][j].a = rand() & 0xff;
-        }
-    T.UnMap();
-    T.MakeActive();
-    GFXTextureEnv(0, GFXREPLACETEXTURE);
-    GFXEnable(TEXTURE0);
-    GFXDisable(TEXTURE1);
-    GFXDisable(CULLFACE);
-    const float verts[4 * (3 + 2)] = {
-        -1,
-        -1,
-        0,
-        0,
-        0,
-        1,
-        -1,
-        0,
-        1,
-        0,
-        1,
-        1,
-        0,
-        1,
-        1,
-        -1,
-        1,
-        0,
-        0,
-        1,
-    };
-    GFXDraw(GFXQUAD, verts, 4, 3, 0, 2);
-#endif
-}
+
 void BaseInterface::Draw()
 {
     // Some operations cannot be performed in the middle of a Draw() loop
@@ -1619,7 +1568,6 @@ void BaseInterface::Draw()
     }
     Room::BaseTalk::hastalked = false;
     rooms[curroom]->Draw(this);
-    AnimationDraw();
 
     float x, y;
     glViewport(0, 0, g_game.x_resolution, g_game.y_resolution);
@@ -1634,7 +1582,9 @@ void BaseInterface::Draw()
         GFXColor tmpbg = curtext.bgcol;
         bool automatte = (0 == tmpbg.a);
         if (automatte)
+        {
             curtext.bgcol = GFXColor(0, 0, 0, base_text_background_alpha);
+        }
         curtext.Draw(curtext.GetText(), 0, true, false, automatte);
         curtext.bgcol = tmpbg;
     }
@@ -1645,7 +1595,9 @@ void BaseInterface::Draw()
         GFXColor tmpbg = othtext.bgcol;
         bool automatte = (0 == tmpbg.a);
         if (automatte)
+        {
             othtext.bgcol = GFXColor(0, 0, 0, base_text_background_alpha);
+        }
         othtext.Draw(othtext.GetText(), 0, true, false, automatte);
         othtext.bgcol = tmpbg;
     }
@@ -1659,20 +1611,28 @@ void BaseInterface::Draw()
         VSFileSystem::vs_fprintf(stderr, "Error: Base nullptr");
         mission->msgcenter->add("game", "all", "[Computer] Docking unit destroyed. Emergency launch initiated.");
         for (size_t i = 0; i < un->pImage->dockedunits.size(); i++)
+        {
             if (un->pImage->dockedunits[i]->uc.GetUnit() == base)
+            {
                 un->FreeDockingPort(i);
+            }
+        }
         Terminate();
     }
 
     //Commit audio scene status to renderer
     if (g_game.sound_enabled)
+    {
         Audio::SceneManager::getSingleton()->commit();
+    }
 
     // Some operations cannot be performed in the middle of a Draw() loop
     // If any of them are scheduled for deferred execution, do so now
     midloop = false;
     if (terminate_scheduled)
+    {
         Terminate();
+    }
 }
 
 void BaseInterface::ProcessKeyboardBuffer()

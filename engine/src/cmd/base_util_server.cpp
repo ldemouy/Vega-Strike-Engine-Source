@@ -4,22 +4,22 @@
 #include "base_util.h"
 namespace BaseUtil
 {
-    int Room(std::string text)
+    int32_t Room(std::string text)
     {
         return 0;
     }
-    void Texture(int room, std::string index, std::string file, float x, float y) {}
-    bool Video(int room, std::string index, std::string file, float x, float y) { return false; }
-    bool VideoStream(int room, std::string index, std::string file, float x, float y, float w, float h) { return false; }
-    void PlayVideo(int room, std::string index) {}
-    void StopVideo(int room, std::string index) {}
+    void Texture(int32_t room, std::string index, std::string file, float x, float y) {}
+    bool Video(int32_t room, std::string index, std::string file, float x, float y) { return false; }
+    bool VideoStream(int32_t room, std::string index, std::string file, float x, float y, float w, float h) { return false; }
+    void PlayVideo(int32_t room, std::string index) {}
+    void StopVideo(int32_t room, std::string index) {}
     void SetDJEnabled(bool enabled) {}
-    void Ship(int room, std::string index, QVector pos, Vector Q, Vector R) {}
-    void Link(int room, std::string index, float x, float y, float wid, float hei, std::string text, int to)
+    void Ship(int32_t room, std::string index, QVector pos, Vector Q, Vector R) {}
+    void Link(int32_t room, std::string index, float x, float y, float wid, float hei, std::string text, int32_t to)
     {
         LinkPython(room, index, "", x, y, wid, hei, text, to);
     }
-    void LinkPython(int room,
+    void LinkPython(int32_t room,
                     std::string index,
                     std::string pythonfile,
                     float x,
@@ -27,12 +27,12 @@ namespace BaseUtil
                     float wid,
                     float hei,
                     std::string text,
-                    int to) {}
-    void Launch(int room, std::string index, float x, float y, float wid, float hei, std::string text)
+                    int32_t to) {}
+    void Launch(int32_t room, std::string index, float x, float y, float wid, float hei, std::string text)
     {
         LaunchPython(room, index, "", x, y, wid, hei, text);
     }
-    void LaunchPython(int room,
+    void LaunchPython(int32_t room,
                       std::string index,
                       std::string pythonfile,
                       float x,
@@ -40,13 +40,13 @@ namespace BaseUtil
                       float wid,
                       float hei,
                       std::string text) {}
-    void EjectPython(int room, std::string index, std::string pythonfile, float x, float y, float wid, float hei,
+    void EjectPython(int32_t room, std::string index, std::string pythonfile, float x, float y, float wid, float hei,
                      std::string text) {}
-    void Comp(int room, std::string index, float x, float y, float wid, float hei, std::string text, std::string modes)
+    void Comp(int32_t room, std::string index, float x, float y, float wid, float hei, std::string text, std::string modes)
     {
         CompPython(room, index, "", x, y, wid, hei, text, modes);
     }
-    void CompPython(int room,
+    void CompPython(int32_t room,
                     std::string index,
                     std::string pythonfile,
                     float x,
@@ -55,20 +55,20 @@ namespace BaseUtil
                     float hei,
                     std::string text,
                     std::string modes) {}
-    void Python(int room, std::string index, float x, float y, float wid, float hei, std::string text, std::string pythonfile) {}
+    void Python(int32_t room, std::string index, float x, float y, float wid, float hei, std::string text, std::string pythonfile) {}
     void Message(std::string text) {}
     void EnqueueMessage(std::string text) {}
-    void EraseLink(int room, std::string index) {}
-    void EraseObj(int room, std::string index) {}
-    int GetCurRoom()
+    void EraseLink(int32_t room, std::string index) {}
+    void EraseObj(int32_t room, std::string index) {}
+    int32_t GetCurRoom()
     {
         return 0;
     }
-    int GetNumRoom()
+    int32_t GetNumRoom()
     {
         return 1;
     }
-    bool HasObject(int room, std::string index)
+    bool HasObject(int32_t room, std::string index)
     {
         return false;
     }

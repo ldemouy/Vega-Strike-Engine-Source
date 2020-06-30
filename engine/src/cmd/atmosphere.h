@@ -48,8 +48,8 @@ private:
     Matrix tmatrix;
     QVector position;
     /* lighting contexts for the above 3 */
-    int l0, l1, l2;
-    int divisions;
+    int32_t l0, l1, l2;
+    int32_t divisions;
 
 public:
     Atmosphere(const Parameters &params);

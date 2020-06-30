@@ -9,13 +9,17 @@ static void RecursiveSetSchedule(Unit *un)
 	if (un)
 	{
 		if (un->SubUnits.empty())
+		{
 			un->schedule_priority = Unit::scheduleRoid;
+		}
 		else
 		{
 			un->schedule_priority = Unit::scheduleAField;
 			un->do_subunit_scheduling = true;
 			for (auto it = un->getSubUnits(); !it.isDone(); ++it)
+			{
 				RecursiveSetSchedule(*it);
+			}
 		}
 	}
 }
@@ -52,7 +56,7 @@ void Asteroid::reactToCollision(Unit *smaller, const QVector &biglocation, const
 	}
 }
 
-Asteroid::Asteroid(const char *filename, int faction, Flightgroup *fg, int fg_snumber, float difficulty) : Unit(filename, false, faction, string(""), fg, fg_snumber)
+Asteroid::Asteroid(const char *filename, int32_t faction, Flightgroup *fg, int32_t fg_snumber, float difficulty) : Unit(filename, false, faction, string(""), fg, fg_snumber)
 {
 	Init(difficulty);
 }

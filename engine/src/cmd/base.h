@@ -12,9 +12,6 @@
 #include "audio/Source.h"
 #include <memory>
 
-//#define BASE_MAKER
-//#define BASE_XML //in case you want to write out XML instead...
-
 #define BASE_EXTENSION ".py"
 
 void RunPython(const char *filnam);
@@ -53,7 +50,7 @@ public:
             uint32_t eventMask;
             int32_t clickbtn;
 
-            virtual void Click(::BaseInterface *base, float x, float y, int button, int32_t state);
+            virtual void Click(::BaseInterface *base, float x, float y, int32_t button, int32_t state);
             virtual void MouseMove(::BaseInterface *base, float x, float y, int32_t buttonmask);
             virtual void MouseEnter(::BaseInterface *base, float x, float y, int32_t buttonmask);
             virtual void MouseLeave(::BaseInterface *base, float x, float y, int32_t buttonmask);
@@ -65,9 +62,7 @@ public:
 
             explicit Link(const std::string &ind, const std::string &pfile) : pythonfile(pfile), alpha(1.0f), index(ind), eventMask(ClickEvent), clickbtn(-1) {}
             virtual ~Link() {}
-#ifdef BASE_MAKER
-            virtual void EndXML(FILE *fp);
-#endif
+
             virtual void Relink(const std::string &pfile);
         };
         class Goto : public Link
@@ -77,9 +72,6 @@ public:
             virtual void Click(::BaseInterface *base, float x, float y, int32_t button, int32_t state);
             virtual ~Goto() {}
             explicit Goto(const std::string &ind, const std::string &pythonfile) : Link(ind, pythonfile) {}
-#ifdef BASE_MAKER
-            virtual void EndXML(FILE *fp);
-#endif
         };
         class Comp : public Link
         {
@@ -88,9 +80,6 @@ public:
             virtual void Click(::BaseInterface *base, float x, float y, int32_t button, int32_t state);
             virtual ~Comp() {}
             explicit Comp(const std::string &ind, const std::string &pythonfile) : Link(ind, pythonfile) {}
-#ifdef BASE_MAKER
-            virtual void EndXML(FILE *fp);
-#endif
         };
         class Launch : public Link
         {
@@ -98,9 +87,6 @@ public:
             virtual void Click(::BaseInterface *base, float x, float y, int32_t button, int32_t state);
             virtual ~Launch() {}
             explicit Launch(const std::string &ind, const std::string &pythonfile) : Link(ind, pythonfile) {}
-#ifdef BASE_MAKER
-            virtual void EndXML(FILE *fp);
-#endif
         };
         class Eject : public Link
         {
@@ -108,9 +94,6 @@ public:
             virtual void Click(::BaseInterface *base, float x, float y, int32_t button, int32_t state);
             virtual ~Eject() {}
             explicit Eject(const std::string &ind, const std::string &pythonfile) : Link(ind, pythonfile) {}
-#ifdef BASE_MAKER
-            virtual void EndXML(FILE *fp);
-#endif
         };
         class Talk : public Link
         {
@@ -123,27 +106,19 @@ public:
             virtual void Click(::BaseInterface *base, float x, float y, int32_t button, int32_t state);
             explicit Talk(const std::string &ind, const std::string &pythonfile);
             virtual ~Talk() {}
-#ifdef BASE_MAKER
-            virtual void EndXML(FILE *fp);
-#endif
         };
         class Python : public Link
         {
         public:
             Python(const std::string &ind, const std::string &pythonfile) : Link(ind, pythonfile) {}
             virtual ~Python() {}
-#ifdef BASE_MAKER
-            virtual void EndXML(FILE *fp);
-#endif
         };
         class BaseObj
         {
         public:
             const std::string index;
             virtual void Draw(::BaseInterface *base);
-#ifdef BASE_MAKER
-            virtual void EndXML(FILE *fp);
-#endif
+
             virtual ~BaseObj()
             {
             }
@@ -156,9 +131,7 @@ public:
             float timeleft;
             float maxtime;
             virtual void Draw(::BaseInterface *base);
-#ifdef BASE_MAKER
-            virtual void EndXML(FILE *fp);
-#endif
+
             virtual ~BasePython()
             {
             }
@@ -170,9 +143,7 @@ public:
         public:
             TextPlane text;
             virtual void Draw(::BaseInterface *base);
-#ifdef BASE_MAKER
-            virtual void EndXML(FILE *fp);
-#endif
+
             virtual ~BaseText()
             {
             }
@@ -214,9 +185,7 @@ public:
             virtual void Draw(::BaseInterface *base);
             Matrix mat;
             virtual ~BaseShip() {}
-#ifdef BASE_MAKER
-            virtual void EndXML(FILE *fp);
-#endif
+
             explicit BaseShip(const std::string &ind) : BaseObj(ind)
             {
             }
@@ -240,10 +209,6 @@ public:
             std::shared_ptr<Audio::Source> soundsource;
             std::string soundscene;
 
-#ifdef BASE_MAKER
-            std::string texfile;
-            virtual void EndXML(FILE *fp);
-#endif
             virtual ~BaseVSSprite();
             BaseVSSprite(const std::string &spritefile, const std::string &ind);
             void SetSprite(const std::string &spritefile);
@@ -300,19 +265,12 @@ public:
             virtual ~BaseTalk() {}
             std::string message;
             BaseTalk(const std::string &msg, const std::string &ind, bool only_one_talk);
-#ifdef BASE_MAKER
-            virtual void EndXML(FILE *fp)
-            {
-            }
-#endif
         };
         std::string soundfile;
         std::string deftext;
         std::vector<Link *> links;
         std::vector<BaseObj *> objs;
-#ifdef BASE_MAKER
-        void EndXML(FILE *fp);
-#endif
+
         void Draw(::BaseInterface *base);
         void Click(::BaseInterface *base, float x, float y, int button, int state);
         int32_t MouseOver(::BaseInterface *base, float x, float y);
@@ -331,11 +289,8 @@ public:
 
     std::string python_kbhandler;
 
-#ifdef BASE_MAKER
-    void EndXML(FILE *fp);
-#endif
     void Terminate();
-    void GotoLink(int linknum);
+    void GotoLink(int32_t linknum);
     void InitCallbacks();
     void CallCommonLinks(const std::string &name, const std::string &value);
     void Load(const char *filename, const char *time_of_day, const char *faction);

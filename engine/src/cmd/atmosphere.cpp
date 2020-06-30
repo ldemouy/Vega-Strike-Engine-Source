@@ -12,7 +12,9 @@
 Atmosphere::SunBox::~SunBox()
 {
     if (sunbox)
+    {
         delete sunbox;
+    }
 }
 
 void Atmosphere::setArray(float c0[4], const GFXColor &c1)
@@ -38,7 +40,9 @@ Atmosphere::Atmosphere(const Parameters &params) : user_params(params), division
 Atmosphere::~Atmosphere()
 {
     for (size_t a = 0; a < sunboxes.size(); ++a)
+    {
         delete sunboxes[a];
+    }
 }
 
 const Atmosphere::Parameters &Atmosphere::parameters()
@@ -56,12 +60,15 @@ void Atmosphere::Update(const QVector &position, const Matrix &tmatrix)
     Planet *currPlanet;
     StarSystem *system = _Universe->activeStarSystem();
     for (size_t a = 0; a < sunboxes.size(); ++a)
+    {
         delete sunboxes[a];
+    }
     sunboxes.clear();
     QVector localDir;
     float rho1 = 0.0;
     Unit *primary;
     for (auto iter = system->getUnitList().createIterator(); (primary = *iter) != nullptr; ++iter)
+    {
         if (primary->isUnit() == PLANETPTR && (currPlanet = (GamePlanet *)primary)->hasLights())
         {
             /* for now just assume all planets with lights are really bright */
@@ -89,6 +96,7 @@ void Atmosphere::Update(const QVector &position, const Matrix &tmatrix)
                 break;
             }
         }
+    }
     if (!sunboxes.empty())
     {
         float rho = acos(rho1) / (PI / 2);

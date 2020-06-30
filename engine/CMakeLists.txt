@@ -398,9 +398,7 @@ SET(VEGASTRIKE_SOURCES
     src/cmd/atmosphere.cpp
     src/cmd/base_init.cpp
     src/cmd/base_interface.cpp
-    src/cmd/base_util.cpp
-    src/cmd/base_write_python.cpp
-    src/cmd/base_write_xml.cpp
+    src/cmd/base_util.cpp    
     src/cmd/base_xml.cpp
     src/cmd/basecomputer.cpp
     src/cmd/beam.cpp
