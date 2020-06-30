@@ -4,7 +4,7 @@ Building::Building(ContinuousTerrain *parent,
                    bool vehicle,
                    const char *filename,
                    bool SubUnit,
-                   int faction,
+                   int32_t faction,
                    const string &modifications,
                    Flightgroup *fg) : Unit(filename, SubUnit, faction, modifications, fg)
 {
@@ -17,7 +17,7 @@ Building::Building(Terrain *parent,
                    bool vehicle,
                    const char *filename,
                    bool SubUnit,
-                   int faction,
+                   int32_t faction,
                    const string &modifications,
                    Flightgroup *fg) : Unit(filename, SubUnit, faction, modifications, fg)
 {

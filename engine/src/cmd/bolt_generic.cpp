@@ -100,26 +100,12 @@ public:
         {
             Bolt *thus = Bolt::BoltFromIndex(starSystem, collidable.ref);
             if (!collidemap->CheckCollisions(thus, collidable))
+            {
                 thus->Update(collidable.ref);
+            }
         }
     }
 };
-
-namespace vsalg
-{
-    //
-
-    template <typename IT, typename F>
-    void for_each(IT start, IT end, F f)
-    {
-        //This way, deletion of current item is allowed
-        //- drawback: iterator copy each iteration
-        while (start != end)
-            f(*start++);
-    }
-
-    //
-} // namespace vsalg
 
 class UpdateBolts
 {
@@ -130,15 +116,15 @@ public:
     template <class T>
     void operator()(T &collidableList)
     {
-        vsalg::for_each(collidableList.begin(), collidableList.end(), sub);
+        std::for_each(collidableList.begin(), collidableList.end(), sub);
     }
 };
 
 void Bolt::UpdatePhysics(StarSystem *ss)
 {
     CollideMap *cm = ss->collidemap[Unit::UNIT_BOLT];
-    vsalg::for_each(cm->sorted.begin(), cm->sorted.end(), UpdateBolt(ss, cm));
-    vsalg::for_each(cm->toflattenhints.begin(), cm->toflattenhints.end(), UpdateBolts(ss, cm));
+    std::for_each(cm->sorted.begin(), cm->sorted.end(), UpdateBolt(ss, cm));
+    std::for_each(cm->toflattenhints.begin(), cm->toflattenhints.end(), UpdateBolts(ss, cm));
 }
 
 bool Bolt::Collide(Unit *target)
@@ -150,18 +136,24 @@ bool Bolt::Collide(Unit *target)
     {
         //ignore return
         if (target == owner)
+        {
             return false;
+        }
         enum clsptr type = target->isUnit();
         if (type == NEBULAPTR || type == ASTEROIDPTR)
         {
             static bool collideroids =
                 XMLSupport::parse_bool(vs_config->getVariable("physics", "AsteroidWeaponCollision", "false"));
             if (type != ASTEROIDPTR || (!collideroids))
+            {
                 return false;
+            }
         }
         static bool collidejump = XMLSupport::parse_bool(vs_config->getVariable("physics", "JumpWeaponCollision", "false"));
         if (type == PLANETPTR && (!collidejump) && !target->GetDestinations().empty())
+        {
             return false;
+        }
         QVector tmp = (cur_position - prev_position).Normalize();
         tmp = tmp.Scale(distance);
         distance = curdist / this->type->Range;
@@ -182,9 +174,13 @@ Bolt *Bolt::BoltFromIndex(StarSystem *ss, Collidable::CollideRef b)
 {
     size_t ind = nondecal_index(b);
     if (b.bolt_index & 128)
+    {
         return &ss->bolts->balls[b.bolt_index & 0x7f][ind];
+    }
     else
+    {
         return &ss->bolts->bolts[b.bolt_index & 0x7f][ind];
+    }
 }
 
 bool Bolt::CollideAnon(Collidable::CollideRef b, Unit *un)
@@ -198,7 +194,7 @@ bool Bolt::CollideAnon(Collidable::CollideRef b, Unit *un)
     return false;
 }
 
-Collidable::CollideRef Bolt::BoltIndex(int index, int decal, bool isBall)
+Collidable::CollideRef Bolt::BoltIndex(int32_t index, int32_t decal, bool isBall)
 {
     Collidable::CollideRef temp;
     temp.bolt_index = index;
@@ -208,27 +204,33 @@ Collidable::CollideRef Bolt::BoltIndex(int index, int decal, bool isBall)
     return temp;
 }
 
-void BoltDestroyGeneric(Bolt *whichbolt, unsigned int index, int decal, bool isBall)
+void BoltDestroyGeneric(Bolt *whichbolt, uint32_t index, int32_t decal, bool isBall)
 {
     VSDESTRUCT2
     bolt_draw *q = _Universe->activeStarSystem()->bolts;
     vector<vector<Bolt>> *target;
     if (!isBall)
+    {
         target = &q->bolts;
+    }
     else
+    {
         target = &q->balls;
+    }
     vector<Bolt> *vec = &(*target)[decal];
     if (&(*vec)[index] == whichbolt)
     {
-        unsigned int tsize = vec->size();
+        uint32_t tsize = vec->size();
         CollideMap *cm = _Universe->activeStarSystem()->collidemap[Unit::UNIT_BOLT];
         cm->UpdateBoltInfo(vec->back().location, (*(*vec)[index].location)->ref);
 
         assert(index < tsize);
         cm->erase((*vec)[index].location);
         if (index + 1 != vec->size())
+        {
             (*vec)[index] = vec->back(); //just a memcopy, yo
-        vec->pop_back();                 //pop that back up
+        }
+        vec->pop_back(); //pop that back up
     }
     else
     {

@@ -7,16 +7,14 @@
 extern Vector mouseline;
 extern vector<Vector> perplines;
 
-Vector MouseCoordinate(int mouseX, int mouseY)
+Vector MouseCoordinate(int32_t mouseX, int32_t mouseY)
 {
     return GFXDeviceToEye(mouseX, mouseY);
 }
 
-bool ClickList::queryShip(int mouseX, int mouseY, Unit *ship)
+bool ClickList::queryShip(int32_t mouseX, int32_t mouseY, Unit *ship)
 {
     Vector mousePoint = MouseCoordinate(mouseX, mouseY);
-
-    //mousePoint.k= -mousePoint.k;
     Vector CamP, CamQ, CamR;
     QVector CamPos;
     _Universe->AccessCamera()->GetPQR(CamP, CamQ, CamR);
@@ -25,14 +23,7 @@ bool ClickList::queryShip(int mouseX, int mouseY, Unit *ship)
 
     mousePoint.Normalize();
     mouseline = mousePoint + CamPos.Cast();
-    /* int tmp = ship->querySphere(CamP,mousePoint,0);  //FIXME  bounding spheres seem to be broken
-    if (tmp) {
-        if ( ship->querySphereClickList( CamPos, mousePoint.Cast(), 0 ) ) {
-            //camera position is not actually the center of the camera
-            //VSFileSystem::vs_fprintf (stderr, "bounding sphere hit\n");
-            return true;
-        }
-    } POSSIBLE DELETE */
+
     return false;
 }
 
@@ -44,11 +35,13 @@ ClickList::ClickList(StarSystem *parSystem, UnitCollection *parIter)
     parentIter = parIter;
 }
 
-UnitCollection *ClickList::requestIterator(int minX, int minY, int maxX, int maxY)
+UnitCollection *ClickList::requestIterator(int32_t minX, int32_t minY, int32_t maxX, int32_t maxY)
 {
     UnitCollection *uc = new UnitCollection(); ///arrgh dumb last collection thing to cycel through ships
     if (minX == maxX || minY == maxY)
+    {
         return uc; //nothing in it
+    }
 
     Matrix view;
     float frustmat[16];
@@ -68,23 +61,31 @@ UnitCollection *ClickList::requestIterator(int minX, int minY, int maxX, int max
     GFXCalculateFrustum(frustum, view, frustmat);
     Unit *un;
     for (auto myParent = parentIter->createIterator(); (un = *myParent) != nullptr; ++myParent)
+    {
         if ((un)->queryFrustum(frustum))
+        {
             uc->prepend(un);
+        }
+    }
     return uc;
 }
 
-UnitCollection *ClickList::requestIterator(int mouseX, int mouseY)
+UnitCollection *ClickList::requestIterator(int32_t mouseX, int32_t mouseY)
 {
     perplines = vector<Vector>();
     UnitCollection *uc = new UnitCollection();
     Unit *un;
     for (auto myParent = parentIter->createIterator(), UAye = uc->createIterator(); (un = *myParent) != nullptr; ++myParent)
+    {
         if (queryShip(mouseX, mouseY, un))
+        {
             UAye.preinsert(un);
+        }
+    }
     return uc;
 }
 
-Unit *ClickList::requestShip(int mouseX, int mouseY)
+Unit *ClickList::requestShip(int32_t mouseX, int32_t mouseY)
 {
     bool equalCheck = false;
     UnitCollection *uc = requestIterator(mouseX, mouseY);
@@ -96,8 +97,12 @@ Unit *ClickList::requestShip(int mouseX, int mouseY)
         for (auto lastiter = lastCollection->createIterator(), UAye = uc->createIterator();
              (lastun = *lastiter) && (un = *UAye) && equalCheck;
              ++lastiter, ++UAye)
+        {
             if (un != lastun)
+            {
                 equalCheck = false;
+            }
+        }
         delete lastCollection;
     }
     float minDistance = 1e+10;

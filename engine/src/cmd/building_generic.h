@@ -8,7 +8,8 @@ class Flightgroup;
 class Building : public Unit
 {
 protected:
-    union Buildingparent {
+    union Buildingparent
+    {
         Terrain *terrain;
         ContinuousTerrain *plane;
     } parent;
@@ -20,14 +21,14 @@ protected:
              bool vehicle,
              const char *filename,
              bool SubUnit,
-             int faction,
+             int32_t faction,
              const std::string &unitModifications = std::string(""),
              Flightgroup *fg = nullptr);
     Building(Terrain *parent,
              bool vehicle,
              const char *filename,
              bool SubUnit,
-             int faction,
+             int32_t faction,
              const std::string &unitModifications = std::string(""),
              Flightgroup *fg = nullptr);
 
@@ -57,7 +58,7 @@ public:
     }
 
 protected:
-    Building(std::vector<Mesh *> m, bool b, int i) : Unit(m, b, i) {}
+    Building(std::vector<Mesh *> m, bool b, int32_t i) : Unit(m, b, i) {}
     /// default constructor forbidden
     Building() {}
     /// copy constructor forbidden

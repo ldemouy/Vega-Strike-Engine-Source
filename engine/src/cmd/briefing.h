@@ -42,7 +42,7 @@ public:
             this->pos = pos;
         }            //mat[12]=pos.i;mat[13]=pos.j;mat[14]=pos.k;}
         float cloak; //btw 0 and 1
-        Ship(const char *filename, int faction, const Vector &position);
+        Ship(const char *filename, int32_t faction, const Vector &position);
         void Render(const Matrix &cam, double interpol);
         void Update();
         void OverrideOrder(const Vector &destination, float time);
@@ -54,13 +54,13 @@ public:
     void Render();
     void Update();
     //-1 returns file not found
-    int AddStarship(const char *filename, int faction, const Vector &);
-    void RemoveStarship(int);
-    void EnqueueOrder(int, const Vector &destination, float time);
-    void OverrideOrder(int, const Vector &destination, float time);
-    void SetPosition(int, const Vector &Position);
-    Vector GetPosition(int);
-    void SetCloak(int, float);
+    int AddStarship(const char *filename, int32_t faction, const Vector &);
+    void RemoveStarship(uint32_t);
+    void EnqueueOrder(uint32_t, const Vector &destination, float time);
+    void OverrideOrder(uint32_t, const Vector &destination, float time);
+    void SetPosition(uint32_t, const Vector &Position);
+    Vector GetPosition(uint32_t);
+    void SetCloak(uint32_t, float);
     Briefing();
     ~Briefing();
 };

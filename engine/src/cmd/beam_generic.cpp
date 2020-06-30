@@ -6,25 +6,12 @@
 #include "configxml.h"
 #include "images.h"
 #include "../gfx/camera.h"
+#include <utility>
+#include <cmath>
 
 using namespace XMLSupport;
 extern double interpolation_blend_factor;
 extern bool AdjustMatrix(Matrix &mat, const Vector &velocity, Unit *target, float speed, bool lead, float cone);
-
-inline static float mysqr(float a)
-{
-    return a * a;
-}
-
-inline static float mymax(float a, float b)
-{
-    return (a > b) ? a : b;
-}
-
-inline static float mymin(float a, float b)
-{
-    return (a < b) ? a : b;
-}
 
 float Beam::refireTime()
 {
@@ -88,11 +75,13 @@ void Beam::Init(const Transformation &trans, const weapon_info &cln, void *own, 
     lastthick = 0;
     curthick = SIMULATION_ATOM * radialspeed;
     if (curthick > thickness) //clamp to max thickness - needed for large simulation atoms
+    {
         curthick = thickness;
+    }
     static GFXVertexList *_vlist = 0;
     if (!_vlist)
     {
-        int numvertex = float_to_int(mymax(48, ((4 * radslices) + 1) * longslices * 4));
+        int32_t numvertex = float_to_int(std::max(48, ((4 * radslices) + 1) * longslices * 4));
         GFXColorVertex *beam = new GFXColorVertex[numvertex]; //regretably necessary: radslices and longslices come from the config file... so it's at runtime.
         memset(beam, 0, sizeof(*beam) * numvertex);
         _vlist = new GFXVertexList(GFXQUAD, numvertex, beam, numvertex, true); //mutable color contained list
@@ -134,9 +123,9 @@ void Beam::RecalculateVertices(const Matrix &trans)
     static bool scoop = XMLSupport::parse_bool(vs_config->getVariable("graphics", "tractor.scoop", "true"));
     static float scoopa =
         XMLSupport::parse_float(vs_config->getVariable("graphics", "tractor.scoop_alpha_multiplier", "2.5"));
-    static int radslices =
+    static int32_t radslices =
         XMLSupport::parse_int(vs_config->getVariable("graphics", "tractor.scoop_rad_slices", "10")) | 1; //Must be odd
-    static int longslices =
+    static int32_t longslices =
         XMLSupport::parse_int(vs_config->getVariable("graphics", "tractor.scoop_long_slices", "10"));
     const float fadeinlength = 4;
     const bool tractor = (damagerate < 0 && phasedamage > 0);
@@ -153,11 +142,11 @@ void Beam::RecalculateVertices(const Matrix &trans)
     float thick = curthick != thickness ? curthick - radialspeed * SIMULATION_ATOM * (1 - interpolation_blend_factor) : thickness;
     float ethick = (thick / ((thickness > 0) ? thickness : 1.0f)) * (doscoop ? curlength * scooptanangle : 0);
     const float invfadelen = thick * fadeinlength;
-    const float invfadealpha = mymax(0.0f, mymin(1.0f, 1.0f - mysqr(invfadelen / len)));
-    const float fadealpha = mymax(0.0f, mymin(1.0f, 1.0f - mysqr(fadelen / len)));
+    const float invfadealpha = std::max(0.0f, std::min(1.0f, static_cast<float>(1.0f - std::pow(invfadelen / len, 2.0))));
+    const float fadealpha = std::max(0.0f, std::min(1.0f, static_cast<float>(1.0f - std::pow(fadelen / len, 2.0))));
     const float endalpha = 0.0f;
     const float peralpha = doscoop ? 0.25f : 0.0f;
-    int a = 0;
+    int32_t a = 0;
     if (doscoop)
     {
         //Do the volumetric thingy
@@ -167,9 +156,9 @@ void Beam::RecalculateVertices(const Matrix &trans)
         x.Normalize();
         y.Normalize();
         z.Normalize();
-        const float xyalpha = mymax(0, fabs(z * r));
-        const float xzalpha = mymax(0, fabs(y * r)) * 0.5f;
-        const float yzalpha = mymax(0, fabs(x * r)) * 0.5f;
+        const float xyalpha = std::max(0.0f, fabs(z * r));
+        const float xzalpha = std::max(0.0f, fabs(y * r)) * 0.5f;
+        const float yzalpha = std::max(0.0f, fabs(x * r)) * 0.5f;
         const float lislices = (longslices > 0) ? 1.0f / longslices : 0.0f;
         const float rislices = (radslices > 0) ? 1.0f / radslices : 0.0f;
         const float bxyalpha = xyalpha * lislices;
@@ -178,12 +167,12 @@ void Beam::RecalculateVertices(const Matrix &trans)
         const float zs = lislices * (fadelen - invfadelen);
         const float ths = lislices * ethick * 1.2f;
         const float rim1 = (radslices - 1) * rislices * 2;
-        for (int i = 0; i < longslices; i++)
+        for (int32_t i = 0; i < longslices; i++)
         {
             float f = i * lislices;
-            float xa = mymax(0, 1.0f - mysqr(f)) * byzalpha * scoopa;
-            float ya = mymax(0, 1.0f - mysqr(f)) * bxzalpha * scoopa;
-            float za = mymax(0, 1.0f - mysqr(f)) * bxyalpha * scoopa;
+            float xa = std::max(0.0, 1.0f - std::pow(f, 2.0)) * byzalpha * scoopa;
+            float ya = std::max(0.0, 1.0f - std::pow(f, 2.0)) * bxzalpha * scoopa;
+            float za = std::max(0.0, 1.0f - std::pow(f, 2.0)) * bxyalpha * scoopa;
             float th = f * ethick + thick;
             float z = i * zs + invfadelen;
             if (za > 0.03)
@@ -197,7 +186,7 @@ void Beam::RecalculateVertices(const Matrix &trans)
             {
                 if (ya > 0.03)
                 {
-                    for (int j = -radslices / 2; j <= radslices / 2; j++)
+                    for (int32_t j = -radslices / 2; j <= radslices / 2; j++)
                     {
                         float y = j * 2 * th * rislices;
                         float f = 1.0f - fabs(rim1 * j * rislices);
@@ -218,7 +207,7 @@ void Beam::RecalculateVertices(const Matrix &trans)
                 }
                 if (xa > 0.03)
                 {
-                    for (int j = -radslices / 2; j <= radslices / 2; j++)
+                    for (int32_t j = -radslices / 2; j <= radslices / 2; j++)
                     {
                         float x = j * 2 * th * rislices;
                         float f = 1.0f - fabs(rim1 * j * rislices);
@@ -270,7 +259,7 @@ void Beam::RecalculateVertices(const Matrix &trans)
         V(0, -thick, 0, touchtex, 0, peralpha);
         V(0, -thick, invfadelen, leftex, 0, peralpha * invfadealpha);
         //copy and rotate xy plane
-        for (int i = 0, upto = a; i < upto; i++, a++)
+        for (int32_t i = 0, upto = a; i < upto; i++, a++)
         {
             beam[a] = beam[i];
             float aux = beam[a].x;
@@ -298,13 +287,19 @@ void Beam::UpdatePhysics(const Transformation &trans,
 {
     curlength += SIMULATION_ATOM * speed;
     if (curlength < 0)
+    {
         curlength = 0;
+    }
     if (curlength > range)
+    {
         curlength = range;
+    }
     if (curthick == 0)
     {
         if (AUDIsPlaying(sound) && refiretime >= SIMULATION_ATOM)
+        {
             AUDStopPlaying(sound);
+        }
         refiretime += SIMULATION_ATOM * HeatSink;
         return;
     }
@@ -319,7 +314,9 @@ void Beam::UpdatePhysics(const Transformation &trans,
     static bool firemissingautotrackers =
         XMLSupport::parse_bool(vs_config->getVariable("physics", "fire_missing_autotrackers", "true"));
     if (targ && possible == false && !firemissingautotrackers)
+    {
         Destabilize();
+    }
     //to help check for crashing.
     center = cumulative_transformation.position;
     direction = TransformNormal(cumulative_transformation_matrix, Vector(0, 0, 1));
@@ -328,7 +325,9 @@ void Beam::UpdatePhysics(const Transformation &trans,
 #endif
     curthick += (impact & UNSTABLE) ? -radialspeed * SIMULATION_ATOM : radialspeed * SIMULATION_ATOM;
     if (curthick > thickness)
+    {
         curthick = thickness;
+    }
     if (curthick <= 0)
     {
         curthick = 0; //die die die
@@ -343,9 +342,13 @@ void Beam::UpdatePhysics(const Transformation &trans,
         {
             //if curlength just happens to be nan --FIXME THIS MAKES NO SENSE AT ALL --chuck_starchaser
             if (curlength > range)
+            {
                 curlength = range;
+            }
             else
+            {
                 curlength = 0;
+            }
         }
         QVector tmpvec(center + direction.Cast().Scale(curlength));
         QVector tmpMini = center.Min(tmpvec);
@@ -393,15 +396,19 @@ bool Beam::Collide(Unit *target, Unit *firer, Unit *superunit)
         static bool collideroids =
             XMLSupport::parse_bool(vs_config->getVariable("physics", "AsteroidWeaponCollision", "false"));
         if (type != ASTEROIDPTR || (!collideroids))
+        {
             return false;
+        }
     }
     static bool collidejump = XMLSupport::parse_bool(vs_config->getVariable("physics", "JumpWeaponCollision", "false"));
     if (type == PLANETPTR && (!collidejump) && !target->GetDestinations().empty())
+    {
         return false;
+    }
     //A bunch of needed config variables - its best to have them here, so that they're loaded the
     //very first time Collide() is called. That way, we avoid hiccups.
     static float nbig = XMLSupport::parse_float(vs_config->getVariable("physics", "percent_to_tractor", ".1"));
-    int upgradesfaction = FactionUtil::GetUpgradeFaction();
+    int32_t upgradesfaction = FactionUtil::GetUpgradeFaction();
     static int cargofaction = FactionUtil::GetFactionIndex("cargo");
     static bool c_fp = XMLSupport::parse_bool(vs_config->getVariable("physics", "tractor.cargo.force_push", "true"));
     static bool c_fi = XMLSupport::parse_bool(vs_config->getVariable("physics", "tractor.cargo.force_in", "true"));
@@ -471,16 +478,24 @@ bool Beam::Collide(Unit *target, Unit *firer, Unit *superunit)
         {
             bool fp = o_fp, fi = o_fi;
             if (target->faction == owner_faction)
+            {
                 fp = f_fp, fi = f_fi;
+            }
 
             else if (target->faction == upgradesfaction)
+            {
                 fp = u_fp, fi = u_fi;
+            }
 
             else if (target->faction == cargofaction)
+            {
                 fp = c_fp, fi = c_fi;
+            }
 
             else if (target->getAIState() == nullptr)
+            {
                 fp = d_fp, fi = d_fi;
+            }
             //tractor/repulsor beam!
             if (fp || target->isTractorable(Unit::tractorPush))
             {
@@ -495,18 +510,24 @@ bool Beam::Collide(Unit *target, Unit *firer, Unit *superunit)
                 if (relspeed < maxrelspeed)
                 {
                     //Modulate force on little mass objects, so they don't slingshot right past you
-                    target->ApplyForce(direction * (appldam / sqrt((target->sim_atom_multiplier > 0) ? target->sim_atom_multiplier : 1.0) * mymin(1, target->GetMass())));
+                    target->ApplyForce(direction * (appldam / sqrt((target->sim_atom_multiplier > 0) ? target->sim_atom_multiplier : 1.0) * std::min(1.0f, target->GetMass())));
                 }
             }
             float ors_m = o_ors_m, trs_m = o_trs_m, ofs = o_o;
             if (target->faction == owner_faction)
+            {
                 ors_m = f_ors_m, trs_m = f_trs_m, ofs = f_o;
+            }
 
             else if (target->faction == upgradesfaction)
+            {
                 ors_m = u_ors_m, trs_m = u_trs_m, ofs = u_o;
+            }
 
             else if (target->faction == cargofaction)
+            {
                 ors_m = c_ors_m, trs_m = c_trs_m, ofs = c_o;
+            }
             if ((fi || target->isTractorable(Unit::tractorIn)) && ((center - target->Position()).Magnitude() < (ors_m * owner_rsize + trs_m * target->rSize() + ofs)))
             {
                 Unit *un = superunit;
@@ -518,8 +539,12 @@ bool Beam::Collide(Unit *target, Unit *firer, Unit *superunit)
                     Cargo tmp;
                     bool isnotcargo = (c == nullptr);
                     if (!isnotcargo)
+                    {
                         if (c->GetCategory().find("upgrades") == 0)
+                        {
                             isnotcargo = true;
+                        }
+                    }
                     //add upgrades as space junk
                     if (isnotcargo)
                     {

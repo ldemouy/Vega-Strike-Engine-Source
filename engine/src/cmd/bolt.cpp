@@ -23,16 +23,28 @@ bolt_draw::~bolt_draw()
 {
     unsigned int i;
     for (i = 0; i < cachedecals.size(); i++)
+    {
         boltdecals->DelTexture(cachedecals[i]);
+    }
     cachedecals.clear();
     for (i = 0; i < animations.size(); i++)
+    {
         delete animations[i];
+    }
     for (i = 0; i < balls.size(); i++)
+    {
         for (int j = balls[i].size() - 1; j >= 0; j--)
+        {
             balls[i][j].Destroy(j);
+        }
+    }
     for (i = 0; i < bolts.size(); i++)
+    {
         for (int j = bolts[i].size() - 1; j >= 0; j--)
+        {
             bolts[i][j].Destroy(j);
+        }
+    }
     delete boltdecals;
 }
 bolt_draw::bolt_draw()
@@ -81,17 +93,23 @@ int Bolt::AddTexture(bolt_draw *q, std::string file)
         q->bolts.push_back(vector<Bolt>());
         int blargh = q->boltdecals->AddTexture(file.c_str(), MIPMAP);
         if (blargh >= (int)q->bolts.size())
+        {
             q->bolts.push_back(vector<Bolt>());
+        }
         q->cachedecals.push_back(blargh);
     }
     return decal;
 }
 int Bolt::AddAnimation(bolt_draw *q, std::string file, QVector cur_position)
 {
-    int decal = -1;
-    for (unsigned int i = 0; i < q->animationname.size(); i++)
+    int32_t decal = -1;
+    for (uint32_t i = 0; i < q->animationname.size(); i++)
+    {
         if (file == q->animationname[i])
+        {
             decal = i;
+        }
+    }
     if (decal == -1)
     {
         decal = q->animations.size();
@@ -161,9 +179,13 @@ void Bolt::Draw()
 
         BLENDFUNC bsrc, bdst;
         if (game_options.BlendGuns == true)
+        {
             GFXBlendMode(bsrc = ONE, bdst = ONE);
+        }
         else
+        {
             GFXBlendMode(bsrc = ONE, bdst = ZERO);
+        }
 
         qmesh->LoadDrawState();
         qmesh->BeginDrawState();
@@ -193,7 +215,9 @@ void Bolt::Draw()
                                 BlendTrans(bolt.drawmat, bolt.cur_position, bolt.prev_position);
                                 Matrix drawmat(bolt.drawmat);
                                 if (game_options.StretchBolts > 0)
+                                {
                                     ScaleMatrix(drawmat, Vector(1, 1, bolt.type->Speed * etime * game_options.StretchBolts / bolt.type->Length));
+                                }
                                 GFXLoadMatrixModel(drawmat);
                                 GFXColor4f(wt->r, wt->g, wt->b, wt->a);
                                 qmesh->Draw();

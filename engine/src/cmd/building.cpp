@@ -5,7 +5,7 @@ GameBuilding::GameBuilding(ContinuousTerrain *parent,
                            bool vehicle,
                            const char *filename,
                            bool SubUnit,
-                           int faction,
+                           int32_t faction,
                            const string &modifications,
                            Flightgroup *fg) : GameUnit<Building>(filename, SubUnit, faction, modifications, fg)
 {
@@ -18,7 +18,7 @@ GameBuilding::GameBuilding(Terrain *parent,
                            bool vehicle,
                            const char *filename,
                            bool SubUnit,
-                           int faction,
+                           int32_t faction,
                            const string &modifications,
                            Flightgroup *fg) : GameUnit<Building>(filename, SubUnit, faction, modifications, fg)
 {
@@ -53,22 +53,15 @@ void GameBuilding::UpdatePhysics2(const Transformation &trans,
     }
     else
     {
-        parent.terrain->GetGroundPos(tmp, p, (float)0, (float)0);
+        parent.terrain->GetGroundPos(tmp, p, 0.0f, 0.0f);
     }
     if (vehicle)
     {
         Normalize(p);
         Vector tmp1;
-#if 0
-        if (k <= 0) {
-            tmp1 = Vector( 0, 0, 1 );
-            if ( k = tmp1.Magnitude() )
-                tmp1 *= 800./k;
-        } else
-#endif
-        {
-            tmp1 = 200 * q.Cross(p);
-        }
+
+        tmp1 = 200 * q.Cross(p);
+
         NetLocalTorque += ((tmp1 - tmp1 * (tmp1.Dot(GetAngularVelocity()) / tmp1.Dot(tmp1)))) * 1. / GetMass();
     }
     SetCurPosition(tmp);

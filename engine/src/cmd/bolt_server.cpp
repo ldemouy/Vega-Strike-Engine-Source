@@ -12,13 +12,21 @@ GFXVertexList *bolt_draw::boltmesh = nullptr;
 
 bolt_draw::~bolt_draw()
 {
-    unsigned int i;
-    for (i = 0; i < balls.size(); i++)
-        for (int j = balls[i].size() - 1; j >= 0; j--)
+
+    for (uint32_t i = 0; i < balls.size(); i++)
+    {
+        for (int32_t j = balls[i].size() - 1; j >= 0; j--)
+        {
             balls[i][j].Destroy(j);
-    for (i = 0; i < bolts.size(); i++)
-        for (int j = balls[i].size() - 1; j >= 0; j--)
+        }
+    }
+    for (uint32_t i = 0; i < bolts.size(); i++)
+    {
+        for (int32_t j = balls[i].size() - 1; j >= 0; j--)
+        {
             bolts[i][j].Destroy(j);
+        }
+    }
 }
 
 bolt_draw::bolt_draw()
@@ -26,24 +34,28 @@ bolt_draw::bolt_draw()
     boltmesh = nullptr;
     boltdecals = nullptr;
 }
-int Bolt::AddTexture(bolt_draw *q, std::string file)
+int32_t Bolt::AddTexture(bolt_draw *q, std::string file)
 {
-    int decal = 0;
-    if (decal >= (int)q->bolts.size())
+    int32_t decal = 0;
+    if (decal >= (int32_t)q->bolts.size())
+    {
         q->bolts.push_back(vector<Bolt>());
+    }
     return decal;
 }
-int Bolt::AddAnimation(bolt_draw *q, std::string file, QVector cur_position)
+int32_t Bolt::AddAnimation(bolt_draw *q, std::string file, QVector cur_position)
 {
-    int decal = 0;
-    if (decal >= (int)q->balls.size())
+    int32_t decal = 0;
+    if (decal >= (int32_t)q->balls.size())
+    {
         q->balls.push_back(vector<Bolt>());
+    }
     return decal;
 }
 
 void Bolt::Draw() {}
-extern void BoltDestroyGeneric(Bolt *whichbolt, unsigned int index, int decal, bool isBall);
-void Bolt::Destroy(unsigned int index)
+extern void BoltDestroyGeneric(Bolt *whichbolt, uint32_t index, int32_t decal, bool isBall);
+void Bolt::Destroy(uint32_t index)
 {
     BoltDestroyGeneric(this, index, decal, type->type != weapon_info::BOLT);
 }

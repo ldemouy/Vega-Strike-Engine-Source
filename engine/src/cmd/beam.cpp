@@ -57,7 +57,9 @@ void Beam::Draw(const Transformation &trans, const Matrix &m, Unit *targ, float 
 {
     //hope that the correct transformation is on teh stack
     if (curthick == 0)
+    {
         return;
+    }
     Matrix cumulative_transformation_matrix;
     local_transformation.to_matrix(cumulative_transformation_matrix);
     Transformation cumulative_transformation = local_transformation;
@@ -84,7 +86,7 @@ void Beam::ProcessDrawQueue()
     GFXEnable(TEXTURE0);
     GFXDisable(TEXTURE1);
     BeamDrawContext c;
-    for (unsigned int decal = 0; decal < beamdrawqueue.size(); decal++)
+    for (uint32_t decal = 0; decal < beamdrawqueue.size(); decal++)
     {
         Texture *tex = beamdecals.GetTexture(decal);
         if (tex)

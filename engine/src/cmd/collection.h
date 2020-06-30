@@ -11,6 +11,8 @@
 
 class Unit;
 
+//TODO: Attempt to figure out purpose of this rather than just using std collections.
+//It feels like a wrapper class just for the sake of being a wrapper.
 /*
  * UnitCollection is the list container for units.
  * It's used to contain subunits, units in a system, etc.
@@ -223,7 +225,7 @@ public:
     bool remove(const class Unit *);
 
     /* Returns number of non-null units in list */
-    inline const int size() const
+    inline int size() const
     {
         return units.size() - removedIters.size();
     }

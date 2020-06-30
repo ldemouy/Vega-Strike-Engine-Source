@@ -20,7 +20,9 @@ collideTrees::collideTrees(const std::string &hk, csOPCODECollider *cT,
                            csOPCODECollider *cS) : hash_key(hk), colShield(cS)
 {
     for (unsigned int i = 0; i < collideTreesMaxTrees; ++i)
+    {
         rapidColliders[i] = nullptr;
+    }
     rapidColliders[0] = cT;
 
     refcount = 1;
@@ -34,20 +36,30 @@ csOPCODECollider *collideTrees::colTree(Unit *un, const Vector &othervelocity)
     float magsqr = un->GetVelocity().MagnitudeSquared();
     float newmagsqr = (un->GetVelocity() - othervelocity).MagnitudeSquared();
     float speedsquared = const_factor * const_factor * (magsqr > newmagsqr ? newmagsqr : magsqr);
-    static unsigned int max_collide_trees = static_cast<unsigned int>(XMLSupport::parse_int(vs_config->getVariable("physics", "max_collide_trees", "16384")));
+    static uint32_t max_collide_trees = static_cast<uint32_t>(XMLSupport::parse_int(vs_config->getVariable("physics", "max_collide_trees", "16384")));
     if (un->rSize() * un->rSize() > SIMULATION_ATOM * SIMULATION_ATOM * speedsquared || max_collide_trees == 1)
+    {
         return rapidColliders[0];
+    }
     if (rapidColliders[0] == nullptr)
+    {
         return nullptr;
+    }
     if (un->rSize() <= 0.) //Shouldn't happen bug I've seen this for asteroid fields...
+    {
         return nullptr;
+    }
     //Force pow to 0 in order to avoid nan problems...
-    unsigned int pow = 0;
+    uint32_t pow = 0;
     if (pow >= collideTreesMaxTrees || pow >= max_collide_trees)
+    {
         pow = collideTreesMaxTrees - 1;
+    }
     int val = 1 << pow;
     if (rapidColliders[pow] == nullptr)
+    {
         rapidColliders[pow] = un->getCollideTree(Vector(1, 1, val));
+    }
     return rapidColliders[pow];
 }
 
@@ -62,11 +74,17 @@ void collideTrees::Dec()
     if (refcount == 0)
     {
         unitColliders.Delete(hash_key);
-        for (unsigned int i = 0; i < collideTreesMaxTrees; ++i)
+        for (uint32_t i = 0; i < collideTreesMaxTrees; ++i)
+        {
             if (rapidColliders[i])
+            {
                 delete rapidColliders[i];
+            }
+        }
         if (colShield)
+        {
             delete colShield;
+        }
         delete this;
         return;
     }
@@ -85,9 +103,13 @@ bool TableLocationChanged(const LineCollide &lc, const QVector &minx, const QVec
 void KillCollideTable(LineCollide *lc, StarSystem *ss)
 {
     if (lc->type == LineCollide::UNIT)
+    {
         ss->collidetable->c.Remove(lc, lc->object.u);
+    }
     else
+    {
         printf("such collide types as %d not allowed", lc->type);
+    }
 }
 
 bool EradicateCollideTable(LineCollide *lc, StarSystem *ss)
@@ -106,9 +128,13 @@ bool EradicateCollideTable(LineCollide *lc, StarSystem *ss)
 void AddCollideQueue(LineCollide &tmp, StarSystem *ss)
 {
     if (tmp.type == LineCollide::UNIT)
+    {
         ss->collidetable->c.Put(&tmp, tmp.object.u);
+    }
     else
+    {
         printf("such collide types as %d not allowed", tmp.type);
+    }
 }
 
 bool lcwithin(const LineCollide &lc, const LineCollide &tmp)
@@ -116,15 +142,16 @@ bool lcwithin(const LineCollide &lc, const LineCollide &tmp)
     return lc.Mini.i < tmp.Maxi.i && lc.Mini.j < tmp.Maxi.j && lc.Mini.k < tmp.Maxi.k && lc.Maxi.i > tmp.Mini.i && lc.Maxi.j > tmp.Mini.j && lc.Maxi.k > tmp.Mini.k;
 }
 
-bool usehuge_table()
-{
-    const unsigned int A = 9301;
-    const unsigned int C = 49297;
-    const unsigned int M = 233280;
-    static unsigned int seed = 3259235;
-    seed = (seed * A + C) % M;
-    return seed < (M / 100);
-}
+// TODO: This feels like an RNG, Investigate closer
+// bool usehuge_table()
+// {
+//     const uint32_t A = 9301;
+//     const uint32_t C = 49297;
+//     const uint32_t M = 233280;
+//     static uint32_t seed = 3259235;
+//     seed = (seed * A + C) % M;
+//     return seed < (M / 100);
+// }
 
 bool Bolt::Collide(Collidable::CollideRef index)
 {
@@ -143,7 +170,9 @@ void Beam::CollideHuge(const LineCollide &lc, Unit *targetToCollideWith, Unit *f
     if (is_null(superunit->location[Unit::UNIT_ONLY]) && curlength)
     {
         if (targetToCollideWith)
+        {
             this->Collide(targetToCollideWith, firer, superunit);
+        }
     }
     else if (curlength)
     {
@@ -156,7 +185,9 @@ void Beam::CollideHuge(const LineCollide &lc, Unit *targetToCollideWith, Unit *f
             CollideArray::CollidableBackref *br = static_cast<CollideArray::CollidableBackref *>(superloc);
             CollideMap::iterator tmploc = cm->begin() + br->toflattenhints_offset;
             if (tmploc == cm->end())
+            {
                 tmploc--;
+            }
             tmore = superloc = tmploc; //don't decrease tless
         }
         else
@@ -181,9 +212,13 @@ void Beam::CollideHuge(const LineCollide &lc, Unit *targetToCollideWith, Unit *f
                 CollideMap::iterator curcheck = tless;
                 bool breakit = false;
                 if (tless != cm->begin())
+                {
                     --tless;
+                }
                 else
+                {
                     breakit = true;
+                }
                 if ((*curcheck)->radius > 0)
                 {
                     if (beamCheckCollision(center, curlength, (**curcheck)))
@@ -194,7 +229,9 @@ void Beam::CollideHuge(const LineCollide &lc, Unit *targetToCollideWith, Unit *f
                     }
                 }
                 if (breakit)
+                {
                     break;
+                }
             }
         }
         if (maxlook > (*superunit->location[Unit::UNIT_ONLY])->getKey())
@@ -218,6 +255,8 @@ void Beam::CollideHuge(const LineCollide &lc, Unit *targetToCollideWith, Unit *f
             }
         }
         if (targetToCollideWith && !targcheck)
+        {
             this->Collide(targetToCollideWith, firer, superunit);
+        }
     }
 }

@@ -14,13 +14,13 @@ using std::vector;
 class Beam
 {
 private:
-    int sound;
+    int32_t sound;
     Transformation local_transformation;
-    unsigned int decal;
+    uint32_t decal;
     GFXVertexList *vlist;
     LineCollide CollideInfo;
 
-    unsigned int numframes;
+    uint32_t numframes;
     float speed; //lite speed
     float texturespeed;
     float curlength;
@@ -59,7 +59,7 @@ public:
     {
         listen_to_owner = listen;
     }
-    Beam(const Transformation &trans, const weapon_info &clne, void *own, Unit *firer, int sound);
+    Beam(const Transformation &trans, const weapon_info &clne, void *own, Unit *firer, int32_t sound);
     void Init(const Transformation &trans, const weapon_info &clne, void *own, Unit *firer);
     ~Beam();
     void RemoveFromSystem(bool eradicate);

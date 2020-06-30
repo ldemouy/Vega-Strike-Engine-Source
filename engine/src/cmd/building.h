@@ -11,14 +11,14 @@ protected:
                  bool vehicle,
                  const char *filename,
                  bool SubUnit,
-                 int faction,
+                 int32_t faction,
                  const std::string &unitModifications = std::string(""),
                  Flightgroup *fg = nullptr);
     GameBuilding(Terrain *parent,
                  bool vehicle,
                  const char *filename,
                  bool SubUnit,
-                 int faction,
+                 int32_t faction,
                  const std::string &unitModifications = std::string(""),
                  Flightgroup *fg = nullptr);
 
