@@ -99,10 +99,9 @@ protected:
 	// Internal methods
 
 	void _SegmentStab(const AABBQuantizedNoLeafNode *node);
-	void _SegmentStab(const AABBTreeNode *node, Container &box_indices);
 
 	void _RayStab(const AABBQuantizedNoLeafNode *node);
-	void _RayStab(const AABBTreeNode *node, Container &box_indices);
+
 	// Overlap tests
 	inline bool RayAABBOverlap(const Point &center, const Point &extents);
 	inline bool SegmentAABBOverlap(const Point &center, const Point &extents);

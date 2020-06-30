@@ -389,35 +389,6 @@ void RayCollider::_SegmentStab(const AABBQuantizedNoLeafNode *node)
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /**
- *	Recursive stabbing query for vanilla AABB trees.
- *	\param		node		[in] current collision node
- *	\param		box_indices	[out] indices of stabbed boxes
- */
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void RayCollider::_SegmentStab(const AABBTreeNode *node, Container &box_indices)
-{
-	// Test the box against the segment
-	Point Center, Extents;
-	node->GetAABB()->GetCenter(Center);
-	node->GetAABB()->GetExtents(Extents);
-	if (!SegmentAABBOverlap(Center, Extents))
-	{
-		return;
-	}
-
-	if (node->IsLeaf())
-	{
-		box_indices.Add(node->GetPrimitives(), node->GetNbPrimitives());
-	}
-	else
-	{
-		_SegmentStab(node->GetPos(), box_indices);
-		_SegmentStab(node->GetNeg(), box_indices);
-	}
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/**
  *	Recursive stabbing query for quantized no-leaf AABB trees.
  *	\param		node	[in] current collision node
  */
@@ -456,35 +427,6 @@ void RayCollider::_RayStab(const AABBQuantizedNoLeafNode *node)
 	else
 	{
 		_RayStab(node->GetNeg());
-	}
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/**
- *	Recursive stabbing query for vanilla AABB trees.
- *	\param		node		[in] current collision node
- *	\param		box_indices	[out] indices of stabbed boxes
- */
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void RayCollider::_RayStab(const AABBTreeNode *node, Container &box_indices)
-{
-	// Test the box against the ray
-	Point Center, Extents;
-	node->GetAABB()->GetCenter(Center);
-	node->GetAABB()->GetExtents(Extents);
-	if (!RayAABBOverlap(Center, Extents))
-	{
-		return;
-	}
-	if (node->IsLeaf())
-	{
-		mFlags |= OPC_CONTACT;
-		box_indices.Add(node->GetPrimitives(), node->GetNbPrimitives());
-	}
-	else
-	{
-		_RayStab(node->GetPos(), box_indices);
-		_RayStab(node->GetNeg(), box_indices);
 	}
 }
 
