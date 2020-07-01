@@ -15,7 +15,7 @@ jobs:
   # This workflow contains a single job called "build"
   build:
     # The type of runner that the job will run on
-    runs-on: ubuntu-latest
+    runs-on: fedora-latest
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -24,7 +24,7 @@ jobs:
 
     # Install Dependencies
     - name: Install Dependencies
-      run: sudo apt-get -y install cmake g++ python3-dev libboost-python-dev libboost-log-dev libgl1-mesa-glx freeglut3-dev libopenal-dev libsdl-gfx1.2-dev libvorbis-dev libjpeg-dev libpng-dev libgtk2.0-dev                
+      run: sudo  dnf -y install cmake g++ python3-devel boost-python3-devel boost-devel freeglut-devel openal-soft-devel SDL-devel libvorbis-devel libjpeg-turbo-devel libpng-devel gtk2-devel                
 
     # Build Vegastrike
     - name: Build Vega Strike
