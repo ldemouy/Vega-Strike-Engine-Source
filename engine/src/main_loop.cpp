@@ -29,7 +29,7 @@
 #include "cmd/ai/aggressive.h"
 #include "cmd/ai/navigation.h"
 #include "cmd/beam.h"
-#include "gfx/halo.h"
+//#include "gfx/halo.h"
 #include "gfx/matrix.h"
 #include "cmd/ai/flyjoystick.h"
 #include "cmd/ai/firekeyboard.h"

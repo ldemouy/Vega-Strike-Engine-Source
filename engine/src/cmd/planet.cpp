@@ -17,7 +17,7 @@
 #endif
 
 #include "images.h"
-#include "gfx/halo.h"
+//#include "gfx/halo.h"
 #include "gfx/animation.h"
 #include "cmd/script/flightgroup.h"
 #include "gfx/ring.h"
@@ -408,12 +408,11 @@ void GamePlanet::Draw(const Transformation &quat, const Matrix &m)
             shine->Draw();
     }
 }
+//TODO: Investigate if can be removed
 void GamePlanet::ProcessTerrains()
 {
     while (!PlanetTerrainDrawQueue.empty())
     {
-        Planet *pl = (Planet *)PlanetTerrainDrawQueue.back()->GetUnit();
-        pl->DrawTerrain();
         PlanetTerrainDrawQueue.back()->SetUnit(nullptr);
         delete PlanetTerrainDrawQueue.back();
         PlanetTerrainDrawQueue.pop_back();

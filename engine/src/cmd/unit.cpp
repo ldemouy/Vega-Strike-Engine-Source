@@ -22,7 +22,7 @@
 #include "vsfilesystem.h"
 #include "vs_globals.h"
 #include "file_main.h"
-#include "gfx/halo.h"
+//#include "gfx/halo.h"
 #include "gfx/halo_system.h"
 #include "gfx/quaternion.h"
 #include "gfx/matrix.h"

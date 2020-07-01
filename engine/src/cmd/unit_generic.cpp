@@ -3226,7 +3226,7 @@ bool Unit::AutoPilotToErrorMessage(const Unit *target,
                         Order *otherord = other->getAIState();
                         if (otherord)
                         {
-                            if (otherord->PursueTarget(this, leadah))
+                            if (otherord->PursueTarget(this))
                             {
                                 other->AutoPilotToErrorMessage(this,
                                                                ignore_energy_requirements,

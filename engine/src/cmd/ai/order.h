@@ -72,7 +72,7 @@ public:
     {
         /*not implemented see fire.cpp*/
     }
-    virtual bool PursueTarget(Unit *, bool isleader)
+    virtual bool PursueTarget(Unit *) const
     {
         return false;
     }
@@ -133,15 +133,15 @@ public:
     Order *EnqueueOrder(Order *ord);
     ///Replaces the first order of that type in the order queue
     Order *ReplaceOrder(Order *ord);
-    bool Done()
+    constexpr bool Done() const
     {
         return done;
     }
-    int getType()
+    constexpr int32_t getType() const
     {
         return type;
     }
-    int getSubType()
+    constexpr int32_t getSubType() const
     {
         return subtype;
     }
@@ -169,7 +169,7 @@ public:
 
     virtual void AdjustRelationTo(Unit *un, float factor);
 
-    virtual std::string getOrderDescription()
+    virtual std::string getOrderDescription() const
     {
         return "empty";
     }
@@ -181,11 +181,11 @@ public:
     {
         actionstring = astring;
     }
-    std::string getActionString()
+    std::string getActionString() const
     {
         return actionstring;
     }
-    virtual float getMood()
+    virtual float getMood() const
     {
         return 0;
     }

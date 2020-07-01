@@ -7,7 +7,7 @@
 #include "ai/order.h"
 #include "gfx/animation.h"
 #include "gfx/mesh.h"
-#include "gfx/halo.h"
+//#include "gfx/halo.h"
 #include "vegastrike.h"
 #include "unit_collide.h"
 #include <float.h>

@@ -104,34 +104,34 @@ protected:
 public:
     UnitCollection satellites;
     virtual ~Planet();
-    inline const float getRadius() const { return radius; }
+    constexpr inline float getRadius() const { return radius; }
     virtual Vector AddSpaceElevator(const std::string &name, const std::string &faction, char direction);
-    virtual void AddFog(const vector<AtmosphericFogMesh> &meshes, bool optical_illusion) {}
-    virtual void AddAtmosphere(const std::string &texture,
-                               float radius,
-                               BLENDFUNC blendSrc,
-                               BLENDFUNC blendDst,
-                               bool inside_out) {}
-    virtual void AddRing(const std::string &texture,
-                         float iradius,
-                         float oradius,
-                         const QVector &r,
-                         const QVector &s,
-                         int slices,
-                         int numwrapx,
-                         int numwrapy,
-                         BLENDFUNC blendSrc,
-                         BLENDFUNC blendDst) {}
-    virtual void AddCity(const std::string &texture,
-                         float radius,
-                         int numwrapx,
-                         int numwrapy,
-                         BLENDFUNC blendSrc,
-                         BLENDFUNC blendDst,
-                         bool inside_out = false,
-                         bool reverse_normals = true) {}
-    virtual void DisableLights() {}
-    virtual void EnableLights() {}
+    // virtual void AddFog(const vector<AtmosphericFogMesh> &meshes, bool optical_illusion) {}
+    // virtual void AddAtmosphere(const std::string &texture,
+    //                            float radius,
+    //                            BLENDFUNC blendSrc,
+    //                            BLENDFUNC blendDst,
+    //                            bool inside_out) {}
+    // virtual void AddRing(const std::string &texture,
+    //                      float iradius,
+    //                      float oradius,
+    //                      const QVector &r,
+    //                      const QVector &s,
+    //                      int slices,
+    //                      int numwrapx,
+    //                      int numwrapy,
+    //                      BLENDFUNC blendSrc,
+    //                      BLENDFUNC blendDst) {}
+    // virtual void AddCity(const std::string &texture,
+    //                      float radius,
+    //                      int numwrapx,
+    //                      int numwrapy,
+    //                      BLENDFUNC blendSrc,
+    //                      BLENDFUNC blendDst,
+    //                      bool inside_out = false,
+    //                      bool reverse_normals = true) {}
+    // virtual void DisableLights() {}
+    // virtual void EnableLights() {}
     void AddSatellite(Unit *orbiter);
     void endElement();
     string getCargoUnitName() const
@@ -164,24 +164,24 @@ public:
     {
         return PLANETPTR;
     }
-    virtual void Draw(const Transformation &quat = identity_transformation, const Matrix &m = identity_matrix) {}
-    virtual void DrawTerrain() {}
-    static void ProcessTerrains() {}
+    // virtual void Draw(const Transformation &quat = identity_transformation, const Matrix &m = identity_matrix) {}
+    // virtual void DrawTerrain() {}
+    // static void ProcessTerrains() {}
     virtual void Kill(bool erasefromsave = false);
 
-    virtual PlanetaryTransform *setTerrain(ContinuousTerrain *, float ratiox, int numwraps, float scaleatmos)
-    {
-        return nullptr;
-    }
-    virtual ContinuousTerrain *getTerrain(PlanetaryTransform *&t)
-    {
-        return nullptr;
-    }
-    virtual void setAtmosphere(Atmosphere *) {}
-    virtual Atmosphere *getAtmosphere()
-    {
-        return nullptr;
-    }
+    // virtual PlanetaryTransform *setTerrain(ContinuousTerrain *, float ratiox, int numwraps, float scaleatmos)
+    // {
+    //     return nullptr;
+    // }
+    // virtual ContinuousTerrain *getTerrain(PlanetaryTransform *&t)
+    // {
+    //     return nullptr;
+    // }
+    // virtual void setAtmosphere(Atmosphere *) {}
+    // virtual Atmosphere *getAtmosphere()
+    // {
+    //     return nullptr;
+    // }
     virtual void reactToCollision(Unit *smaller,
                                   const QVector &biglocation,
                                   const Vector &bignormal,
@@ -201,22 +201,13 @@ public:
             pos = localCollection.createIterator();
         }
         ~PlanetIterator() {}
-        void preinsert(Unit *unit)
-        {
-            abort();
-        }
-        void postinsert(Unit *unit)
-        {
-            abort();
-        }
-        void remove()
-        {
-            abort();
-        }
+
         inline Unit *current()
         {
             if (!pos.isDone())
+            {
                 return *pos;
+            }
             return nullptr;
         }
         void advance()
@@ -241,10 +232,10 @@ public:
         }
 
     private:
-        inline UnitCollection::UnitIterator operator++(int)
-        {
-            abort();
-        }
+        // inline UnitCollection::UnitIterator operator++(int)
+        // {
+        //     abort();
+        // }
         UnitCollection localCollection;
         UnitCollection::UnitIterator pos;
     };

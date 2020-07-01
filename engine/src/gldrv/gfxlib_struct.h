@@ -846,7 +846,8 @@ class /*GFXDRVAPI*/ GFXQuadList
     ///Assignments to packed data for quad modification
     int *quadassignments;
     ///all numVertices allocated vertices and color
-    union VCDAT {
+    union VCDAT
+    {
         GFXVertex *vertices;
         GFXColorVertex *colors;
     } data;
@@ -862,13 +863,6 @@ public:
     ~GFXQuadList();
     ///Draws all quads contained in quad list
     void Draw();
-    ///Adds quad to quad list, an integer indicating number that should be used to henceforth Mod it or delete it
-    int AddQuad(const GFXVertex *vertices, const GFXColorVertex *colors = 0);
-    ///Removes quad from Quad list
-    void DelQuad(int which);
-    ///modifies quad in quad list to contain new vertices and color information
-    void ModQuad(int which, const GFXVertex *vertices, float alpha = -1);
-    void ModQuad(int which, const GFXColorVertex *vertices);
 };
 
 /**
@@ -886,14 +880,16 @@ protected:
     const GFXColorVertex *GetColorVertex(int index) const;
     int numVertices;
     ///Vertices and colors stored
-    union VDAT {
+    union VDAT
+    {
         ///The data either does not have color data
         GFXVertex *vertices;
         ///Or has color data
         GFXColorVertex *colors;
         VDAT() : vertices(0){};
     } data;
-    union INDEX {
+    union INDEX
+    {
         unsigned char *b;  //stride 1
         unsigned short *s; //stride 2
         unsigned int *i;   //stride 4

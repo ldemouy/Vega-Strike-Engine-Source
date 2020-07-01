@@ -52,28 +52,16 @@ void GameUnit<UnitType>::UpdatePhysics2(const Transformation &trans,
                                         bool lastframe,
                                         UnitCollection *uc)
 {
-    int player = -1;
 
     UnitType::UpdatePhysics2(trans, old_physical_state, accel, difficulty, transmat, cum_vel, lastframe, uc);
 
     this->AddVelocity(difficulty);
 
-#ifdef DEPRECATEDPLANETSTUFF
-    if (planet)
-    {
-        Matrix basis;
-        curr_physical_state.to_matrix(this->cumulative_transformation_matrix);
-        Vector p, q, r, c;
-        MatrixToVectors(this->cumulative_transformation_matrix, p, q, r, c);
-        planet->trans->InvTransformBasis(this->cumulative_transformation_matrix, p, q, r, c);
-        planet->cps = Transformation::from_matrix(this->cumulative_transformation_matrix);
-    }
-#endif
     this->cumulative_transformation = this->curr_physical_state;
     this->cumulative_transformation.Compose(trans, transmat);
     this->cumulative_transformation.to_matrix(this->cumulative_transformation_matrix);
     this->cumulative_velocity = TransformNormal(transmat, this->Velocity) + cum_vel;
-    unsigned int i, n;
+    uint32_t i, n;
     if (lastframe)
     {
         char tmp = 0;
@@ -94,7 +82,9 @@ void GameUnit<UnitType>::UpdatePhysics2(const Transformation &trans,
         }
         //double blah1 = queryTime();
         if (!tmp && this->hull < 0)
+        {
             Explode(false, SIMULATION_ATOM);
+        }
         //double blah2 = queryTime();
     }
 }
