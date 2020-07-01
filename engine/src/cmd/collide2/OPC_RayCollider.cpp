@@ -56,16 +56,16 @@
  *	FIRST CONTACT:
  *
  *		- You can setup "first contact" mode or "all contacts" mode with RayCollider::SetFirstContact().
- *		- In "first contact" mode we return as soon as the ray hits one face. If can be useful e.g. for shadow feelers, where
- *		you want to know whether the path to the light is free or not (a boolean answer is enough).
+ *		- In "first contact" mode we return as soon as the ray hits one face. If can be useful e.g. for shadow feelers,
+ *where you want to know whether the path to the light is free or not (a boolean answer is enough).
  *		- In "all contacts" mode we return all faces hit by the ray.
  *
  *	TEMPORAL COHERENCE:
  *
  *		- You can enable or disable temporal coherence with RayCollider::SetTemporalCoherence().
  *		- It currently only works in "first contact" mode.
- *		- If temporal coherence is enabled, the previously hit triangle is cached during the first query. Then, next queries
- *		start by colliding the ray against the cached triangle. If they still collide, we return immediately.
+ *		- If temporal coherence is enabled, the previously hit triangle is cached during the first query. Then, next
+ *queries start by colliding the ray against the cached triangle. If they still collide, we return immediately.
  *
  *	CLOSEST HIT:
  *
@@ -77,14 +77,14 @@
  *
  *		- You can enable or disable backface culling with RayCollider::SetCulling().
  *		- If culling is enabled, ray will not hit back faces (only front faces).
- *		
+ *
  *
  *
  *	\class		RayCollider
  *	\author		Pierre Terdiman
  *	\version	1.3
  *	\date		June, 2, 2001
-*/
+ */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -96,7 +96,7 @@
  *	\author		Pierre Terdiman
  *	\version	1.3
  *	\date		March, 20, 2001
-*/
+ */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -107,84 +107,80 @@
  *	\author		Pierre Terdiman
  *	\version	1.3
  *	\date		March, 20, 2001
-*/
+ */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #include "OPC_RayCollider.h"
 
-#define SET_CONTACT(prim_index, flag)                                          \
-	mNbIntersections++;                                                        \
-	/* Set contact status */                                                   \
-	mFlags |= flag;                                                            \
-	/* In any case the contact has been found and recorded in mStabbedFace  */ \
-	mStabbedFace.mFaceID = prim_index;
+#define SET_CONTACT(prim_index, flag)                                                                                  \
+    mNbIntersections++;                                                                                                \
+    /* Set contact status */                                                                                           \
+    mFlags |= flag;                                                                                                    \
+    /* In any case the contact has been found and recorded in mStabbedFace  */                                         \
+    mStabbedFace.mFaceID = prim_index;
 
-#define HANDLE_CONTACT(prim_index, flag)         \
-	SET_CONTACT(prim_index, flag)                \
-                                                 \
-	if (mHitCallback)                            \
-	{                                            \
-		(mHitCallback)(mStabbedFace, mUserData); \
-	}                                            \
-	else                                         \
-	{                                            \
-	}
+#define HANDLE_CONTACT(prim_index, flag)                                                                               \
+    SET_CONTACT(prim_index, flag)                                                                                      \
+                                                                                                                       \
+    if (mHitCallback)                                                                                                  \
+    {                                                                                                                  \
+        (mHitCallback)(mStabbedFace, mUserData);                                                                       \
+    }                                                                                                                  \
+    else                                                                                                               \
+    {                                                                                                                  \
+    }
 
-#define UPDATE_CACHE                   \
-	if (cache && GetContactStatus())   \
-	{                                  \
-		*cache = mStabbedFace.mFaceID; \
-	}                                  \
-	else                               \
-	{                                  \
-	}
+#define UPDATE_CACHE                                                                                                   \
+    if (cache && GetContactStatus())                                                                                   \
+    {                                                                                                                  \
+        *cache = mStabbedFace.mFaceID;                                                                                 \
+    }                                                                                                                  \
+    else                                                                                                               \
+    {                                                                                                                  \
+    }
 
-#define SEGMENT_PRIM(prim_index, flag)                                                       \
-	/* Request vertices from the app */                                                      \
-	VertexPointers VP;                                                                       \
-	mIMesh->GetTriangle(VP, prim_index);                                                     \
-                                                                                             \
-	/* Perform ray-tri overlap test and return */                                            \
-	if (RayTriOverlap(*VP.Vertex[0], *VP.Vertex[1], *VP.Vertex[2]))                          \
-	{                                                                                        \
-		/* Intersection point is valid if dist < segment's length */                         \
-		/* We know dist>0 so we can use integers */                                          \
-		if (static_cast<uint32_t>(mStabbedFace.mDistance) < static_cast<uint32_t>(mMaxDist)) \
-		{                                                                                    \
-			HANDLE_CONTACT(prim_index, flag)                                                 \
-		}                                                                                    \
-	}                                                                                        \
-	else                                                                                     \
-	{                                                                                        \
-	}
+#define SEGMENT_PRIM(prim_index, flag)                                                                                 \
+    /* Request vertices from the app */                                                                                \
+    VertexPointers VP;                                                                                                 \
+    mIMesh->GetTriangle(VP, prim_index);                                                                               \
+                                                                                                                       \
+    /* Perform ray-tri overlap test and return */                                                                      \
+    if (RayTriOverlap(*VP.Vertex[0], *VP.Vertex[1], *VP.Vertex[2]))                                                    \
+    {                                                                                                                  \
+        /* Intersection point is valid if dist < segment's length */                                                   \
+        /* We know dist>0 so we can use integers */                                                                    \
+        if (static_cast<uint32_t>(mStabbedFace.mDistance) < static_cast<uint32_t>(mMaxDist))                           \
+        {                                                                                                              \
+            HANDLE_CONTACT(prim_index, flag)                                                                           \
+        }                                                                                                              \
+    }                                                                                                                  \
+    else                                                                                                               \
+    {                                                                                                                  \
+    }
 
-#define RAY_PRIM(prim_index, flag)                                  \
-	/* Request vertices from the app */                             \
-	VertexPointers VP;                                              \
-	mIMesh->GetTriangle(VP, prim_index);                            \
-                                                                    \
-	/* Perform ray-tri overlap test and return */                   \
-	if (RayTriOverlap(*VP.Vertex[0], *VP.Vertex[1], *VP.Vertex[2])) \
-	{                                                               \
-		HANDLE_CONTACT(prim_index, flag)                            \
-	}                                                               \
-	else                                                            \
-	{                                                               \
-	}
+#define RAY_PRIM(prim_index, flag)                                                                                     \
+    /* Request vertices from the app */                                                                                \
+    VertexPointers VP;                                                                                                 \
+    mIMesh->GetTriangle(VP, prim_index);                                                                               \
+                                                                                                                       \
+    /* Perform ray-tri overlap test and return */                                                                      \
+    if (RayTriOverlap(*VP.Vertex[0], *VP.Vertex[1], *VP.Vertex[2]))                                                    \
+    {                                                                                                                  \
+        HANDLE_CONTACT(prim_index, flag)                                                                               \
+    }                                                                                                                  \
+    else                                                                                                               \
+    {                                                                                                                  \
+    }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /**
  *	Constructor.
  */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-RayCollider::RayCollider() : mHitCallback(nullptr),
-							 mUserData(0),
-							 mNbRayBVTests(0),
-							 mNbRayPrimTests(0),
-							 mNbIntersections(0),
-							 mMaxDist(std::numeric_limits<float>::max()),
-							 mCulling(true)
+RayCollider::RayCollider()
+    : mHitCallback(nullptr), mUserData(0), mNbRayBVTests(0), mNbRayPrimTests(0), mNbIntersections(0),
+      mMaxDist(std::numeric_limits<float>::max()), mCulling(true)
 {
 }
 
@@ -213,37 +209,37 @@ RayCollider::~RayCollider()
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool RayCollider::Collide(const Ray &world_ray, const Model &model, const Matrix4x4 *world, uint32_t *cache)
 {
-	// Checkings
-	if (!Setup(&model))
-	{
-		return false;
-	}
+    // Checkings
+    if (!Setup(&model))
+    {
+        return false;
+    }
 
-	// Init collision query
-	if (InitQuery(world_ray, world, cache))
-	{
-		return true;
-	}
+    // Init collision query
+    if (InitQuery(world_ray, world, cache))
+    {
+        return true;
+    }
 
-	const AABBQuantizedNoLeafTree *Tree = (const AABBQuantizedNoLeafTree *)model.GetTree();
+    const AABBQuantizedNoLeafTree *Tree = (const AABBQuantizedNoLeafTree *)model.GetTree();
 
-	// Setup dequantization coeffs
-	mCenterCoeff = Tree->mCenterCoeff;
-	mExtentsCoeff = Tree->mExtentsCoeff;
+    // Setup dequantization coeffs
+    mCenterCoeff = Tree->mCenterCoeff;
+    mExtentsCoeff = Tree->mExtentsCoeff;
 
-	// Perform stabbing query
-	if (static_cast<uint32_t>(mMaxDist) != IEEE_MAX_FLOAT)
-	{
-		_SegmentStab(Tree->GetNodes());
-	}
-	else
-	{
-		_RayStab(Tree->GetNodes());
-	}
+    // Perform stabbing query
+    if (static_cast<uint32_t>(mMaxDist) != IEEE_MAX_FLOAT)
+    {
+        _SegmentStab(Tree->GetNodes());
+    }
+    else
+    {
+        _RayStab(Tree->GetNodes());
+    }
 
-	// Update cache if needed
-	UPDATE_CACHE
-	return true;
+    // Update cache if needed
+    UPDATE_CACHE
+    return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -262,86 +258,86 @@ bool RayCollider::Collide(const Ray &world_ray, const Model &model, const Matrix
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool RayCollider::InitQuery(const Ray &world_ray, const Matrix4x4 *world, uint32_t *face_id)
 {
-	// Reset stats & contact status
-	Collider::InitQuery();
-	mNbRayBVTests = 0;
-	mNbRayPrimTests = 0;
-	mNbIntersections = 0;
+    // Reset stats & contact status
+    Collider::InitQuery();
+    mNbRayBVTests = 0;
+    mNbRayPrimTests = 0;
+    mNbIntersections = 0;
 
-	// Compute ray in local space
-	// The (Origin/Dir) form is needed for the ray-triangle test anyway (even for segment tests)
-	if (world)
-	{
-		Matrix3x3 InvWorld = *world;
-		mDir = InvWorld * world_ray.mDir;
+    // Compute ray in local space
+    // The (Origin/Dir) form is needed for the ray-triangle test anyway (even for segment tests)
+    if (world)
+    {
+        Matrix3x3 InvWorld = *world;
+        mDir = InvWorld * world_ray.mDir;
 
-		Matrix4x4 World;
-		InvertPRMatrix(World, *world);
-		mOrigin = world_ray.mOrig * World;
-	}
-	else
-	{
-		mDir = world_ray.mDir;
-		mOrigin = world_ray.mOrig;
-	}
+        Matrix4x4 World;
+        InvertPRMatrix(World, *world);
+        mOrigin = world_ray.mOrig * World;
+    }
+    else
+    {
+        mDir = world_ray.mDir;
+        mOrigin = world_ray.mOrig;
+    }
 
-	// 4) Special case: 1-triangle meshes [Opcode 1.3]
-	if (mCurrentModel && mCurrentModel->HasSingleNode())
-	{
-		// We simply perform the BV-Prim overlap test each time. We assume single triangle has index 0.
-		if (!SkipPrimitiveTests())
-		{
-			// Perform overlap test between the unique triangle and the ray (and set contact status if needed)
-			SEGMENT_PRIM(uint32_t(0), OPC_CONTACT)
+    // 4) Special case: 1-triangle meshes [Opcode 1.3]
+    if (mCurrentModel && mCurrentModel->HasSingleNode())
+    {
+        // We simply perform the BV-Prim overlap test each time. We assume single triangle has index 0.
+        if (!SkipPrimitiveTests())
+        {
+            // Perform overlap test between the unique triangle and the ray (and set contact status if needed)
+            SEGMENT_PRIM(uint32_t(0), OPC_CONTACT)
 
-			// Return immediately regardless of status
-			return true;
-		}
-	}
+            // Return immediately regardless of status
+            return true;
+        }
+    }
 
-	// Check temporal coherence :
+    // Check temporal coherence :
 
-	// Test previously colliding primitives first
-	if (TemporalCoherenceEnabled() && FirstContactEnabled() && face_id && *face_id != INVALID_ID)
-	{
-		// New code
-		// We handle both Segment/ray queries with the same segment code, and a possible infinite limit
-		SEGMENT_PRIM(*face_id, OPC_TEMPORAL_CONTACT)
+    // Test previously colliding primitives first
+    if (TemporalCoherenceEnabled() && FirstContactEnabled() && face_id && *face_id != INVALID_ID)
+    {
+        // New code
+        // We handle both Segment/ray queries with the same segment code, and a possible infinite limit
+        SEGMENT_PRIM(*face_id, OPC_TEMPORAL_CONTACT)
 
-		// Return immediately if possible
-		if (GetContactStatus())
-			return true;
-	}
+        // Return immediately if possible
+        if (GetContactStatus())
+            return true;
+    }
 
-	// Precompute data (moved after temporal coherence since only needed for ray-AABB)
-	if (static_cast<uint32_t>(mMaxDist) != IEEE_MAX_FLOAT)
-	{
-		// For Segment-AABB overlap
-		mData = 0.5f * mDir * mMaxDist;
-		mData2 = mOrigin + mData;
+    // Precompute data (moved after temporal coherence since only needed for ray-AABB)
+    if (static_cast<uint32_t>(mMaxDist) != IEEE_MAX_FLOAT)
+    {
+        // For Segment-AABB overlap
+        mData = 0.5f * mDir * mMaxDist;
+        mData2 = mOrigin + mData;
 
-		// Precompute mFDir;
-		mFDir.x = fabsf(mData.x);
-		mFDir.y = fabsf(mData.y);
-		mFDir.z = fabsf(mData.z);
-	}
-	else
-	{
-		// For Ray-AABB overlap
-		//		uint32_t x = SIR(mDir.x)-1;
-		//		uint32_t y = SIR(mDir.y)-1;
-		//		uint32_t z = SIR(mDir.z)-1;
-		//		mData.x = FR(x);
-		//		mData.y = FR(y);
-		//		mData.z = FR(z);
+        // Precompute mFDir;
+        mFDir.x = fabsf(mData.x);
+        mFDir.y = fabsf(mData.y);
+        mFDir.z = fabsf(mData.z);
+    }
+    else
+    {
+        // For Ray-AABB overlap
+        //		uint32_t x = SIR(mDir.x)-1;
+        //		uint32_t y = SIR(mDir.y)-1;
+        //		uint32_t z = SIR(mDir.z)-1;
+        //		mData.x = FR(x);
+        //		mData.y = FR(y);
+        //		mData.z = FR(z);
 
-		// Precompute mFDir;
-		mFDir.x = fabsf(mDir.x);
-		mFDir.y = fabsf(mDir.y);
-		mFDir.z = fabsf(mDir.z);
-	}
+        // Precompute mFDir;
+        mFDir.x = fabsf(mDir.x);
+        mFDir.y = fabsf(mDir.y);
+        mFDir.z = fabsf(mDir.z);
+    }
 
-	return false;
+    return false;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -352,39 +348,41 @@ bool RayCollider::InitQuery(const Ray &world_ray, const Matrix4x4 *world, uint32
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void RayCollider::_SegmentStab(const AABBQuantizedNoLeafNode *node)
 {
-	// Dequantize box
-	const QuantizedAABB &Box = node->mAABB;
-	const Point Center(float(Box.mCenter[0]) * mCenterCoeff.x, float(Box.mCenter[1]) * mCenterCoeff.y, float(Box.mCenter[2]) * mCenterCoeff.z);
-	const Point Extents(float(Box.mExtents[0]) * mExtentsCoeff.x, float(Box.mExtents[1]) * mExtentsCoeff.y, float(Box.mExtents[2]) * mExtentsCoeff.z);
+    // Dequantize box
+    const QuantizedAABB &Box = node->mAABB;
+    const Point Center(float(Box.mCenter[0]) * mCenterCoeff.x, float(Box.mCenter[1]) * mCenterCoeff.y,
+                       float(Box.mCenter[2]) * mCenterCoeff.z);
+    const Point Extents(float(Box.mExtents[0]) * mExtentsCoeff.x, float(Box.mExtents[1]) * mExtentsCoeff.y,
+                        float(Box.mExtents[2]) * mExtentsCoeff.z);
 
-	// Perform Segment-AABB overlap test
-	if (!SegmentAABBOverlap(Center, Extents))
-	{
-		return;
-	}
+    // Perform Segment-AABB overlap test
+    if (!SegmentAABBOverlap(Center, Extents))
+    {
+        return;
+    }
 
-	if (node->HasPosLeaf())
-	{
-		SEGMENT_PRIM(node->GetPosPrimitive(), OPC_CONTACT)
-	}
-	else
-	{
-		_SegmentStab(node->GetPos());
-	}
+    if (node->HasPosLeaf())
+    {
+        SEGMENT_PRIM(node->GetPosPrimitive(), OPC_CONTACT)
+    }
+    else
+    {
+        _SegmentStab(node->GetPos());
+    }
 
-	if (ContactFound())
-	{
-		return;
-	}
+    if (ContactFound())
+    {
+        return;
+    }
 
-	if (node->HasNegLeaf())
-	{
-		SEGMENT_PRIM(node->GetNegPrimitive(), OPC_CONTACT)
-	}
-	else
-	{
-		_SegmentStab(node->GetNeg());
-	}
+    if (node->HasNegLeaf())
+    {
+        SEGMENT_PRIM(node->GetNegPrimitive(), OPC_CONTACT)
+    }
+    else
+    {
+        _SegmentStab(node->GetNeg());
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -395,80 +393,82 @@ void RayCollider::_SegmentStab(const AABBQuantizedNoLeafNode *node)
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void RayCollider::_RayStab(const AABBQuantizedNoLeafNode *node)
 {
-	// Dequantize box
-	const QuantizedAABB &Box = node->mAABB;
-	const Point Center(float(Box.mCenter[0]) * mCenterCoeff.x, float(Box.mCenter[1]) * mCenterCoeff.y, float(Box.mCenter[2]) * mCenterCoeff.z);
-	const Point Extents(float(Box.mExtents[0]) * mExtentsCoeff.x, float(Box.mExtents[1]) * mExtentsCoeff.y, float(Box.mExtents[2]) * mExtentsCoeff.z);
+    // Dequantize box
+    const QuantizedAABB &Box = node->mAABB;
+    const Point Center(float(Box.mCenter[0]) * mCenterCoeff.x, float(Box.mCenter[1]) * mCenterCoeff.y,
+                       float(Box.mCenter[2]) * mCenterCoeff.z);
+    const Point Extents(float(Box.mExtents[0]) * mExtentsCoeff.x, float(Box.mExtents[1]) * mExtentsCoeff.y,
+                        float(Box.mExtents[2]) * mExtentsCoeff.z);
 
-	// Perform Ray-AABB overlap test
-	if (!RayAABBOverlap(Center, Extents))
-	{
-		return;
-	}
+    // Perform Ray-AABB overlap test
+    if (!RayAABBOverlap(Center, Extents))
+    {
+        return;
+    }
 
-	if (node->HasPosLeaf())
-	{
-		RAY_PRIM(node->GetPosPrimitive(), OPC_CONTACT)
-	}
-	else
-	{
-		_RayStab(node->GetPos());
-	}
+    if (node->HasPosLeaf())
+    {
+        RAY_PRIM(node->GetPosPrimitive(), OPC_CONTACT)
+    }
+    else
+    {
+        _RayStab(node->GetPos());
+    }
 
-	if (ContactFound())
-	{
-		return;
-	}
+    if (ContactFound())
+    {
+        return;
+    }
 
-	if (node->HasNegLeaf())
-	{
-		RAY_PRIM(node->GetNegPrimitive(), OPC_CONTACT)
-	}
-	else
-	{
-		_RayStab(node->GetNeg());
-	}
+    if (node->HasNegLeaf())
+    {
+        RAY_PRIM(node->GetNegPrimitive(), OPC_CONTACT)
+    }
+    else
+    {
+        _RayStab(node->GetNeg());
+    }
 }
 
 inline bool RayCollider::SegmentAABBOverlap(const Point &center, const Point &extents)
 {
-	// Stats
-	mNbRayBVTests++;
+    // Stats
+    mNbRayBVTests++;
 
-	float Dx = mData2.x - center.x;
-	if (fabsf(Dx) > extents.x + mFDir.x)
-	{
-		return false;
-	}
-	float Dy = mData2.y - center.y;
-	if (fabsf(Dy) > extents.y + mFDir.y)
-	{
-		return false;
-	}
-	float Dz = mData2.z - center.z;
-	if (fabsf(Dz) > extents.z + mFDir.z)
-	{
-		return false;
-	}
+    float Dx = mData2.x - center.x;
+    if (fabsf(Dx) > extents.x + mFDir.x)
+    {
+        return false;
+    }
+    float Dy = mData2.y - center.y;
+    if (fabsf(Dy) > extents.y + mFDir.y)
+    {
+        return false;
+    }
+    float Dz = mData2.z - center.z;
+    if (fabsf(Dz) > extents.z + mFDir.z)
+    {
+        return false;
+    }
 
-	float f;
-	f = mData.y * Dz - mData.z * Dy;
-	if (fabsf(f) > extents.y * mFDir.z + extents.z * mFDir.y)
-	{
-		return false;
-	}
-	f = mData.z * Dx - mData.x * Dz;
-	if (fabsf(f) > extents.x * mFDir.z + extents.z * mFDir.x)
-	{
-		return false;
-	}
-	f = mData.x * Dy - mData.y * Dx;
-	if (fabsf(f) > extents.x * mFDir.y + extents.y * mFDir.x)
-	{
-		return false;
-	}
+    float f;
+    f = mData.y * Dz - mData.z * Dy;
+    if (fabsf(f) > extents.y * mFDir.z + extents.z * mFDir.y)
+    {
+        return false;
+    }
+    f = mData.z * Dx - mData.x * Dz;
+    if (fabsf(f) > extents.x * mFDir.z + extents.z * mFDir.x)
+    {
+        return false;
+    }
+    f = mData.x * Dy - mData.y * Dx;
+    if (fabsf(f) > extents.x * mFDir.y + extents.y * mFDir.x)
+    {
+        return false;
+    }
 
-	return true;
+    return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -481,148 +481,149 @@ inline bool RayCollider::SegmentAABBOverlap(const Point &center, const Point &ex
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 inline bool RayCollider::RayAABBOverlap(const Point &center, const Point &extents)
 {
-	// Stats
-	mNbRayBVTests++;
+    // Stats
+    mNbRayBVTests++;
 
-	//	float Dx = mOrigin.x - center.x;	if(fabsf(Dx) > extents.x && Dx*mDir.x>=0.0f)	return false;
-	//	float Dy = mOrigin.y - center.y;	if(fabsf(Dy) > extents.y && Dy*mDir.y>=0.0f)	return false;
-	//	float Dz = mOrigin.z - center.z;	if(fabsf(Dz) > extents.z && Dz*mDir.z>=0.0f)	return false;
+    //	float Dx = mOrigin.x - center.x;	if(fabsf(Dx) > extents.x && Dx*mDir.x>=0.0f)	return false;
+    //	float Dy = mOrigin.y - center.y;	if(fabsf(Dy) > extents.y && Dy*mDir.y>=0.0f)	return false;
+    //	float Dz = mOrigin.z - center.z;	if(fabsf(Dz) > extents.z && Dz*mDir.z>=0.0f)	return false;
 
-	float Dx = mOrigin.x - center.x;
-	if (GREATER(Dx, extents.x) && Dx * mDir.x >= 0.0f)
-	{
-		return false;
-	}
-	float Dy = mOrigin.y - center.y;
-	if (GREATER(Dy, extents.y) && Dy * mDir.y >= 0.0f)
-	{
-		return false;
-	}
-	float Dz = mOrigin.z - center.z;
-	if (GREATER(Dz, extents.z) && Dz * mDir.z >= 0.0f)
-	{
-		return false;
-	}
+    float Dx = mOrigin.x - center.x;
+    if (GREATER(Dx, extents.x) && Dx * mDir.x >= 0.0f)
+    {
+        return false;
+    }
+    float Dy = mOrigin.y - center.y;
+    if (GREATER(Dy, extents.y) && Dy * mDir.y >= 0.0f)
+    {
+        return false;
+    }
+    float Dz = mOrigin.z - center.z;
+    if (GREATER(Dz, extents.z) && Dz * mDir.z >= 0.0f)
+    {
+        return false;
+    }
 
-	//	float Dx = mOrigin.x - center.x;	if(GREATER(Dx, extents.x) && ((SIR(Dx)-1)^SIR(mDir.x))>=0.0f)	return false;
-	//	float Dy = mOrigin.y - center.y;	if(GREATER(Dy, extents.y) && ((SIR(Dy)-1)^SIR(mDir.y))>=0.0f)	return false;
-	//	float Dz = mOrigin.z - center.z;	if(GREATER(Dz, extents.z) && ((SIR(Dz)-1)^SIR(mDir.z))>=0.0f)	return false;
+    //	float Dx = mOrigin.x - center.x;	if(GREATER(Dx, extents.x) && ((SIR(Dx)-1)^SIR(mDir.x))>=0.0f)	return
+    //false; 	float Dy = mOrigin.y - center.y;	if(GREATER(Dy, extents.y) && ((SIR(Dy)-1)^SIR(mDir.y))>=0.0f)	return
+    //false; 	float Dz = mOrigin.z - center.z;	if(GREATER(Dz, extents.z) && ((SIR(Dz)-1)^SIR(mDir.z))>=0.0f)	return
+    //false;
 
-	float f;
-	f = mDir.y * Dz - mDir.z * Dy;
-	if (fabsf(f) > extents.y * mFDir.z + extents.z * mFDir.y)
-	{
-		return false;
-	}
-	f = mDir.z * Dx - mDir.x * Dz;
-	if (fabsf(f) > extents.x * mFDir.z + extents.z * mFDir.x)
-	{
-		return false;
-	}
-	f = mDir.x * Dy - mDir.y * Dx;
-	if (fabsf(f) > extents.x * mFDir.y + extents.y * mFDir.x)
-	{
-		return false;
-	}
+    float f;
+    f = mDir.y * Dz - mDir.z * Dy;
+    if (fabsf(f) > extents.y * mFDir.z + extents.z * mFDir.y)
+    {
+        return false;
+    }
+    f = mDir.z * Dx - mDir.x * Dz;
+    if (fabsf(f) > extents.x * mFDir.z + extents.z * mFDir.x)
+    {
+        return false;
+    }
+    f = mDir.x * Dy - mDir.y * Dx;
+    if (fabsf(f) > extents.x * mFDir.y + extents.y * mFDir.x)
+    {
+        return false;
+    }
 
-	return true;
+    return true;
 }
 
 inline bool RayCollider::RayTriOverlap(const Point &vert0, const Point &vert1, const Point &vert2)
 {
-	// Stats
-	mNbRayPrimTests++;
+    // Stats
+    mNbRayPrimTests++;
 
-	// Find vectors for two edges sharing vert0
-	Point edge1 = vert1 - vert0;
-	Point edge2 = vert2 - vert0;
+    // Find vectors for two edges sharing vert0
+    Point edge1 = vert1 - vert0;
+    Point edge2 = vert2 - vert0;
 
-	// Begin calculating determinant - also used to calculate U parameter
-	Point pvec = mDir ^ edge2;
+    // Begin calculating determinant - also used to calculate U parameter
+    Point pvec = mDir ^ edge2;
 
-	// If determinant is near zero, ray lies in plane of triangle
-	float det = edge1 | pvec;
+    // If determinant is near zero, ray lies in plane of triangle
+    float det = edge1 | pvec;
 
-	if (mCulling)
-	{
-		if (det < std::numeric_limits<float>::epsilon())
-		{
-			return false;
-		}
-		// From here, det is > 0. So we can use integer cmp.
+    if (mCulling)
+    {
+        if (det < std::numeric_limits<float>::epsilon())
+        {
+            return false;
+        }
+        // From here, det is > 0. So we can use integer cmp.
 
-		// Calculate distance from vert0 to ray origin
-		Point tvec = mOrigin - vert0;
+        // Calculate distance from vert0 to ray origin
+        Point tvec = mOrigin - vert0;
 
-		// Calculate U parameter and test bounds
-		mStabbedFace.mU = tvec | pvec;
-		//		if(IR(u)&0x80000000 || u>det)					return false;
-		if ((mStabbedFace.mU < 0.0f) || static_cast<uint32_t>(mStabbedFace.mU) > static_cast<uint32_t>(det))
-		{
-			return false;
-		}
+        // Calculate U parameter and test bounds
+        mStabbedFace.mU = tvec | pvec;
+        //		if(IR(u)&0x80000000 || u>det)					return false;
+        if ((mStabbedFace.mU < 0.0f) || static_cast<uint32_t>(mStabbedFace.mU) > static_cast<uint32_t>(det))
+        {
+            return false;
+        }
 
-		// Prepare to test V parameter
-		Point qvec = tvec ^ edge1;
+        // Prepare to test V parameter
+        Point qvec = tvec ^ edge1;
 
-		// Calculate V parameter and test bounds
-		mStabbedFace.mV = mDir | qvec;
-		if ((mStabbedFace.mV < 0.0f) || mStabbedFace.mU + mStabbedFace.mV > det)
-		{
-			return false;
-		}
+        // Calculate V parameter and test bounds
+        mStabbedFace.mV = mDir | qvec;
+        if ((mStabbedFace.mV < 0.0f) || mStabbedFace.mU + mStabbedFace.mV > det)
+        {
+            return false;
+        }
 
-		// Calculate t, scale parameters, ray intersects triangle
-		mStabbedFace.mDistance = edge2 | qvec;
-		// Det > 0 so we can early exit here
-		// Intersection point is valid if distance is positive (else it can just be a face behind the orig point)
-		if ((mStabbedFace.mDistance < 0.0f))
-		{
-			return false;
-		}
-		// Else go on
-		float OneOverDet = 1.0f / det;
-		mStabbedFace.mDistance *= OneOverDet;
-		mStabbedFace.mU *= OneOverDet;
-		mStabbedFace.mV *= OneOverDet;
-	}
-	else
-	{
-		// the non-culling branch
-		if (det > -std::numeric_limits<float>::epsilon() && det < std::numeric_limits<float>::epsilon())
-		{
-			return false;
-		}
-		float OneOverDet = 1.0f / det;
+        // Calculate t, scale parameters, ray intersects triangle
+        mStabbedFace.mDistance = edge2 | qvec;
+        // Det > 0 so we can early exit here
+        // Intersection point is valid if distance is positive (else it can just be a face behind the orig point)
+        if ((mStabbedFace.mDistance < 0.0f))
+        {
+            return false;
+        }
+        // Else go on
+        float OneOverDet = 1.0f / det;
+        mStabbedFace.mDistance *= OneOverDet;
+        mStabbedFace.mU *= OneOverDet;
+        mStabbedFace.mV *= OneOverDet;
+    }
+    else
+    {
+        // the non-culling branch
+        if (det > -std::numeric_limits<float>::epsilon() && det < std::numeric_limits<float>::epsilon())
+        {
+            return false;
+        }
+        float OneOverDet = 1.0f / det;
 
-		// Calculate distance from vert0 to ray origin
-		Point tvec = mOrigin - vert0;
+        // Calculate distance from vert0 to ray origin
+        Point tvec = mOrigin - vert0;
 
-		// Calculate U parameter and test bounds
-		mStabbedFace.mU = (tvec | pvec) * OneOverDet;
-		//		if(IR(u)&0x80000000 || u>1.0f)					return false;
-		if ((mStabbedFace.mU < 0.0f) || (mStabbedFace.mU > 1.0f))
-		{
-			return false;
-		}
+        // Calculate U parameter and test bounds
+        mStabbedFace.mU = (tvec | pvec) * OneOverDet;
+        //		if(IR(u)&0x80000000 || u>1.0f)					return false;
+        if ((mStabbedFace.mU < 0.0f) || (mStabbedFace.mU > 1.0f))
+        {
+            return false;
+        }
 
-		// prepare to test V parameter
-		Point qvec = tvec ^ edge1;
+        // prepare to test V parameter
+        Point qvec = tvec ^ edge1;
 
-		// Calculate V parameter and test bounds
-		mStabbedFace.mV = (mDir | qvec) * OneOverDet;
-		if ((mStabbedFace.mV < 0.0f) || mStabbedFace.mU + mStabbedFace.mV > 1.0f)
-		{
-			return false;
-		}
+        // Calculate V parameter and test bounds
+        mStabbedFace.mV = (mDir | qvec) * OneOverDet;
+        if ((mStabbedFace.mV < 0.0f) || mStabbedFace.mU + mStabbedFace.mV > 1.0f)
+        {
+            return false;
+        }
 
-		// Calculate t, ray intersects triangle
-		mStabbedFace.mDistance = (edge2 | qvec) * OneOverDet;
-		// Intersection point is valid if distance is positive (else it can just be a face behind the orig point)
-		if ((mStabbedFace.mDistance < 0.0f))
-		{
-			return false;
-		}
-	}
-	return true;
+        // Calculate t, ray intersects triangle
+        mStabbedFace.mDistance = (edge2 | qvec) * OneOverDet;
+        // Intersection point is valid if distance is positive (else it can just be a face behind the orig point)
+        if ((mStabbedFace.mDistance < 0.0f))
+        {
+            return false;
+        }
+    }
+    return true;
 }

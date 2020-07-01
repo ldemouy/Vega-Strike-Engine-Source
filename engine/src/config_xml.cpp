@@ -23,23 +23,23 @@
  *  xml Configuration written by Alexander Rawass <alexannika@users.sourceforge.net>
  */
 
-#include <expat.h>
-#include "xml_support.h"
-#include "vegastrike.h"
-#include <assert.h>
 #include "config_xml.h"
-#include "easydom.h"
-#include "cmd/ai/flykeyboard.h"
-#include "cmd/ai/firekeyboard.h"
-#include "cmd/music.h"
-#include "gfx/loc_select.h"
 #include "aldrv/audiolib.h"
-#include "in_joystick.h"
-#include "main_loop.h" //for CockpitKeys
+#include "cmd/ai/firekeyboard.h"
+#include "cmd/ai/flykeyboard.h"
+#include "cmd/music.h"
+#include "easydom.h"
 #include "gfx/cockpit.h"
-#include "in_kb_data.h"
-#include "python/python_compile.h"
+#include "gfx/loc_select.h"
 #include "gfx/screenshot.h"
+#include "in_joystick.h"
+#include "in_kb_data.h"
+#include "main_loop.h" //for CockpitKeys
+#include "python/python_compile.h"
+#include "vegastrike.h"
+#include "xml_support.h"
+#include <assert.h>
+#include <expat.h>
 using std::cerr;
 using std::cout;
 using std::endl;
@@ -50,7 +50,7 @@ GameVegaConfig::GameVegaConfig(const char *configfile) : VegaConfig(configfile)
 {
     initCommandMap();
     initKeyMap();
-    //set hatswitches to off
+    // set hatswitches to off
     for (size_t h = 0; h < MAX_HATSWITCHES; h++)
     {
         hatswitch_margin[h] = 2.0;
@@ -127,12 +127,12 @@ void decdop(const KBData &, KBSTATE a)
 #endif
 }
 
-#endif //1
+#endif // 1
 /* *********************************************************** */
 
 void GameVegaConfig::initKeyMap()
 {
-    //mapping from special key string to glut key
+    // mapping from special key string to glut key
     key_map["space"] = ' ';
     key_map["return"] = WSK_RETURN;
     key_map["enter"] = WSK_KP_ENTER;
@@ -287,7 +287,7 @@ void GameVegaConfig::doAxis(configNode *node)
     }
     int32_t axis_nr = atoi(axis.c_str());
 
-    //no checks for correct number yet
+    // no checks for correct number yet
 
     bool inverse = false;
     if (!invertstr.empty())
@@ -423,8 +423,8 @@ void GameVegaConfig::checkBind(configNode *node)
     }
     if (!keystr.empty())
     {
-        //normal keyboard key
-        //now map the command to a callback function and bind it
+        // normal keyboard key
+        // now map the command to a callback function and bind it
         if (keystr.length() == 1)
         {
             BindKey(keystr[0], modifier, XMLSupport::parse_int(player_bound), handler, KBData(additional_data));
@@ -442,11 +442,11 @@ void GameVegaConfig::checkBind(configNode *node)
     }
     else if (!buttonstr.empty())
     {
-        //maps a joystick button or analogue hatswitch button
+        // maps a joystick button or analogue hatswitch button
         int32_t button_nr = atoi(buttonstr.c_str());
         if (joy_str.empty() && mouse_str.empty())
         {
-            //it has to be the analogue hatswitch
+            // it has to be the analogue hatswitch
             if (hat_str.empty())
             {
                 cout << "you got to give a analogue hatswitch number" << endl;
@@ -458,7 +458,7 @@ void GameVegaConfig::checkBind(configNode *node)
         }
         else
         {
-            //joystick button
+            // joystick button
             int32_t joystick_nr;
             if (mouse_str.empty())
             {
@@ -471,9 +471,9 @@ void GameVegaConfig::checkBind(configNode *node)
 
             if (joystick[joystick_nr]->isAvailable())
             {
-                //now map the command to a callback function and bind it
+                // now map the command to a callback function and bind it
 
-                //yet to check for correct buttons/joy-nr
+                // yet to check for correct buttons/joy-nr
 
                 BindJoyKey(joystick_nr, button_nr, handler, KBData(additional_data));
             }
@@ -490,7 +490,7 @@ void GameVegaConfig::checkBind(configNode *node)
     }
     else if (!(dighswitch.empty() || direction.empty() || (mouse_str.empty() && joy_str.empty())))
     {
-        //digital hatswitch or ...
+        // digital hatswitch or ...
         if (dighswitch.empty() || direction.empty() || (mouse_str.empty() && joy_str.empty()))
         {
             cout << "you have to specify joystick,digital-hatswitch,direction" << endl;
@@ -556,7 +556,8 @@ void GameVegaConfig::checkBind(configNode *node)
             return;
         }
         BindDigitalHatswitchKey(joy_nr, hsw_nr, dir_index, handler, KBData(additional_data));
-        cout << "Bound joy " << joy_nr << " hatswitch " << hsw_nr << " dir_index " << dir_index << " to command " << cmdstr << endl;
+        cout << "Bound joy " << joy_nr << " hatswitch " << hsw_nr << " dir_index " << dir_index << " to command "
+             << cmdstr << endl;
     }
 #if 1
     else
@@ -576,7 +577,7 @@ void GameVegaConfig::bindKeys()
 /* *********************************************************** */
 CommandMap initGlobalCommandMap()
 {
-    //I don't knwo why this gives linker errors!
+    // I don't knwo why this gives linker errors!
     CommandMap commandMap;
     commandMap["NoPositionalKey"] = mute;
     commandMap["DopplerInc"] = incdop;
@@ -596,8 +597,8 @@ CommandMap initGlobalCommandMap()
     commandMap["TimeInc"] = inc_time_compression;
     commandMap["TimeDec"] = dec_time_compression;
     commandMap["TimeReset"] = reset_time_compression;
-    //mapping from command string to keyboard handler
-    //Networking bindings
+    // mapping from command string to keyboard handler
+    // Networking bindings
 
     commandMap["SwitchWebcam"] = FlyByKeyboard::SwitchWebcam;
     commandMap["SwitchSecured"] = FlyByKeyboard::SwitchSecured;
@@ -651,7 +652,7 @@ CommandMap initGlobalCommandMap()
     commandMap["CommDefendTarget"] = FireKeyboard::DefendTarget;
     commandMap["CommDockAtTarget"] = FireKeyboard::DockTarget;
     commandMap["CommHoldPosition"] = FireKeyboard::HoldPosition;
-    //Added for nearest unit targeting -ch
+    // Added for nearest unit targeting -ch
     commandMap["NearestHostileTargetKey"] = FireKeyboard::NearestHostileTargetKey;
     commandMap["NearestDangerousHostileKey"] = FireKeyboard::NearestDangerousHostileKey;
     commandMap["NearestFriendlyKey"] = FireKeyboard::NearestFriendlyKey;

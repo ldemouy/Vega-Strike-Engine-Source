@@ -1,10 +1,11 @@
-#include "mesh.h"
 #include "aux_texture.h"
-#if !defined(_WIN32) && !defined(__CYGWIN__) && !(defined(__APPLE__) || defined(MACOSX)) && !defined(BSD) && !defined(__HAIKU__)
+#include "mesh.h"
+#if !defined(_WIN32) && !defined(__CYGWIN__) && !(defined(__APPLE__) || defined(MACOSX)) && !defined(BSD) &&           \
+    !defined(__HAIKU__)
 #include <values.h>
 #endif
-#include <float.h>
 #include <assert.h>
+#include <float.h>
 #define PBEHIND (-1)
 #define PFRONT (1)
 #define PUNK (0)
@@ -53,7 +54,9 @@ void Mesh::Fork(Mesh *&x, Mesh *&y, float a, float b, float c, float d)
     {
         for (i = 0; i < last; i++)
         {
-            if ((!(numtqy[l] < last / 3 && numtqx[l] > 2 * last / 3)) && ((numtqx[l] < last / 3 && numtqy[l] > 2 * last / 3) || whichside(&Orig[offset + i * inc], inc, a, b, c, d) == PFRONT))
+            if ((!(numtqy[l] < last / 3 && numtqx[l] > 2 * last / 3)) &&
+                ((numtqx[l] < last / 3 && numtqy[l] > 2 * last / 3) ||
+                 whichside(&Orig[offset + i * inc], inc, a, b, c, d) == PFRONT))
             {
                 numtqx[l]++;
                 for (j = 0; j < inc; j++)

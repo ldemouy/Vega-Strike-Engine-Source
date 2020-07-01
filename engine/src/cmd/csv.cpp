@@ -70,7 +70,7 @@ static string addQuote(string s, string delim = ",;")
     {
         if (s.find('\"') != string::npos)
         {
-            //Replace " by ""
+            // Replace " by ""
             string as;
             int sl = s.length();
             as.reserve(2 * sl);
@@ -82,7 +82,7 @@ static string addQuote(string s, string delim = ",;")
                     as += "\"\"";
             s.swap(as);
         }
-        //Add single quotes to the sides
+        // Add single quotes to the sides
         s.insert(s.begin(), 1, '\"');
         s.insert(s.end(), 1, '\"');
     }
@@ -114,7 +114,7 @@ string writeCSV(const vector<string> &key, const vector<string> &table, string d
 
 void CSVTable::Init(const string &data)
 {
-    //Clear optimizer
+    // Clear optimizer
     optimizer_setup = false;
     optimizer_keys.clear();
     optimizer_indexes.clear();
@@ -359,8 +359,7 @@ CSVTable *loadCSVTableList(const string &csvfiles, VSFileSystem::VSFileType file
             }
             else if (critical)
             {
-                std::cerr << boost::format("Could not load CSV database at '%1%'") % tmp
-                          << std::endl;
+                std::cerr << boost::format("Could not load CSV database at '%1%'") % tmp << std::endl;
                 exit(2);
             }
         }

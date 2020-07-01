@@ -19,52 +19,52 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 #include "unit.h"
-#include "vsfilesystem.h"
-#include "vs_globals.h"
 #include "file_main.h"
+#include "vs_globals.h"
+#include "vsfilesystem.h"
 //#include "gfx/halo.h"
 #include "gfx/halo_system.h"
-#include "gfx/quaternion.h"
 #include "gfx/matrix.h"
-#include "gfx/technique.h"
 #include "gfx/occlusion.h"
+#include "gfx/quaternion.h"
+#include "gfx/technique.h"
 
 #include "unit_factory.h"
 
 #include "gfx/sprite.h"
 #include "lin_time.h"
 
-#include "gfx/vsbox.h"
-#include "bolt.h"
-#include "gfx/lerp.h"
 #include "aldrv/audiolib.h"
-#include "gfx/cockpit.h"
-#include "config_xml.h"
-#include "images.h"
-#include "main_loop.h"
-#include "script/mission.h"
-#include "script/flightgroup.h"
-#include "savegame.h"
-#include "xml_serializer.h"
-#include "python/python_class.h"
-#include "gfx/particle.h"
+#include "bolt.h"
 #include "cmd/ai/aggressive.h"
 #include "cmd/base.h"
+#include "config_xml.h"
+#include "gfx/cockpit.h"
+#include "gfx/lerp.h"
+#include "gfx/particle.h"
 #include "gfx/point_to_cam.h"
+#include "gfx/vsbox.h"
+#include "images.h"
+#include "main_loop.h"
+#include "python/python_class.h"
+#include "savegame.h"
+#include "script/flightgroup.h"
+#include "script/mission.h"
+#include "xml_serializer.h"
 
 #include "base_util.h"
-#include "unit_jump.h"
+#include "options.h"
+#include "unit_click.h"
 #include "unit_customize.h"
 #include "unit_damage.h"
+#include "unit_jump.h"
 #include "unit_physics.h"
-#include "unit_click.h"
-#include "options.h"
 
 using std::map;
 using std::string;
 using std::vector;
 
-//if the PQR of the unit may be variable...for radius size computation
+// if the PQR of the unit may be variable...for radius size computation
 //#define VARIABLE_LENGTH_PQR
 
 //#define DESTRUCTDEBUG
@@ -78,37 +78,32 @@ extern bool cam_setup_phase;
 /**** MOVED FROM BASE_INTERFACE.CPP ****/
 extern string getCargoUnitName(const char *name);
 
-template <class UnitType>
-GameUnit<UnitType>::GameUnit(int) : sparkle_accum(0), phalos(new HaloSystem())
+template <class UnitType> GameUnit<UnitType>::GameUnit(int) : sparkle_accum(0), phalos(new HaloSystem())
 {
     this->Unit::Init();
 }
 
 template <class UnitType>
-GameUnit<UnitType>::GameUnit(std::vector<Mesh *> &meshes, bool SubU, int fact) : UnitType(meshes, SubU, fact), sparkle_accum(0), phalos(new HaloSystem())
+GameUnit<UnitType>::GameUnit(std::vector<Mesh *> &meshes, bool SubU, int fact)
+    : UnitType(meshes, SubU, fact), sparkle_accum(0), phalos(new HaloSystem())
 {
 }
 
 template <class UnitType>
-GameUnit<UnitType>::GameUnit(const char *filename,
-                             bool SubU,
-                             int faction,
-                             std::string unitModifications,
-                             Flightgroup *flightgrp,
-                             int fg_subnumber,
-                             string *netxml) : sparkle_accum(0), phalos(new HaloSystem())
+GameUnit<UnitType>::GameUnit(const char *filename, bool SubU, int faction, std::string unitModifications,
+                             Flightgroup *flightgrp, int fg_subnumber, string *netxml)
+    : sparkle_accum(0), phalos(new HaloSystem())
 {
     Unit::Init(filename, SubU, faction, unitModifications, flightgrp, fg_subnumber, netxml);
 }
 
-template <class UnitType>
-GameUnit<UnitType>::~GameUnit()
+template <class UnitType> GameUnit<UnitType>::~GameUnit()
 {
     for (unsigned int meshcount = 0; meshcount < this->meshdata.size(); meshcount++)
         if (this->meshdata[meshcount])
             delete this->meshdata[meshcount];
     this->meshdata.clear();
-    //delete phalos;
+    // delete phalos;
 }
 
 /*template < class UnitType >
@@ -117,8 +112,7 @@ unsigned int GameUnit< UnitType >::nummesh() const {
     return (this->meshdata.size() - 1 );
 }*/
 
-template <class UnitType>
-void GameUnit<UnitType>::UpgradeInterface(Unit *baseun)
+template <class UnitType> void GameUnit<UnitType>::UpgradeInterface(Unit *baseun)
 {
     string basename = (::getCargoUnitName(baseun->getFullname().c_str()));
     if (baseun->isUnit() != PLANETPTR)
@@ -136,36 +130,28 @@ inline static float perspectiveFactor(float d)
         return 1.0f;
 }
 
-template <class UnitType>
-VSSprite *GameUnit<UnitType>::getHudImage() const
+template <class UnitType> VSSprite *GameUnit<UnitType>::getHudImage() const
 {
     return this->pImage->pHudImage;
 }
 
 template <class UnitType>
-void GameUnit<UnitType>::addHalo(const char *filename,
-                                 const Matrix &trans,
-                                 const Vector &size,
-                                 const GFXColor &col,
-                                 std::string halo_type,
-                                 float halo_speed)
+void GameUnit<UnitType>::addHalo(const char *filename, const Matrix &trans, const Vector &size, const GFXColor &col,
+                                 std::string halo_type, float halo_speed)
 {
     phalos->AddHalo(filename, trans, size, col, halo_type, halo_speed);
 }
 
-template <class UnitType>
-void GameUnit<UnitType>::Cloak(bool engage)
+template <class UnitType> void GameUnit<UnitType>::Cloak(bool engage)
 {
-    UnitType::Cloak(engage); //client side unit
+    UnitType::Cloak(engage); // client side unit
 }
 
-template <class UnitType>
-bool GameUnit<UnitType>::queryFrustum(double frustum[6][4]) const
+template <class UnitType> bool GameUnit<UnitType>::queryFrustum(double frustum[6][4]) const
 {
     unsigned int i;
 #ifdef VARIABLE_LENGTH_PQR
-    Vector TargetPoint(cumulative_transformation_matrix[0],
-                       cumulative_transformation_matrix[1],
+    Vector TargetPoint(cumulative_transformation_matrix[0], cumulative_transformation_matrix[1],
                        cumulative_transformation_matrix[2]);
     float SizeScaleFactor = sqrtf(TargetPoint.Dot(TargetPoint));
 #else
@@ -174,8 +160,7 @@ bool GameUnit<UnitType>::queryFrustum(double frustum[6][4]) const
     for (i = 0; i < nummesh() && this->meshdata[i]; i++)
     {
         TargetPoint = Transform(this->cumulative_transformation_matrix, this->meshdata[i]->Position());
-        if (GFXSphereInFrustum(frustum,
-                               TargetPoint,
+        if (GFXSphereInFrustum(frustum, TargetPoint,
                                this->meshdata[i]->rSize()
 #ifdef VARIABLE_LENGTH_PQR
                                    * SizeScaleFactor
@@ -194,8 +179,7 @@ bool GameUnit<UnitType>::queryFrustum(double frustum[6][4]) const
     return false;
 }
 
-template <class UnitType>
-void GameUnit<UnitType>::UpdateHudMatrix(int whichcam)
+template <class UnitType> void GameUnit<UnitType>::UpdateHudMatrix(int whichcam)
 {
     Matrix m;
     Matrix ctm = this->cumulative_transformation_matrix;
@@ -205,16 +189,15 @@ void GameUnit<UnitType>::UpdateHudMatrix(int whichcam)
     CrossProduct(r, q, tmp);
     _Universe->AccessCamera(whichcam)->SetOrientation(tmp, q, r);
 
-    _Universe->AccessCamera(whichcam)->SetPosition(Transform(ctm,
-                                                             this->pImage->CockpitCenter.Cast()),
-                                                   this->GetWarpVelocity(), this->GetAngularVelocity(), this->GetAcceleration());
+    _Universe->AccessCamera(whichcam)->SetPosition(Transform(ctm, this->pImage->CockpitCenter.Cast()),
+                                                   this->GetWarpVelocity(), this->GetAngularVelocity(),
+                                                   this->GetAcceleration());
 }
 
 extern bool flickerDamage(Unit *un, float hullpercent);
-extern int cloakVal(int cloakint, int cloakminint, int cloakrateint, bool cloakglass); //short fix?
+extern int cloakVal(int cloakint, int cloakminint, int cloakrateint, bool cloakglass); // short fix?
 
-template <class UnitType>
-void GameUnit<UnitType>::DrawNow(const Matrix &mato, float lod)
+template <class UnitType> void GameUnit<UnitType>::DrawNow(const Matrix &mato, float lod)
 {
     static const void *rootunit = nullptr;
     if (rootunit == nullptr)
@@ -247,14 +230,13 @@ void GameUnit<UnitType>::DrawNow(const Matrix &mato, float lod)
         cloak = cloakVal(cloak, this->cloakmin, this->pImage->cloakrate, this->pImage->cloakglass);
     for (i = 0; i <= this->nummesh(); i++)
     {
-        //NOTE LESS THAN OR EQUALS...to cover shield mesh
+        // NOTE LESS THAN OR EQUALS...to cover shield mesh
         if (this->meshdata[i] == nullptr)
             continue;
-        QVector TransformedPosition = Transform(mat,
-                                                this->meshdata[i]->Position().Cast());
+        QVector TransformedPosition = Transform(mat, this->meshdata[i]->Position().Cast());
         float d = GFXSphereInFrustum(TransformedPosition, this->meshdata[i]->clipRadialSize() * vlpqrScaleFactor);
-        if (d) //d can be used for level of detail
-               //this->meshdata[i]->DrawNow(lod,false,mat,cloak);//cloakign and nebula
+        if (d) // d can be used for level of detail
+               // this->meshdata[i]->DrawNow(lod,false,mat,cloak);//cloakign and nebula
             this->meshdata[i]->Draw(lod, mat, d, cloak);
     }
     Unit *un;
@@ -278,7 +260,7 @@ void GameUnit<UnitType>::DrawNow(const Matrix &mato, float lod)
     float cmas = this->computer.max_ab_speed() * this->computer.max_ab_speed();
     if (cmas == 0)
         cmas = 1;
-    Vector Scale(1, 1, 1); //Now, HaloSystem handles that
+    Vector Scale(1, 1, 1); // Now, HaloSystem handles that
     int nummounts = this->GetNumMounts();
     Matrix wmat = this->WarpMatrix(mat);
     for (i = 0; (int)i < nummounts; i++)
@@ -297,20 +279,26 @@ void GameUnit<UnitType>::DrawNow(const Matrix &mato, float lod)
                     if (GFXSphereInFrustum(mountLocation.position, gun->rSize() * vlpqrScaleFactor) > 0)
                     {
                         float d = (mountLocation.position - _Universe->AccessCamera()->GetPosition()).Magnitude();
-                        float lod = gun->rSize() * g_game.detaillevel * perspectiveFactor((d - gun->rSize() < g_game.znear) ? g_game.znear : d - gun->rSize());
+                        float lod =
+                            gun->rSize() * g_game.detaillevel *
+                            perspectiveFactor((d - gun->rSize() < g_game.znear) ? g_game.znear : d - gun->rSize());
                         ScaleMatrix(mmat, Vector(mahnt->xyscale, mahnt->xyscale, mahnt->zscale));
                         gun->setCurrentFrame(this->mounts[i].ComputeAnimatedFrame(gun));
                         gun->Draw(lod, mmat, d, cloak,
-                                  (_Universe->AccessCamera()->GetNebula() == this->nebula && this->nebula != nullptr) ? -1 : 0,
+                                  (_Universe->AccessCamera()->GetNebula() == this->nebula && this->nebula != nullptr)
+                                      ? -1
+                                      : 0,
                                   chardamage,
-                                  true); //cloakign and nebula
+                                  true); // cloakign and nebula
                         if (mahnt->type->gun1)
                         {
                             gun = mahnt->type->gun1;
                             gun->setCurrentFrame(this->mounts[i].ComputeAnimatedFrame(gun));
-                            gun->Draw(lod, mmat, d, cloak,
-                                      (_Universe->AccessCamera()->GetNebula() == this->nebula && this->nebula != nullptr) ? -1 : 0,
-                                      chardamage, true); //cloakign and nebula
+                            gun->Draw(
+                                lod, mmat, d, cloak,
+                                (_Universe->AccessCamera()->GetNebula() == this->nebula && this->nebula != nullptr) ? -1
+                                                                                                                    : 0,
+                                chardamage, true); // cloakign and nebula
                         }
                     }
                 }
@@ -321,7 +309,8 @@ void GameUnit<UnitType>::DrawNow(const Matrix &mato, float lod)
     float maxaccel = this->GetMaxAccelerationInDirectionOf(mat.getR(), true);
     Vector velocity = this->GetVelocity();
     if (!(this->docked & (UnitType::DOCKED | UnitType::DOCKED_INSIDE)))
-        phalos->Draw(mat, Scale, cloak, 0, this->GetHullPercent(), velocity, linaccel, angaccel, maxaccel, cmas, this->faction);
+        phalos->Draw(mat, Scale, cloak, 0, this->GetHullPercent(), velocity, linaccel, angaccel, maxaccel, cmas,
+                     this->faction);
     if (rootunit == (const void *)this)
     {
         Mesh::ProcessZFarMeshes();
@@ -330,27 +319,24 @@ void GameUnit<UnitType>::DrawNow(const Matrix &mato, float lod)
     }
 }
 
-template <class UnitType>
-void GameUnit<UnitType>::DrawNow()
+template <class UnitType> void GameUnit<UnitType>::DrawNow()
 {
     DrawNow(identity_matrix, 1000000000);
 }
 
 extern double calc_blend_factor(double frac, int priority, int when_it_will_be_simulated, int cur_simulation_frame);
 
-template <class UnitType>
-void GameUnit<UnitType>::Draw(const Transformation &parent, const Matrix &parentMatrix)
+template <class UnitType> void GameUnit<UnitType>::Draw(const Transformation &parent, const Matrix &parentMatrix)
 {
-    //Quick shortcut for camera setup phase
+    // Quick shortcut for camera setup phase
     bool myparent = (this == _Universe->AccessCockpit()->GetParent());
 
     Matrix *ctm;
     Matrix invview;
     Transformation *ct;
 
-    this->cumulative_transformation = linear_interpolate(this->prev_physical_state,
-                                                         this->curr_physical_state,
-                                                         interpolation_blend_factor);
+    this->cumulative_transformation =
+        linear_interpolate(this->prev_physical_state, this->curr_physical_state, interpolation_blend_factor);
     this->cumulative_transformation.Compose(parent, parentMatrix);
     this->cumulative_transformation.to_matrix(this->cumulative_transformation_matrix);
 
@@ -413,13 +399,12 @@ void GameUnit<UnitType>::Draw(const Transformation &parent, const Matrix &parent
             Camera *camera = _Universe->AccessCamera();
             QVector camerapos = camera->GetPosition();
 
-            float minmeshradius =
-                (camera->GetVelocity().Magnitude() + this->Velocity.Magnitude()) * SIMULATION_ATOM;
+            float minmeshradius = (camera->GetVelocity().Magnitude() + this->Velocity.Magnitude()) * SIMULATION_ATOM;
 
             unsigned int numKeyFrames = this->graphicOptions.NumAnimationPoints;
             for (i = 0, n = this->nummesh(); i <= n; i++)
             {
-                //NOTE LESS THAN OR EQUALS...to cover shield mesh
+                // NOTE LESS THAN OR EQUALS...to cover shield mesh
                 if (this->meshdata[i] == nullptr)
                     continue;
                 if (i == n && (this->meshdata[i]->numFX() == 0 || this->hull < 0))
@@ -434,12 +419,11 @@ void GameUnit<UnitType>::Draw(const Transformation &parent, const Matrix &parent
                 }
                 QVector TransformedPosition = Transform(*ctm, this->meshdata[i]->Position().Cast());
 
-                //d can be used for level of detail shit
+                // d can be used for level of detail shit
                 float mSize = this->meshdata[i]->rSize() * avgscale;
                 double d = (TransformedPosition - camerapos).Magnitude();
                 double rd = d - mSize;
-                float pixradius = Apparent_Size = mSize * perspectiveFactor(
-                                                              (rd < g_game.znear) ? g_game.znear : rd);
+                float pixradius = Apparent_Size = mSize * perspectiveFactor((rd < g_game.znear) ? g_game.znear : rd);
                 float lod = pixradius * g_game.detaillevel;
                 if (this->meshdata[i]->getBlendDst() == ZERO)
                 {
@@ -454,41 +438,40 @@ void GameUnit<UnitType>::Draw(const Transformation &parent, const Matrix &parent
                 }
                 if (lod >= 0.5 && pixradius >= 2.5)
                 {
-                    double frustd = GFXSphereInFrustum(
-                        TransformedPosition,
-                        minmeshradius + mSize);
+                    double frustd = GFXSphereInFrustum(TransformedPosition, minmeshradius + mSize);
                     if (frustd)
                     {
-                        //if the radius is at least half a pixel at detail 1 (equivalent to pixradius >= 0.5 / detail)
+                        // if the radius is at least half a pixel at detail 1 (equivalent to pixradius >= 0.5 / detail)
                         float currentFrame = this->meshdata[i]->getCurrentFrame();
-                        this->meshdata[i]->Draw(lod, wmat, d,
-                                                i == this->meshdata.size() - 1 ? -1 : cloak,
-                                                (camera->GetNebula() == this->nebula && this->nebula != nullptr) ? -1 : 0,
-                                                chardamage); //cloakign and nebula
+                        this->meshdata[i]->Draw(lod, wmat, d, i == this->meshdata.size() - 1 ? -1 : cloak,
+                                                (camera->GetNebula() == this->nebula && this->nebula != nullptr) ? -1
+                                                                                                                 : 0,
+                                                chardamage); // cloakign and nebula
                         On_Screen = true;
                         unsigned int numAnimFrames = 0;
                         static const string default_animation;
-                        if (this->meshdata[i]->getFramesPerSecond() && (numAnimFrames = this->meshdata[i]->getNumAnimationFrames(default_animation)))
+                        if (this->meshdata[i]->getFramesPerSecond() &&
+                            (numAnimFrames = this->meshdata[i]->getNumAnimationFrames(default_animation)))
                         {
-                            float currentprogress = floor(
-                                this->meshdata[i]->getCurrentFrame() * numKeyFrames / (float)numAnimFrames);
-                            if (numKeyFrames && floor(currentFrame * numKeyFrames / (float)numAnimFrames) != currentprogress)
+                            float currentprogress =
+                                floor(this->meshdata[i]->getCurrentFrame() * numKeyFrames / (float)numAnimFrames);
+                            if (numKeyFrames &&
+                                floor(currentFrame * numKeyFrames / (float)numAnimFrames) != currentprogress)
                             {
                                 this->graphicOptions.Animating = 0;
-                                this->meshdata[i]->setCurrentFrame(.1 + currentprogress * numAnimFrames / (float)numKeyFrames);
+                                this->meshdata[i]->setCurrentFrame(.1 + currentprogress * numAnimFrames /
+                                                                            (float)numKeyFrames);
                             }
                             else if (!this->graphicOptions.Animating)
                             {
-                                this->meshdata[i]->setCurrentFrame(currentFrame); //dont' budge
+                                this->meshdata[i]->setCurrentFrame(currentFrame); // dont' budge
                             }
                         }
                     }
                 }
             }
 
-            Unit_On_Screen = On_Screen || !!GFXSphereInFrustum(
-                                              ct->position,
-                                              minmeshradius + this->rSize());
+            Unit_On_Screen = On_Screen || !!GFXSphereInFrustum(ct->position, minmeshradius + this->rSize());
         }
         else
             Unit_On_Screen = true;
@@ -502,10 +485,8 @@ void GameUnit<UnitType>::Draw(const Transformation &parent, const Matrix &parent
                 float backup = SIMULATION_ATOM;
                 if (this->sim_atom_multiplier && un->sim_atom_multiplier)
                     SIMULATION_ATOM = SIMULATION_ATOM * un->sim_atom_multiplier / this->sim_atom_multiplier;
-                interpolation_blend_factor = calc_blend_factor(saved_interpolation_blend_factor,
-                                                               un->sim_atom_multiplier,
-                                                               un->cur_sim_queue_slot,
-                                                               cur_sim_frame);
+                interpolation_blend_factor = calc_blend_factor(
+                    saved_interpolation_blend_factor, un->sim_atom_multiplier, un->cur_sim_queue_slot, cur_sim_frame);
                 (un)->Draw(*ct, *ctm);
 
                 SIMULATION_ATOM = backup;
@@ -515,8 +496,8 @@ void GameUnit<UnitType>::Draw(const Transformation &parent, const Matrix &parent
     }
     else
     {
-        _Universe->AccessCockpit()->SetupViewPort(); ///this is the final, smoothly calculated cam
-        //UpdateHudMatrix();
+        _Universe->AccessCockpit()->SetupViewPort(); /// this is the final, smoothly calculated cam
+        // UpdateHudMatrix();
     }
     /***DEBUGGING cosAngleFromMountTo
      *  UnitCollection *dL = _Universe->activeStarSystem()->getUnitList();
@@ -552,30 +533,37 @@ void GameUnit<UnitType>::Draw(const Transformation &parent, const Matrix &parent
                     if (GFXSphereInFrustum(mountLocation.position, gun->rSize() * avgscale) > 0)
                     {
                         float d = (mountLocation.position - _Universe->AccessCamera()->GetPosition()).Magnitude();
-                        float pixradius = gun->rSize() * perspectiveFactor(
-                                                             (d - gun->rSize() < g_game.znear) ? g_game.znear : d - gun->rSize());
+                        float pixradius =
+                            gun->rSize() *
+                            perspectiveFactor((d - gun->rSize() < g_game.znear) ? g_game.znear : d - gun->rSize());
                         float lod = pixradius * g_game.detaillevel;
                         if (lod > 0.5 && pixradius > 2.5)
                         {
                             ScaleMatrix(mat, Vector(mahnt->xyscale, mahnt->xyscale, mahnt->zscale));
                             gun->setCurrentFrame(this->mounts[i].ComputeAnimatedFrame(gun));
-                            gun->Draw(lod, mat, d, cloak,
-                                      (_Universe->AccessCamera()->GetNebula() == this->nebula && this->nebula != nullptr) ? -1 : 0,
-                                      chardamage,
-                                      true); //cloakign and nebula
+                            gun->Draw(
+                                lod, mat, d, cloak,
+                                (_Universe->AccessCamera()->GetNebula() == this->nebula && this->nebula != nullptr) ? -1
+                                                                                                                    : 0,
+                                chardamage,
+                                true); // cloakign and nebula
                         }
                         if (mahnt->type->gun1)
                         {
-                            pixradius = gun->rSize() * perspectiveFactor(
-                                                           (d - gun->rSize() < g_game.znear) ? g_game.znear : d - gun->rSize());
+                            pixradius =
+                                gun->rSize() *
+                                perspectiveFactor((d - gun->rSize() < g_game.znear) ? g_game.znear : d - gun->rSize());
                             lod = pixradius * g_game.detaillevel;
                             if (lod > 0.5 && pixradius > 2.5)
                             {
                                 gun = mahnt->type->gun1;
                                 gun->setCurrentFrame(this->mounts[i].ComputeAnimatedFrame(gun));
-                                gun->Draw(lod, mat, d, cloak,
-                                          (_Universe->AccessCamera()->GetNebula() == this->nebula && this->nebula != nullptr) ? -1 : 0,
-                                          chardamage, true); //cloakign and nebula
+                                gun->Draw(
+                                    lod, mat, d, cloak,
+                                    (_Universe->AccessCamera()->GetNebula() == this->nebula && this->nebula != nullptr)
+                                        ? -1
+                                        : 0,
+                                    chardamage, true); // cloakign and nebula
                             }
                         }
                     }
@@ -584,10 +572,14 @@ void GameUnit<UnitType>::Draw(const Transformation &parent, const Matrix &parent
         if (this->mounts[i].type->type == weapon_info::BEAM)
             if (this->mounts[i].ref.gun)
                 this->mounts[i].ref.gun->Draw(*ct, wmat,
-                                              ((this->mounts[i].size & weapon_info::AUTOTRACKING) && (this->mounts[i].time_to_lock <= 0) && Unit::TargetTracked()) ? Unit::Target() : nullptr,
+                                              ((this->mounts[i].size & weapon_info::AUTOTRACKING) &&
+                                               (this->mounts[i].time_to_lock <= 0) && Unit::TargetTracked())
+                                                  ? Unit::Target()
+                                                  : nullptr,
                                               this->computer.radar.trackingcone);
     }
-    if (On_Screen && (phalos->NumHalos() > 0) && !(this->docked & (UnitType::DOCKED | UnitType::DOCKED_INSIDE)) && (Apparent_Size > 5.0f))
+    if (On_Screen && (phalos->NumHalos() > 0) && !(this->docked & (UnitType::DOCKED | UnitType::DOCKED_INSIDE)) &&
+        (Apparent_Size > 5.0f))
     {
         Vector linaccel = this->GetAcceleration();
         Vector angaccel = this->GetAngularAcceleration();
@@ -597,19 +589,20 @@ void GameUnit<UnitType>::Draw(const Transformation &parent, const Matrix &parent
         float cmas = this->computer.max_ab_speed() * this->computer.max_ab_speed();
         if (cmas == 0)
             cmas = 1;
-        Vector Scale(1, 1, 1); //Now, HaloSystem handles that
-        //WARNING: cmas is not a valid maximum speed for the upcoming multi-direction thrusters,
-        //nor is maxaccel. Instead, each halo should have its own limits specified in units.csv
+        Vector Scale(1, 1, 1); // Now, HaloSystem handles that
+        // WARNING: cmas is not a valid maximum speed for the upcoming multi-direction thrusters,
+        // nor is maxaccel. Instead, each halo should have its own limits specified in units.csv
         float nebd = (_Universe->AccessCamera()->GetNebula() == this->nebula && this->nebula != nullptr) ? -1 : 0;
         float hulld = this->GetHull() > 0 ? damagelevel : 1.0;
         phalos->Draw(wmat, Scale, cloak, nebd, hulld, velocity, linaccel, angaccel, maxaccel, cmas, this->faction);
     }
-    if (On_Screen && !UnitType::graphicOptions.NoDamageParticles && !(this->docked & (UnitType::DOCKED | UnitType::DOCKED_INSIDE)))
+    if (On_Screen && !UnitType::graphicOptions.NoDamageParticles &&
+        !(this->docked & (UnitType::DOCKED | UnitType::DOCKED_INSIDE)))
     {
         if (damagelevel < .99 && this->nummesh() > 0 && this->GetHull() > 0)
         {
-            unsigned int switcher = (damagelevel > .8) ? 1
-                                                       : (damagelevel > .6) ? 2 : (damagelevel > .4) ? 3 : (damagelevel > .2) ? 4 : 5;
+            unsigned int switcher =
+                (damagelevel > .8) ? 1 : (damagelevel > .6) ? 2 : (damagelevel > .4) ? 3 : (damagelevel > .2) ? 4 : 5;
             sparkle_accum += GetElapsedTime() * game_options.sparklerate;
             int spawn = (int)(sparkle_accum);
             sparkle_accum -= spawn;
@@ -624,7 +617,8 @@ void GameUnit<UnitType>::Draw(const Transformation &parent, const Matrix &parent
                 case 3:
                     LaunchOneParticle(*ctm, this->GetVelocity(), ((long)this) + 61, this, damagelevel, this->faction);
                 case 2:
-                    LaunchOneParticle(*ctm, this->GetVelocity(), ((long)this) + 65537, this, damagelevel, this->faction);
+                    LaunchOneParticle(*ctm, this->GetVelocity(), ((long)this) + 65537, this, damagelevel,
+                                      this->faction);
                 default:
                     LaunchOneParticle(*ctm, this->GetVelocity(), ((long)this) + 257, this, damagelevel, this->faction);
                 }
@@ -641,14 +635,12 @@ void GameUnit<UnitType>::Draw(const Transformation &parent, const Matrix &parent
     }
 }
 
-template <class UnitType>
-void GameUnit<UnitType>::Draw(const Transformation &quat)
+template <class UnitType> void GameUnit<UnitType>::Draw(const Transformation &quat)
 {
     Draw(quat, identity_matrix);
 }
 
-template <class UnitType>
-void GameUnit<UnitType>::Draw()
+template <class UnitType> void GameUnit<UnitType>::Draw()
 {
     Draw(identity_transformation, identity_matrix);
 }
@@ -675,7 +667,7 @@ static void parseFloat4(const std::string &s, float value[4])
         value[i++] = parseFloat(s.substr(ini, end = s.find_first_of(',', ini)));
         ini = ((end == string::npos) ? end : (end + 1));
     }
-    //if (i >= 4 && ini != string::npos) {
+    // if (i >= 4 && ini != string::npos) {
     //    BOOST_LOG_TRIVIAL(info) << boost::format("WARNING: invalid float4: %1%") % s;
     //}
     while (i < 4)
@@ -684,8 +676,7 @@ static void parseFloat4(const std::string &s, float value[4])
     }
 }
 
-template <class UnitType>
-void GameUnit<UnitType>::applyTechniqueOverrides(const map<string, string> &overrides)
+template <class UnitType> void GameUnit<UnitType>::applyTechniqueOverrides(const map<string, string> &overrides)
 {
     for (vector<Mesh *>::iterator mesh = this->meshdata.begin(); mesh != this->meshdata.end(); ++mesh)
     {
@@ -731,10 +722,12 @@ void GameUnit<UnitType>::applyTechniqueOverrides(const map<string, string> &over
     }
 }
 
-template <class UnitType>
-Matrix GameUnit<UnitType>::WarpMatrix(const Matrix &ctm) const
+template <class UnitType> Matrix GameUnit<UnitType>::WarpMatrix(const Matrix &ctm) const
 {
-    if (this->GetWarpVelocity().MagnitudeSquared() < (game_options.warp_stretch_cutoff * game_options.warp_stretch_cutoff * game_options.game_speed * game_options.game_speed) || (game_options.only_stretch_in_warp && this->graphicOptions.InWarp == 0))
+    if (this->GetWarpVelocity().MagnitudeSquared() <
+            (game_options.warp_stretch_cutoff * game_options.warp_stretch_cutoff * game_options.game_speed *
+             game_options.game_speed) ||
+        (game_options.only_stretch_in_warp && this->graphicOptions.InWarp == 0))
     {
         return ctm;
     }
@@ -743,14 +736,23 @@ Matrix GameUnit<UnitType>::WarpMatrix(const Matrix &ctm) const
         Matrix k(ctm);
 
         float speed = this->GetWarpVelocity().Magnitude();
-        float stretchregion0length = game_options.warp_stretch_region0_max * (speed - (game_options.warp_stretch_cutoff * game_options.game_speed)) / ((game_options.warp_stretch_max_region0_speed * game_options.game_speed) - (game_options.warp_stretch_cutoff * game_options.game_speed));
-        float stretchlength =
-            (game_options.warp_stretch_max - game_options.warp_stretch_region0_max) * (speed - (game_options.warp_stretch_max_region0_speed * game_options.game_speed)) / ((game_options.warp_stretch_max_speed * game_options.game_speed) - (game_options.warp_stretch_max_region0_speed * game_options.game_speed) + .06125f) + game_options.warp_stretch_region0_max;
+        float stretchregion0length = game_options.warp_stretch_region0_max *
+                                     (speed - (game_options.warp_stretch_cutoff * game_options.game_speed)) /
+                                     ((game_options.warp_stretch_max_region0_speed * game_options.game_speed) -
+                                      (game_options.warp_stretch_cutoff * game_options.game_speed));
+        float stretchlength = (game_options.warp_stretch_max - game_options.warp_stretch_region0_max) *
+                                  (speed - (game_options.warp_stretch_max_region0_speed * game_options.game_speed)) /
+                                  ((game_options.warp_stretch_max_speed * game_options.game_speed) -
+                                   (game_options.warp_stretch_max_region0_speed * game_options.game_speed) + .06125f) +
+                              game_options.warp_stretch_region0_max;
         if (stretchlength > game_options.warp_stretch_max)
             stretchlength = game_options.warp_stretch_max;
         if (stretchregion0length > game_options.warp_stretch_region0_max)
             stretchregion0length = game_options.warp_stretch_region0_max;
-        ScaleMatrix(k, Vector(1, 1, 1 + (speed > (game_options.warp_stretch_max_region0_speed * game_options.game_speed) ? stretchlength : stretchregion0length)));
+        ScaleMatrix(k, Vector(1, 1,
+                              1 + (speed > (game_options.warp_stretch_max_region0_speed * game_options.game_speed)
+                                       ? stretchlength
+                                       : stretchregion0length)));
         return k;
     }
 }
@@ -778,7 +780,7 @@ void GameUnit< UnitType >::SwapInHalos()
 #endif
 
 /////////////////////////////////////////////////////
-//explicit instantiations, added by chuck_starchaser:
+// explicit instantiations, added by chuck_starchaser:
 
 #include "cmd/asteroid_generic.h"
 template class GameUnit<Asteroid>;

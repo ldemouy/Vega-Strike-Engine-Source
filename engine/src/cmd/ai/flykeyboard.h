@@ -14,7 +14,7 @@ class FlyByKeyboard : public FlyByWire
     Vector axis_key;
     unsigned int last_jumped;
 
-protected:
+  protected:
     enum joy_mode_enum
     {
         joyModeNormal = 0,
@@ -23,15 +23,15 @@ protected:
         joyModeRoll = 4,
         joyModeBank = 8
     };
-    char joy_mode; //do not mix different modes
-protected:
+    char joy_mode; // do not mix different modes
+  protected:
     void KeyboardUp(float val);
     void KeyboardRight(float val);
     void KeyboardRollRight(float val);
     float clamp_axis(float v);
     float reduce_axis(float v);
 
-public:
+  public:
     static void SwitchWebcam(const KBData &, KBSTATE);
     static void SwitchSecured(const KBData &, KBSTATE);
     static void ChangeCommStatus(const KBData &, KBSTATE);
@@ -79,7 +79,7 @@ public:
     FlyByKeyboard(unsigned int whichplayer);
     virtual void Destroy();
     virtual ~FlyByKeyboard();
-    void Execute(bool); //should we reset our ang velocity
+    void Execute(bool); // should we reset our ang velocity
     void Execute();
 };
 

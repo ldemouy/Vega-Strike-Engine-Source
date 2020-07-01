@@ -1,6 +1,7 @@
 #ifndef HARD_CODED_SCRIPTS_H_
 #define HARD_CODED_SCRIPTS_H_
 
+#include "ai/order.h"
 typedef void CCScript(Order *script, Unit *un);
 
 CCScript AfterburnerSlide;

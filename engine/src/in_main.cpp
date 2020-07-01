@@ -18,15 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-#include <queue>
 #include <list>
+#include <queue>
 using std::list;
 using std::queue;
 
+#include "in_handler.h"
+#include "in_joystick.h"
 #include "in_kb.h"
 #include "in_mouse.h"
-#include "in_joystick.h"
-#include "in_handler.h"
 
 extern KBSTATE keyState[LAST_MODIFIER][KEYMAP_SIZE];
 

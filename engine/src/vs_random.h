@@ -69,7 +69,7 @@ class VSRandom
 #undef NN_CONSTANT
     unsigned int mti; /* mti==N+1 means mt[N] is not initialized */
     /* initializes mt[N] with a seed */
-public:
+  public:
     VSRandom(unsigned int s) : mti(N() + 1)
     {
         init_genrand(s);
@@ -79,8 +79,7 @@ public:
         mt[0] = s & 0xffffffffUL;
         for (mti = 1; mti < N(); mti++)
         {
-            mt[mti] =
-                (1812433253UL * (mt[mti - 1] ^ (mt[mti - 1] >> 30)) + mti);
+            mt[mti] = (1812433253UL * (mt[mti - 1] ^ (mt[mti - 1] >> 30)) + mti);
             /*
              * See Knuth TAOCP Vol2. 3	rd Ed. P.106 for multiplier.
              * In the previous versions, MSB	s of the seed affect
@@ -92,10 +91,10 @@ public:
         }
     }
     /*
- * initialize by an array with array-length
- * init_key is the array for initializing keys
- * key_length is its length
- */
+     * initialize by an array with array-length
+     * init_key is the array for initializing keys
+     * key_length is its length
+     */
     VSRandom(unsigned int init_key[], unsigned int key_length) : mti(N() + 1)
     {
         unsigned int i, j, k;
@@ -106,7 +105,7 @@ public:
         for (; k; k--)
         {
             mt[i] = (mt[i] ^ ((mt[i - 1] ^ (mt[i - 1] >> 30)) * 1664525UL)) + init_key[j] + j; /* non linear */
-            mt[i] &= 0xffffffffUL;                                                             /* for WORDSIZE > 32 machines */
+            mt[i] &= 0xffffffffUL; /* for WORDSIZE > 32 machines */
             i++;
             j++;
             if (i >= N())

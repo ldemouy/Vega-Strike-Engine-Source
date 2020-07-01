@@ -16,8 +16,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-#include <Python.h>
 #include "audio/test.h"
+#include <Python.h>
 #include <memory>
 #if defined(HAVE_SDL)
 #include <SDL/SDL.h>
@@ -30,32 +30,31 @@
 #include <direct.h>
 #include <process.h>
 #endif
+#include "aldrv/audiolib.h"
+#include "cmd/music.h"
+#include "cmd/script/mission.h"
+#include "cmd/unit.h"
+#include "cmd/unit_factory.h"
+#include "config_xml.h"
+#include "force_feedback.h"
+#include "gamemenu.h"
+#include "gfx/animation.h"
+#include "gfx/cockpit.h"
+#include "gfx/hud.h"
+#include "gfx/masks.h"
 #include "gldrv/gfxlib.h"
+#include "gldrv/winsys.h"
 #include "in_kb.h"
 #include "lin_time.h"
 #include "main_loop.h"
-#include "config_xml.h"
-#include "cmd/script/mission.h"
-#include "aldrv/audiolib.h"
-#include "config_xml.h"
-#include "vsfilesystem.h"
-#include "vs_globals.h"
-#include "gfx/animation.h"
-#include "cmd/unit.h"
-#include "gfx/cockpit.h"
 #include "python/init.h"
-#include "savegame.h"
-#include "force_feedback.h"
-#include "gfx/hud.h"
-#include "gldrv/winsys.h"
-#include "universe_util.h"
-#include "universe.h"
 #include "save_util.h"
-#include "gfx/masks.h"
-#include "cmd/music.h"
+#include "savegame.h"
 #include "ship_commands.h"
-#include "gamemenu.h"
-#include "cmd/unit_factory.h"
+#include "universe.h"
+#include "universe_util.h"
+#include "vs_globals.h"
+#include "vsfilesystem.h"
 
 #include "audio/SceneManager.h"
 #include "audio/TemplateManager.h"
@@ -75,8 +74,8 @@
 #endif
 
 #include <boost/log/core.hpp>
-#include <boost/log/trivial.hpp>
 #include <boost/log/expressions.hpp>
+#include <boost/log/trivial.hpp>
 
 #include "options.h"
 
@@ -95,7 +94,7 @@ Universe *_Universe;
 TextPlane *bs_tp = nullptr;
 char SERVER = 0;
 
-//false if command line option --net is given to start without network
+// false if command line option --net is given to start without network
 static bool ignore_network = true;
 
 void enableNetwork(bool usenetwork)
@@ -109,8 +108,8 @@ void enableNetwork(bool usenetwork)
 
 void setup_game_data()
 {
-    //pass in config file l8r??
-    g_game.audio_frequency_mode = 4; //22050/16
+    // pass in config file l8r??
+    g_game.audio_frequency_mode = 4; // 22050/16
     g_game.sound_enabled = 1;
     g_game.use_textures = 1;
     g_game.use_ship_textures = 0;
@@ -184,7 +183,7 @@ char mission_name[1024];
 void bootstrap_main_loop();
 void bootstrap_first_loop();
 #if defined(WITH_MACOSX_BUNDLE)
-//WTF! this causes windowed creation to fail... please justify yourself ;-)  #undef main
+// WTF! this causes windowed creation to fail... please justify yourself ;-)  #undef main
 #endif
 void nothinghappens(unsigned int, unsigned int, bool, int, int)
 {
@@ -307,12 +306,12 @@ int main(int argc, char *argv[])
         srand(time(nullptr));
     }
     else
-    { //in benchmark mode, always use the same seed
+    { // in benchmark mode, always use the same seed
         srand(171070);
     }
-    //this sets up the vegastrike config variable
+    // this sets up the vegastrike config variable
     setup_game_data();
-    //loads the configuration file .vegastrike/vegastrike.config from home dir if such exists
+    // loads the configuration file .vegastrike/vegastrike.config from home dir if such exists
     {
         string subdir = ParseCommandLine(argc, argv);
         cerr << "GOT SUBDIR ARG = " << subdir << endl;
@@ -321,7 +320,7 @@ int main(int argc, char *argv[])
             CONFIGFILE = new char[42];
             sprintf(CONFIGFILE, "vegastrike.config");
         }
-        //Specify the config file and the possible mod subdir to play
+        // Specify the config file and the possible mod subdir to play
         VSFileSystem::InitPaths(CONFIGFILE, subdir);
     }
 
@@ -351,7 +350,7 @@ int main(int argc, char *argv[])
         return exitcode;
     }
 
-    //might overwrite the default mission with the command line
+    // might overwrite the default mission with the command line
     InitUnitTables();
 #ifdef HAVE_PYTHON
     Python::init();
@@ -382,8 +381,8 @@ int main(int argc, char *argv[])
     initALRenderer();
     initScenes();
 
-    //Register commands
-    //COmmand Interpretor Seems to break VC8, so I'm leaving disabled for now - Patrick, Dec 24
+    // Register commands
+    // COmmand Interpretor Seems to break VC8, so I'm leaving disabled for now - Patrick, Dec 24
     if (game_options.command_interpretor)
     {
         CommandInterpretor = new commandI;
@@ -393,7 +392,7 @@ int main(int argc, char *argv[])
     TheTopLevelUnit = UnitFactory::createUnit();
     _Universe->Loop(bootstrap_first_loop);
 
-    //Unregister commands - and cleanup memory
+    // Unregister commands - and cleanup memory
     UninitShipCommands();
 
     closeRenderer();
@@ -431,11 +430,11 @@ void bootstrap_draw(const std::string &message, Animation *newSplashScreen)
     {
         return;
     }
-    Music::MuzakCycle(); //Allow for loading music...
+    Music::MuzakCycle(); // Allow for loading music...
     if (SplashScreen == nullptr && newSplashScreen == nullptr)
     {
-        //if there's no splashscreen, we don't draw on it
-        //this happens, when the splash screens texture is loaded
+        // if there's no splashscreen, we don't draw on it
+        // this happens, when the splash screens texture is loaded
         return;
     }
 
@@ -464,7 +463,7 @@ void bootstrap_draw(const std::string &message, Animation *newSplashScreen)
     GFXLoadMatrixModel(tmp);
     GFXBeginScene();
 
-    bs_tp->SetPos(-.99, -.97); //Leave a little bit of room for the bottoms of characters.
+    bs_tp->SetPos(-.99, -.97); // Leave a little bit of room for the bottoms of characters.
     bs_tp->SetCharSize(.4, .8);
     ScaleMatrix(tmp, Vector(6500, 6500, 0));
     GFXLoadMatrixModel(tmp);
@@ -475,12 +474,15 @@ void bootstrap_draw(const std::string &message, Animation *newSplashScreen)
         {
             ani->UpdateAllFrame();
         }
-        //Investigate if bracing error
+        // Investigate if bracing error
         {
-            ani->DrawNow(tmp); //VSFileSystem::vs_fprintf( stderr, "(new?) splash screen ('animation'?) %d.  ", (long long)ani ); //temporary, by chuck
+            ani->DrawNow(tmp); // VSFileSystem::vs_fprintf( stderr, "(new?) splash screen ('animation'?) %d.  ", (long
+                               // long)ani ); //temporary, by chuck
         }
     }
-    bs_tp->Draw(game_options.default_boot_message.length() > 0 ? game_options.default_boot_message : message.length() > 0 ? message : game_options.initial_boot_message);
+    bs_tp->Draw(game_options.default_boot_message.length() > 0
+                    ? game_options.default_boot_message
+                    : message.length() > 0 ? message : game_options.initial_boot_message);
 
     GFXHudMode(GFXFALSE);
     GFXEndScene();
@@ -573,7 +575,11 @@ void bootstrap_first_loop()
 
 void SetStartupView(Cockpit *cp)
 {
-    cp->SetView(game_options.startup_cockpit_view == "view_target" ? CP_TARGET : (game_options.startup_cockpit_view == "back" ? CP_BACK : (game_options.startup_cockpit_view == "chase" ? CP_CHASE : CP_FRONT)));
+    cp->SetView(game_options.startup_cockpit_view == "view_target"
+                    ? CP_TARGET
+                    : (game_options.startup_cockpit_view == "back"
+                           ? CP_BACK
+                           : (game_options.startup_cockpit_view == "chase" ? CP_CHASE : CP_FRONT)));
 }
 void bootstrap_main_loop()
 {
@@ -586,7 +592,7 @@ void bootstrap_main_loop()
 
         mission->initMission();
 
-        UniverseUtil::showSplashScreen(""); //Twice for double or triple-buffering
+        UniverseUtil::showSplashScreen(""); // Twice for double or triple-buffering
         UniverseUtil::showSplashScreen("");
 
         QVector pos;
@@ -607,7 +613,7 @@ void bootstrap_main_loop()
 
             if (!ignore_network)
             {
-                //In network mode, test if all player sections are present
+                // In network mode, test if all player sections are present
                 if (pname == "")
                 {
                     cout << "Missing or incomlpete section for player " << p << endl;
@@ -656,14 +662,8 @@ void bootstrap_main_loop()
 
         if (game_options.load_last_savegame)
         {
-            _Universe->AccessCockpit(k)->savegame->ParseSaveGame(savegamefile,
-                                                                 mysystem,
-                                                                 mysystem,
-                                                                 pos,
-                                                                 setplayerXloc,
-                                                                 credits,
-                                                                 packedInfo,
-                                                                 k);
+            _Universe->AccessCockpit(k)->savegame->ParseSaveGame(savegamefile, mysystem, mysystem, pos, setplayerXloc,
+                                                                 credits, packedInfo, k);
         }
         else
         {
@@ -691,7 +691,7 @@ void bootstrap_main_loop()
         SetStarSystemLoading(true);
         InitializeInput();
 
-        vs_config->bindKeys(); //gotta do this before we do ai
+        vs_config->bindKeys(); // gotta do this before we do ai
 
         createObjects(playersaveunit, ss, playerNloc, savefiles);
         while (!savedun.empty())
@@ -726,10 +726,7 @@ void bootstrap_main_loop()
             }
         }
 
-        if (mission->getVariable("savegame",
-                                 "")
-                    .length() != 0 &&
-            game_options.dockOnLoad)
+        if (mission->getVariable("savegame", "").length() != 0 && game_options.dockOnLoad)
         {
             for (size_t i = 0; i < _Universe->numPlayers(); i++)
             {
@@ -740,7 +737,7 @@ void bootstrap_main_loop()
 
         if (game_options.load_last_savegame)
         {
-            //Don't write if we didn't load...
+            // Don't write if we didn't load...
             for (uint32_t i = 0; i < _Universe->numPlayers(); ++i)
             {
                 WriteSaveGame(_Universe->AccessCockpit(i), false);
@@ -752,30 +749,29 @@ void bootstrap_main_loop()
             _Universe->AccessCockpit(i)->savegame->LoadSavedMissions();
         }
         _Universe->Loop(main_loop);
-        ///return to idle func which now should call main_loop mohahahah
+        /// return to idle func which now should call main_loop mohahahah
         if (game_options.auto_hide)
         {
             UniverseUtil::hideSplashScreen();
         }
     }
-    ///Draw Texture
+    /// Draw Texture
 }
 
-const char helpmessage[] =
-    "Command line options for vegastrike\n"
-    "\n"
-    " -D -d \t Specify data directory\n"
-    " -N -n \t Number of players\n"
-    " -M -m \t Specify a mod to play\n"
-    " -P -p \t Specify player location\n"
-    " -J -j \t Start in a specific system\n"
-    " -A -a \t Normal resolution (800x600)\n"
-    " -H -h \t High resolution (1024x768)\n"
-    " -V -v \t Super high resolution (1280x1024)\n"
-    " --net \t Networking Enabled (Experimental)\n"
-    " --debug[=#] \t Enable debugging output, 1 major warnings, 2 medium, 3 developer notes\n"
-    " --test-audio \t Run audio tests\n"
-    "\n";
+const char helpmessage[] = "Command line options for vegastrike\n"
+                           "\n"
+                           " -D -d \t Specify data directory\n"
+                           " -N -n \t Number of players\n"
+                           " -M -m \t Specify a mod to play\n"
+                           " -P -p \t Specify player location\n"
+                           " -J -j \t Start in a specific system\n"
+                           " -A -a \t Normal resolution (800x600)\n"
+                           " -H -h \t High resolution (1024x768)\n"
+                           " -V -v \t Super high resolution (1280x1024)\n"
+                           " --net \t Networking Enabled (Experimental)\n"
+                           " --debug[=#] \t Enable debugging output, 1 major warnings, 2 medium, 3 developer notes\n"
+                           " --test-audio \t Run audio tests\n"
+                           "\n";
 std::string ParseCommandLine(int argc, char **lpCmdLine)
 {
     std::string st;
@@ -792,7 +788,7 @@ std::string ParseCommandLine(int argc, char **lpCmdLine)
             {
             case 'd':
             case 'D':
-                //Specifying data directory
+                // Specifying data directory
                 if (lpCmdLine[i][2] == 0)
                 {
                     cout << "Option -D requires an argument" << endl;
@@ -836,21 +832,22 @@ std::string ParseCommandLine(int argc, char **lpCmdLine)
                 break;
             case 'L':
             case 'l':
-                if (3 == sscanf(lpCmdLine[i] + 2, "%lf,%lf,%lf", &PlayerLocation.i, &PlayerLocation.j, &PlayerLocation.k))
+                if (3 ==
+                    sscanf(lpCmdLine[i] + 2, "%lf,%lf,%lf", &PlayerLocation.i, &PlayerLocation.j, &PlayerLocation.k))
                     SetPlayerLoc(PlayerLocation, true);
                 break;
             case 'J':
-            case 'j': //low rez
+            case 'j': // low rez
                 st = string((lpCmdLine[i]) + 2);
                 SetPlayerSystem(st, true);
                 break;
-            case 'A': //average rez
+            case 'A': // average rez
             case 'a':
                 g_game.y_resolution = 600;
                 g_game.x_resolution = 800;
                 break;
             case 'H':
-            case 'h': //high rez
+            case 'h': // high rez
                 g_game.y_resolution = 768;
                 g_game.x_resolution = 1024;
                 break;
@@ -863,7 +860,7 @@ std::string ParseCommandLine(int argc, char **lpCmdLine)
             case 'g':
                 break;
             case '-':
-                //long options
+                // long options
                 if (strcmp(lpCmdLine[i], "--benchmark") == 0)
                 {
                     benchmark = atof(lpCmdLine[i + 1]);
@@ -871,7 +868,7 @@ std::string ParseCommandLine(int argc, char **lpCmdLine)
                 }
                 else if (strcmp(lpCmdLine[i], "--net") == 0)
                 {
-                    //don't ignore the network section of the config file
+                    // don't ignore the network section of the config file
                     ignore_network = false;
                 }
                 else if (strcmp(lpCmdLine[i], "--help") == 0)
@@ -898,7 +895,7 @@ std::string ParseCommandLine(int argc, char **lpCmdLine)
         }
         else
         {
-            //no "-" before it - it's the mission name
+            // no "-" before it - it's the mission name
             strncpy(mission_name, lpCmdLine[i], 1023);
             mission_name[1023] = '\0';
         }

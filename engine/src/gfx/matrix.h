@@ -21,16 +21,16 @@
 #ifndef _MATRIX_H
 #define _MATRIX_H
 
-#include "vec.h"
 #include "endianness.h"
+#include "vec.h"
 #include "vs_globals.h"
 
 class Matrix
 {
-private:
+  private:
     float operator[](int i);
 
-public:
+  public:
     float r[9];
     QVector p;
 
@@ -39,7 +39,7 @@ public:
         r[0] = r[1] = r[2] = r[3] = r[4] = r[5] = r[6] = r[7] = r[8] = 0;
     }
 
-    //Convert the matrix into network byte order
+    // Convert the matrix into network byte order
     void netswap()
     {
         for (int i = 0; i < 9; i++)
@@ -101,10 +101,7 @@ public:
     inline Matrix operator*(const Matrix &m2) const;
 };
 
-const Matrix identity_matrix(1, 0, 0,
-                             0, 1, 0,
-                             0, 0, 1,
-                             QVector(0, 0, 0));
+const Matrix identity_matrix(1, 0, 0, 0, 1, 0, 0, 0, 1, QVector(0, 0, 0));
 
 /** moves a vector struct to a matrix */
 
@@ -121,7 +118,8 @@ inline void ScaleMatrix(Matrix &RESTRICT matrix, const Vector &RESTRICT scale)
     matrix.r[8] *= scale.k;
 }
 
-inline void VectorAndPositionToMatrix(Matrix &matrix, const Vector &v1, const Vector &v2, const Vector &v3, const QVector &pos)
+inline void VectorAndPositionToMatrix(Matrix &matrix, const Vector &v1, const Vector &v2, const Vector &v3,
+                                      const QVector &pos)
 {
     matrix.r[0] = v1.i;
     matrix.r[1] = v1.j;
@@ -136,7 +134,8 @@ inline void VectorAndPositionToMatrix(Matrix &matrix, const Vector &v1, const Ve
     matrix.r[8] = v3.k;
     matrix.p = pos;
 }
-inline Matrix::Matrix(const Vector &RESTRICT v1, const Vector &RESTRICT v2, const Vector &RESTRICT v3, const QVector &RESTRICT pos)
+inline Matrix::Matrix(const Vector &RESTRICT v1, const Vector &RESTRICT v2, const Vector &RESTRICT v3,
+                      const QVector &RESTRICT pos)
 {
     VectorAndPositionToMatrix(*this, v1, v2, v3, pos);
 }
@@ -169,15 +168,15 @@ inline void RotateAxisAngle(Matrix &RESTRICT tmp, const Vector &RESTRICT axis, c
     M(0, 0) = axis.i * axis.i * (1 - c) + c;
     M(0, 1) = axis.i * axis.j * (1 - c) - axis.k * s;
     M(0, 2) = axis.i * axis.k * (1 - c) + axis.j * s;
-    //M(0,3)=0;
+    // M(0,3)=0;
     M(1, 0) = axis.j * axis.i * (1 - c) + axis.k * s;
     M(1, 1) = axis.j * axis.j * (1 - c) + c;
     M(1, 2) = axis.j * axis.k * (1 - c) - axis.i * s;
-    //M(1,3)=0;
+    // M(1,3)=0;
     M(2, 0) = axis.i * axis.k * (1 - c) - axis.j * s;
     M(2, 1) = axis.j * axis.k * (1 - c) + axis.i * s;
     M(2, 2) = axis.k * axis.k * (1 - c) + c;
-    //M(2,3)=0;
+    // M(2,3)=0;
 #undef M
     tmp.p.Set(0, 0, 0);
 }
@@ -244,12 +243,11 @@ inline Vector Transform(const Matrix &t, const Vector &v)
                   t.p.k + v.i * t.r[2] + v.j * t.r[5] + v.k * t.r[8]);
 }
 
-//these vectors are going to be just normals...
+// these vectors are going to be just normals...
 inline Vector InvTransformNormal(const Matrix &t, const Vector &v)
 {
 #define M(A, B) (t.r[B * 3 + A])
-    return Vector(v.i * M(0, 0) + v.j * M(1, 0) + v.k * M(2, 0),
-                  v.i * M(0, 1) + v.j * M(1, 1) + v.k * M(2, 1),
+    return Vector(v.i * M(0, 0) + v.j * M(1, 0) + v.k * M(2, 0), v.i * M(0, 1) + v.j * M(1, 1) + v.k * M(2, 1),
                   v.i * M(0, 2) + v.j * M(1, 2) + v.k * M(2, 2));
 
 #undef M
@@ -257,8 +255,7 @@ inline Vector InvTransformNormal(const Matrix &t, const Vector &v)
 inline QVector InvTransformNormal(const Matrix &t, const QVector &v)
 {
 #define M(A, B) (t.r[B * 3 + A])
-    return QVector(v.i * M(0, 0) + v.j * M(1, 0) + v.k * M(2, 0),
-                   v.i * M(0, 1) + v.j * M(1, 1) + v.k * M(2, 1),
+    return QVector(v.i * M(0, 0) + v.j * M(1, 0) + v.k * M(2, 0), v.i * M(0, 1) + v.j * M(1, 1) + v.k * M(2, 1),
                    v.i * M(0, 2) + v.j * M(1, 2) + v.k * M(2, 2));
 
 #undef M
@@ -275,14 +272,12 @@ inline Vector InvTransform(const Matrix &t, const Vector &v)
 
 inline Vector TransformNormal(const Matrix &t, const Vector &v)
 {
-    return Vector(v.i * t.r[0] + v.j * t.r[3] + v.k * t.r[6],
-                  v.i * t.r[1] + v.j * t.r[4] + v.k * t.r[7],
+    return Vector(v.i * t.r[0] + v.j * t.r[3] + v.k * t.r[6], v.i * t.r[1] + v.j * t.r[4] + v.k * t.r[7],
                   v.i * t.r[2] + v.j * t.r[5] + v.k * t.r[8]);
 }
 inline QVector TransformNormal(const Matrix &t, const QVector &v)
 {
-    return QVector(v.i * t.r[0] + v.j * t.r[3] + v.k * t.r[6],
-                   v.i * t.r[1] + v.j * t.r[4] + v.k * t.r[7],
+    return QVector(v.i * t.r[0] + v.j * t.r[3] + v.k * t.r[6], v.i * t.r[1] + v.j * t.r[4] + v.k * t.r[7],
                    v.i * t.r[2] + v.j * t.r[5] + v.k * t.r[8]);
 }
 
@@ -309,9 +304,9 @@ inline QVector InvScaleTransform(const Matrix &trans, QVector pos)
 #define h (trans.r[5])
 #define i (trans.r[8])
     double factor = 1.0F / (-c * e * g + b * f * g + c * d * h - a * f * h - b * d * i + a * e * i);
-    return QVector(pos.Dot(QVector(e * i - f * h, c * h - b * i,
-                                   b * f - c * e)),
-                   pos.Dot(QVector(f * g - d * i, a * i - c * g, c * d - a * f)), pos.Dot(QVector(d * h - e * g, b * g - a * h, a * e - b * d))) *
+    return QVector(pos.Dot(QVector(e * i - f * h, c * h - b * i, b * f - c * e)),
+                   pos.Dot(QVector(f * g - d * i, a * i - c * g, c * d - a * f)),
+                   pos.Dot(QVector(d * h - e * g, b * g - a * h, a * e - b * d))) *
            factor;
 
 #undef a
@@ -361,20 +356,20 @@ inline void Rotate(Matrix &tmp, const Vector &axis, float angle)
 {
     double c = cos(angle);
     double s = sin(angle);
-//Row, COl
+// Row, COl
 #define M(a, b) (tmp.r[b * 3 + a])
     M(0, 0) = axis.i * axis.i * (1 - c) + c;
     M(0, 1) = axis.i * axis.j * (1 - c) - axis.k * s;
     M(0, 2) = axis.i * axis.k * (1 - c) + axis.j * s;
-    //M(0,3)=0;
+    // M(0,3)=0;
     M(1, 0) = axis.j * axis.i * (1 - c) + axis.k * s;
     M(1, 1) = axis.j * axis.j * (1 - c) + c;
     M(1, 2) = axis.j * axis.k * (1 - c) - axis.i * s;
-    //M(1,3)=0;
+    // M(1,3)=0;
     M(2, 0) = axis.i * axis.k * (1 - c) - axis.j * s;
     M(2, 1) = axis.j * axis.k * (1 - c) + axis.i * s;
     M(2, 2) = axis.k * axis.k * (1 - c) + c;
-    //M(2,3)=0;
+    // M(2,3)=0;
 #undef M
     tmp.p.Set(0, 0, 0);
 }
@@ -382,8 +377,12 @@ struct DrawContext
 {
     Matrix m;
     class GFXVertexList *vlist;
-    DrawContext() {}
-    DrawContext(const Matrix &a, GFXVertexList *vl) : m(a), vlist(vl) {}
+    DrawContext()
+    {
+    }
+    DrawContext(const Matrix &a, GFXVertexList *vl) : m(a), vlist(vl)
+    {
+    }
 };
 
 #endif

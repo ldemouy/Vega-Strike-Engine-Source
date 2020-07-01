@@ -5,10 +5,10 @@
 class UnitContainer;
 class PythonMissionBaseClass
 {
-protected:
+  protected:
     virtual void Destructor();
 
-public:
+  public:
     std::vector<UnitContainer *> relevant_units;
     PythonMissionBaseClass();
     virtual void Destroy()

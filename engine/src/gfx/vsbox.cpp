@@ -8,7 +8,8 @@
  */
 string tostring(const Vector &v)
 {
-    return std::string("(") + XMLSupport::tostring(v.i) + ", " + XMLSupport::tostring(v.j) + ", " + XMLSupport::tostring(v.k) + ")";
+    return std::string("(") + XMLSupport::tostring(v.i) + ", " + XMLSupport::tostring(v.j) + ", " +
+           XMLSupport::tostring(v.k) + ")";
 }
 
 Box::Box(const Vector &corner1, const Vector &corner2) : corner_min(corner1), corner_max(corner2)
@@ -20,7 +21,7 @@ Box::Box(const Vector &corner1, const Vector &corner2) : corner_min(corner1), co
     blendDst = ONE;
     Box *oldmesh;
     string hash_key = string("@@Box") + "#" + tostring(corner1) + "#" + tostring(corner2);
-    //cerr << "hashkey: " << hash_key << endl;
+    // cerr << "hashkey: " << hash_key << endl;
     if (0 != (oldmesh = (Box *)meshHashTable.Get(hash_key)))
     {
         *this = *oldmesh;
@@ -31,18 +32,18 @@ Box::Box(const Vector &corner1, const Vector &corner2) : corner_min(corner1), co
     int a = 0;
     GFXVertex *vertices = new GFXVertex[18];
 
-#define VERTEX(ax, ay, az)  \
-    do                      \
-    {                       \
-        vertices[a].x = ax; \
-        vertices[a].y = ay; \
-        vertices[a].z = az; \
-        vertices[a].i = ax; \
-        vertices[a].j = ay; \
-        vertices[a].k = az; \
-        vertices[a].s = 0;  \
-        vertices[a].t = 0;  \
-        a++;                \
+#define VERTEX(ax, ay, az)                                                                                             \
+    do                                                                                                                 \
+    {                                                                                                                  \
+        vertices[a].x = ax;                                                                                            \
+        vertices[a].y = ay;                                                                                            \
+        vertices[a].z = az;                                                                                            \
+        vertices[a].i = ax;                                                                                            \
+        vertices[a].j = ay;                                                                                            \
+        vertices[a].k = az;                                                                                            \
+        vertices[a].s = 0;                                                                                             \
+        vertices[a].t = 0;                                                                                             \
+        a++;                                                                                                           \
     } while (0)
 
     VERTEX(corner_max.i, corner_min.j, corner_max.k);
@@ -78,7 +79,7 @@ Box::Box(const Vector &corner1, const Vector &corner2) : corner_min(corner1), co
     polys[0] = GFXQUAD;
     polys[1] = GFXQUADSTRIP;
     vlist = new GFXVertexList(polys, 18, vertices, 2, offsets);
-    //quadstrips[0] = new GFXVertexList(GFXQUADSTRIP,10,vertices);
+    // quadstrips[0] = new GFXVertexList(GFXQUADSTRIP,10,vertices);
     delete[] vertices;
 
     meshHashTable.Put(hash_key, this);

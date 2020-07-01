@@ -5,88 +5,95 @@
 #define __AUDIO_SIMPLESOUND_H__INCLUDED__
 
 #include "Exceptions.h"
-#include "Types.h"
 #include "Format.h"
 #include "Sound.h"
 #include "SoundBuffer.h"
+#include "Types.h"
 
-#include <memory>
 #include "vsfilesystem.h"
+#include <memory>
 
 namespace Audio
 {
 
-    // Forward definitions
-    class Stream;
+// Forward definitions
+class Stream;
 
-    /**
-     * Simple Sound abstract class
-     *
-     * @remarks This partial implementation implements foreground loading of files 
-     *      using the codec registry.
-     *      @par No background loading is implemented, meaning all requests for load, 
-     *      even with wait=false, are processed in the foreground.
-     *      @par There's a possibility for streaming given the packetized pulling
-     *      architecture. Renderers are not required to pull all packets from the stream,
-     *      and access to the Stream object is also provided for seeking back and forth.
-     *      @par Renderers still have to override (un)loadImpl() and abortLoad(). 
-     *      This refinement merely adds supporting methods for implementing them.
-     * @see Sound, BackgroundLoadingSound
-     *
-     */
-    class SimpleSound : public Sound
+/**
+ * Simple Sound abstract class
+ *
+ * @remarks This partial implementation implements foreground loading of files
+ *      using the codec registry.
+ *      @par No background loading is implemented, meaning all requests for load,
+ *      even with wait=false, are processed in the foreground.
+ *      @par There's a possibility for streaming given the packetized pulling
+ *      architecture. Renderers are not required to pull all packets from the stream,
+ *      and access to the Stream object is also provided for seeking back and forth.
+ *      @par Renderers still have to override (un)loadImpl() and abortLoad().
+ *      This refinement merely adds supporting methods for implementing them.
+ * @see Sound, BackgroundLoadingSound
+ *
+ */
+class SimpleSound : public Sound
+{
+  private:
+    std::shared_ptr<Stream> stream;
+    VSFileSystem::VSFileType type;
+
+  protected:
+    /** Internal constructor used by derived classes */
+    SimpleSound(const std::string &name, VSFileSystem::VSFileType type = VSFileSystem::UnknownFile,
+                bool streaming = false);
+
+  public:
+    virtual ~SimpleSound();
+
+    /** VSFileSystem File type */
+    VSFileSystem::VSFileType getType() const
     {
-    private:
-        std::shared_ptr<Stream> stream;
-        VSFileSystem::VSFileType type;
+        return type;
+    }
 
-    protected:
-        /** Internal constructor used by derived classes */
-        SimpleSound(const std::string &name, VSFileSystem::VSFileType type = VSFileSystem::UnknownFile, bool streaming = false);
+    // The following section contains supporting methods for accessing the stream.
+    // Subclasses need not bother with actual stream management, they need only worry
+    // about sending the samples to where they're needed.
+  protected:
+    /** Do we have an open stream? */
+    bool isStreamLoaded() const
+    {
+        return stream.get() != 0;
+    }
 
-    public:
-        virtual ~SimpleSound();
+    /** Initialize the stream.
+     * @remarks Calling this when the stream has already been initialized will
+     *      raise an ReasourceAlreadyLoadedException.
+     */
+    void loadStream();
 
-        /** VSFileSystem File type */
-        VSFileSystem::VSFileType getType() const { return type; }
+    /** Uninitialize the stream
+     * @remarks Calling this when isStreamLoaded() returns false will raise an
+     *      ResourceNotLoadedException.
+     */
+    void closeStream();
 
-        // The following section contains supporting methods for accessing the stream.
-        // Subclasses need not bother with actual stream management, they need only worry
-        // about sending the samples to where they're needed.
-    protected:
-        /** Do we have an open stream? */
-        bool isStreamLoaded() const { return stream.get() != 0; }
+    /** Get a pointer to the stream
+     * @remarks Calling this when isStreamLoaded() returns false will raise an
+     *      ResourceNotLoadedException.
+     */
+    std::shared_ptr<Stream> getStream() const;
 
-        /** Initialize the stream.
-         * @remarks Calling this when the stream has already been initialized will
-         *      raise an ReasourceAlreadyLoadedException.
-         */
-        void loadStream();
+    /** Read from the stream into the buffer
+     * @remarks Will throw EndOfStreamException when the end of the stream
+     *      is reached. Any other exception is probably fatal.
+     */
+    void readBuffer(SoundBuffer &buffer);
 
-        /** Uninitialize the stream
-         * @remarks Calling this when isStreamLoaded() returns false will raise an
-         *      ResourceNotLoadedException.
-         */
-        void closeStream();
-
-        /** Get a pointer to the stream
-         * @remarks Calling this when isStreamLoaded() returns false will raise an
-         *      ResourceNotLoadedException.
-         */
-        std::shared_ptr<Stream> getStream() const;
-
-        /** Read from the stream into the buffer 
-         * @remarks Will throw EndOfStreamException when the end of the stream
-         *      is reached. Any other exception is probably fatal.
-         */
-        void readBuffer(SoundBuffer &buffer);
-
-        // The following section contains basic Sound interface implementation
-        // functions provided by SimpleSound.
-    protected:
-        /** @copydoc Sound::abortLoad */
-        virtual void abortLoad();
-    };
+    // The following section contains basic Sound interface implementation
+    // functions provided by SimpleSound.
+  protected:
+    /** @copydoc Sound::abortLoad */
+    virtual void abortLoad();
+};
 
 }; // namespace Audio
 

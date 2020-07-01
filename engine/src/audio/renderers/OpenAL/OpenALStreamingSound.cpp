@@ -13,10 +13,10 @@
 #undef max
 #endif
 
-#include <utility>
 #include <list>
-#include <string>
 #include <memory>
+#include <string>
+#include <utility>
 
 using namespace Audio::__impl::OpenAL;
 
@@ -26,163 +26,161 @@ using namespace Audio::__impl::OpenAL;
 namespace Audio
 {
 
-    OpenALStreamingSound::OpenALStreamingSound(const std::string &name, VSFileSystem::VSFileType type,
-                                               uint32_t _bufferSamples) : SimpleSound(name, type, true),
-                                                                          bufferSamples(_bufferSamples)
-    {
-        for (size_t i = 0; i < NUM_BUFFERS; ++i)
-            bufferHandles[i] = AL_nullptr_BUFFER;
-    }
+OpenALStreamingSound::OpenALStreamingSound(const std::string &name, VSFileSystem::VSFileType type,
+                                           uint32_t _bufferSamples)
+    : SimpleSound(name, type, true), bufferSamples(_bufferSamples)
+{
+    for (size_t i = 0; i < NUM_BUFFERS; ++i)
+        bufferHandles[i] = AL_nullptr_BUFFER;
+}
 
-    OpenALStreamingSound::~OpenALStreamingSound()
-    {
-    }
+OpenALStreamingSound::~OpenALStreamingSound()
+{
+}
 
-    void OpenALStreamingSound::loadImpl(bool wait)
-    {
-        // just in case
-        unloadImpl();
+void OpenALStreamingSound::loadImpl(bool wait)
+{
+    // just in case
+    unloadImpl();
 
+    try
+    {
+
+        flags.loading = 1;
+
+        // load the stream
         try
         {
-
-            flags.loading = 1;
-
-            // load the stream
-            try
-            {
-                loadStream();
-            }
-            catch (const ResourceAlreadyLoadedException &e)
-            {
-                // Weird...
-                getStream()->seek(0);
-            }
-            std::shared_ptr<Stream> stream = getStream();
-
-            // setup formatted buffer
-            // if the format does not match an OpenAL built-in format, we must convert it.
-            targetFormat = stream->getFormat();
-            targetFormat.signedSamples = (targetFormat.bitsPerSample > 8);
-            targetFormat.nativeOrder = 1;
-            if (targetFormat.bitsPerSample > 8)
-            {
-                targetFormat.bitsPerSample = 16;
-            }
-            else
-            {
-                targetFormat.bitsPerSample = 8;
-            }
-
-            // Set capacity to a quarter second or 16k samples, whatever's bigger
-            // TODO: make it configurable. But first, implement a central configuration repository.
-            bufferSamples = std::max(16384U, targetFormat.sampleFrequency / 4);
-
-            // Prepare a buffer, so we avoid repeated allocation/deallocation
-            buffer.reserve(bufferSamples, targetFormat);
-
-            // Prepare AL buffers
-            clearAlError();
-            alGenBuffers(NUM_BUFFERS, bufferHandles);
-            checkAlError();
-
-            // Initialize the buffer queue
-            flushBuffers();
-
-            onLoaded(true);
+            loadStream();
         }
-        catch (const Exception &e)
+        catch (const ResourceAlreadyLoadedException &e)
         {
-            onLoaded(false);
-            throw e;
+            // Weird...
+            getStream()->seek(0);
         }
-    }
+        std::shared_ptr<Stream> stream = getStream();
 
-    void OpenALStreamingSound::flushBuffers()
-    {
-        // Mark as detached, so that readAndFlip() knows to initialize the source
-        // and streaming indices
-        readBufferIndex = 0;
-
-        // Mark the playBufferIndex as uninitialized, by setting it to NUM_BUFFERS
-        // readAndFlip will initialize it later.
-        playBufferIndex = NUM_BUFFERS;
-    }
-
-    void OpenALStreamingSound::unloadImpl()
-    {
-        if (isStreamLoaded())
+        // setup formatted buffer
+        // if the format does not match an OpenAL built-in format, we must convert it.
+        targetFormat = stream->getFormat();
+        targetFormat.signedSamples = (targetFormat.bitsPerSample > 8);
+        targetFormat.nativeOrder = 1;
+        if (targetFormat.bitsPerSample > 8)
         {
-            closeStream();
+            targetFormat.bitsPerSample = 16;
         }
-        if (bufferHandles[0] != AL_nullptr_BUFFER)
+        else
         {
-            alDeleteBuffers(sizeof(bufferHandles) / sizeof(bufferHandles[0]), bufferHandles);
-        }
-    }
-
-    ALBufferHandle OpenALStreamingSound::readAndFlip()
-    {
-        if (!isLoaded())
-        {
-            throw ResourceNotLoadedException(getName());
+            targetFormat.bitsPerSample = 8;
         }
 
-        // Check for a full queue
-        if (playBufferIndex == readBufferIndex)
-        {
-            return AL_nullptr_BUFFER;
-        }
+        // Set capacity to a quarter second or 16k samples, whatever's bigger
+        // TODO: make it configurable. But first, implement a central configuration repository.
+        bufferSamples = std::max(16384U, targetFormat.sampleFrequency / 4);
 
-        bufferStarts[readBufferIndex] = getStream()->getPosition();
+        // Prepare a buffer, so we avoid repeated allocation/deallocation
+        buffer.reserve(bufferSamples, targetFormat);
 
-        readBuffer(buffer);
-
-        // Break if there's no more data
-        if (buffer.getUsedBytes() == 0)
-        {
-            throw EndOfStreamException();
-        }
-
-        ALBufferHandle bufferHandle = bufferHandles[readBufferIndex];
-
+        // Prepare AL buffers
         clearAlError();
-        alBufferData(bufferHandle,
-                     asALFormat(targetFormat),
-                     buffer.getBuffer(), buffer.getUsedBytes(),
-                     targetFormat.sampleFrequency);
+        alGenBuffers(NUM_BUFFERS, bufferHandles);
         checkAlError();
 
-        if (playBufferIndex == NUM_BUFFERS)
-        {
-            playBufferIndex = readBufferIndex;
-        }
+        // Initialize the buffer queue
+        flushBuffers();
 
-        readBufferIndex = (readBufferIndex + 1) % NUM_BUFFERS;
-        return bufferHandle;
+        onLoaded(true);
     }
-
-    void OpenALStreamingSound::unqueueBuffer(ALBufferHandle buffer)
+    catch (const Exception &e)
     {
-        if (playBufferIndex < NUM_BUFFERS && buffer == bufferHandles[playBufferIndex])
-        {
-            playBufferIndex = (playBufferIndex + 1) % NUM_BUFFERS;
-        }
+        onLoaded(false);
+        throw e;
     }
+}
 
-    void OpenALStreamingSound::seek(double position)
+void OpenALStreamingSound::flushBuffers()
+{
+    // Mark as detached, so that readAndFlip() knows to initialize the source
+    // and streaming indices
+    readBufferIndex = 0;
+
+    // Mark the playBufferIndex as uninitialized, by setting it to NUM_BUFFERS
+    // readAndFlip will initialize it later.
+    playBufferIndex = NUM_BUFFERS;
+}
+
+void OpenALStreamingSound::unloadImpl()
+{
+    if (isStreamLoaded())
     {
-        if (!isLoaded())
-        {
-            throw ResourceNotLoadedException(getName());
-        }
-
-        getStream()->seek(position);
+        closeStream();
     }
-
-    Timestamp OpenALStreamingSound::getTimeBase() const
+    if (bufferHandles[0] != AL_nullptr_BUFFER)
     {
-        return bufferStarts[playBufferIndex];
+        alDeleteBuffers(sizeof(bufferHandles) / sizeof(bufferHandles[0]), bufferHandles);
     }
+}
+
+ALBufferHandle OpenALStreamingSound::readAndFlip()
+{
+    if (!isLoaded())
+    {
+        throw ResourceNotLoadedException(getName());
+    }
+
+    // Check for a full queue
+    if (playBufferIndex == readBufferIndex)
+    {
+        return AL_nullptr_BUFFER;
+    }
+
+    bufferStarts[readBufferIndex] = getStream()->getPosition();
+
+    readBuffer(buffer);
+
+    // Break if there's no more data
+    if (buffer.getUsedBytes() == 0)
+    {
+        throw EndOfStreamException();
+    }
+
+    ALBufferHandle bufferHandle = bufferHandles[readBufferIndex];
+
+    clearAlError();
+    alBufferData(bufferHandle, asALFormat(targetFormat), buffer.getBuffer(), buffer.getUsedBytes(),
+                 targetFormat.sampleFrequency);
+    checkAlError();
+
+    if (playBufferIndex == NUM_BUFFERS)
+    {
+        playBufferIndex = readBufferIndex;
+    }
+
+    readBufferIndex = (readBufferIndex + 1) % NUM_BUFFERS;
+    return bufferHandle;
+}
+
+void OpenALStreamingSound::unqueueBuffer(ALBufferHandle buffer)
+{
+    if (playBufferIndex < NUM_BUFFERS && buffer == bufferHandles[playBufferIndex])
+    {
+        playBufferIndex = (playBufferIndex + 1) % NUM_BUFFERS;
+    }
+}
+
+void OpenALStreamingSound::seek(double position)
+{
+    if (!isLoaded())
+    {
+        throw ResourceNotLoadedException(getName());
+    }
+
+    getStream()->seek(position);
+}
+
+Timestamp OpenALStreamingSound::getTimeBase() const
+{
+    return bufferStarts[playBufferIndex];
+}
 
 }; // namespace Audio

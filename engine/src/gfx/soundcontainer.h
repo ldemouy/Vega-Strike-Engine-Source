@@ -7,8 +7,8 @@
 
 /**
  * A reference to a soundfile that can be lazily loaded.
- * 
- * This abstract base class specifies the common interface 
+ *
+ * This abstract base class specifies the common interface
  * for all implementations of sound containers, see
  * concrete implementations for more details.
  */
@@ -17,7 +17,7 @@ class GameSoundContainer : public SoundContainer
     bool triggered;
     bool loaded;
 
-public:
+  public:
     /**
      * Create a refernece to an optionally-looping sound file.
      */
@@ -66,7 +66,7 @@ public:
     }
 
     // Concrete classes implement the following:
-protected:
+  protected:
     virtual void loadImpl() = 0;
     virtual void unloadImpl() = 0;
 

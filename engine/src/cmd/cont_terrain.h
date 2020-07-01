@@ -22,12 +22,12 @@ class ContinuousTerrain
     bool *dirty;
     bool checkInvScale(double &pos, double campos, float size);
 
-public:
+  public:
     ContinuousTerrain(const char *filenameUL, const Vector &Scales = Vector(0, 0, 0), const float mass = 0);
     void SetTransformation(const Matrix &transformation);
     /**
- *  Centers terrain around camera
- */
+     *  Centers terrain around camera
+     */
     void AdjustTerrain(StarSystem *);
 
     void AdjustTerrain(Matrix &transform, const Matrix &transformation, const QVector &unitpos, int i);

@@ -13,61 +13,61 @@
 namespace Audio
 {
 
-    namespace __impl
-    {
-        struct OggData;
-    };
+namespace __impl
+{
+struct OggData;
+};
 
-    /**
-     * OggStream class, used by the OggCodec to decode Ogg-vorbis audio streams
-     *
+/**
+ * OggStream class, used by the OggCodec to decode Ogg-vorbis audio streams
+ *
+ * @remarks Container formats with multiple embedded streams are supported by
+ *      using the special path form "[path]|[stream number]". By default, the
+ *      first audio stream is opened.
+ *
+ * @see Stream, CodecRegistry.
+ *
+ */
+class OggStream : public Stream
+{
+  private:
+    double duration;
+    __impl::OggData *oggData;
+    VSFileSystem::VSFile file;
+
+    void *readBuffer;
+    unsigned int readBufferAvail;
+    unsigned int readBufferSize;
+
+  public:
+    /** Open the specified OGG file, or whine about it
      * @remarks Container formats with multiple embedded streams are supported by
      *      using the special path form "[path]|[stream number]". By default, the
      *      first audio stream is opened.
-     *
-     * @see Stream, CodecRegistry.
-     *
      */
-    class OggStream : public Stream
-    {
-    private:
-        double duration;
-        __impl::OggData *oggData;
-        VSFileSystem::VSFile file;
+    OggStream(const std::string &path, VSFileSystem::VSFileType type = VSFileSystem::UnknownFile);
 
-        void *readBuffer;
-        unsigned int readBufferAvail;
-        unsigned int readBufferSize;
+    virtual ~OggStream();
 
-    public:
-        /** Open the specified OGG file, or whine about it
-         * @remarks Container formats with multiple embedded streams are supported by
-         *      using the special path form "[path]|[stream number]". By default, the
-         *      first audio stream is opened.
-         */
-        OggStream(const std::string &path, VSFileSystem::VSFileType type = VSFileSystem::UnknownFile);
+  protected:
+    /** @see Stream::getLengthImpl */
+    virtual double getLengthImpl() const;
 
-        virtual ~OggStream();
+    /** @see Stream::getPositionImpl */
+    virtual double getPositionImpl() const;
 
-    protected:
-        /** @see Stream::getLengthImpl */
-        virtual double getLengthImpl() const;
+    /** @see Stream::seekImpl */
+    virtual void seekImpl(double position);
 
-        /** @see Stream::getPositionImpl */
-        virtual double getPositionImpl() const;
+    /** @see Stream::getBufferImpl */
+    virtual void getBufferImpl(void *&buffer, unsigned int &bufferSize);
 
-        /** @see Stream::seekImpl */
-        virtual void seekImpl(double position);
-
-        /** @see Stream::getBufferImpl */
-        virtual void getBufferImpl(void *&buffer, unsigned int &bufferSize);
-
-        /** @see Stream::nextBufferImpl */
-        virtual void nextBufferImpl();
-    };
+    /** @see Stream::nextBufferImpl */
+    virtual void nextBufferImpl();
+};
 
 }; // namespace Audio
 
-#endif //HAVE_OGG
+#endif // HAVE_OGG
 
 #endif //__AUDIO_OGG_STREAM_H__INCLUDED__

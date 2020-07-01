@@ -1,41 +1,40 @@
 #ifndef __UNIT_DAMAGE_CPP__
 #define __UNIT_DAMAGE_CPP__
-#include <string>
-#include <vector>
-#include "unit.h"
-#include "unit_factory.h"
 #include "ai/order.h"
 #include "gfx/animation.h"
 #include "gfx/mesh.h"
+#include "unit.h"
+#include "unit_factory.h"
+#include <string>
+#include <vector>
 //#include "gfx/halo.h"
-#include "vegastrike.h"
-#include "unit_collide.h"
-#include <float.h>
 #include "aldrv/audiolib.h"
-#include "images.h"
+#include "base.h"
 #include "beam.h"
-#include "config_xml.h"
-#include "vs_globals.h"
-#include "xml_support.h"
-#include "savegame.h"
-#include "gfx/cockpit.h"
-#include "cmd/script/mission.h"
-#include "missile.h"
 #include "cmd/ai/communication.h"
 #include "cmd/script/flightgroup.h"
-#include "music.h"
-#include "faction_generic.h"
-#include "universe_util.h"
+#include "cmd/script/mission.h"
+#include "config_xml.h"
 #include "csv.h"
-#include "unit_csv.h"
-#include "base.h"
+#include "faction_generic.h"
+#include "gfx/cockpit.h"
+#include "images.h"
+#include "missile.h"
+#include "music.h"
 #include "options.h"
+#include "savegame.h"
+#include "unit_collide.h"
+#include "unit_csv.h"
+#include "universe_util.h"
+#include "vegastrike.h"
+#include "vs_globals.h"
+#include "xml_support.h"
+#include <float.h>
 
-extern unsigned int apply_float_to_unsigned_int(float tmp); //Short fix
+extern unsigned int apply_float_to_unsigned_int(float tmp); // Short fix
 extern vector<Mesh *> MakeMesh(unsigned int mysize);
 
-template <class UnitType>
-void GameUnit<UnitType>::Split(int level)
+template <class UnitType> void GameUnit<UnitType>::Split(int level)
 {
     if (game_options.split_dead_subunits)
         for (auto su = this->getSubUnits(); *su; ++su)
@@ -88,8 +87,8 @@ void GameUnit<UnitType>::Split(int level)
         int scale = atoi(scalestr.c_str());
         if (scale == 0)
             scale = 1;
-        AddMeshes(nw, randomstartframe, randomstartseconds, scale, chunkname, this->faction,
-                  this->getFlightgroup(), &meshsizes);
+        AddMeshes(nw, randomstartframe, randomstartseconds, scale, chunkname, this->faction, this->getFlightgroup(),
+                  &meshsizes);
         VSFileSystem::current_type.pop_back();
         VSFileSystem::current_subdirectory.pop_back();
         VSFileSystem::current_path.pop_back();
@@ -111,7 +110,7 @@ void GameUnit<UnitType>::Split(int level)
                 nw.push_back(nullptr);
                 nw.push_back(nullptr);
                 old[i]->Fork(nw[nw.size() - 2], nw.back(), PlaneNorm.i, PlaneNorm.j, PlaneNorm.k,
-                             -PlaneNorm.Dot(old[i]->Position())); //splits somehow right down the middle.
+                             -PlaneNorm.Dot(old[i]->Position())); // splits somehow right down the middle.
                 delete old[i];
                 old[i] = nullptr;
                 if (nw[nw.size() - 2] == nullptr)
@@ -128,7 +127,7 @@ void GameUnit<UnitType>::Split(int level)
         for (size_t i = 0; i < old.size(); ++i)
             meshsizes.push_back(1);
     }
-    old.push_back(nullptr); //push back shield
+    old.push_back(nullptr); // push back shield
     if (shield)
         delete shield;
     nm = old.size() - 1;
@@ -152,50 +151,52 @@ void GameUnit<UnitType>::Split(int level)
             float locm = loc.Magnitude();
             if (locm < .0001)
                 locm = 1;
-            splitsub->ApplyForce(splitsub->meshdata[0]->rSize() * game_options.explosionforce * 10 * splitsub->GetMass() * loc / locm);
+            splitsub->ApplyForce(splitsub->meshdata[0]->rSize() * game_options.explosionforce * 10 *
+                                 splitsub->GetMass() * loc / locm);
             loc.Set(rand(), rand(), rand() + .1);
             loc.Normalize();
-            splitsub->ApplyLocalTorque(loc * splitsub->GetMoment() * game_options.explosiontorque * (1 + rand() % (int)(1 + this->rSize())));
+            splitsub->ApplyLocalTorque(loc * splitsub->GetMoment() * game_options.explosiontorque *
+                                       (1 + rand() % (int)(1 + this->rSize())));
         }
     }
     old.clear();
     this->meshdata.clear();
-    this->meshdata.push_back(nullptr); //the shield
+    this->meshdata.push_back(nullptr); // the shield
     this->Mass *= game_options.debris_mass;
 }
 
 extern float rand01();
 
-template <class UnitType>
-void GameUnit<UnitType>::ArmorDamageSound(const Vector &pnt)
+template <class UnitType> void GameUnit<UnitType>::ArmorDamageSound(const Vector &pnt)
 {
     if (!_Universe->isPlayerStarship(this))
     {
         if (AUDIsPlaying(this->sound->armor))
             AUDStopPlaying(this->sound->armor);
         if (game_options.ai_sound)
-            AUDPlay(this->sound->armor, this->ToWorldCoordinates(pnt).Cast() + this->cumulative_transformation.position, this->Velocity, 1);
+            AUDPlay(this->sound->armor, this->ToWorldCoordinates(pnt).Cast() + this->cumulative_transformation.position,
+                    this->Velocity, 1);
     }
     else
     {
-        static int playerarmorsound =
-            AUDCreateSoundWAV(game_options.player_armor_hit);
+        static int playerarmorsound = AUDCreateSoundWAV(game_options.player_armor_hit);
         int sound = playerarmorsound != -1 ? playerarmorsound : this->sound->armor;
         if (AUDIsPlaying(sound))
             AUDStopPlaying(sound);
-        AUDPlay(sound, this->ToWorldCoordinates(pnt).Cast() + this->cumulative_transformation.position, this->Velocity, 1);
+        AUDPlay(sound, this->ToWorldCoordinates(pnt).Cast() + this->cumulative_transformation.position, this->Velocity,
+                1);
     }
 }
 
-template <class UnitType>
-void GameUnit<UnitType>::HullDamageSound(const Vector &pnt)
+template <class UnitType> void GameUnit<UnitType>::HullDamageSound(const Vector &pnt)
 {
     if (!_Universe->isPlayerStarship(this))
     {
         if (AUDIsPlaying(this->sound->hull))
             AUDStopPlaying(this->sound->hull);
         if (game_options.ai_sound)
-            AUDPlay(this->sound->hull, this->ToWorldCoordinates(pnt).Cast() + this->cumulative_transformation.position, this->Velocity, 1);
+            AUDPlay(this->sound->hull, this->ToWorldCoordinates(pnt).Cast() + this->cumulative_transformation.position,
+                    this->Velocity, 1);
     }
     else
     {
@@ -203,12 +204,12 @@ void GameUnit<UnitType>::HullDamageSound(const Vector &pnt)
         int sound = playerhullsound != -1 ? playerhullsound : this->sound->hull;
         if (AUDIsPlaying(sound))
             AUDStopPlaying(sound);
-        AUDPlay(sound, this->ToWorldCoordinates(pnt).Cast() + this->cumulative_transformation.position, this->Velocity, 1);
+        AUDPlay(sound, this->ToWorldCoordinates(pnt).Cast() + this->cumulative_transformation.position, this->Velocity,
+                1);
     }
 }
 
-template <class UnitType>
-float GameUnit<UnitType>::DealDamageToShield(const Vector &pnt, float &damage)
+template <class UnitType> float GameUnit<UnitType>::DealDamageToShield(const Vector &pnt, float &damage)
 {
     float percent = UnitType::DealDamageToShield(pnt, damage);
     if (!_Universe->isPlayerStarship(this))
@@ -218,19 +219,21 @@ float GameUnit<UnitType>::DealDamageToShield(const Vector &pnt, float &damage)
             if (AUDIsPlaying(this->sound->shield))
                 AUDStopPlaying(this->sound->shield);
             if (game_options.ai_sound)
-                AUDPlay(this->sound->shield, this->ToWorldCoordinates(pnt).Cast() + this->cumulative_transformation.position, this->Velocity, 1);
+                AUDPlay(this->sound->shield,
+                        this->ToWorldCoordinates(pnt).Cast() + this->cumulative_transformation.position, this->Velocity,
+                        1);
         }
     }
     else
     {
-        static int playerhullsound =
-            AUDCreateSoundWAV(game_options.player_shield_hit);
+        static int playerhullsound = AUDCreateSoundWAV(game_options.player_shield_hit);
         int sound = playerhullsound != -1 ? playerhullsound : this->sound->hull;
         if (percent)
         {
             if (AUDIsPlaying(sound))
                 AUDStopPlaying(sound);
-            AUDPlay(sound, this->ToWorldCoordinates(pnt).Cast() + this->cumulative_transformation.position, this->Velocity, 1);
+            AUDPlay(sound, this->ToWorldCoordinates(pnt).Cast() + this->cumulative_transformation.position,
+                    this->Velocity, 1);
         }
     }
     return percent;
@@ -243,14 +246,13 @@ extern Animation *getRandomCachedAni();
 extern string getRandomCachedAniString();
 extern void disableSubUnits(Unit *un);
 
-template <class UnitType>
-bool GameUnit<UnitType>::Explode(bool drawit, float timeit)
+template <class UnitType> bool GameUnit<UnitType>::Explode(bool drawit, float timeit)
 {
     if (this->pImage->pExplosion == nullptr && this->pImage->timeexplode == 0)
     {
-        //no explosion in unit data file && explosions haven't started yet
+        // no explosion in unit data file && explosions haven't started yet
 
-        //notify the director that a ship got destroyed
+        // notify the director that a ship got destroyed
         mission->DirectorShipDestroyed(this);
         disableSubUnits(this);
         this->pImage->timeexplode = 0;
@@ -272,9 +274,11 @@ bool GameUnit<UnitType>::Explode(bool drawit, float timeit)
         this->pImage->pExplosion->SetOrientation(p, q, r);
         if (this->isUnit() != MISSILEPTR)
         {
-            _Universe->activeStarSystem()->AddMissileToQueue(new MissileEffect(this->Position(), this->MaxShieldVal(),
-                                                                               0, this->ExplosionRadius() * game_options.explosion_damage_center,
-                                                                               this->ExplosionRadius() * game_options.explosion_damage_center * game_options.explosion_damage_edge, nullptr));
+            _Universe->activeStarSystem()->AddMissileToQueue(new MissileEffect(
+                this->Position(), this->MaxShieldVal(), 0,
+                this->ExplosionRadius() * game_options.explosion_damage_center,
+                this->ExplosionRadius() * game_options.explosion_damage_center * game_options.explosion_damage_edge,
+                nullptr));
         }
         QVector exploc = this->cumulative_transformation.position;
         bool sub = this->isSubUnit();
@@ -282,7 +286,8 @@ bool GameUnit<UnitType>::Explode(bool drawit, float timeit)
         if (!sub)
             if ((un = _Universe->AccessCockpit(0)->GetParent()))
             {
-                exploc = un->Position() * game_options.explosion_closeness + exploc * (1 - game_options.explosion_closeness);
+                exploc =
+                    un->Position() * game_options.explosion_closeness + exploc * (1 - game_options.explosion_closeness);
             }
         AUDPlay(this->sound->explode, exploc, this->Velocity, 1);
         if (!sub)
@@ -296,8 +301,8 @@ bool GameUnit<UnitType>::Explode(bool drawit, float timeit)
                     static Animation *__shock__ani = new Animation(shockani.c_str(), true, .1, MIPMAP, false);
 
                     __shock__ani->SetFaceCam(false);
-                    unsigned int which = AddAnimation(this->Position(),
-                                                      this->ExplosionRadius(), true, shockani, game_options.shockwave_growth);
+                    unsigned int which = AddAnimation(this->Position(), this->ExplosionRadius(), true, shockani,
+                                                      game_options.shockwave_growth);
                     Animation *ani = GetVolatileAni(which);
                     if (ani)
                     {
@@ -323,9 +328,11 @@ bool GameUnit<UnitType>::Explode(bool drawit, float timeit)
                     {
                         static float lasttime = 0;
                         float newtime = getNewTime();
-                        if (newtime - lasttime > game_options.time_between_music || (_Universe->isPlayerStarship(this) && this->isUnit() != MISSILEPTR && this->faction != upgradesfaction))
+                        if (newtime - lasttime > game_options.time_between_music ||
+                            (_Universe->isPlayerStarship(this) && this->isUnit() != MISSILEPTR &&
+                             this->faction != upgradesfaction))
                         {
-                            //No victory for missiles or spawned explosions
+                            // No victory for missiles or spawned explosions
                             if (rel > game_options.victory_relationship)
                             {
                                 lasttime = newtime;
@@ -342,8 +349,8 @@ bool GameUnit<UnitType>::Explode(bool drawit, float timeit)
             }
         }
     }
-    bool timealldone =
-        (this->pImage->timeexplode > game_options.debris_time || this->isUnit() == MISSILEPTR || _Universe->AccessCockpit()->GetParent() == this || this->SubUnits.empty());
+    bool timealldone = (this->pImage->timeexplode > game_options.debris_time || this->isUnit() == MISSILEPTR ||
+                        _Universe->AccessCockpit()->GetParent() == this || this->SubUnits.empty());
     if (this->pImage->pExplosion)
     {
         this->pImage->timeexplode += timeit;
@@ -357,7 +364,7 @@ bool GameUnit<UnitType>::Explode(bool drawit, float timeit)
             this->pImage->pExplosion = nullptr;
         }
         if (drawit && this->pImage->pExplosion)
-            this->pImage->pExplosion->Draw(); //puts on draw queue... please don't delete
+            this->pImage->pExplosion->Draw(); // puts on draw queue... please don't delete
     }
     bool alldone = this->pImage->pExplosion ? !this->pImage->pExplosion->Done() : false;
     if (!this->SubUnits.empty())
@@ -376,7 +383,7 @@ bool GameUnit<UnitType>::Explode(bool drawit, float timeit)
         if (dropcount > this->numCargo())
             dropcount = this->numCargo();
         for (unsigned int i = 0; i < dropcount; i++)
-            this->EjectCargo(this->numCargo() - 1); //Ejecting the last one is somewhat faster
+            this->EjectCargo(this->numCargo() - 1); // Ejecting the last one is somewhat faster
     }
     return alldone || (!timealldone);
 }

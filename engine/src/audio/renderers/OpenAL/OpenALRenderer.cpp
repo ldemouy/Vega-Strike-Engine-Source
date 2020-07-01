@@ -8,9 +8,9 @@
 
 #include "al.h"
 
+#include "../../Listener.h"
 #include "../../Sound.h"
 #include "../../Source.h"
-#include "../../Listener.h"
 
 #include "OpenALSimpleSound.h"
 #include "OpenALStreamingSound.h"
@@ -24,433 +24,418 @@
 namespace Audio
 {
 
-    namespace __impl
-    {
+namespace __impl
+{
 
-        namespace OpenAL
+namespace OpenAL
+{
+
+struct RendererData
+{
+    // The many required indexes
+    ALCdevice *alDevice;
+    ALCcontext *alContext;
+
+    class SoundKey
+    {
+        VSFileSystem::VSFileType type;
+        size_t nameLen;
+        std::string name;
+
+      public:
+        SoundKey() : type(VSFileSystem::SoundFile), nameLen(0)
         {
-
-            struct RendererData
-            {
-                // The many required indexes
-                ALCdevice *alDevice;
-                ALCcontext *alContext;
-
-                class SoundKey
-                {
-                    VSFileSystem::VSFileType type;
-                    size_t nameLen;
-                    std::string name;
-
-                public:
-                    SoundKey() : type(VSFileSystem::SoundFile),
-                                 nameLen(0)
-                    {
-                    }
-                    SoundKey(VSFileSystem::VSFileType _type, const std::string &_name) : type(_type),
-                                                                                         nameLen(_name.length()),
-                                                                                         name(_name)
-                    {
-                    }
-
-                    bool isNull() const { return nameLen == 0; }
-
-                    bool operator<(const SoundKey &other) const
-                    {
-                        return (type < other.type) ||
-                               ((type == other.type) && ((nameLen < other.nameLen) ||
-                                                         ((nameLen == other.nameLen) && (name < other.name))));
-                    }
-
-                    bool operator==(const SoundKey &other) const
-                    {
-                        return (type == other.type) &&
-                               (nameLen == other.nameLen) &&
-                               (name == other.name);
-                    }
-                };
-
-                typedef std::map<SoundKey, std::shared_ptr<Sound>> SoundMap;
-                typedef std::map<std::shared_ptr<Sound>, SoundKey> ReverseSoundMap;
-
-                SoundMap loadedSounds;
-                ReverseSoundMap loadedSoundsReverse;
-
-                struct
-                {
-                    int meterDistance : 1;
-                    int dopplerFactor : 1;
-                } dirty;
-
-                std::shared_ptr<Sound> lookupSound(VSFileSystem::VSFileType type, const std::string &name) const
-                {
-                    SoundKey key(type, name);
-                    SoundMap::const_iterator it = loadedSounds.find(key);
-                    if (it != loadedSounds.end())
-                    {
-                        return it->second;
-                    }
-                    else
-                    {
-                        return std::shared_ptr<Sound>();
-                    }
-                }
-
-                SoundKey lookupSound(const std::shared_ptr<Sound> &sound) const
-                {
-                    ReverseSoundMap::const_iterator it = loadedSoundsReverse.find(sound);
-                    if (it != loadedSoundsReverse.end())
-                    {
-                        return it->second;
-                    }
-                    else
-                    {
-                        return SoundKey();
-                    }
-                }
-
-                void addSound(VSFileSystem::VSFileType type, const std::string &name, std::shared_ptr<Sound> sound)
-                {
-                    SoundKey key(type, name);
-                    loadedSounds[key] = sound;
-                    loadedSoundsReverse[sound] = key;
-                }
-
-                void unloadSound(const std::shared_ptr<Sound> &sound)
-                {
-                    SoundKey key = lookupSound(sound);
-                    if (!key.isNull())
-                    {
-                        loadedSounds.erase(key);
-                        loadedSoundsReverse.erase(sound);
-                    }
-                }
-
-                void unloadSounds()
-                {
-                    for (SoundMap::iterator it = loadedSounds.begin(); it != loadedSounds.end(); ++it)
-                    {
-                        it->second->unload();
-                    }
-                }
-
-                void openDevice(const char *deviceSpecifier)
-                {
-                    if (alDevice)
-                        throw Exception("Trying to open a device without closing the previous one first");
-
-                    clearAlError();
-
-                    if (deviceSpecifier == nullptr)
-                    {
-#ifdef _WIN32
-                        deviceSpecifier = "DirectSound3D";
-#else
-#ifdef __APPLE__
-                        deviceSpecifier = "sdl";
-#endif
-#endif
-                    }
-
-                    alDevice = alcOpenDevice((ALCstring)(deviceSpecifier));
-
-                    if (!alDevice)
-                    {
-                        checkAlError();
-                    }
-                    else
-                    {
-                        clearAlError();
-                    }
-                }
-
-                void closeDevice()
-                {
-                    if (alContext)
-                    {
-                        throw Exception("Trying to close device without closing the previous one first");
-                    }
-                    if (alDevice)
-                    {
-                        unloadSounds();
-                        alcCloseDevice(alDevice);
-                        alDevice = nullptr;
-                        clearAlError();
-                    }
-                }
-
-                void openContext(const Format &format)
-                {
-                    if (alContext)
-                    {
-                        throw Exception("Trying to open context without closing the previous one first");
-                    }
-                    if (!alDevice)
-                    {
-                        throw Exception("Trying to open context without opening a device first");
-                    }
-
-                    clearAlError();
-
-                    ALCint params[] = {
-                        ALC_FREQUENCY, static_cast<ALCint>(format.sampleFrequency),
-                        0};
-
-                    alContext = alcCreateContext(alDevice, params);
-                    if (!alContext)
-                    {
-                        checkAlError();
-                    }
-                    else
-                    {
-                        clearAlError();
-                    }
-
-                    alcMakeContextCurrent(alContext);
-                    checkAlError();
-                }
-
-                void commit()
-                {
-                    alcProcessContext(alContext);
-                    checkAlError();
-                }
-
-                void suspend()
-                {
-                    // FIXME: There's a residual error here on Windows. Can't track down where it's from.
-                    alGetError();
-                    checkAlError();
-                    alcMakeContextCurrent(alContext);
-                    alcSuspendContext(alContext);
-                    checkAlError();
-                }
-
-                void closeContext()
-                {
-                    if (alContext)
-                    {
-                        alcMakeContextCurrent(nullptr);
-                        alcDestroyContext(alContext);
-                        clearAlError();
-                        alContext = nullptr;
-                    }
-                }
-
-                RendererData() : alDevice(nullptr),
-                                 alContext(nullptr)
-                {
-                }
-
-                ~RendererData()
-                {
-                    unloadSounds();
-                    closeContext();
-                    closeDevice();
-                }
-            };
-        }; // namespace OpenAL
-    };     // namespace __impl
-
-    using namespace __impl::OpenAL;
-
-    OpenALRenderer::OpenALRenderer() : data(new RendererData)
-    {
-    }
-
-    OpenALRenderer::~OpenALRenderer()
-    {
-    }
-
-    std::shared_ptr<Sound> OpenALRenderer::getSound(
-        const std::string &name,
-        VSFileSystem::VSFileType type,
-        bool streaming)
-    {
-        checkContext();
-        std::shared_ptr<Sound> sound = data->lookupSound(type, name);
-        if (!sound.get() || streaming)
-        {
-            if (streaming)
-            {
-                // Streaming sounds cannot be cached, so if a streaming sound
-                // is in the cache, it must be evicted and re-created
-                sound.reset();
-                data->addSound(
-                    type,
-                    name,
-                    sound = std::shared_ptr<Sound>(new OpenALStreamingSound(name, type)));
-            }
-            else
-            {
-                data->addSound(
-                    type,
-                    name,
-                    sound = std::shared_ptr<Sound>(new OpenALSimpleSound(name, type)));
-            }
         }
-        return sound;
-    }
-
-    bool OpenALRenderer::owns(std::shared_ptr<Sound> sound)
-    {
-        return !data->lookupSound(sound).isNull();
-    }
-
-    void OpenALRenderer::attach(std::shared_ptr<Source> source)
-    {
-        checkContext();
-        source->setRenderable(std::shared_ptr<RenderableSource>(
-            source->getSound()->isStreaming()
-                ? (RenderableSource *)new OpenALRenderableStreamingSource(source.get())
-                : (RenderableSource *)new OpenALRenderableSource(source.get())));
-    }
-
-    void OpenALRenderer::attach(std::shared_ptr<Listener> listener)
-    {
-        checkContext();
-        listener->setRenderable(std::shared_ptr<RenderableListener>(
-            new OpenALRenderableListener(listener.get())));
-    }
-
-    void OpenALRenderer::detach(std::shared_ptr<Source> source)
-    {
-        // Just clear it... RenderableListener's destructor will handle everything fine.
-        source->setRenderable(std::shared_ptr<RenderableSource>());
-    }
-
-    void OpenALRenderer::detach(std::shared_ptr<Listener> listener)
-    {
-        // Just clear it... RenderableListener's destructor will handle everything fine.
-        listener->setRenderable(std::shared_ptr<RenderableListener>());
-    }
-
-    void OpenALRenderer::setMeterDistance(Scalar distance)
-    {
-        // ToDo
-        // Nothing yet - this is an extension to OpenAL 1.1's specs and in this phase
-        // we'll implement only basic functionality.
-        Renderer::setMeterDistance(distance);
-
-        // meterDistance affects doppler settings (since it affects the speed of sound)
-        data->dirty.dopplerFactor = 1;
-        data->dirty.meterDistance = 1;
-    }
-
-    void OpenALRenderer::setDopplerFactor(Scalar factor)
-    {
-        Renderer::setDopplerFactor(factor);
-
-        // Just flag it as dirty so that the next commit reconfigures the doppler effect.
-        data->dirty.dopplerFactor = 1;
-    }
-
-    void OpenALRenderer::setOutputFormat(const Format &format)
-    {
-        if (!data->alDevice)
+        SoundKey(VSFileSystem::VSFileType _type, const std::string &_name)
+            : type(_type), nameLen(_name.length()), name(_name)
         {
-            data->openDevice(nullptr);
         }
-        data->closeContext();
-        data->openContext(format);
-        Renderer::setOutputFormat(format);
-    }
 
-    void OpenALRenderer::checkContext()
-    {
-        if (!data->alDevice)
+        bool isNull() const
         {
-            data->openDevice(nullptr);
+            return nameLen == 0;
         }
-        if (!data->alContext)
+
+        bool operator<(const SoundKey &other) const
         {
-            data->openContext(getOutputFormat());
-            initContext();
+            return (type < other.type) ||
+                   ((type == other.type) &&
+                    ((nameLen < other.nameLen) || ((nameLen == other.nameLen) && (name < other.name))));
         }
-    }
 
-    void OpenALRenderer::beginTransaction()
-    {
-        data->suspend();
-
-        if (data->dirty.dopplerFactor)
+        bool operator==(const SoundKey &other) const
         {
-            setupDopplerEffect();
+            return (type == other.type) && (nameLen == other.nameLen) && (name == other.name);
         }
-    }
+    };
 
-    void OpenALRenderer::commitTransaction()
+    typedef std::map<SoundKey, std::shared_ptr<Sound>> SoundMap;
+    typedef std::map<std::shared_ptr<Sound>, SoundKey> ReverseSoundMap;
+
+    SoundMap loadedSounds;
+    ReverseSoundMap loadedSoundsReverse;
+
+    struct
     {
-        data->commit();
-    }
+        int meterDistance : 1;
+        int dopplerFactor : 1;
+    } dirty;
 
-    void OpenALRenderer::initContext()
+    std::shared_ptr<Sound> lookupSound(VSFileSystem::VSFileType type, const std::string &name) const
     {
-        // Set the distance model
-        alDistanceModel(AL_INVERSE_DISTANCE_CLAMPED);
-
-        // Flag everything as dirty
-        data->dirty.meterDistance = 1;
-        data->dirty.dopplerFactor = 1;
-    }
-
-    void OpenALRenderer::setupDopplerEffect()
-    {
-        clearAlError();
-
-        // First of all, compute the speed of sound (in world units)
-        Scalar speedOfSound = 343.3f * getMeterDistance();
-
-        // Set doppler factor and speed of sound
-        alDopplerFactor(getDopplerFactor());
-#ifdef _WIN32
-        alDopplerVelocity(speedOfSound);
-#else
-        alSpeedOfSound(speedOfSound);
-#endif
-
-        data->dirty.dopplerFactor = 0;
-
-        checkAlError();
-    }
-
-    BorrowedOpenALRenderer::BorrowedOpenALRenderer(ALCdevice *device, ALCcontext *context) : OpenALRenderer()
-    {
-        if (device)
+        SoundKey key(type, name);
+        SoundMap::const_iterator it = loadedSounds.find(key);
+        if (it != loadedSounds.end())
         {
-            data->alDevice = device;
-        }
-        if (context)
-        {
-            data->alContext = context;
+            return it->second;
         }
         else
         {
-            data->alContext = alcGetCurrentContext();
+            return std::shared_ptr<Sound>();
         }
-        if (!device && data->alContext)
+    }
+
+    SoundKey lookupSound(const std::shared_ptr<Sound> &sound) const
+    {
+        ReverseSoundMap::const_iterator it = loadedSoundsReverse.find(sound);
+        if (it != loadedSoundsReverse.end())
         {
-            data->alDevice = alcGetContextsDevice(data->alContext);
+            return it->second;
+        }
+        else
+        {
+            return SoundKey();
+        }
+    }
+
+    void addSound(VSFileSystem::VSFileType type, const std::string &name, std::shared_ptr<Sound> sound)
+    {
+        SoundKey key(type, name);
+        loadedSounds[key] = sound;
+        loadedSoundsReverse[sound] = key;
+    }
+
+    void unloadSound(const std::shared_ptr<Sound> &sound)
+    {
+        SoundKey key = lookupSound(sound);
+        if (!key.isNull())
+        {
+            loadedSounds.erase(key);
+            loadedSoundsReverse.erase(sound);
+        }
+    }
+
+    void unloadSounds()
+    {
+        for (SoundMap::iterator it = loadedSounds.begin(); it != loadedSounds.end(); ++it)
+        {
+            it->second->unload();
+        }
+    }
+
+    void openDevice(const char *deviceSpecifier)
+    {
+        if (alDevice)
+            throw Exception("Trying to open a device without closing the previous one first");
+
+        clearAlError();
+
+        if (deviceSpecifier == nullptr)
+        {
+#ifdef _WIN32
+            deviceSpecifier = "DirectSound3D";
+#else
+#ifdef __APPLE__
+            deviceSpecifier = "sdl";
+#endif
+#endif
         }
 
+        alDevice = alcOpenDevice((ALCstring)(deviceSpecifier));
+
+        if (!alDevice)
+        {
+            checkAlError();
+        }
+        else
+        {
+            clearAlError();
+        }
+    }
+
+    void closeDevice()
+    {
+        if (alContext)
+        {
+            throw Exception("Trying to close device without closing the previous one first");
+        }
+        if (alDevice)
+        {
+            unloadSounds();
+            alcCloseDevice(alDevice);
+            alDevice = nullptr;
+            clearAlError();
+        }
+    }
+
+    void openContext(const Format &format)
+    {
+        if (alContext)
+        {
+            throw Exception("Trying to open context without closing the previous one first");
+        }
+        if (!alDevice)
+        {
+            throw Exception("Trying to open context without opening a device first");
+        }
+
+        clearAlError();
+
+        ALCint params[] = {ALC_FREQUENCY, static_cast<ALCint>(format.sampleFrequency), 0};
+
+        alContext = alcCreateContext(alDevice, params);
+        if (!alContext)
+        {
+            checkAlError();
+        }
+        else
+        {
+            clearAlError();
+        }
+
+        alcMakeContextCurrent(alContext);
+        checkAlError();
+    }
+
+    void commit()
+    {
+        alcProcessContext(alContext);
+        checkAlError();
+    }
+
+    void suspend()
+    {
+        // FIXME: There's a residual error here on Windows. Can't track down where it's from.
+        alGetError();
+        checkAlError();
+        alcMakeContextCurrent(alContext);
+        alcSuspendContext(alContext);
+        checkAlError();
+    }
+
+    void closeContext()
+    {
+        if (alContext)
+        {
+            alcMakeContextCurrent(nullptr);
+            alcDestroyContext(alContext);
+            clearAlError();
+            alContext = nullptr;
+        }
+    }
+
+    RendererData() : alDevice(nullptr), alContext(nullptr)
+    {
+    }
+
+    ~RendererData()
+    {
+        unloadSounds();
+        closeContext();
+        closeDevice();
+    }
+};
+}; // namespace OpenAL
+}; // namespace __impl
+
+using namespace __impl::OpenAL;
+
+OpenALRenderer::OpenALRenderer() : data(new RendererData)
+{
+}
+
+OpenALRenderer::~OpenALRenderer()
+{
+}
+
+std::shared_ptr<Sound> OpenALRenderer::getSound(const std::string &name, VSFileSystem::VSFileType type, bool streaming)
+{
+    checkContext();
+    std::shared_ptr<Sound> sound = data->lookupSound(type, name);
+    if (!sound.get() || streaming)
+    {
+        if (streaming)
+        {
+            // Streaming sounds cannot be cached, so if a streaming sound
+            // is in the cache, it must be evicted and re-created
+            sound.reset();
+            data->addSound(type, name, sound = std::shared_ptr<Sound>(new OpenALStreamingSound(name, type)));
+        }
+        else
+        {
+            data->addSound(type, name, sound = std::shared_ptr<Sound>(new OpenALSimpleSound(name, type)));
+        }
+    }
+    return sound;
+}
+
+bool OpenALRenderer::owns(std::shared_ptr<Sound> sound)
+{
+    return !data->lookupSound(sound).isNull();
+}
+
+void OpenALRenderer::attach(std::shared_ptr<Source> source)
+{
+    checkContext();
+    source->setRenderable(std::shared_ptr<RenderableSource>(
+        source->getSound()->isStreaming() ? (RenderableSource *)new OpenALRenderableStreamingSource(source.get())
+                                          : (RenderableSource *)new OpenALRenderableSource(source.get())));
+}
+
+void OpenALRenderer::attach(std::shared_ptr<Listener> listener)
+{
+    checkContext();
+    listener->setRenderable(std::shared_ptr<RenderableListener>(new OpenALRenderableListener(listener.get())));
+}
+
+void OpenALRenderer::detach(std::shared_ptr<Source> source)
+{
+    // Just clear it... RenderableListener's destructor will handle everything fine.
+    source->setRenderable(std::shared_ptr<RenderableSource>());
+}
+
+void OpenALRenderer::detach(std::shared_ptr<Listener> listener)
+{
+    // Just clear it... RenderableListener's destructor will handle everything fine.
+    listener->setRenderable(std::shared_ptr<RenderableListener>());
+}
+
+void OpenALRenderer::setMeterDistance(Scalar distance)
+{
+    // ToDo
+    // Nothing yet - this is an extension to OpenAL 1.1's specs and in this phase
+    // we'll implement only basic functionality.
+    Renderer::setMeterDistance(distance);
+
+    // meterDistance affects doppler settings (since it affects the speed of sound)
+    data->dirty.dopplerFactor = 1;
+    data->dirty.meterDistance = 1;
+}
+
+void OpenALRenderer::setDopplerFactor(Scalar factor)
+{
+    Renderer::setDopplerFactor(factor);
+
+    // Just flag it as dirty so that the next commit reconfigures the doppler effect.
+    data->dirty.dopplerFactor = 1;
+}
+
+void OpenALRenderer::setOutputFormat(const Format &format)
+{
+    if (!data->alDevice)
+    {
+        data->openDevice(nullptr);
+    }
+    data->closeContext();
+    data->openContext(format);
+    Renderer::setOutputFormat(format);
+}
+
+void OpenALRenderer::checkContext()
+{
+    if (!data->alDevice)
+    {
+        data->openDevice(nullptr);
+    }
+    if (!data->alContext)
+    {
+        data->openContext(getOutputFormat());
         initContext();
     }
+}
 
-    BorrowedOpenALRenderer::~BorrowedOpenALRenderer()
+void OpenALRenderer::beginTransaction()
+{
+    data->suspend();
+
+    if (data->dirty.dopplerFactor)
     {
-        data->alDevice = nullptr;
-        data->alContext = nullptr;
+        setupDopplerEffect();
+    }
+}
+
+void OpenALRenderer::commitTransaction()
+{
+    data->commit();
+}
+
+void OpenALRenderer::initContext()
+{
+    // Set the distance model
+    alDistanceModel(AL_INVERSE_DISTANCE_CLAMPED);
+
+    // Flag everything as dirty
+    data->dirty.meterDistance = 1;
+    data->dirty.dopplerFactor = 1;
+}
+
+void OpenALRenderer::setupDopplerEffect()
+{
+    clearAlError();
+
+    // First of all, compute the speed of sound (in world units)
+    Scalar speedOfSound = 343.3f * getMeterDistance();
+
+    // Set doppler factor and speed of sound
+    alDopplerFactor(getDopplerFactor());
+#ifdef _WIN32
+    alDopplerVelocity(speedOfSound);
+#else
+    alSpeedOfSound(speedOfSound);
+#endif
+
+    data->dirty.dopplerFactor = 0;
+
+    checkAlError();
+}
+
+BorrowedOpenALRenderer::BorrowedOpenALRenderer(ALCdevice *device, ALCcontext *context) : OpenALRenderer()
+{
+    if (device)
+    {
+        data->alDevice = device;
+    }
+    if (context)
+    {
+        data->alContext = context;
+    }
+    else
+    {
+        data->alContext = alcGetCurrentContext();
+    }
+    if (!device && data->alContext)
+    {
+        data->alDevice = alcGetContextsDevice(data->alContext);
     }
 
-    void BorrowedOpenALRenderer::setOutputFormat(const Format &format)
-    {
-        // No-op... format is given by the borrowed context
-        Renderer::setOutputFormat(format);
-    }
+    initContext();
+}
 
-    void BorrowedOpenALRenderer::checkContext()
-    {
-        // No-op... context has been borrowed
-    }
+BorrowedOpenALRenderer::~BorrowedOpenALRenderer()
+{
+    data->alDevice = nullptr;
+    data->alContext = nullptr;
+}
+
+void BorrowedOpenALRenderer::setOutputFormat(const Format &format)
+{
+    // No-op... format is given by the borrowed context
+    Renderer::setOutputFormat(format);
+}
+
+void BorrowedOpenALRenderer::checkContext()
+{
+    // No-op... context has been borrowed
+}
 
 }; // namespace Audio

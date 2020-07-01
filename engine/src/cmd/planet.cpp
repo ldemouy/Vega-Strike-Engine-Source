@@ -1,30 +1,30 @@
-#include <math.h>
-#include "vegastrike.h"
-#include "unit_factory.h"
 #include "planet.h"
-#include "gldrv/gfxlib.h"
-#include "gfx/sphere.h"
-#include "collection.h"
 #include "ai/order.h"
-#include "gldrv/gfxlib_struct.h"
-#include "vs_globals.h"
-#include "config_xml.h"
-#include <assert.h>
-#include "cont_terrain.h"
 #include "atmosphere.h"
+#include "collection.h"
+#include "config_xml.h"
+#include "cont_terrain.h"
+#include "gfx/sphere.h"
+#include "gldrv/gfxlib.h"
+#include "gldrv/gfxlib_struct.h"
+#include "unit_factory.h"
+#include "vegastrike.h"
+#include "vs_globals.h"
+#include <assert.h>
+#include <math.h>
 #ifdef FIX_TERRAIN
 #include "gfx/planetary_transform.h"
 #endif
 
 #include "images.h"
 //#include "gfx/halo.h"
-#include "gfx/animation.h"
-#include "cmd/script/flightgroup.h"
-#include "gfx/ring.h"
 #include "alphacurve.h"
+#include "cmd/script/flightgroup.h"
+#include "gfx/animation.h"
+#include "gfx/camera.h"
+#include "gfx/ring.h"
 #include "gfx/vsimage.h"
 #include "vsfilesystem.h"
-#include "gfx/camera.h"
 
 GamePlanet::GamePlanet() : GameUnit<Planet>(0)
 {
@@ -35,7 +35,7 @@ GamePlanet::GamePlanet() : GameUnit<Planet>(0)
     inside = false;
     Init();
     terraintrans = nullptr;
-    SetAI(new Order()); //no behavior
+    SetAI(new Order()); // no behavior
 }
 
 static void SetFogMaterialColor(Mesh *thus, const GFXColor &color, const GFXColor &dcolor)
@@ -55,25 +55,29 @@ Mesh *MakeFogMesh(const AtmosphericFogMesh &f, float radius)
     static int count = 0;
     count++;
     string nam = f.meshname + XMLSupport::tostring(count) + ".png";
-    if (f.min_alpha != 0 || f.max_alpha != 255 || f.concavity != 0 || f.focus != .5 || f.tail_mode_start != -1 || f.tail_mode_end != -1)
+    if (f.min_alpha != 0 || f.max_alpha != 255 || f.concavity != 0 || f.focus != .5 || f.tail_mode_start != -1 ||
+        f.tail_mode_end != -1)
     {
-        static int rez = XMLSupport::parse_int(vs_config->getVariable("graphics", "atmosphere_texture_resolution", "512"));
+        static int rez =
+            XMLSupport::parse_int(vs_config->getVariable("graphics", "atmosphere_texture_resolution", "512"));
         unsigned char *tex = (unsigned char *)malloc(sizeof(char) * rez * 4);
         for (int i = 0; i < rez; ++i)
         {
             tex[i * 4] = 255;
             tex[i * 4 + 1] = 255;
             tex[i * 4 + 2] = 255;
-            tex[i * 4 + 3] = get_alpha(i, rez, f.min_alpha, f.max_alpha, f.focus, f.concavity, f.tail_mode_start, f.tail_mode_end);
+            tex[i * 4 + 3] =
+                get_alpha(i, rez, f.min_alpha, f.max_alpha, f.focus, f.concavity, f.tail_mode_start, f.tail_mode_end);
         }
-        //Writing in the homedir texture directory
+        // Writing in the homedir texture directory
         ::VSImage image;
         using VSFileSystem::TextureFile;
         image.WriteImage((char *)nam.c_str(), &tex[0], PngImage, rez, 1, true, 8, TextureFile);
     }
     vector<string> override;
     override.push_back(nam);
-    Mesh *ret = Mesh::LoadMesh(f.meshname.c_str(), Vector(f.scale * radius, f.scale * radius, f.scale * radius), 0, nullptr, override);
+    Mesh *ret = Mesh::LoadMesh(f.meshname.c_str(), Vector(f.scale * radius, f.scale * radius, f.scale * radius), 0,
+                               nullptr, override);
     ret->setConvex(true);
     SetFogMaterialColor(ret, GFXColor(f.er, f.eg, f.eb, f.ea), GFXColor(f.dr, f.dg, f.db, f.da));
     return ret;
@@ -81,7 +85,7 @@ Mesh *MakeFogMesh(const AtmosphericFogMesh &f, float radius)
 
 class AtmosphereHalo : public GameUnit<Unit>
 {
-public:
+  public:
     float planetRadius;
     AtmosphereHalo(float radiusOfPlanet, vector<Mesh *> &meshes, int faction) : GameUnit<Unit>(meshes, true, faction)
     {
@@ -133,21 +137,17 @@ void GamePlanet::AddFog(const std::vector<AtmosphericFogMesh> &v, bool opticalil
     meshdata.push_back(shield);
 #endif
 }
-void GamePlanet::AddCity(const std::string &texture,
-                         float radius,
-                         int numwrapx,
-                         int numwrapy,
-                         BLENDFUNC blendSrc,
-                         BLENDFUNC blendDst,
-                         bool inside_out,
-                         bool reverse_normals)
+void GamePlanet::AddCity(const std::string &texture, float radius, int numwrapx, int numwrapy, BLENDFUNC blendSrc,
+                         BLENDFUNC blendDst, bool inside_out, bool reverse_normals)
 {
     if (meshdata.empty())
         meshdata.push_back(nullptr);
     Mesh *shield = meshdata.back();
     meshdata.pop_back();
-    static float materialweight = XMLSupport::parse_float(vs_config->getVariable("graphics", "city_light_strength", "10"));
-    static float daymaterialweight = XMLSupport::parse_float(vs_config->getVariable("graphics", "day_city_light_strength", "0"));
+    static float materialweight =
+        XMLSupport::parse_float(vs_config->getVariable("graphics", "city_light_strength", "10"));
+    static float daymaterialweight =
+        XMLSupport::parse_float(vs_config->getVariable("graphics", "day_city_light_strength", "0"));
     GFXMaterial m;
     setMaterialAmbient(m, 0.0);
     setMaterialDiffuse(m, materialweight);
@@ -165,13 +165,10 @@ void GamePlanet::AddCity(const std::string &texture,
 
 Vector GamePlanet::AddSpaceElevator(const std::string &name, const std::string &faction, char direction)
 {
-    //direction is udrlfb//up down right left front ack
+    // direction is udrlfb//up down right left front ack
     return Planet::AddSpaceElevator(name, faction, direction);
 }
-void GamePlanet::AddAtmosphere(const std::string &texture,
-                               float radius,
-                               BLENDFUNC blendSrc,
-                               BLENDFUNC blendDst,
+void GamePlanet::AddAtmosphere(const std::string &texture, float radius, BLENDFUNC blendSrc, BLENDFUNC blendDst,
                                bool inside_out)
 {
     if (meshdata.empty())
@@ -179,30 +176,18 @@ void GamePlanet::AddAtmosphere(const std::string &texture,
     Mesh *shield = meshdata.back();
     meshdata.pop_back();
     static int stacks = XMLSupport::parse_int(vs_config->getVariable("graphics", "planet_detail", "24"));
-    meshdata.push_back(new SphereMesh(radius, stacks, stacks, texture.c_str(), string(), nullptr, inside_out, blendSrc, blendDst));
+    meshdata.push_back(
+        new SphereMesh(radius, stacks, stacks, texture.c_str(), string(), nullptr, inside_out, blendSrc, blendDst));
     if (meshdata.back())
     {
-        //By klauss - this needs to be done for most atmospheres
-        GFXMaterial a = {
-            0, 0, 0, 0,
-            1, 1, 1, 1,
-            0, 0, 0, 0,
-            0, 0, 0, 0,
-            0};
+        // By klauss - this needs to be done for most atmospheres
+        GFXMaterial a = {0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0};
         meshdata.back()->SetMaterial(a);
     }
     meshdata.push_back(shield);
 }
-void GamePlanet::AddRing(const std::string &texture,
-                         float iradius,
-                         float oradius,
-                         const QVector &R,
-                         const QVector &S,
-                         int slices,
-                         int wrapx,
-                         int wrapy,
-                         BLENDFUNC blendSrc,
-                         BLENDFUNC blendDst)
+void GamePlanet::AddRing(const std::string &texture, float iradius, float oradius, const QVector &R, const QVector &S,
+                         int slices, int wrapx, int wrapy, BLENDFUNC blendSrc, BLENDFUNC blendDst)
 {
     if (meshdata.empty())
         meshdata.push_back(nullptr);
@@ -215,33 +200,20 @@ void GamePlanet::AddRing(const std::string &texture,
         if (stacks < 3)
             stacks = 3;
         for (int i = 0; i < slices; i++)
-            meshdata.push_back(new RingMesh(iradius, oradius, stacks, texture.c_str(), R, S, wrapx, wrapy, blendSrc, blendDst,
-                                            false, i * (2 * M_PI) / ((float)slices), (i + 1) * (2 * M_PI) / ((float)slices)));
+            meshdata.push_back(new RingMesh(iradius, oradius, stacks, texture.c_str(), R, S, wrapx, wrapy, blendSrc,
+                                            blendDst, false, i * (2 * M_PI) / ((float)slices),
+                                            (i + 1) * (2 * M_PI) / ((float)slices)));
     }
     meshdata.push_back(shield);
 }
 
 extern const vector<string> &ParseDestinations(const string &value);
-GamePlanet::GamePlanet(QVector x,
-                       QVector y,
-                       float vely,
-                       const Vector &rotvel,
-                       float pos,
-                       float gravity,
-                       float radius,
-                       const string &textname,
-                       const string &technique,
-                       const string &unitname,
-                       BLENDFUNC blendSrc,
-                       BLENDFUNC blendDst,
-                       const vector<string> &dest,
-                       const QVector &orbitcent,
-                       Unit *parent,
-                       const GFXMaterial &ourmat,
-                       const std::vector<GFXLightLocal> &ligh,
-                       int faction,
-                       string fgid,
-                       bool inside_out) : GameUnit<Planet>(0)
+GamePlanet::GamePlanet(QVector x, QVector y, float vely, const Vector &rotvel, float pos, float gravity, float radius,
+                       const string &textname, const string &technique, const string &unitname, BLENDFUNC blendSrc,
+                       BLENDFUNC blendDst, const vector<string> &dest, const QVector &orbitcent, Unit *parent,
+                       const GFXMaterial &ourmat, const std::vector<GFXLightLocal> &ligh, int faction, string fgid,
+                       bool inside_out)
+    : GameUnit<Planet>(0)
 {
     atmosphere = nullptr;
     terrain = nullptr;
@@ -298,14 +270,15 @@ GamePlanet::GamePlanet(QVector x,
                 jump = nullptr;
         }
         if (anytrue)
-            meshdata.push_back(nullptr); //shield mesh...otherwise is a standard planet
+            meshdata.push_back(nullptr); // shield mesh...otherwise is a standard planet
         wormhole = anytrue;
     }
     if (!wormhole)
     {
         static int stacks = XMLSupport::parse_int(vs_config->getVariable("graphics", "planet_detail", "24"));
         atmospheric = !(blendSrc == ONE && blendDst == ZERO);
-        meshdata.push_back(new SphereMesh(radius, stacks, stacks, textname.c_str(), technique, nullptr, inside_out, blendSrc, blendDst));
+        meshdata.push_back(new SphereMesh(radius, stacks, stacks, textname.c_str(), technique, nullptr, inside_out,
+                                          blendSrc, blendDst));
         meshdata.back()->setEnvMap(GFXFALSE);
         meshdata.back()->SetMaterial(ourmat);
         meshdata.push_back(nullptr);
@@ -313,7 +286,8 @@ GamePlanet::GamePlanet(QVector x,
     calculate_extent(false);
     if (wormhole)
     {
-        static float radscale = XMLSupport::parse_float(vs_config->getVariable("physics", "jump_mesh_radius_scale", ".5"));
+        static float radscale =
+            XMLSupport::parse_float(vs_config->getVariable("physics", "jump_mesh_radius_scale", ".5"));
         radius *= radscale;
         corner_min.i = corner_min.j = corner_min.k = -radius;
         corner_max.i = corner_max.j = corner_max.k = radius;
@@ -323,7 +297,8 @@ GamePlanet::GamePlanet(QVector x,
     }
     if (ligh.size() > 0)
     {
-        static float bodyradius = XMLSupport::parse_float(vs_config->getVariable("graphics", "star_body_radius", ".33"));
+        static float bodyradius =
+            XMLSupport::parse_float(vs_config->getVariable("graphics", "star_body_radius", ".33"));
         static bool drawglow = XMLSupport::parse_bool(vs_config->getVariable("graphics", "draw_star_glow", "true"));
 
         static bool drawstar = XMLSupport::parse_bool(vs_config->getVariable("graphics", "draw_star_body", "true"));
@@ -332,16 +307,20 @@ GamePlanet::GamePlanet(QVector x,
         if (drawglow)
         {
             GFXColor c = getMaterialEmissive(ourmat);
-            static bool spec = XMLSupport::parse_bool(vs_config->getVariable("graphics", "glow_ambient_star_light", "false"));
-            static bool diff = XMLSupport::parse_bool(vs_config->getVariable("graphics", "glow_diffuse_star_light", "false"));
+            static bool spec =
+                XMLSupport::parse_bool(vs_config->getVariable("graphics", "glow_ambient_star_light", "false"));
+            static bool diff =
+                XMLSupport::parse_bool(vs_config->getVariable("graphics", "glow_diffuse_star_light", "false"));
             if (diff)
                 c = ligh[0].ligh.GetProperties(DIFFUSE);
             if (spec)
                 c = ligh[0].ligh.GetProperties(AMBIENT);
-            static vector<string> shines = ParseDestinations(vs_config->getVariable("graphics", "star_shine", "shine.ani"));
+            static vector<string> shines =
+                ParseDestinations(vs_config->getVariable("graphics", "star_shine", "shine.ani"));
             if (shines.empty())
                 shines.push_back("shine.ani");
-            shine = new Animation(shines[rand() % shines.size()].c_str(), true, .1, BILINEAR, false, true, c); //GFXColor(ourmat.er,ourmat.eg,ourmat.eb,ourmat.ea));
+            shine = new Animation(shines[rand() % shines.size()].c_str(), true, .1, BILINEAR, false, true,
+                                  c); // GFXColor(ourmat.er,ourmat.eg,ourmat.eb,ourmat.ea));
             shine->SetDimensions(glowradius * radius, glowradius * radius);
             if (!drawstar)
             {
@@ -351,23 +330,16 @@ GamePlanet::GamePlanet(QVector x,
             }
         }
     }
-    this->InitPlanet(x, y, vely, rotvel,
-                     pos,
-                     gravity, radius,
-                     textname, technique, unitname,
-                     dest,
-                     orbitcent, parent,
-                     faction, fgid,
-                     inside_out,
-                     nlights);
+    this->InitPlanet(x, y, vely, rotvel, pos, gravity, radius, textname, technique, unitname, dest, orbitcent, parent,
+                     faction, fgid, inside_out, nlights);
 }
 
 vector<UnitContainer *> PlanetTerrainDrawQueue;
 void GamePlanet::Draw(const Transformation &quat, const Matrix &m)
 {
-    //Do lighting fx
-    //if cam inside don't draw?
-    //if(!inside) {
+    // Do lighting fx
+    // if cam inside don't draw?
+    // if(!inside) {
     GameUnit<Planet>::Draw(quat, m);
     //}
     QVector t(_Universe->AccessCamera()->GetPosition() - Position());
@@ -381,7 +353,7 @@ void GamePlanet::Draw(const Transformation &quat, const Matrix &m)
         else
         {
             inside = false;
-            ///somehow warp unit to reasonable place outisde of planet
+            /// somehow warp unit to reasonable place outisde of planet
             if (terrain)
             {
 #ifdef PLANETARYTRANSFORM
@@ -408,7 +380,7 @@ void GamePlanet::Draw(const Transformation &quat, const Matrix &m)
             shine->Draw();
     }
 }
-//TODO: Investigate if can be removed
+// TODO: Investigate if can be removed
 void GamePlanet::ProcessTerrains()
 {
     while (!PlanetTerrainDrawQueue.empty())
@@ -460,16 +432,12 @@ void GamePlanet::DrawTerrain()
 
 extern bool CrashForceDock(Unit *thus, Unit *dockingUn, bool force);
 extern void abletodock(int dock);
-void GamePlanet::reactToCollision(Unit *un,
-                                  const QVector &biglocation,
-                                  const Vector &bignormal,
-                                  const QVector &smalllocation,
-                                  const Vector &smallnormal,
-                                  float dist)
+void GamePlanet::reactToCollision(Unit *un, const QVector &biglocation, const Vector &bignormal,
+                                  const QVector &smalllocation, const Vector &smallnormal, float dist)
 {
 #ifdef JUMP_DEBUG
-    VSFileSystem::vs_fprintf(stderr, "%s reacting to collision with %s drive %d", name.c_str(),
-                             un->name.c_str(), un->GetJumpStatus().drive);
+    VSFileSystem::vs_fprintf(stderr, "%s reacting to collision with %s drive %d", name.c_str(), un->name.c_str(),
+                             un->GetJumpStatus().drive);
 #endif
 #ifdef FIX_TERRAIN
     if (terrain && un->isUnit() != PLANETPTR)
@@ -499,18 +467,18 @@ void GamePlanet::reactToCollision(Unit *un,
     }
 #endif
     jumpReactToCollision(un);
-    //screws with earth having an atmosphere... blahrgh
+    // screws with earth having an atmosphere... blahrgh
     if (!terrain && GetDestinations().empty() && !atmospheric)
     {
-        //no place to go and acts like a ship
+        // no place to go and acts like a ship
         GameUnit<Planet>::reactToCollision(un, biglocation, bignormal, smalllocation, smallnormal, dist);
         static bool planet_crash_docks =
             XMLSupport::parse_bool(vs_config->getVariable("physics", "planet_collision_docks", "true"));
         if (_Universe->isPlayerStarship(un) && planet_crash_docks)
             CrashForceDock(this, un, true);
     }
-    //nothing happens...you fail to do anythign :-)
-    //maybe air reisstance here? or swithc dynamics to atmos mode
+    // nothing happens...you fail to do anythign :-)
+    // maybe air reisstance here? or swithc dynamics to atmos mode
 }
 void GamePlanet::EnableLights()
 {
@@ -536,8 +504,8 @@ GamePlanet::~GamePlanet()
         Matrix *tmp = new Matrix();
         *tmp = cumulative_transformation_matrix;
         terraintrans->SetTransformation(tmp);
-        //FIXME
-        //We're losing memory here...but alas alas... planets don't die that often
+        // FIXME
+        // We're losing memory here...but alas alas... planets don't die that often
     }
 #endif
 }

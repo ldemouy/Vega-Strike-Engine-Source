@@ -24,12 +24,12 @@
 
 #include "gldrv/gfxlib.h"
 #include "gldrv/winsys.h"
-//Location in 2d.
+// Location in 2d.
 struct Point2
 {
     float x, y;
 
-    //OPERATORS
+    // OPERATORS
     bool operator==(const Point2 &other)
     {
         return x == other.x && y == other.y;
@@ -39,19 +39,21 @@ struct Point2
         return !(*this == other);
     }
 
-    //CONSTRUCTION
-    Point2() : x(0.0), y(0.0) {}
+    // CONSTRUCTION
+    Point2() : x(0.0), y(0.0)
+    {
+    }
     Point2(float cx, float cy) : x(cx), y(cy)
     {
     }
 };
 
-//Extent of an area in 2d.  This is not the same as a point.
+// Extent of an area in 2d.  This is not the same as a point.
 struct Size
 {
     float width, height;
 
-    //OPERATORS
+    // OPERATORS
     bool operator==(const Size &other)
     {
         return width == other.width && height == other.height;
@@ -61,18 +63,20 @@ struct Size
         return !(*this == other);
     }
 
-    //CONSTRUCTION
-    Size() : width(0.0), height(0.0) {}
+    // CONSTRUCTION
+    Size() : width(0.0), height(0.0)
+    {
+    }
     Size(float cwidth, float cheight) : width(cwidth), height(cheight)
     {
     }
 };
 
-//Rectangle in 2d.
+// Rectangle in 2d.
 class Rect
 {
-public:
-    //Data
+  public:
+    // Data
     Point2 origin;
     Size size;
 
@@ -93,19 +97,19 @@ public:
         return origin.y + size.height;
     }
 
-    //The center of this rectangle.
+    // The center of this rectangle.
     Point2 center(void) const
     {
         return Point2(origin.x + size.width / 2, origin.y + size.height / 2);
     }
 
-    //Whether a Point is inside this Rect.
+    // Whether a Point is inside this Rect.
     bool inside(const Point2 &p) const
     {
         return p.x >= left() && p.x < right() && p.y >= bottom() && p.y < top();
     }
 
-    //Make a new Rect that is inset by the specified margins.
+    // Make a new Rect that is inset by the specified margins.
     void inset(const Size &s)
     {
         origin.x += s.width;
@@ -114,7 +118,7 @@ public:
         size.height -= s.height * 2;
     }
 
-    //Return a copy of the rect inset by specified margins.
+    // Return a copy of the rect inset by specified margins.
     Rect copyAndInset(const Size &s)
     {
         Rect result = *this;
@@ -122,7 +126,7 @@ public:
         return result;
     }
 
-    //OPERATORS
+    // OPERATORS
     bool operator==(const Rect &other)
     {
         return origin == other.origin && size == other.size;
@@ -132,8 +136,10 @@ public:
         return !(*this == other);
     }
 
-    //CONSTRUCTION
-    Rect() {}
+    // CONSTRUCTION
+    Rect()
+    {
+    }
     Rect(Point2 &p, Size &s) : origin(p), size(s)
     {
     }
@@ -142,10 +148,10 @@ public:
     }
 };
 
-//Rect that describes the coordinates of a full screen.
+// Rect that describes the coordinates of a full screen.
 static const Rect FULL_SCREEN_RECT(-1, -1, 2, 2);
 
-//Type of input event.
+// Type of input event.
 typedef enum
 {
     KEY_DOWN_EVENT,
@@ -156,17 +162,17 @@ typedef enum
     MOUSE_DRAG_EVENT
 } InputEventType;
 
-//Event modifiers as a bit mask: buttons or keys.
+// Event modifiers as a bit mask: buttons or keys.
 typedef unsigned int EventModMask;
 
-//The code for a key in a keyboard event.
+// The code for a key in a keyboard event.
 typedef unsigned int EventKeyCode;
 
-//The code for a button in a mouse event.
+// The code for a button in a mouse event.
 //(Currently, this must be the same type as a key code.)
 typedef EventKeyCode EventButton;
 
-//Mouse button constants
+// Mouse button constants
 static const unsigned int LEFT_MOUSE_BUTTON = WS_LEFT_BUTTON;
 static const unsigned int MIDDLE_MOUSE_BUTTON = WS_MIDDLE_BUTTON;
 static const unsigned int RIGHT_MOUSE_BUTTON = WS_RIGHT_BUTTON;
@@ -178,17 +184,21 @@ static const unsigned int WHEELDOWN_MOUSE_BUTTON = WS_WHEEL_DOWN;
  */
 struct InputEvent
 {
-    InputEventType type; //Kind of event.
-    unsigned int code;   //Key or mouse button.
-    EventModMask mask;   //Modifier keys or buttons.
-    Point2 loc;          //Coordinate of mouse.
+    InputEventType type; // Kind of event.
+    unsigned int code;   // Key or mouse button.
+    EventModMask mask;   // Modifier keys or buttons.
+    Point2 loc;          // Coordinate of mouse.
 
-    //CONSTRUCTION
-    InputEvent(InputEventType t, unsigned int c, EventModMask m, const Point2 &l) : type(t), code(c), mask(m), loc(l) {}
-    InputEvent() : type(MOUSE_UP_EVENT), code(LEFT_MOUSE_BUTTON), mask(0), loc(Point2(0, 0)) {}
+    // CONSTRUCTION
+    InputEvent(InputEventType t, unsigned int c, EventModMask m, const Point2 &l) : type(t), code(c), mask(m), loc(l)
+    {
+    }
+    InputEvent() : type(MOUSE_UP_EVENT), code(LEFT_MOUSE_BUTTON), mask(0), loc(Point2(0, 0))
+    {
+    }
 };
 
-//Text justification possibilities.
+// Text justification possibilities.
 enum Justification
 {
     RIGHT_JUSTIFY,
@@ -197,7 +207,7 @@ enum Justification
 };
 
 GFXColor SaturatedColor(float r, float g, float b, float a = 1.0f);
-//Predefined colors.
+// Predefined colors.
 GFXColor GUI_OPAQUE_BLACK(); //(0.0,0.0,0.0);
 GFXColor GUI_OPAQUE_WHITE(); //(1.0,1.0,1.0);
 const GFXColor GUI_CLEAR(0.0, 0.0, 0.0, 0.0);
@@ -205,14 +215,14 @@ GFXColor GUI_OPAQUE_LIGHT_GRAY();  //(0.25,0.25,0.25);
 GFXColor GUI_OPAQUE_MEDIUM_GRAY(); //(0.5,0.5,0.5);
 GFXColor GUI_OPAQUE_DARK_GRAY();   //(0.75,0.75,0.75);
 
-//Whether a color is clear -- totally transparent.
+// Whether a color is clear -- totally transparent.
 inline bool isClear(const GFXColor &c)
 {
     return c.a <= 0.0;
 }
 
-//Compare two colors.
-//Used in upgrade/downgrade to decide whether an item is OK.
+// Compare two colors.
+// Used in upgrade/downgrade to decide whether an item is OK.
 inline bool equalColors(const GFXColor &c1, const GFXColor &c2)
 {
     return c1.r == c2.r && c1.g == c2.g && c1.b == c2.b && c1.a == c2.a;
@@ -220,19 +230,19 @@ inline bool equalColors(const GFXColor &c1, const GFXColor &c2)
 
 //////////////////   DRAWING UTILITIES   ////////////////////
 
-//Draw a rectangle using the specified color.
+// Draw a rectangle using the specified color.
 void drawRect(const Rect &rect, const GFXColor &color);
 
-//Draw the outline of a rectangle using the specified color.
+// Draw the outline of a rectangle using the specified color.
 void drawRectOutline(const Rect &rect, const GFXColor &color, float lineWidth);
 
-//Draw upper-left part of rectangle's "shadow".
+// Draw upper-left part of rectangle's "shadow".
 void drawUpLeftShadow(const Rect &rect, const GFXColor &color, float lineWidth);
 
-//Draw lower-right part of rectangle's "shadow".
+// Draw lower-right part of rectangle's "shadow".
 void drawLowRightShadow(const Rect &rect, const GFXColor &color, float lineWidth);
 
-//Fill a closed polygon.
+// Fill a closed polygon.
 void drawFilledPolygon(const std::vector<Point2> &coords, const GFXColor &color);
 
 //////////////////   MIN AND MAX FUNCTIONS   ////////////////////

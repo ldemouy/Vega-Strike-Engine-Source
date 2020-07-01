@@ -1,13 +1,12 @@
 #include <cstdlib>
 #include <string.h>
-template <class ITEM>
-class Resizable
+template <class ITEM> class Resizable
 {
     unsigned int num;
     unsigned int alloc;
     ITEM *q;
 
-public:
+  public:
     Resizable()
     {
         num = 0;

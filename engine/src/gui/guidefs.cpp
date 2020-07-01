@@ -19,11 +19,11 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "vegastrike.h"
-#include "xml_support.h"
-#include "vs_globals.h"
-#include "config_xml.h"
 #include "guidefs.h"
+#include "config_xml.h"
+#include "vegastrike.h"
+#include "vs_globals.h"
+#include "xml_support.h"
 
 GFXColor SaturatedColor(float r, float g, float b, float a)
 {
@@ -60,7 +60,7 @@ GFXColor GUI_OPAQUE_DARK_GRAY()
     return gui_dark_gray;
 }
 
-//Draw a rectangle using the specified color.
+// Draw a rectangle using the specified color.
 void drawRect(const Rect &rect, const GFXColor &color)
 {
     GFXDisable(TEXTURE0);
@@ -68,25 +68,15 @@ void drawRect(const Rect &rect, const GFXColor &color)
     GFXColorf(color);
 
     const float verts[4 * 3] = {
-        rect.left(),
-        rect.top(),
-        0,
-        rect.right(),
-        rect.top(),
-        0,
-        rect.right(),
-        rect.bottom(),
-        0,
-        rect.left(),
-        rect.bottom(),
-        0,
+        rect.left(),  rect.top(),    0, rect.right(), rect.top(),    0,
+        rect.right(), rect.bottom(), 0, rect.left(),  rect.bottom(), 0,
     };
     GFXDraw(GFXQUAD, verts, 4);
 
     GFXEnable(TEXTURE0);
 }
 
-//Draw the outline of a rectangle using the specified color.
+// Draw the outline of a rectangle using the specified color.
 void drawRectOutline(const Rect &rect, const GFXColor &color, float lineWidth)
 {
     GFXDisable(TEXTURE0);
@@ -94,28 +84,15 @@ void drawRectOutline(const Rect &rect, const GFXColor &color, float lineWidth)
     GFXColorf(color);
 
     const float verts[5 * 3] = {
-        rect.left(),
-        rect.top(),
-        0,
-        rect.right(),
-        rect.top(),
-        0,
-        rect.right(),
-        rect.bottom(),
-        0,
-        rect.left(),
-        rect.bottom(),
-        0,
-        rect.left(),
-        rect.top(),
-        0,
+        rect.left(), rect.top(),    0, rect.right(), rect.top(), 0, rect.right(), rect.bottom(), 0,
+        rect.left(), rect.bottom(), 0, rect.left(),  rect.top(), 0,
     };
     GFXDraw(GFXLINESTRIP, verts, 5);
 
     GFXEnable(TEXTURE0);
 }
 
-//Draw upper-left part of rectangle's "shadow".
+// Draw upper-left part of rectangle's "shadow".
 void drawUpLeftShadow(const Rect &rect, const GFXColor &color, float lineWidth)
 {
     GFXDisable(TEXTURE0);
@@ -138,7 +115,7 @@ void drawUpLeftShadow(const Rect &rect, const GFXColor &color, float lineWidth)
     GFXEnable(TEXTURE0);
 }
 
-//Draw lower-right part of rectangle's "shadow".
+// Draw lower-right part of rectangle's "shadow".
 void drawLowRightShadow(const Rect &rect, const GFXColor &color, float lineWidth)
 {
     GFXDisable(TEXTURE0);
@@ -161,7 +138,7 @@ void drawLowRightShadow(const Rect &rect, const GFXColor &color, float lineWidth
     GFXEnable(TEXTURE0);
 }
 
-//Fill a closed polygon.
+// Fill a closed polygon.
 void drawFilledPolygon(const std::vector<Point2> &coords, const GFXColor &color)
 {
     GFXDisable(TEXTURE0);

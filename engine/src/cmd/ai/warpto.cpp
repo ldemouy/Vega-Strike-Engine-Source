@@ -1,7 +1,7 @@
 #include "cmd/unit_generic.h"
 #include "cmd/unit_util.h"
-#include "universe_util.h"
 #include "config_xml.h"
+#include "universe_util.h"
 
 float max_allowable_travel_time()
 {
@@ -11,8 +11,8 @@ float max_allowable_travel_time()
 
 bool DistanceWarrantsWarpTo(Unit *parent, float dist, bool following)
 {
-    //first let us decide whether the target is far enough to warrant using warp
-    //double dist =UnitUtil::getSignificantDistance(parent,target);
+    // first let us decide whether the target is far enough to warrant using warp
+    // double dist =UnitUtil::getSignificantDistance(parent,target);
     static float tooclose = XMLSupport::parse_float(vs_config->getVariable("AI", "too_close_for_warp_tactic", "13000"));
     static float tooclosefollowing =
         XMLSupport::parse_float(vs_config->getVariable("AI", "too_close_for_warp_in_formation", "1500"));
@@ -27,7 +27,8 @@ bool DistanceWarrantsWarpTo(Unit *parent, float dist, bool following)
     else if (timetolive > (max_allowable_travel_time()))
     {
         float mytime = SIMULATION_ATOM * 1.5;
-        static bool rampdown = XMLSupport::parse_bool(vs_config->getVariable("physics", "autopilot_ramp_warp_down", "true"));
+        static bool rampdown =
+            XMLSupport::parse_bool(vs_config->getVariable("physics", "autopilot_ramp_warp_down", "true"));
         if (rampdown == false)
         {
             static float warprampdowntime =
@@ -35,7 +36,7 @@ bool DistanceWarrantsWarpTo(Unit *parent, float dist, bool following)
             mytime = warprampdowntime;
         }
         if (dist - parent->GetWarpVelocity().Magnitude() * mytime < toodamnclose)
-            return false; //avoid nasty jitter-jumping behavior should eventually have "running away check"
+            return false; // avoid nasty jitter-jumping behavior should eventually have "running away check"
 
         return true;
     }
@@ -44,7 +45,7 @@ bool DistanceWarrantsWarpTo(Unit *parent, float dist, bool following)
 
 bool DistanceWarrantsTravelTo(Unit *parent, float dist, bool following)
 {
-    //first let us decide whether the target is far enough to warrant using warp
+    // first let us decide whether the target is far enough to warrant using warp
     float diff = 1;
     parent->GetVelocityDifficultyMult(diff);
     float timetolive = dist / (diff * parent->GetComputerData().max_combat_speed);
@@ -78,12 +79,13 @@ static void ActuallyWarpTo(Unit *parent, const QVector &tarpos, Vector tarvel, U
             XMLSupport::parse_float(vs_config->getVariable("AI", "min_energy_to_enter_warp", ".33"));
         static float min_warpfield_to_enter_warp =
             XMLSupport::parse_float(vs_config->getVariable("AI", "min_warp_to_try", "1.5"));
-        if ((parent->WarpEnergyData() > min_energy_to_enter_warp) && (parent->GetMaxWarpFieldStrength(1) > min_warpfield_to_enter_warp))
+        if ((parent->WarpEnergyData() > min_energy_to_enter_warp) &&
+            (parent->GetMaxWarpFieldStrength(1) > min_warpfield_to_enter_warp))
         {
             if (parent->graphicOptions.InWarp == 0)
             {
-                parent->graphicOptions.InWarp = 1;      //don't want the AI thrashing
-                parent->graphicOptions.WarpRamping = 1; //don't want the AI thrashing
+                parent->graphicOptions.InWarp = 1;      // don't want the AI thrashing
+                parent->graphicOptions.WarpRamping = 1; // don't want the AI thrashing
             }
         }
     }
@@ -109,8 +111,8 @@ void WarpToP(Unit *parent, Unit *target, bool following)
     {
         if (TargetWorthPursuing(parent, target))
         {
-            static bool auto_valid =
-                XMLSupport::parse_bool(vs_config->getVariable("physics", "insystem_jump_or_timeless_auto-pilot", "false"));
+            static bool auto_valid = XMLSupport::parse_bool(
+                vs_config->getVariable("physics", "insystem_jump_or_timeless_auto-pilot", "false"));
             if (auto_valid)
             {
                 std::string tmp;

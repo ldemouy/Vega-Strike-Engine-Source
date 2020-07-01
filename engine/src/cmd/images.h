@@ -1,13 +1,13 @@
 #ifndef _IMAGES_H
 #define _IMAGES_H
 
+#include "../SharedPool.h"
+#include "container.h"
+#include "gfx/animation.h"
+#include "gfx/sprite.h"
+#include "gfx/vec.h"
 #include <string>
 #include <vector>
-#include "gfx/vec.h"
-#include "container.h"
-#include "../SharedPool.h"
-#include "gfx/sprite.h"
-#include "gfx/animation.h"
 
 struct DockingPorts
 {
@@ -69,52 +69,61 @@ struct DockingPorts
         }
     };
 
-    DockingPorts()
-        : radius(0),
-          isInside(false),
-          isConnected(false),
-          isWaypoint(false),
-          isOccupied(false)
+    DockingPorts() : radius(0), isInside(false), isConnected(false), isWaypoint(false), isOccupied(false)
     {
     }
 
     DockingPorts(const Vector &center, float radius, float minradius, const Type::Value &type)
-        : center(center),
-          radius(radius),
-          isInside(Type::IsInside(type)),
-          isConnected(Type::IsConnected(type)),
-          isWaypoint(Type::IsWaypoint(type)),
-          isOccupied(isWaypoint) // Waypoints are always occupied
+        : center(center), radius(radius), isInside(Type::IsInside(type)), isConnected(Type::IsConnected(type)),
+          isWaypoint(Type::IsWaypoint(type)), isOccupied(isWaypoint) // Waypoints are always occupied
     {
     }
 
     DockingPorts(const Vector &min, const Vector &max, float minradius, const Type::Value &type)
-        : center((min + max) / 2.0f),
-          radius((max - min).Magnitude() / 2.0f),
-          isInside(Type::IsInside(type)),
-          isConnected(Type::IsConnected(type)),
-          isWaypoint(Type::IsWaypoint(type)),
+        : center((min + max) / 2.0f), radius((max - min).Magnitude() / 2.0f), isInside(Type::IsInside(type)),
+          isConnected(Type::IsConnected(type)), isWaypoint(Type::IsWaypoint(type)),
           isOccupied(isWaypoint) // Waypoints are always occupied
     {
     }
 
-    float GetRadius() const { return radius; }
+    float GetRadius() const
+    {
+        return radius;
+    }
 
-    const Vector &GetPosition() const { return center; }
+    const Vector &GetPosition() const
+    {
+        return center;
+    }
 
     // Waypoints are always marked as occupied.
-    bool IsOccupied() const { return isOccupied; }
-    void Occupy(bool yes) { isOccupied = yes; }
+    bool IsOccupied() const
+    {
+        return isOccupied;
+    }
+    void Occupy(bool yes)
+    {
+        isOccupied = yes;
+    }
 
     // Does port have connecting waypoints?
-    bool IsConnected() const { return isConnected; }
+    bool IsConnected() const
+    {
+        return isConnected;
+    }
 
     // Port is located inside or outside the station
-    bool IsInside() const { return isInside; }
+    bool IsInside() const
+    {
+        return isInside;
+    }
 
-    bool IsDockable() const { return !isWaypoint; }
+    bool IsDockable() const
+    {
+        return !isWaypoint;
+    }
 
-private:
+  private:
     Vector center;
     float radius;
     bool isInside;
@@ -127,12 +136,14 @@ struct DockedUnits
 {
     UnitContainer uc;
     unsigned int whichdock;
-    DockedUnits(Unit *un, unsigned int w) : uc(un), whichdock(w) {}
+    DockedUnits(Unit *un, unsigned int w) : uc(un), whichdock(w)
+    {
+    }
 };
 
 class Cargo
 {
-public:
+  public:
     StringPool::Reference content;
     StringPool::Reference category;
     StringPool::Reference description;
@@ -154,7 +165,8 @@ public:
         installed = false;
         functionality = maxfunctionality = 1.0f;
     }
-    Cargo(std::string name, std::string cc, float pp, int qq, float mm, float vv, float func, float maxfunc) : content(name), category(cc)
+    Cargo(std::string name, std::string cc, float pp, int qq, float mm, float vv, float func, float maxfunc)
+        : content(name), category(cc)
     {
         quantity = qq;
         price = pp;
@@ -278,7 +290,7 @@ class VSSprite;
 class Animation;
 
 template <typename BOGUS>
-//added by chuck starchaser, to try to break dependency to VSSprite in vegaserver
+// added by chuck starchaser, to try to break dependency to VSSprite in vegaserver
 struct UnitImages
 {
     UnitImages()
@@ -288,51 +300,52 @@ struct UnitImages
         pExplosion = nullptr;
     }
     /*    {
-*       VSCONSTRUCT1( 'i' )
-*  //        pHudImage = nullptr;
-*       pExplosion = nullptr;
-*   }*/
+     *       VSCONSTRUCT1( 'i' )
+     *  //        pHudImage = nullptr;
+     *       pExplosion = nullptr;
+     *   }*/
     virtual ~UnitImages();
     /*    {
-*       delete pExplosion;
-*  //        delete pHudImage;
-*       VSDESTRUCT1
-*   }*/
+     *       delete pExplosion;
+     *  //        delete pHudImage;
+     *       VSDESTRUCT1
+     *   }*/
     StringPool::Reference cockpitImage;
     StringPool::Reference explosion_type;
     Vector CockpitCenter;
     VSSprite *pHudImage;
-    ///The explosion starts at null, when activated time explode is incremented and ends at null
+    /// The explosion starts at null, when activated time explode is incremented and ends at null
     Animation *pExplosion;
     float timeexplode;
-    float *cockpit_damage; //0 is radar, 1 to MAXVDU is vdus and >MAXVDU is gauges
-    ///how likely to fool missiles
+    float *cockpit_damage; // 0 is radar, 1 to MAXVDU is vdus and >MAXVDU is gauges
+    /// how likely to fool missiles
     /// -2 = inactive L2, -1 = inactive L1, 0 = not available, 1 = active L1, 2 = active L2, etc...
     int ecm;
-    ///holds the info for the repair bot type. 0 is no bot;
+    /// holds the info for the repair bot type. 0 is no bot;
     unsigned char repair_droid;
     float next_repair_time;
     unsigned int next_repair_cargo; //(~0 : select randomly)
-    ///How much energy cloaking takes per frame
+    /// How much energy cloaking takes per frame
     float cloakenergy;
-    ///how fast this starship decloaks/close...if negative, decloaking
-    int cloakrate; //short fix
-    ///If this unit cloaks like glass or like fading
+    /// how fast this starship decloaks/close...if negative, decloaking
+    int cloakrate; // short fix
+    /// If this unit cloaks like glass or like fading
     bool cloakglass;
-    ///if the unit is a wormhole
+    /// if the unit is a wormhole
     bool forcejump;
     float UpgradeVolume;
-    float CargoVolume;      ///mass just makes you turn worse
-    float equipment_volume; //this one should be more general--might want to apply it to radioactive goods, passengers, ships (hangar), etc
+    float CargoVolume;      /// mass just makes you turn worse
+    float equipment_volume; // this one should be more general--might want to apply it to radioactive goods, passengers,
+                            // ships (hangar), etc
     float HiddenCargoVolume;
     std::vector<Cargo> cargo;
     std::vector<string> destination;
     std::vector<DockingPorts> dockingports;
-    ///warning unreliable pointer, never dereference!
+    /// warning unreliable pointer, never dereference!
     std::vector<Unit *> clearedunits;
     std::vector<DockedUnits *> dockedunits;
     UnitContainer DockedTo;
-    float unitscale; //for output
+    float unitscale; // for output
     class XMLSerializer *unitwriter;
     float fireControlFunctionality;
     float fireControlFunctionalityMax;
@@ -344,7 +357,7 @@ struct UnitImages
     float LifeSupportFunctionalityMax;
     enum GAUGES
     {
-        //Image-based gauges
+        // Image-based gauges
         ARMORF,
         ARMORB,
         ARMORR,
@@ -372,12 +385,12 @@ struct UnitImages
         ECM,
         HULL,
         WARPENERGY,
-        //target gauges
+        // target gauges
         TARGETSHIELDF,
         TARGETSHIELDB,
         TARGETSHIELDR,
         TARGETSHIELDL,
-        KPS, //KEEP KPS HERE - it marks the start of text-based gauges
+        KPS, // KEEP KPS HERE - it marks the start of text-based gauges
         SETKPS,
         COCKPIT_FPS,
         WARPFIELDSTRENGTH,
@@ -386,7 +399,7 @@ struct UnitImages
         MAXCOMBATKPS,
         MAXCOMBATABKPS,
         MASSEFFECT,
-        AUTOPILOT_MODAL, //KEEP first multimodal gauge HERE -- it marks the start of multi-modal gauges
+        AUTOPILOT_MODAL, // KEEP first multimodal gauge HERE -- it marks the start of multi-modal gauges
         SPEC_MODAL,
         FLIGHTCOMPUTER_MODAL,
         TURRETCONTROL_MODAL,
@@ -400,7 +413,7 @@ struct UnitImages
         COLLISIONWARNING_MODAL,
         CANJUMP_MODAL,
         CANDOCK_MODAL,
-        NUMGAUGES //KEEP THIS LAST - obvious reasons, marks the end of all gauges
+        NUMGAUGES // KEEP THIS LAST - obvious reasons, marks the end of all gauges
     };
     enum MODALGAUGEVALUES
     {
@@ -433,7 +446,7 @@ struct UnitSounds
     int jump;
 };
 
-//From star_system_jump.cpp
+// From star_system_jump.cpp
 class StarSystem;
 struct unorigdest
 {
@@ -446,14 +459,12 @@ struct unorigdest
     bool justloaded;
     bool ready;
     QVector final_location;
-    unorigdest(Unit *un,
-               Unit *jumppoint,
-               StarSystem *orig,
-               StarSystem *dest,
-               float delay,
-               int ani,
-               bool justloaded,
-               QVector use_coordinates /*set to 0,0,0 for crap*/) : un(un), jumppoint(jumppoint), orig(orig), dest(dest), delay(delay), animation(ani), justloaded(justloaded), ready(true), final_location(use_coordinates) {}
+    unorigdest(Unit *un, Unit *jumppoint, StarSystem *orig, StarSystem *dest, float delay, int ani, bool justloaded,
+               QVector use_coordinates /*set to 0,0,0 for crap*/)
+        : un(un), jumppoint(jumppoint), orig(orig), dest(dest), delay(delay), animation(ani), justloaded(justloaded),
+          ready(true), final_location(use_coordinates)
+    {
+    }
 };
 
 #endif

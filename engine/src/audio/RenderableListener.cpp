@@ -7,25 +7,25 @@
 namespace Audio
 {
 
-    RenderableListener::RenderableListener(Listener *_listener) : listener(_listener)
-    {
-    }
+RenderableListener::RenderableListener(Listener *_listener) : listener(_listener)
+{
+}
 
-    RenderableListener::~RenderableListener()
-    {
-        // Just in case.
-        listener = 0;
-    }
+RenderableListener::~RenderableListener()
+{
+    // Just in case.
+    listener = 0;
+}
 
-    void RenderableListener::update(int32_t flags)
+void RenderableListener::update(int32_t flags)
+{
+    try
     {
-        try
-        {
-            updateImpl(flags);
-        }
-        catch (const Exception &e)
-        {
-        }
+        updateImpl(flags);
     }
+    catch (const Exception &e)
+    {
+    }
+}
 
 }; // namespace Audio

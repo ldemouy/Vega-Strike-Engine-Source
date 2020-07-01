@@ -1,14 +1,14 @@
-#include <vector>
-#include <string>
-#include <gnuhash.h>
-#include <expat.h>
+#include "ai/communication.h"
+#include "cmd/music.h"
+#include "faction_generic.h"
+#include "unit_factory.h"
 #include "vegastrike.h"
 #include "xml_support.h"
 #include <assert.h>
-#include "ai/communication.h"
-#include "unit_factory.h"
-#include "cmd/music.h"
-#include "faction_generic.h"
+#include <expat.h>
+#include <gnuhash.h>
+#include <string>
+#include <vector>
 
 using namespace XMLSupport;
 
@@ -16,74 +16,65 @@ static int unitlevel;
 
 namespace FactionXML
 {
-    //
+//
 
-    enum Names
-    {
-        UNKNOWN,
-        FACTIONS,
-        FACTION,
-        NAME,
-        LOGORGB,
-        LOGOA,
-        SECLOGORGB,
-        SECLOGOA,
-        RELATION,
-        STATS,
-        FRIEND,
-        ENEMY,
-        CONVERSATION,
-        COMM_ANIMATION,
-        MOOD_ANIMATION,
-        CONTRABAND,
-        EXPLOSION,
-        SEX,
-        BASE_ONLY,
-        DOCKABLE_ONLY,
-        SPARKRED,
-        SPARKGREEN,
-        SPARKBLUE,
-        SPARKALPHA,
-        SHIPMODIFIER,
-        ISCITIZEN
-    };
+enum Names
+{
+    UNKNOWN,
+    FACTIONS,
+    FACTION,
+    NAME,
+    LOGORGB,
+    LOGOA,
+    SECLOGORGB,
+    SECLOGOA,
+    RELATION,
+    STATS,
+    FRIEND,
+    ENEMY,
+    CONVERSATION,
+    COMM_ANIMATION,
+    MOOD_ANIMATION,
+    CONTRABAND,
+    EXPLOSION,
+    SEX,
+    BASE_ONLY,
+    DOCKABLE_ONLY,
+    SPARKRED,
+    SPARKGREEN,
+    SPARKBLUE,
+    SPARKALPHA,
+    SHIPMODIFIER,
+    ISCITIZEN
+};
 
-    const EnumMap::Pair element_names[] = {
-        EnumMap::Pair("UNKNOWN", UNKNOWN),
-        EnumMap::Pair("Factions", FACTIONS),
-        EnumMap::Pair("Faction", FACTION),
-        EnumMap::Pair("Friend", FRIEND),
-        EnumMap::Pair("Enemy", ENEMY),
-        EnumMap::Pair("Stats", STATS),
-        EnumMap::Pair("CommAnimation", COMM_ANIMATION),
-        EnumMap::Pair("MoodAnimation", MOOD_ANIMATION),
-        EnumMap::Pair("Explosion", EXPLOSION),
-        EnumMap::Pair("ShipModifier", SHIPMODIFIER)};
+const EnumMap::Pair element_names[] = {EnumMap::Pair("UNKNOWN", UNKNOWN),
+                                       EnumMap::Pair("Factions", FACTIONS),
+                                       EnumMap::Pair("Faction", FACTION),
+                                       EnumMap::Pair("Friend", FRIEND),
+                                       EnumMap::Pair("Enemy", ENEMY),
+                                       EnumMap::Pair("Stats", STATS),
+                                       EnumMap::Pair("CommAnimation", COMM_ANIMATION),
+                                       EnumMap::Pair("MoodAnimation", MOOD_ANIMATION),
+                                       EnumMap::Pair("Explosion", EXPLOSION),
+                                       EnumMap::Pair("ShipModifier", SHIPMODIFIER)};
 
-    const EnumMap::Pair attribute_names[] = {
-        EnumMap::Pair("UNKNOWN", UNKNOWN),
-        EnumMap::Pair("name", NAME),
-        EnumMap::Pair("SparkRed", SPARKRED),
-        EnumMap::Pair("SparkGreen", SPARKGREEN),
-        EnumMap::Pair("SparkBlue", SPARKBLUE),
-        EnumMap::Pair("SparkAlpha", SPARKALPHA),
-        EnumMap::Pair("logoRGB", LOGORGB),
-        EnumMap::Pair("logoA", LOGOA),
-        EnumMap::Pair("secLogoRGB", SECLOGORGB),
-        EnumMap::Pair("secLogoA", SECLOGOA),
-        EnumMap::Pair("relation", RELATION),
-        EnumMap::Pair("Conversation", CONVERSATION),
-        EnumMap::Pair("Contraband", CONTRABAND),
-        EnumMap::Pair("sex", SEX),
-        EnumMap::Pair("base_only", BASE_ONLY),
-        EnumMap::Pair("dockable_only", DOCKABLE_ONLY),
-        EnumMap::Pair("citizen", ISCITIZEN)};
+const EnumMap::Pair attribute_names[] = {
+    EnumMap::Pair("UNKNOWN", UNKNOWN),       EnumMap::Pair("name", NAME),
+    EnumMap::Pair("SparkRed", SPARKRED),     EnumMap::Pair("SparkGreen", SPARKGREEN),
+    EnumMap::Pair("SparkBlue", SPARKBLUE),   EnumMap::Pair("SparkAlpha", SPARKALPHA),
+    EnumMap::Pair("logoRGB", LOGORGB),       EnumMap::Pair("logoA", LOGOA),
+    EnumMap::Pair("secLogoRGB", SECLOGORGB), EnumMap::Pair("secLogoA", SECLOGOA),
+    EnumMap::Pair("relation", RELATION),     EnumMap::Pair("Conversation", CONVERSATION),
+    EnumMap::Pair("Contraband", CONTRABAND), EnumMap::Pair("sex", SEX),
+    EnumMap::Pair("base_only", BASE_ONLY),   EnumMap::Pair("dockable_only", DOCKABLE_ONLY),
+    EnumMap::Pair("citizen", ISCITIZEN)};
 
-    const EnumMap element_map(element_names, 10);
+const EnumMap element_map(element_names, 10);
 
-    const EnumMap attribute_map(attribute_names, 17);
+const EnumMap attribute_map(attribute_names, 17);
 
-    //
+//
 } // namespace FactionXML
 
 static vector<std::string> contrabandlists;
@@ -114,7 +105,8 @@ void Faction::beginElement(void *userData, const XML_Char *names, const XML_Char
             switch (attribute_map.lookup((*iter).name))
             {
             case NAME:
-                factions.back()->explosion.push_back(std::shared_ptr<Animation>(FactionUtil::createAnimation((*iter).value.c_str())));
+                factions.back()->explosion.push_back(
+                    std::shared_ptr<Animation>(FactionUtil::createAnimation((*iter).value.c_str())));
                 factions.back()->explosion_name.push_back((*iter).value);
                 break;
             }
@@ -160,7 +152,8 @@ void Faction::beginElement(void *userData, const XML_Char *names, const XML_Char
 
                 break;
             case BASE_ONLY:
-                factions.back()->comm_faces.back().base = parse_bool((*iter).value) ? comm_face_t::CYES : comm_face_t::CNO;
+                factions.back()->comm_faces.back().base =
+                    parse_bool((*iter).value) ? comm_face_t::CYES : comm_face_t::CNO;
                 break;
             }
         }
@@ -173,7 +166,8 @@ void Faction::beginElement(void *userData, const XML_Char *names, const XML_Char
             switch (attribute_map.lookup((*iter).name))
             {
             case NAME:
-                factions.back()->comm_faces.back().animations.push_back(FactionUtil::createAnimation((*iter).value.c_str()));
+                factions.back()->comm_faces.back().animations.push_back(
+                    FactionUtil::createAnimation((*iter).value.c_str()));
                 break;
             }
         }
@@ -184,7 +178,7 @@ void Faction::beginElement(void *userData, const XML_Char *names, const XML_Char
         factions.push_back(std::shared_ptr<Faction>(new Faction()));
         assert(factions.size() > 0);
         contrabandlists.push_back("");
-        //factions[factions.size()-1];
+        // factions[factions.size()-1];
         for (iter = attributes.begin(); iter != attributes.end(); iter++)
         {
             switch (attribute_map.lookup((*iter).name))
@@ -249,15 +243,19 @@ void Faction::beginElement(void *userData, const XML_Char *names, const XML_Char
                 factions[factions.size() - 1]->faction[factions[factions.size() - 1]->faction.size() - 1].stats.name =
                     new char[strlen((*iter).value.c_str()) + 1];
 
-                strcpy(factions[factions.size() - 1]->faction[factions[factions.size() - 1]->faction.size() - 1].stats.name,
+                strcpy(factions[factions.size() - 1]
+                           ->faction[factions[factions.size() - 1]->faction.size() - 1]
+                           .stats.name,
                        (*iter).value.c_str());
                 break;
             case RELATION:
-                factions[factions.size() - 1]->faction[factions[factions.size() - 1]->faction.size() - 1].relationship = parse_float(
-                    (*iter).value);
+                factions[factions.size() - 1]->faction[factions[factions.size() - 1]->faction.size() - 1].relationship =
+                    parse_float((*iter).value);
                 break;
             case CONVERSATION:
-                factions[factions.size() - 1]->faction[factions[factions.size() - 1]->faction.size() - 1].conversation.reset(new FSM((*iter).value));
+                factions[factions.size() - 1]
+                    ->faction[factions[factions.size() - 1]->faction.size() - 1]
+                    .conversation.reset(new FSM((*iter).value));
                 break;
             }
         }
@@ -368,9 +366,7 @@ void Faction::LoadXML(const char *filename, char *xmlbuffer, int buflength)
                     }
                     cache.insert(Cache::value_type(jointCommFile, jointComm));
                 }
-                factions[i]->faction[j].conversation = jointComm
-                                                           ? jointComm
-                                                           : (myComm ? myComm : neutralComm);
+                factions[i]->faction[j].conversation = jointComm ? jointComm : (myComm ? myComm : neutralComm);
             }
         }
     }

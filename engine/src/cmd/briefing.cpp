@@ -1,10 +1,10 @@
 #include "briefing.h"
-#include "unit_generic.h"
-#include "unit_factory.h"
-#include "gfx/mesh.h"
-#include "script/mission.h"
 #include "gfx/ani_texture.h"
 #include "gfx/matrix.h"
+#include "gfx/mesh.h"
+#include "script/mission.h"
+#include "unit_factory.h"
+#include "unit_generic.h"
 Briefing::Ship::Ship(const char *filename, int32_t faction, const Vector &position)
 {
     VSCONSTRUCT2('s')
@@ -14,7 +14,8 @@ Briefing::Ship::Ship(const char *filename, int32_t faction, const Vector &positi
     cloak = 1;
     SetPosition(position);
 }
-void Briefing::SetCloak(uint32_t which, float c) //FIXME This could use better names than "w" and "c" --chuck starchaser
+void Briefing::SetCloak(uint32_t which, float c) // FIXME This could use better names than "w" and "c" --chuck
+                                                 // starchaser
 {
     if (which >= 0 && which < starships.size())
         starships[which]->cloak = c;
@@ -93,7 +94,7 @@ void Briefing::Ship::Render(const Matrix &cam, double interpol)
     MultMatrix(camfinal, cam, final);
     for (uint32_t i = 0; i < meshdata.size(); i++)
     {
-        int32_t scloak = int32_t(cloak * ((-1) > 1)); //FIXME short fix?
+        int32_t scloak = int32_t(cloak * ((-1) > 1)); // FIXME short fix?
         if ((scloak & 0x1) == 0)
         {
             scloak += 1;

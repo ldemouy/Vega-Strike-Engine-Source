@@ -28,8 +28,8 @@
 
 #include <SDL/SDL.h>
 
-#include "vegastrike.h"
 #include "in_kb.h"
+#include "vegastrike.h"
 
 class JoyStick;
 
@@ -66,10 +66,10 @@ class JoyStick
     void InitMouse(int32_t i);
     void GetMouse(float &x, float &y, float &z, int32_t &buttons);
 
-public:
-    //initializes the joystick
+  public:
+    // initializes the joystick
     JoyStick(int);
-    //engine calls GetJoyStick to get coordinates and buttons
+    // engine calls GetJoyStick to get coordinates and buttons
     void GetJoyStick(float &x, float &y, float &z, int32_t &buttons);
     bool isAvailable(void);
     bool is_around(float axe, float hswitch);
@@ -105,7 +105,8 @@ void UnbindJoyKey(int32_t joystick, int32_t key);
 void UnbindHatswitchKey(int32_t hatswitch, int32_t val_index);
 void BindHatswitchKey(int32_t hatswitch, int32_t val_index, KBHandler handler, const KBData &data);
 
-void BindDigitalHatswitchKey(int32_t joystick, int32_t hatswitch, int32_t dir_index, KBHandler handler, const KBData &data);
+void BindDigitalHatswitchKey(int32_t joystick, int32_t hatswitch, int32_t dir_index, KBHandler handler,
+                             const KBData &data);
 void UnbindDigitalHatswitchKey(int32_t joystick, int32_t hatswitch, int32_t dir_index);
 
 #endif //_JOYSTICK_H_

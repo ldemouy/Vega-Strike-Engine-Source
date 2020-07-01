@@ -1,5 +1,5 @@
-#include "quadsquare.h"
 #include "aux_texture.h"
+#include "quadsquare.h"
 
 float SphereTransformRenderlevel = 0;
 
@@ -90,11 +90,7 @@ int quadsquare::Render(const quadcornerdata &cd, const Vector &camvec)
 }
 
 //#define DONOTDRAWBLENDEDQUADS
-inline void RotateTriRight(unsigned int &aa,
-                           unsigned short &ta,
-                           unsigned int &bb,
-                           unsigned short &tb,
-                           unsigned int &cc,
+inline void RotateTriRight(unsigned int &aa, unsigned short &ta, unsigned int &bb, unsigned short &tb, unsigned int &cc,
                            unsigned short &tc)
 {
     unsigned int baki;
@@ -113,11 +109,7 @@ inline void RotateTriRight(unsigned int &aa,
     ta = baks;
 }
 
-inline void RotateTriLeft(unsigned int &aa,
-                          unsigned short &ta,
-                          unsigned int &bb,
-                          unsigned short &tb,
-                          unsigned int &cc,
+inline void RotateTriLeft(unsigned int &aa, unsigned short &ta, unsigned int &bb, unsigned short &tb, unsigned int &cc,
                           unsigned short &tc)
 {
     unsigned int baki;
@@ -136,14 +128,10 @@ inline void RotateTriLeft(unsigned int &aa,
     ta = baks;
 }
 
-void quadsquare::tri(unsigned int aa,
-                     unsigned short ta,
-                     unsigned int bb,
-                     unsigned short tb,
-                     unsigned int cc,
+void quadsquare::tri(unsigned int aa, unsigned short ta, unsigned int bb, unsigned short tb, unsigned int cc,
                      unsigned short tc)
 {
-    assert(0); //see below #if VERTEX_LIST functions... this whole contraption sorely needs a rewrite
+    assert(0); // see below #if VERTEX_LIST functions... this whole contraption sorely needs a rewrite
 #ifdef DONOTDRAWBLENDEDQUADS
     if (ta == tb && tb == tc)
     {
@@ -201,16 +189,16 @@ void quadsquare::tri(unsigned int aa,
 unsigned short VertInfo::GetTex() const
 {
     return (Rem > 127) ? (Tex + 1) : Tex;
-    //return Tex/texmultiply + (((Tex%texmultiply)>texmultiply/2)?1:0);
+    // return Tex/texmultiply + (((Tex%texmultiply)>texmultiply/2)?1:0);
 }
 
 void quadsquare::RenderAux(const quadcornerdata &cd, CLIPSTATE vis)
 {
-    //Does the work of rendering this square.  Uses the enabled vertices only.
-    //Recurses as necessary.
+    // Does the work of rendering this square.  Uses the enabled vertices only.
+    // Recurses as necessary.
     unsigned int whole = 2 << cd.Level;
     SphereTransformRenderlevel++;
-    //If this square is outside the frustum, then don't render it.
+    // If this square is outside the frustum, then don't render it.
     if (vis != GFX_TOTALLY_VISIBLE)
     {
         Vector min, max;
@@ -224,7 +212,7 @@ void quadsquare::RenderAux(const quadcornerdata &cd, CLIPSTATE vis)
         if (vis == GFX_NOT_VISIBLE)
         {
             SphereTransformRenderlevel--;
-            //This square is completely outside the view frustum.
+            // This square is completely outside the view frustum.
             return;
         }
     }
@@ -248,8 +236,9 @@ void quadsquare::RenderAux(const quadcornerdata &cd, CLIPSTATE vis)
     SphereTransformRenderlevel--;
     if (flags == 0)
         return;
-//Local macro to make the triangle logic shorter & hopefully clearer.
-//#define tri(aa,ta,bb,tb,cc,tc) (indices[ta].q.push_back (aa), indices[ta].q.push_back (bb), indices[ta].q.push_back (cc))
+// Local macro to make the triangle logic shorter & hopefully clearer.
+//#define tri(aa,ta,bb,tb,cc,tc) (indices[ta].q.push_back (aa), indices[ta].q.push_back (bb), indices[ta].q.push_back
+//(cc))
 #define V0 (Vertex[0].vertindex)
 #define T0 (Vertex[0].GetTex())
 #define V1 (Vertex[1].vertindex)
@@ -268,7 +257,7 @@ void quadsquare::RenderAux(const quadcornerdata &cd, CLIPSTATE vis)
 #define T7 (Vertex[4].GetTex())
 #define V8 (cd.Verts[3].vertindex)
 #define T8 (cd.Verts[3].GetTex())
-    //Make the list of triangles to draw.
+    // Make the list of triangles to draw.
     if ((EnabledFlags & 1) == 0)
     {
         tri(V0, T0, V8, T8, V2, T2);
@@ -333,26 +322,26 @@ void quadsquare::RenderAux(const quadcornerdata &cd, CLIPSTATE vis)
 
 void quadsquare::SetupCornerData(quadcornerdata *q, const quadcornerdata &cd, int ChildIndex)
 {
-    //Fills the given structure with the appropriate corner values for the
-    //specified child block, given our own vertex data and our corner
-    //vertex data from cd.
+    // Fills the given structure with the appropriate corner values for the
+    // specified child block, given our own vertex data and our corner
+    // vertex data from cd.
     //
-    //ChildIndex mapping:
+    // ChildIndex mapping:
     //+-+-+
     //|1|0|
     //+-+-+
     //|2|3|
     //+-+-+
     //
-    //Verts mapping:
-    //1-0
+    // Verts mapping:
+    // 1-0
     //| |
-    //2-3
+    // 2-3
     //
-    //Vertex mapping:
+    // Vertex mapping:
     //+-2-+
     //| | |
-    //3-0-1
+    // 3-0-1
     //| | |
     //+-4-+
     int half = 1 << cd.Level;

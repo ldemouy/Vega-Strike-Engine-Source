@@ -222,7 +222,8 @@
 ** Mac OS X
 ** ------------------------------------------------------------------
 */
-#if (defined __MWERKS__ && defined __powerc && !defined macintosh) || defined __APPLE_CC__ || defined macosx || defined FORCE_DOXYGEN
+#if (defined __MWERKS__ && defined __powerc && !defined macintosh) || defined __APPLE_CC__ || defined macosx ||        \
+    defined FORCE_DOXYGEN
 #define POSH_OS_OSX /**<if defined, target OS is Mac OS X */
 #if !defined FORCE_DOXYGEN
 #define POSH_OS_STRING "MacOS X"
@@ -401,7 +402,8 @@
 ** PowerPC
 ** ------------------------------------------------------------------
 */
-#if defined __PPC__ || defined __POWERPC__ || defined powerpc || defined _POWER || defined __ppc__ || defined __powerpc__ || defined FORCE_DOXYGEN
+#if defined __PPC__ || defined __POWERPC__ || defined powerpc || defined _POWER || defined __ppc__ ||                  \
+    defined __powerpc__ || defined FORCE_DOXYGEN
 #define POSH_CPU_PPC /**< if defined, target processor is a PowerPC derivative */
 #if !defined FORCE_DOXYGEN
 #if defined __powerpc64__
@@ -511,7 +513,8 @@
 ** Intel x86 and AMD x86-64
 ** ------------------------------------------------------------------
 */
-#if defined __X86__ || defined __i386__ || defined i386 || defined _M_IX86 || defined __386__ || defined FORCE_DOXYGEN || defined __amd64__ || defined __AMD64__ || defined __x86_64__
+#if defined __X86__ || defined __i386__ || defined i386 || defined _M_IX86 || defined __386__ ||                       \
+    defined FORCE_DOXYGEN || defined __amd64__ || defined __AMD64__ || defined __x86_64__
 #define POSH_CPU_X86 /**<if defined, target CPU is Intel 386+ compatible */
 #if defined __x86_64__ || defined FORCE_DOXYGEN || defined __amd64__ || defined __AMD64__
 #define POSH_CPU_X86_64 /**<if defined, target CPU is AMD x86-64 */
@@ -566,7 +569,8 @@
 
 /* Attempt to autodetect building for embedded on Sony PS2 */
 #if (!defined POSH_OS_STRING) || defined FORCE_DOXYGEN
-#define POSH_OS_EMBEDDED /**<if defined, target OS is embedded or non-existent such as Sony PS2.  @ingroup OSSymbols */
+#define POSH_OS_EMBEDDED /**<if defined, target OS is embedded or non-existent such as Sony PS2.  @ingroup OSSymbols   \
+                          */
 #if !defined FORCE_DOXYGEN
 #if defined _R5900
 #define POSH_OS_STRING "Sony PS2(embedded)"
@@ -628,7 +632,8 @@
  */
 
 /** @todo need to get a comprehensive list of how cdecl, et. al. are specified */
-#if !defined FORCE_DOXYGEN && (defined _MSC_VER || defined __WATCOMC__ || defined __GNUC__ || defined __BORLANDC__ || defined __MWERKS__)
+#if !defined FORCE_DOXYGEN &&                                                                                          \
+    (defined _MSC_VER || defined __WATCOMC__ || defined __GNUC__ || defined __BORLANDC__ || defined __MWERKS__)
 #define POSH_CDECL __cdecl
 #define POSH_STDCALL __stdcall
 #define POSH_FASTCALL __fastcall
@@ -792,7 +797,8 @@
 #if defined FORCE_DOXYGEN
 #define POSH_LITTLE_ENDIAN
 #define POSH_BIG_ENDIAN
-#elif defined POSH_CPU_X86 || defined POSH_CPU_AXP || defined POSH_CPU_STRONGARM || defined POSH_OS_WIN32 || defined POSH_OS_WINCE || defined __MIPSEL__
+#elif defined POSH_CPU_X86 || defined POSH_CPU_AXP || defined POSH_CPU_STRONGARM || defined POSH_OS_WIN32 ||           \
+    defined POSH_OS_WINCE || defined __MIPSEL__
 #define POSH_LITTLE_ENDIAN 1
 #define POSH_ENDIAN_STRING "little"
 #else
@@ -849,7 +855,8 @@ typedef long posh_s64_t;
 typedef unsigned long posh_u64_t;
 #define POSH_S64(x) ((posh_s64_t)x)
 #define POSH_U64(x) ((posh_u64_t)x)
-#elif defined __GNUC__ || defined __MWERKS__ || defined __SUNPRO_C || defined __SUNPRO_CC || defined __APPLE_CC__ || defined POSH_OS_IRIX || defined _LONG_LONG || defined _CRAYC
+#elif defined __GNUC__ || defined __MWERKS__ || defined __SUNPRO_C || defined __SUNPRO_CC || defined __APPLE_CC__ ||   \
+    defined POSH_OS_IRIX || defined _LONG_LONG || defined _CRAYC
 #define POSH_64BIT_INTEGER 1
 typedef long long posh_i64_t;
 typedef long long posh_s64_t;
@@ -1024,7 +1031,8 @@ POSH_COMPILE_TIME_ASSERT(posh_i64_t, sizeof(posh_i64_t) == 8);
 #define POSH_64BIT_POINTER 1
 #endif
 
-#if defined POSH_CPU_SPARC64 || defined POSH_OS_WIN64 || defined __64BIT__ || defined __LP64 || defined _LP64 || defined __LP64__ || defined _ADDR64 || defined _CRAYC
+#if defined POSH_CPU_SPARC64 || defined POSH_OS_WIN64 || defined __64BIT__ || defined __LP64 || defined _LP64 ||       \
+    defined __LP64__ || defined _ADDR64 || defined _CRAYC
 #define POSH_64BIT_POINTER 1
 #endif
 

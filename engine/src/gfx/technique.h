@@ -18,7 +18,7 @@ class Technique
     bool compiled;
     int programVersion;
 
-public:
+  public:
     class Pass
     {
         /** Compiled and linked program */
@@ -33,7 +33,7 @@ public:
         /** Fragment Program file before compilation */
         std::string fragmentProgram;
 
-    public:
+      public:
         enum Tristate
         {
             False = 0,
@@ -237,14 +237,14 @@ public:
             float value[4];
         };
 
-    private:
+      private:
         typedef std::vector<TextureUnit> TextureUnitList;
         typedef std::vector<ShaderParam> ShaderParamList;
 
         TextureUnitList textureUnits;
         ShaderParamList shaderParams;
 
-    public:
+      public:
         /** Type of pass - shader or fixed pipeline */
         Type type;
 
@@ -314,11 +314,8 @@ public:
          *      bound to this texture unit.
          * @remarks [type] may be either Decal or File, mapping to equally named SourceType s
          */
-        void addTextureUnit(const std::string &source,
-                            int target,
-                            const std::string &deflt,
-                            const std::string &paramName,
-                            Technique::Pass::TextureUnit::Kind texKind);
+        void addTextureUnit(const std::string &source, int target, const std::string &deflt,
+                            const std::string &paramName, Technique::Pass::TextureUnit::Kind texKind);
 
         /** Add a constant shader param
          * @param name A string defining the shader's parameter name.
@@ -382,11 +379,11 @@ public:
         bool isCompiled(int programVersion) const;
     };
 
-protected:
+  protected:
     typedef std::vector<Pass> PassList;
     PassList passes;
 
-public:
+  public:
     /** Create a technique by loading and parsing the definition in [name].technique */
     explicit Technique(const std::string &name);
 
@@ -416,7 +413,7 @@ public:
         return compiled && this->programVersion == programVersion;
     }
 
-    void compile(); //Throws on error
+    void compile(); // Throws on error
 
     int getNumPasses() const
     {

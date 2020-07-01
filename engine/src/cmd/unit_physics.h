@@ -22,35 +22,30 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "gfx/mesh.h"
-#include "unit.h"
-#include "lin_time.h"
-#include "beam.h"
-#include "planet.h"
 #include "aldrv/audiolib.h"
+#include "beam.h"
 #include "configxml.h"
+#include "gfx/mesh.h"
+#include "lin_time.h"
+#include "planet.h"
+#include "unit.h"
 #include "vs_globals.h"
 #include "vs_math.h"
 
 #ifdef FIX_TERRAIN
 #include "gfx/planetary_transform.h"
 #endif
+#include "cmd/script/mission.h"
 #include "gfx/cockpit.h"
 #include "unit_util.h"
 #include "universe_util.h"
-#include "cmd/script/mission.h"
 
-extern unsigned int apply_float_to_unsigned_int(float tmp); //short fix
+extern unsigned int apply_float_to_unsigned_int(float tmp); // short fix
 
 template <class UnitType>
-void GameUnit<UnitType>::UpdatePhysics2(const Transformation &trans,
-                                        const Transformation &old_physical_state,
-                                        const Vector &accel,
-                                        float difficulty,
-                                        const Matrix &transmat,
-                                        const Vector &cum_vel,
-                                        bool lastframe,
-                                        UnitCollection *uc)
+void GameUnit<UnitType>::UpdatePhysics2(const Transformation &trans, const Transformation &old_physical_state,
+                                        const Vector &accel, float difficulty, const Matrix &transmat,
+                                        const Vector &cum_vel, bool lastframe, UnitCollection *uc)
 {
 
     UnitType::UpdatePhysics2(trans, old_physical_state, accel, difficulty, transmat, cum_vel, lastframe, uc);
@@ -65,7 +60,7 @@ void GameUnit<UnitType>::UpdatePhysics2(const Transformation &trans,
     if (lastframe)
     {
         char tmp = 0;
-        //double blah = queryTime();
+        // double blah = queryTime();
         for (i = 0, n = this->meshdata.size(); i < n; i++)
         {
             if (!this->meshdata[i])
@@ -80,19 +75,18 @@ void GameUnit<UnitType>::UpdatePhysics2(const Transformation &trans,
                 tmp = 1;
             }
         }
-        //double blah1 = queryTime();
+        // double blah1 = queryTime();
         if (!tmp && this->hull < 0)
         {
             Explode(false, SIMULATION_ATOM);
         }
-        //double blah2 = queryTime();
+        // double blah2 = queryTime();
     }
 }
 
 /****************************** ONLY SOUND/GFX STUFF LEFT IN THOSE FUNCTIONS *********************************/
 
-template <class UnitType>
-void GameUnit<UnitType>::Thrust(const Vector &amt1, bool afterburn)
+template <class UnitType> void GameUnit<UnitType>::Thrust(const Vector &amt1, bool afterburn)
 {
     if (this->afterburntype == 0)
         afterburn = afterburn && this->energy > this->afterburnenergy * SIMULATION_ATOM;
@@ -106,10 +100,8 @@ void GameUnit<UnitType>::Thrust(const Vector &amt1, bool afterburn)
         XMLSupport::parse_bool(vs_config->getVariable("audio", "buzzing_needs_afterburner", "false"));
     if (_Universe->isPlayerStarship(this) != nullptr)
     {
-        static int playerengine = AUDCreateSound(vs_config->getVariable("unitaudio",
-                                                                        "player_afterburner",
-                                                                        "sfx10.wav"),
-                                                 true);
+        static int playerengine =
+            AUDCreateSound(vs_config->getVariable("unitaudio", "player_afterburner", "sfx10.wav"), true);
         static float enginegain = XMLSupport::parse_float(vs_config->getVariable("audio", "afterburner_gain", ".5"));
         if (afterburn != AUDIsPlaying(playerengine))
         {
@@ -122,14 +114,14 @@ void GameUnit<UnitType>::Thrust(const Vector &amt1, bool afterburn)
     else if (afterburn || !must_afterburn_to_buzz)
     {
         static float buzzingtime = XMLSupport::parse_float(vs_config->getVariable("audio", "buzzing_time", "5"));
-        static float buzzingdistance = XMLSupport::parse_float(vs_config->getVariable("audio", "buzzing_distance", "5"));
+        static float buzzingdistance =
+            XMLSupport::parse_float(vs_config->getVariable("audio", "buzzing_distance", "5"));
         static float lastbuzz = getNewTime();
         Unit *playa = _Universe->AccessCockpit()->GetParent();
         if (playa)
         {
-            if (UnitUtil::getDistance(this,
-                                      playa) < buzzingdistance &&
-                playa->owner != this && this->owner != playa && this->owner != playa->owner)
+            if (UnitUtil::getDistance(this, playa) < buzzingdistance && playa->owner != this && this->owner != playa &&
+                this->owner != playa->owner)
             {
                 float ttime = getNewTime();
                 if (ttime - lastbuzz > buzzingtime)
@@ -153,8 +145,7 @@ void GameUnit<UnitType>::Thrust(const Vector &amt1, bool afterburn)
     }
 }
 
-template <class UnitType>
-Vector GameUnit<UnitType>::ResolveForces(const Transformation &trans, const Matrix &transmat)
+template <class UnitType> Vector GameUnit<UnitType>::ResolveForces(const Transformation &trans, const Matrix &transmat)
 {
 #ifndef PERFRAMESOUND
     AUDAdjustSound(this->sound->engine, this->cumulative_transformation.position, this->cumulative_velocity);

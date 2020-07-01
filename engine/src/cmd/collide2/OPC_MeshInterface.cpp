@@ -25,7 +25,7 @@
  *	\author		Pierre Terdiman
  *	\version	1.3
  *	\date		March, 20, 2001
-*/
+ */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -111,7 +111,7 @@
  *	\author		Pierre Terdiman
  *	\version	1.3
  *	\date		November, 27, 2002
-*/
+ */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -121,10 +121,7 @@
  *	Constructor.
  */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-MeshInterface::MeshInterface() : mUserData(nullptr),
-								 mObjCallback(nullptr),
-								 mNbTris(0),
-								 mNbVerts(0)
+MeshInterface::MeshInterface() : mUserData(nullptr), mObjCallback(nullptr), mNbTris(0), mNbVerts(0)
 {
 }
 
@@ -145,15 +142,15 @@ MeshInterface::~MeshInterface()
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool MeshInterface::IsValid() const
 {
-	if (!mNbTris || !mNbVerts)
-	{
-		return false;
-	}
-	if (!mObjCallback)
-	{
-		return false;
-	}
-	return true;
+    if (!mNbTris || !mNbVerts)
+    {
+        return false;
+    }
+    if (!mObjCallback)
+    {
+        return false;
+    }
+    return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -165,27 +162,27 @@ bool MeshInterface::IsValid() const
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 uint32_t MeshInterface::CheckTopology() const
 {
-	// Check topology. If the model contains degenerate faces, collision report can be wrong in some cases.
-	// e.g. it happens with the standard MAX teapot. So clean your meshes first... If you don't have a mesh cleaner
-	// you can try this: www.codercorner.com/Consolidation.zip
+    // Check topology. If the model contains degenerate faces, collision report can be wrong in some cases.
+    // e.g. it happens with the standard MAX teapot. So clean your meshes first... If you don't have a mesh cleaner
+    // you can try this: www.codercorner.com/Consolidation.zip
 
-	uint32_t NbDegenerate = 0;
+    uint32_t NbDegenerate = 0;
 
-	VertexPointers VP;
+    VertexPointers VP;
 
-	// Using callbacks, we don't have access to vertex indices. Nevertheless we still can check for
-	// redundant vertex pointers, which cover all possibilities (callbacks/pointers/strides).
-	for (uint32_t i = 0; i < mNbTris; i++)
-	{
-		GetTriangle(VP, i);
+    // Using callbacks, we don't have access to vertex indices. Nevertheless we still can check for
+    // redundant vertex pointers, which cover all possibilities (callbacks/pointers/strides).
+    for (uint32_t i = 0; i < mNbTris; i++)
+    {
+        GetTriangle(VP, i);
 
-		if ((VP.Vertex[0] == VP.Vertex[1]) || (VP.Vertex[1] == VP.Vertex[2]) || (VP.Vertex[2] == VP.Vertex[0]))
-		{
-			NbDegenerate++;
-		}
-	}
+        if ((VP.Vertex[0] == VP.Vertex[1]) || (VP.Vertex[1] == VP.Vertex[2]) || (VP.Vertex[2] == VP.Vertex[0]))
+        {
+            NbDegenerate++;
+        }
+    }
 
-	return NbDegenerate;
+    return NbDegenerate;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -198,12 +195,12 @@ uint32_t MeshInterface::CheckTopology() const
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool MeshInterface::SetCallback(RequestCallback callback, void *user_data)
 {
-	//	if(!callback)	return SetIceError("MeshInterface::SetCallback: callback pointer is null");
-	if (!callback)
-	{
-		return (false);
-	}
-	mObjCallback = callback;
-	mUserData = user_data;
-	return true;
+    //	if(!callback)	return SetIceError("MeshInterface::SetCallback: callback pointer is null");
+    if (!callback)
+    {
+        return (false);
+    }
+    mObjCallback = callback;
+    mUserData = user_data;
+    return true;
 }

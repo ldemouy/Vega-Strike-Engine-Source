@@ -1,14 +1,14 @@
-#include <boost/version.hpp>
 #include <boost/python/object.hpp>
+#include <boost/version.hpp>
 
-#include <Python.h>
-#include <vector>
-#include <string>
-#include <math.h>
-#include "python/python_class.h"
 #include "base.h"
 #include "base_util.h"
+#include "python/python_class.h"
 #include "vsfilesystem.h"
+#include <Python.h>
+#include <math.h>
+#include <string>
+#include <vector>
 
 static FILE *withAndWithout(std::string filename, std::string time_of_day_hint)
 {
@@ -54,7 +54,7 @@ void BaseInterface::Load(const char *filename, const char *time_of_day_hint, con
         }
     }
 
-    //now that we have a FILE * named inFile and a std::string named newfile we can finally begin the python
+    // now that we have a FILE * named inFile and a std::string named newfile we can finally begin the python
     string compilefile = string(filename) + time_of_day_hint + string(faction) + BASE_EXTENSION;
     Python::reseterrors();
     PyRun_SimpleFile(inFile, compilefile.c_str());

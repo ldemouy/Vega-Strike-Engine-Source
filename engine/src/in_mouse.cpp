@@ -19,15 +19,15 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "vegastrike.h"
-#include "in_handler.h"
 #include "in_mouse.h"
-#include <deque>
-#include "vs_globals.h"
 #include "config_xml.h"
-#include "in_joystick.h"
 #include "gldrv/winsys.h"
+#include "in_handler.h"
+#include "in_joystick.h"
 #include "options.h"
+#include "vegastrike.h"
+#include "vs_globals.h"
+#include <deque>
 
 using std::deque;
 const int32_t NUM_BUTTONS = 15;
@@ -70,7 +70,10 @@ struct MouseEvent
     int32_t mod;
     int32_t x;
     int32_t y;
-    MouseEvent(EventType type, int32_t button, int32_t state, int32_t mod, int32_t x, int32_t y) : type(type), button(button), state(state), mod(mod), x(x), y(y) {}
+    MouseEvent(EventType type, int32_t button, int32_t state, int32_t mod, int32_t x, int32_t y)
+        : type(type), button(button), state(state), mod(mod), x(x), y(y)
+    {
+    }
 };
 
 static deque<MouseEvent> eventQueue;
@@ -93,7 +96,9 @@ void DealWithWarp(int32_t x, int32_t y)
     {
         if (joystick[MOUSE_JOYSTICK]->player < _Universe->numPlayers())
         {
-            if (x < game_options.warp_mouse_zone || y < game_options.warp_mouse_zone || x > g_game.x_resolution - game_options.warp_mouse_zone || y > g_game.y_resolution - game_options.warp_mouse_zone)
+            if (x < game_options.warp_mouse_zone || y < game_options.warp_mouse_zone ||
+                x > g_game.x_resolution - game_options.warp_mouse_zone ||
+                y > g_game.y_resolution - game_options.warp_mouse_zone)
             {
                 int32_t delx = -x + g_game.x_resolution / 2;
                 int32_t dely = -y + g_game.y_resolution / 2;
@@ -201,7 +206,9 @@ void mouseMotion(int32_t x, int32_t y)
     mousey = y;
 }
 
-static void DefaultMouseHandler(KBSTATE, int32_t x, int32_t y, int32_t delx, int32_t dely, int32_t mod) {}
+static void DefaultMouseHandler(KBSTATE, int32_t x, int32_t y, int32_t delx, int32_t dely, int32_t mod)
+{
+}
 
 void UnbindMouse(int32_t key)
 {

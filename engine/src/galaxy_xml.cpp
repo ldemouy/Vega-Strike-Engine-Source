@@ -23,13 +23,13 @@
  *  Daniel Horn
  */
 
-#include <expat.h>
-#include "xml_support.h"
-#include "vsfilesystem.h"
 #include "vs_globals.h"
+#include "vsfilesystem.h"
+#include "xml_support.h"
+#include <expat.h>
 
-#include "galaxy_xml.h"
 #include "galaxy_gen.h"
+#include "galaxy_xml.h"
 #ifdef WRITEGALAXYCOORDS
 #include "gfx/nav/navscreen.h"
 #endif
@@ -39,125 +39,118 @@ using namespace VSFileSystem;
 
 namespace GalaxyXML
 {
-    enum GalaxyNames
-    {
-        UNKNOWN,
-        GALAXY,
-        SYSTEMS,
-        SECTOR,
-        SYSTEM,
-        VAR,
-        NAME,
-        VALUE,
-        PLANETS,
-        PLANET
-    };
-    const EnumMap::Pair element_names[8] = {
-        EnumMap::Pair("UNKNOWN", UNKNOWN),
-        EnumMap::Pair("Galaxy", GALAXY),
-        EnumMap::Pair("Systems", SYSTEMS),
-        EnumMap::Pair("Sector", SECTOR),
-        EnumMap::Pair("System", SYSTEM),
-        EnumMap::Pair("Planets", PLANETS),
-        EnumMap::Pair("Planet", PLANET),
-        EnumMap::Pair("Var", VAR)};
-    const EnumMap::Pair attribute_names[3] = {
-        EnumMap::Pair("UNKNOWN", UNKNOWN),
-        EnumMap::Pair("name", NAME),
-        EnumMap::Pair("value", VALUE)};
+enum GalaxyNames
+{
+    UNKNOWN,
+    GALAXY,
+    SYSTEMS,
+    SECTOR,
+    SYSTEM,
+    VAR,
+    NAME,
+    VALUE,
+    PLANETS,
+    PLANET
+};
+const EnumMap::Pair element_names[8] = {EnumMap::Pair("UNKNOWN", UNKNOWN), EnumMap::Pair("Galaxy", GALAXY),
+                                        EnumMap::Pair("Systems", SYSTEMS), EnumMap::Pair("Sector", SECTOR),
+                                        EnumMap::Pair("System", SYSTEM),   EnumMap::Pair("Planets", PLANETS),
+                                        EnumMap::Pair("Planet", PLANET),   EnumMap::Pair("Var", VAR)};
+const EnumMap::Pair attribute_names[3] = {EnumMap::Pair("UNKNOWN", UNKNOWN), EnumMap::Pair("name", NAME),
+                                          EnumMap::Pair("value", VALUE)};
 
-    const EnumMap element_map(element_names, 8);
-    const EnumMap attribute_map(attribute_names, 3);
-    class XML
+const EnumMap element_map(element_names, 8);
+const EnumMap attribute_map(attribute_names, 3);
+class XML
+{
+  public:
+    SGalaxy *g;
+    std::vector<std::string> stak;
+};
+void beginElement(void *userdata, const XML_Char *nam, const XML_Char **atts)
+{
+    AttributeList::const_iterator iter;
+    XML *xml = (XML *)userdata;
+    string tname(nam);
+    AttributeList attributes(atts);
+    GalaxyNames elem = (GalaxyNames)element_map.lookup(tname);
+    GalaxyNames attr;
+    string name;
+    string value;
+    switch (elem)
     {
-    public:
-        SGalaxy *g;
-        std::vector<std::string> stak;
-    };
-    void beginElement(void *userdata, const XML_Char *nam, const XML_Char **atts)
-    {
-        AttributeList::const_iterator iter;
-        XML *xml = (XML *)userdata;
-        string tname(nam);
-        AttributeList attributes(atts);
-        GalaxyNames elem = (GalaxyNames)element_map.lookup(tname);
-        GalaxyNames attr;
-        string name;
-        string value;
-        switch (elem)
+    case GALAXY:
+        break;
+    case SYSTEMS:
+        break;
+    case PLANETS:
+        xml->stak.push_back("<planets>");
+        xml->g->addSection(xml->stak);
+        break;
+    case SECTOR:
+    case SYSTEM:
+
+    case PLANET:
+        for (iter = attributes.begin(); iter != attributes.end(); ++iter)
         {
-        case GALAXY:
-            break;
-        case SYSTEMS:
-            break;
-        case PLANETS:
-            xml->stak.push_back("<planets>");
-            xml->g->addSection(xml->stak);
-            break;
-        case SECTOR:
-        case SYSTEM:
-
-        case PLANET:
-            for (iter = attributes.begin(); iter != attributes.end(); ++iter)
+            attr = (GalaxyNames)attribute_map.lookup((*iter).name);
+            switch (attr)
             {
-                attr = (GalaxyNames)attribute_map.lookup((*iter).name);
-                switch (attr)
-                {
-                case NAME:
-                    name = (*iter).value;
-                    break;
-                default:
-                    break;
-                }
+            case NAME:
+                name = (*iter).value;
+                break;
+            default:
+                break;
             }
-            xml->stak.push_back(name);
-            xml->g->addSection(xml->stak);
-
-            break;
-        case VAR:
-            for (iter = attributes.begin(); iter != attributes.end(); ++iter)
-            {
-                attr = (GalaxyNames)attribute_map.lookup((*iter).name);
-                switch (attr)
-                {
-                case NAME:
-                    name = (*iter).value;
-                    break;
-                case VALUE:
-                    value = (*iter).value;
-                    break;
-                default:
-                    break;
-                }
-            }
-            xml->g->setVariable(xml->stak, name, value);
-            break;
-        default:
-            break;
         }
-    }
-    void endElement(void *userdata, const XML_Char *nam)
-    {
-        XML *xml = (XML *)userdata;
-        string name(nam);
-        GalaxyNames elem = (GalaxyNames)element_map.lookup(name);
-        switch (elem)
+        xml->stak.push_back(name);
+        xml->g->addSection(xml->stak);
+
+        break;
+    case VAR:
+        for (iter = attributes.begin(); iter != attributes.end(); ++iter)
         {
-        case GALAXY:
-        case SYSTEMS:
-            break;
-        case VAR:
-            break;
-        case SECTOR:
-        case SYSTEM:
-        case PLANETS:
-        case PLANET:
-            xml->stak.pop_back();
-            break;
-        default:
-            break;
+            attr = (GalaxyNames)attribute_map.lookup((*iter).name);
+            switch (attr)
+            {
+            case NAME:
+                name = (*iter).value;
+                break;
+            case VALUE:
+                value = (*iter).value;
+                break;
+            default:
+                break;
+            }
         }
+        xml->g->setVariable(xml->stak, name, value);
+        break;
+    default:
+        break;
     }
+}
+void endElement(void *userdata, const XML_Char *nam)
+{
+    XML *xml = (XML *)userdata;
+    string name(nam);
+    GalaxyNames elem = (GalaxyNames)element_map.lookup(name);
+    switch (elem)
+    {
+    case GALAXY:
+    case SYSTEMS:
+        break;
+    case VAR:
+        break;
+    case SECTOR:
+    case SYSTEM:
+    case PLANETS:
+    case PLANET:
+        xml->stak.pop_back();
+        break;
+    default:
+        break;
+    }
+}
 } // namespace GalaxyXML
 
 using namespace GalaxyXML;
@@ -390,8 +383,7 @@ const string &SGalaxy::getRandSystem(const string &sect, const string &def) cons
             if (size > 0)
             {
                 int which = rand() % size;
-                SubHeirarchy::const_iterator i =
-                    sector.subheirarchy->begin();
+                SubHeirarchy::const_iterator i = sector.subheirarchy->begin();
                 while (which > 0)
                     --which, ++i;
                 return (*i).first;
@@ -400,9 +392,7 @@ const string &SGalaxy::getRandSystem(const string &sect, const string &def) cons
     }
     return def;
 }
-const string &SGalaxy::getVariable(const string &section,
-                                   const string &subsection,
-                                   const string &name,
+const string &SGalaxy::getVariable(const string &section, const string &subsection, const string &name,
                                    const string &defaultvalue) const
 {
 #ifdef WRITEGALAXYCOORDS
@@ -595,11 +585,8 @@ void Galaxy::setupPlanetTypeMaps()
 
             if (texture2name.find(val) != texture2name.end())
             {
-                printf("name conflict %s has texture %s and %s has texture %s\n",
-                       name.c_str(),
-                       val.c_str(),
-                       texture2name[val].c_str(),
-                       val.c_str());
+                printf("name conflict %s has texture %s and %s has texture %s\n", name.c_str(), val.c_str(),
+                       texture2name[val].c_str(), val.c_str());
             }
             else
             {
@@ -608,11 +595,8 @@ void Galaxy::setupPlanetTypeMaps()
             val = (*i).second["initial"];
             if (initial2name.find(val) != initial2name.end())
             {
-                printf("name conflict %s has initial %s and %s has initial %s\n",
-                       name.c_str(),
-                       val.c_str(),
-                       initial2name[val].c_str(),
-                       val.c_str());
+                printf("name conflict %s has initial %s and %s has initial %s\n", name.c_str(), val.c_str(),
+                       initial2name[val].c_str(), val.c_str());
             }
             else
             {

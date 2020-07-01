@@ -1,25 +1,24 @@
 #ifndef __STRINGPOOL_H__INCLUDED__
 #define __STRINGPOOL_H__INCLUDED__
-#include <string>
 #include "gnuhash.h"
+#include <string>
 
 #ifndef INITIAL_STRINGPOOL_SIZE
 #define INITIAL_STRINGPOOL_SIZE (1 << 15)
 #endif
 
-//Need reference counted strings, or we'll eat memory like crazy
-template <class T, class RefcounterTraits = vsHashComp<T>>
-class SharedPool
+// Need reference counted strings, or we'll eat memory like crazy
+template <class T, class RefcounterTraits = vsHashComp<T>> class SharedPool
 {
-public:
+  public:
     typedef vsUMap<T, unsigned int> ReferenceCounter;
     typedef SharedPool<T, RefcounterTraits> PoolType;
 
-private:
+  private:
     ReferenceCounter referenceCounter;
     static PoolType *ms_singleton;
 
-public:
+  public:
     typedef T ValueType;
     typedef RefcounterTraits RefocounterTraitsType;
 
@@ -36,7 +35,7 @@ public:
     SharedPool();
     ~SharedPool();
 
-public:
+  public:
     class Reference
     {
         typename ReferenceCounter::iterator _it;
@@ -58,12 +57,14 @@ public:
                 ++(_it->second);
         }
 
-    public:
-        Reference() : _it(SharedPool::getSingleton().referenceCounter.end()), _rc(&SharedPool::getSingleton().referenceCounter)
+      public:
+        Reference()
+            : _it(SharedPool::getSingleton().referenceCounter.end()), _rc(&SharedPool::getSingleton().referenceCounter)
         {
         }
 
-        explicit Reference(const T &s) : _it(SharedPool::getSingleton().referenceCounter.end()), _rc(&SharedPool::getSingleton().referenceCounter)
+        explicit Reference(const T &s)
+            : _it(SharedPool::getSingleton().referenceCounter.end()), _rc(&SharedPool::getSingleton().referenceCounter)
         {
             set(s);
         }
@@ -180,7 +181,7 @@ public:
 
 class StringpoolTraits : public vsHashComp<std::string>
 {
-public:
+  public:
     enum
     {
         min_buckets = INITIAL_STRINGPOOL_SIZE
@@ -201,8 +202,7 @@ inline std::string operator+(const StringPool::Reference &r, const std::string &
     return r.get() + s;
 }
 
-template <typename T>
-inline T &operator<<(T &stream, const StringPool::Reference &ref)
+template <typename T> inline T &operator<<(T &stream, const StringPool::Reference &ref)
 {
     return stream << ref.get();
 }

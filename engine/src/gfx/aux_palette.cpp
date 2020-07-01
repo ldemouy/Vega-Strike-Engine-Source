@@ -42,9 +42,9 @@ double Minimum(double r, double g, double b)
 void RGB_To_HSV(double r, double g, double b, double *h, double *s, double *v)
 {
     /*
- * given: rgb, each in [0,1]
- * desired: h in [0,360), s and v in [0,1] except if s = 0 then h = undefined
- */
+     * given: rgb, each in [0,1]
+     * desired: h in [0,360), s and v in [0,1] except if s = 0 then h = undefined
+     */
     double max = Maximum(r, g, b);
     double min = Minimum(r, g, b);
     *v = max; /*This is the value v. */
@@ -139,7 +139,7 @@ void HSV_To_RGB(double *r, double *g, double *b, double h, double s, double v)
     } /*Chromatic case */
 }
 
-//desired: h in [0,360), s and v in [0,1] except if s = 0 then h = undefined
+// desired: h in [0,360), s and v in [0,1] except if s = 0 then h = undefined
 void ShiftPalette(unsigned char Palette[769], double DH, double DS, double DV, double DsH, double DsS, double DsV)
 {
     double r, g, b, h, s, v;

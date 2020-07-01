@@ -1,29 +1,29 @@
 /***************************************************************************
-*                           text_area.cpp  -  description
-*                           --------------------------
-*                           begin                : January 10, 2002
-*                           copyright            : (C) 2002 by David Ranger
-*                           email                : ussreliant@users.sourceforge.net
-***************************************************************************/
+ *                           text_area.cpp  -  description
+ *                           --------------------------
+ *                           begin                : January 10, 2002
+ *                           copyright            : (C) 2002 by David Ranger
+ *                           email                : ussreliant@users.sourceforge.net
+ ***************************************************************************/
 
 /***************************************************************************
-*                                                                         *
-*   This program is free software; you can redistribute it and/or modify  *
-*   it under the terms of the GNU General Public License as published by  *
-*   the Free Software Foundation; either version 2 of the License, or     *
-*   any later version.                                                    *
-*                                                                         *
-***************************************************************************/
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   any later version.                                                    *
+ *                                                                         *
+ ***************************************************************************/
 
 #include "text_area.h"
 #include "gldrv/winsys.h"
 #include <cstdlib>
 #include <cstring>
 
-//Array of textures for the text area
-//GUITexture *Images;
+// Array of textures for the text area
+// GUITexture *Images;
 
-//List of images to load. Last element must always be nullptr
+// List of images to load. Last element must always be nullptr
 /*
  *  char *LoadImages[] = {  TEXT_AREA_00, TEXT_AREA_01, TEXT_AREA_02, TEXT_AREA_03, TEXT_AREA_04,
  *                       TEXT_AREA_05, TEXT_AREA_06, TEXT_AREA_07, TEXT_AREA_08, TEXT_AREA_09,
@@ -34,14 +34,16 @@
 
 static char EMPTY_STR[] = "";
 
-TextArea::~TextArea() {}
+TextArea::~TextArea()
+{
+}
 
 TextArea::TextArea()
 {
     TextArea(0, 0, 1, 1, 1);
 }
 
-//Currently, corners overlap the horizontal and vertical bars. It's only noticable with transparency
+// Currently, corners overlap the horizontal and vertical bars. It's only noticable with transparency
 TextArea::TextArea(float x, float y, float wid, float hei, int scrollbar)
 {
 #ifdef DEBUG
@@ -53,7 +55,7 @@ TextArea::TextArea(float x, float y, float wid, float hei, int scrollbar)
 
     LoadTextures();
 
-    //Initialize the variables
+    // Initialize the variables
     item_count = 0;
     cur_selected = 0;
     top_item_number = 0;
@@ -76,19 +78,19 @@ TextArea::TextArea(float x, float y, float wid, float hei, int scrollbar)
         ratio[1] = 0.12;
         has_scrollbar = 1;
     }
-    //Top and bottom button ratios. Only change these if you change the ratio[1] and/or the image
-    //If you change these, uncomment the appropriate ShowColor() in the Refresh to verify the alignment
-    button_ratio[0] = 0.91096; //left x, both buttons
-    button_ratio[1] = 0.0345;  //Top button, top left corner y
-    button_ratio[2] = 0.0585;  //Height and width of the buttons
+    // Top and bottom button ratios. Only change these if you change the ratio[1] and/or the image
+    // If you change these, uncomment the appropriate ShowColor() in the Refresh to verify the alignment
+    button_ratio[0] = 0.91096; // left x, both buttons
+    button_ratio[1] = 0.0345;  // Top button, top left corner y
+    button_ratio[2] = 0.0585;  // Height and width of the buttons
 
-    scrollbar_ratio[0] = 0.91096; //x axis
-    scrollbar_ratio[1] = 0.1;     //y axis
-    scrollbar_ratio[2] = 0.0585;  //Width
-    //scrollbar_ratio[3] = 0.89;	// Height
-    scrollbar_ratio[3] = 0.73; //Height (how much the bar doesn't take of the buttons)
+    scrollbar_ratio[0] = 0.91096; // x axis
+    scrollbar_ratio[1] = 0.1;     // y axis
+    scrollbar_ratio[2] = 0.0585;  // Width
+    // scrollbar_ratio[3] = 0.89;	// Height
+    scrollbar_ratio[3] = 0.73; // Height (how much the bar doesn't take of the buttons)
 
-    //Set the variables to control where and how text will be displayed
+    // Set the variables to control where and how text will be displayed
     font_size = 4;
     font_size_float = 4;
     horizontal_per_level = 0.05;
@@ -96,7 +98,8 @@ TextArea::TextArea(float x, float y, float wid, float hei, int scrollbar)
     vertical_left_of_text = 0.02;
     text_spacing = (font_size_float / 100) + (horizontal_spacer * 2);
 
-    //The parent TextAreaItem. This is the only link where parent == nullptr. It is not displayed and handled only internally
+    // The parent TextAreaItem. This is the only link where parent == nullptr. It is not displayed and handled only
+    // internally
     ItemList = new TextAreaItem("", "", nullptr);
     if (wid < 0 || hei < 0)
     {
@@ -107,42 +110,42 @@ TextArea::TextArea(float x, float y, float wid, float hei, int scrollbar)
         wid = 1 - x;
     if (y - hei < -1)
         hei = -1 + y;
-    //Set the class variables to remember the dimensions and locations of the text area
+    // Set the class variables to remember the dimensions and locations of the text area
     xcoord[0] = x;
     ycoord[0] = y;
     width[0] = wid;
     height[0] = hei;
 
-    //Displayable text area
-    //Some parts of y and height are based on the width, not the height, of the text area
-    //If you want to see the area created by this, there's a commented ShowColor() at the end of TextArea::Refresh
+    // Displayable text area
+    // Some parts of y and height are based on the width, not the height, of the text area
+    // If you want to see the area created by this, there's a commented ShowColor() at the end of TextArea::Refresh
     xcoord[5] = x + (wid * ratio[0]) + (wid * vertical_left_of_text);
     ycoord[5] = y - (wid * ratio[0]) - (wid * horizontal_spacer);
     width[5] = (wid * (1 - ratio[0] - ratio[1])) - (wid * vertical_left_of_text * 2);
     height[5] = (hei * (1 - ratio[0])) - (wid * horizontal_spacer * 2);
 
-    //Top scroll button
+    // Top scroll button
     xcoord[1] = x + (wid * button_ratio[0]);
     ycoord[1] = y - (wid * button_ratio[1]);
     width[1] = wid * button_ratio[2];
     height[1] = width[1];
 
-    //Bottom scroll button
+    // Bottom scroll button
     xcoord[2] = xcoord[1];
     ycoord[2] = y - hei + (wid * (button_ratio[2] + button_ratio[1]));
-    //The original non-working patched formula. I spent so much time fixing this, that this line is to remember it. God knows why.
-    //ycoord[2] = y - (hei * (1 - button_ratio[1] - button_ratio[3]));
+    // The original non-working patched formula. I spent so much time fixing this, that this line is to remember it. God
+    // knows why. ycoord[2] = y - (hei * (1 - button_ratio[1] - button_ratio[3]));
     width[2] = width[1];
     height[2] = width[1];
 
-    //Scrollbar Area
+    // Scrollbar Area
     xcoord[3] = x + (wid * scrollbar_ratio[0]);
     ycoord[3] = y - (wid * scrollbar_ratio[1]);
     width[3] = wid * scrollbar_ratio[2];
-    //height[3] = hei * scrollbar_ratio[3];
+    // height[3] = hei * scrollbar_ratio[3];
     height[3] = hei - (height[1] + height[2]) - ((height[2] * scrollbar_ratio[3]) * 2);
 
-    //Static portion of the active scrollbar
+    // Static portion of the active scrollbar
     xcoord[4] = xcoord[3];
     width[4] = width[3];
 
@@ -155,7 +158,7 @@ void TextArea::Refresh(void)
 {
     // Obscene amounts of commented code removed, check r13553 for content
 
-    //Draw the bars to run across the length
+    // Draw the bars to run across the length
 
     if (has_scrollbar != 0)
         DisplayScrollbar();
@@ -170,8 +173,8 @@ void TextArea::RenderText(void)
 {
     if (item_count == 0)
         return;
-    //There's a bug in glut_support. Can't show a color then text. Have to render an image between colors and text
-    //ShowImage(0,0,0,0, Images[0], 0, 0);
+    // There's a bug in glut_support. Can't show a color then text. Have to render an image between colors and text
+    // ShowImage(0,0,0,0, Images[0], 0, 0);
     RenderTextItem(ItemList, 0);
 }
 void TextArea::RenderTextItem(TextAreaItem *current, int level)
@@ -241,7 +244,7 @@ void TextArea::ChangeTextItemColor(const char *name, const GFXColor &col)
 
 void TextArea::ClearList(void)
 {
-    //Wipe the list clean
+    // Wipe the list clean
     if (ItemList != nullptr)
         delete ItemList;
     item_count = 0;
@@ -290,8 +293,8 @@ void TextArea::SortList(void)
     ItemList->Sort();
 }
 
-//The button checks assume that the scroll buttons and scrollbar are on the same x axis
-//If you change the position of the buttons, you'll need to add more checks here
+// The button checks assume that the scroll buttons and scrollbar are on the same x axis
+// If you change the position of the buttons, you'll need to add more checks here
 int TextArea::MouseClick(int button, int state, float x, float y)
 {
     if (state == WS_MOUSE_UP && scroll_start != 0)
@@ -303,21 +306,21 @@ int TextArea::MouseClick(int button, int state, float x, float y)
     if (Inside(x, y, 0) == 0)
         return 0;
     if (button != WS_LEFT_BUTTON)
-        return 1; //Don't have anything to do with the middle and right button
-    //Check to see if the cursor is in the same x axis as the buttons and scrollbar
+        return 1; // Don't have anything to do with the middle and right button
+    // Check to see if the cursor is in the same x axis as the buttons and scrollbar
     if (x > xcoord[1] && x < (xcoord[1] + width[1]))
     {
-        //Find out if the click is on a button, the scrollbar, or nowhere
+        // Find out if the click is on a button, the scrollbar, or nowhere
         if (y < ycoord[1] && y > (ycoord[1] - height[1]))
         {
             if (state == WS_MOUSE_UP)
             {
-                //ShowImage(xcoord[1], ycoord[1], width[1], height[1], Images[IMG_BUTTON_UP], 0, 0);
+                // ShowImage(xcoord[1], ycoord[1], width[1], height[1], Images[IMG_BUTTON_UP], 0, 0);
                 button_pressed = 0;
             }
             else
             {
-                //ShowImage(xcoord[1], ycoord[1], width[1], height[1], Images[IMG_HIGHLIGHT_BUTTON_UP], 0, 0);
+                // ShowImage(xcoord[1], ycoord[1], width[1], height[1], Images[IMG_HIGHLIGHT_BUTTON_UP], 0, 0);
                 button_pressed = 1;
 
                 top_item_number--;
@@ -331,18 +334,18 @@ int TextArea::MouseClick(int button, int state, float x, float y)
         {
             if (state == WS_MOUSE_UP)
             {
-                //ShowImage(xcoord[2], ycoord[2], width[2], height[2], Images[IMG_BUTTON_DOWN], 0, 0);
+                // ShowImage(xcoord[2], ycoord[2], width[2], height[2], Images[IMG_BUTTON_DOWN], 0, 0);
                 button_pressed = 0;
             }
             else
             {
-                //ShowImage(xcoord[2], ycoord[2], width[2], height[2], Images[IMG_HIGHLIGHT_BUTTON_DOWN], 0, 0);
+                // ShowImage(xcoord[2], ycoord[2], width[2], height[2], Images[IMG_HIGHLIGHT_BUTTON_DOWN], 0, 0);
                 button_pressed = 2;
 
                 top_item_number++;
                 if (top_item_number >= (item_count - max_lines))
                 {
-                    //This is to avoid a compile time warning.
+                    // This is to avoid a compile time warning.
 #ifdef NO_WARNINGS
                     float tmp = item_count - max_lines;
                     char LINE[10];
@@ -350,7 +353,7 @@ int TextArea::MouseClick(int button, int state, float x, float y)
                     top_item_number = atoi(LINE);
 #else
                     top_item_number = item_count - max_lines;
-#endif //NO_WARNINGS
+#endif // NO_WARNINGS
                 }
             }
         }
@@ -360,17 +363,18 @@ int TextArea::MouseClick(int button, int state, float x, float y)
     if (Inside(x, y, 3) != 0 && Inside(x, y, 4) == 0)
     {
         if (state != WS_MOUSE_UP)
-            return 1; //We're outside the active scroll bar, but in the passive area. The active scrollbar is only for MouseMoveClick
+            return 1; // We're outside the active scroll bar, but in the passive area. The active scrollbar is only for
+                      // MouseMoveClick
         if (y > ycoord[4])
         {
-            //Top area
+            // Top area
             top_item_number -= page_size;
             if (top_item_number < 0)
                 top_item_number = 0;
         }
         else
         {
-            //Bottom area
+            // Bottom area
             top_item_number += page_size;
             if (top_item_number >= (item_count - max_lines))
             {
@@ -381,7 +385,7 @@ int TextArea::MouseClick(int button, int state, float x, float y)
                 top_item_number = atoi(LINE);
 #else
                 top_item_number = item_count - max_lines;
-#endif //NO_WARNINGS
+#endif // NO_WARNINGS
             }
         }
     }
@@ -453,7 +457,7 @@ void TextArea::LoadTextures(void)
      */
 }
 
-//Assumes the mouse is in the text area
+// Assumes the mouse is in the text area
 int TextArea::LocateCount(float y)
 {
     float base = ycoord[5] - y - horizontal_spacer;
@@ -468,7 +472,7 @@ int TextArea::LocateCount(float y)
 
 #else
     return base;
-#endif //NO_WARNINGS
+#endif // NO_WARNINGS
 }
 
 void TextArea::HighlightCount(int count, int type)
@@ -497,14 +501,14 @@ void TextArea::DisplayScrollbar(void)
         ShowColor(xcoord[3], ycoord[3], width[3], height[3], 0, 1, 1, 0.05);
         return;
     }
-    //The percentage that each item consists of the entire list
+    // The percentage that each item consists of the entire list
     item_perc = item_count;
     item_perc = 1 / item_perc;
 
-    //The percentage that the visible list takes of the entire list
+    // The percentage that the visible list takes of the entire list
     page_perc = max_lines;
     page_perc /= item_count;
-    //If this isn't 0, the scrollbar is being moved
+    // If this isn't 0, the scrollbar is being moved
     if (scroll_cur != 0)
     {
         float move = ((scroll_cur - scroll_start) / height[3]) / item_perc;
@@ -515,7 +519,7 @@ void TextArea::DisplayScrollbar(void)
         change = atoi(LINE);
 #else
         change = move;
-#endif //NO_WARNINGS
+#endif // NO_WARNINGS
         if (move < 0)
         {
             change *= -1;
@@ -527,7 +531,7 @@ void TextArea::DisplayScrollbar(void)
                 top_item_number = atoi(LINE);
 #else
                 top_item_number = item_count - max_lines;
-#endif //NO_WARNINGS
+#endif // NO_WARNINGS
             }
         }
         else
@@ -539,7 +543,7 @@ void TextArea::DisplayScrollbar(void)
         if (change != 0)
             scroll_start = scroll_cur;
     }
-    //How much is scrolled up past the view
+    // How much is scrolled up past the view
     y_dist = item_perc * top_item_number;
 
     new_y = ycoord[3] - (y_dist * height[3]);
@@ -611,7 +615,7 @@ TextAreaItem::TextAreaItem(const char *new_name, const char *desc, TextAreaItem 
     child_count = 0;
     child = nullptr;
     parent = nullptr;
-    //if (parent == nullptr) { expanded = 1; }
+    // if (parent == nullptr) { expanded = 1; }
 }
 
 TextAreaItem::~TextAreaItem(void)
@@ -620,7 +624,7 @@ TextAreaItem::~TextAreaItem(void)
     if (name != nullptr)
         free(name);
     if (description != nullptr)
-        free(description); //if there are no children, it won't run through this for
+        free(description); // if there are no children, it won't run through this for
     for (cur = 0; cur < child_count; cur++)
         if (child[cur] != nullptr)
             delete child[cur];
@@ -631,7 +635,7 @@ TextAreaItem::~TextAreaItem(void)
 TextAreaItem *TextAreaItem::FindChild(const char *search_name)
 {
     int cur = 0;
-    //int max = child_count_multiplier * 10;
+    // int max = child_count_multiplier * 10;
     TextAreaItem *match;
     if (search_name == nullptr)
         return this;
@@ -667,7 +671,7 @@ TextAreaItem *TextAreaItem::FindCount(int count, int cur)
 {
     static int current = 0;
     if (cur == 0)
-        current = 0; //int max = child_count_multiplier * 10;
+        current = 0; // int max = child_count_multiplier * 10;
     TextAreaItem *match;
     if (count == current)
         return this;

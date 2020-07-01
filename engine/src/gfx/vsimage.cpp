@@ -5,16 +5,17 @@
 #include <OpenGL/glext.h>
 #else
 #include <GL/glut.h>
+
 #include <GL/glext.h>
 #endif
 
 #include "cmd/unit_generic.h"
 
-#include "vsfilesystem.h"
-#include "vs_globals.h"
-#include <string.h>
-#include <png.h>
 #include "posh.h"
+#include "vs_globals.h"
+#include "vsfilesystem.h"
+#include <png.h>
+#include <string.h>
 
 #ifndef png_jmpbuf
 #define png_jmpbuf(png_ptr) ((png_ptr)->jmpbuf)
@@ -28,8 +29,9 @@
 #define DDS_CUBEMAP_NEGATIVEY 0x00002000L
 #define DDS_CUBEMAP_POSITIVEZ 0x00004000L
 #define DDS_CUBEMAP_NEGATIVEZ 0x00008000L
-#define DDS_CUBEMAP_ALLFACES \
-    (DDS_CUBEMAP_POSITIVEX | DDS_CUBEMAP_NEGATIVEX | DDS_CUBEMAP_POSITIVEY | DDS_CUBEMAP_NEGATIVEY | DDS_CUBEMAP_POSITIVEZ | DDS_CUBEMAP_NEGATIVEZ)
+#define DDS_CUBEMAP_ALLFACES                                                                                           \
+    (DDS_CUBEMAP_POSITIVEX | DDS_CUBEMAP_NEGATIVEX | DDS_CUBEMAP_POSITIVEY | DDS_CUBEMAP_NEGATIVEY |                   \
+     DDS_CUBEMAP_POSITIVEZ | DDS_CUBEMAP_NEGATIVEZ)
 #endif
 
 #include "gfx/jpeg_memory.h"
@@ -44,8 +46,11 @@ int PNG_HAS_PALETTE = 1;
 int PNG_HAS_COLOR = 2;
 int PNG_HAS_ALPHA = 4;
 
-LOCALCONST_DEF(VSImage, int, SIZEOF_BITMAPFILEHEADER, sizeof(WORD) + sizeof(DWORD) + sizeof(WORD) + sizeof(WORD) + sizeof(DWORD))
-LOCALCONST_DEF(VSImage, int, SIZEOF_BITMAPINFOHEADER, sizeof(DWORD) + sizeof(LONG) + sizeof(LONG) + 2 * sizeof(WORD) + 2 * sizeof(DWORD) + 2 * sizeof(LONG) + 2 * sizeof(DWORD))
+LOCALCONST_DEF(VSImage, int, SIZEOF_BITMAPFILEHEADER,
+               sizeof(WORD) + sizeof(DWORD) + sizeof(WORD) + sizeof(WORD) + sizeof(DWORD))
+LOCALCONST_DEF(VSImage, int, SIZEOF_BITMAPINFOHEADER,
+               sizeof(DWORD) + sizeof(LONG) + sizeof(LONG) + 2 * sizeof(WORD) + 2 * sizeof(DWORD) + 2 * sizeof(LONG) +
+                   2 * sizeof(DWORD))
 LOCALCONST_DEF(VSImage, int, SIZEOF_RGBQUAD, sizeof(BYTE) * 4)
 
 VSImage::VSImage()
@@ -62,7 +67,7 @@ void VSImage::Init()
 {
     this->tt = nullptr;
     this->img_type = Unrecognized;
-    //this->tex->palette = nullptr;
+    // this->tex->palette = nullptr;
     this->strip_16 = false;
 }
 
@@ -86,7 +91,7 @@ VSImage::VSImage(VSFile *f, textureTransform *t, bool strip, VSFile *f2)
 
 VSImage::~VSImage()
 {
-    //img_file? and tt should not be deleted since they are passed as args to the class
+    // img_file? and tt should not be deleted since they are passed as args to the class
 }
 
 unsigned char *VSImage::ReadImage(VSFile *f, textureTransform *t, bool strip, VSFile *f2)
@@ -119,15 +124,15 @@ unsigned char *VSImage::ReadImage(VSFile *f, textureTransform *t, bool strip, VS
     }
     catch (...)
     {
-        //ReadXXX() already handles exceptions. But, if any exception remains unhandled,
-        //this handler will perform a dirty abortion (reclaims no memory, but doesn't crash at least)
+        // ReadXXX() already handles exceptions. But, if any exception remains unhandled,
+        // this handler will perform a dirty abortion (reclaims no memory, but doesn't crash at least)
         return nullptr;
     }
 }
 
 VSError VSImage::CheckPNGSignature(VSFile *file)
 {
-    //Do standard reading of the file
+    // Do standard reading of the file
     unsigned char sig[8];
     file->Begin();
     file->Read(sig, 8);
@@ -141,10 +146,10 @@ VSError VSImage::CheckJPEGSignature(VSFile *file)
 {
     VSError ret = Ok;
 
-    //First 4 aren't known to me
-    //Next 2 bytes is length
-    //Next 5 are JFIF\0
-    //Next 2 are version numbers
+    // First 4 aren't known to me
+    // Next 2 bytes is length
+    // Next 5 are JFIF\0
+    // Next 2 are version numbers
     char sig[13];
     file->Begin();
     file->Read(sig, 13);
@@ -235,7 +240,7 @@ static void png_cexcept_error(png_structp png_ptr, png_const_charp msg)
     if (png_ptr)
         ;
     //#ifndef PNG_NO_CONSOLE_IO
-    //BOOST_LOG_TRIVIAL(info) << format("libpng error: %1%") % msg;
+    // BOOST_LOG_TRIVIAL(info) << format("libpng error: %1%") % msg;
     //#endif
 }
 
@@ -261,14 +266,15 @@ unsigned char *VSImage::ReadPNG()
             BOOST_LOG_TRIVIAL(info) << img_file->GetFilename();
             throw(1);
         }
-        //Go after sig since we already checked it
-        //Only when reading from a buffer otherwise CheckPNGSignature already did the work
+        // Go after sig since we already checked it
+        // Only when reading from a buffer otherwise CheckPNGSignature already did the work
         if (img_file->UseVolume())
         {
             PngFileBuffer.Buffer = img_file->get_pk3_data();
             PngFileBuffer.Pos = 8;
         }
-        png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, (png_error_ptr)png_cexcept_error, (png_error_ptr) nullptr);
+        png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, (png_error_ptr)png_cexcept_error,
+                                         (png_error_ptr) nullptr);
         if (png_ptr == nullptr)
         {
             BOOST_LOG_TRIVIAL(info) << "VSImage ERROR : PNG ptr == nullptr !!!";
@@ -305,15 +311,8 @@ unsigned char *VSImage::ReadPNG()
         this->img_nmips = 0;
         this->img_sides = SIDE_SINGLE;
 
-        png_get_IHDR(png_ptr,
-                     info_ptr,
-                     (png_uint_32 *)&this->sizeX,
-                     (png_uint_32 *)&this->sizeY,
-                     &this->img_depth,
-                     &this->img_color_type,
-                     &interlace_type,
-                     nullptr,
-                     nullptr);
+        png_get_IHDR(png_ptr, info_ptr, (png_uint_32 *)&this->sizeX, (png_uint_32 *)&this->sizeY, &this->img_depth,
+                     &this->img_color_type, &interlace_type, nullptr, nullptr);
         BOOST_LOG_TRIVIAL(trace) << format("1. Loading a PNG file: width = %1% , height = %2% , depth = %3% , img "
                                            "color = %4% , interlace = %5% ") %
                                         sizeX % sizeY % img_depth % img_color_type % interlace_type;
@@ -334,15 +333,8 @@ unsigned char *VSImage::ReadPNG()
         this->sizeX = 1;
         this->sizeY = 1;
         this->img_depth = 8;
-        png_get_IHDR(png_ptr,
-                     info_ptr,
-                     (png_uint_32 *)&this->sizeX,
-                     (png_uint_32 *)&this->sizeY,
-                     &this->img_depth,
-                     &this->img_color_type,
-                     &interlace_type,
-                     nullptr,
-                     nullptr);
+        png_get_IHDR(png_ptr, info_ptr, (png_uint_32 *)&this->sizeX, (png_uint_32 *)&this->sizeY, &this->img_depth,
+                     &this->img_color_type, &interlace_type, nullptr, nullptr);
         BOOST_LOG_TRIVIAL(trace) << format("2. Loading a PNG file : width = %1% , height = %2% , depth = %3% , "
                                            "img_color = %4% , interlace = %5%") %
                                         sizeX % sizeY % img_depth % img_color_type % interlace_type;
@@ -363,7 +355,8 @@ unsigned char *VSImage::ReadPNG()
         else
             mode = _24BITRGBA;
         unsigned long stride = numchan * sizeof(unsigned char) * this->img_depth / 8;
-        BOOST_LOG_TRIVIAL(trace) << format("3. Allocating image buffer of size = %1% ") % (stride * this->sizeX * this->sizeY);
+        BOOST_LOG_TRIVIAL(trace) << format("3. Allocating image buffer of size = %1% ") %
+                                        (stride * this->sizeX * this->sizeY);
         image = (unsigned char *)malloc(stride * this->sizeX * this->sizeY);
         for (unsigned int i = 0; i < this->sizeY; i++)
             row_pointers[i] = &image[i * stride * this->sizeX];
@@ -406,27 +399,27 @@ unsigned char *VSImage::ReadPNG()
 struct my_error_mgr
 {
     struct jpeg_error_mgr pub; //"public" fields
-    jmp_buf setjmp_buffer;     //for return to caller
+    jmp_buf setjmp_buffer;     // for return to caller
 };
 
 METHODDEF(void)
 my_error_exit(j_common_ptr cinfo)
 {
-    //cinfo->err really points to a my_error_mgr struct, so coerce pointer
+    // cinfo->err really points to a my_error_mgr struct, so coerce pointer
     my_error_mgr *myerr = (my_error_mgr *)cinfo->err;
 
-    //Always display the message.
-    //We could postpone this until after returning, if we chose.
+    // Always display the message.
+    // We could postpone this until after returning, if we chose.
     (*cinfo->err->output_message)(cinfo);
 
-    //Return control to the setjmp point
+    // Return control to the setjmp point
     longjmp(myerr->setjmp_buffer, 1);
 }
 
 unsigned char *VSImage::ReadJPEG()
 {
     unsigned char *image = nullptr;
-    JSAMPARRAY row_pointers = nullptr; //Output row buffer
+    JSAMPARRAY row_pointers = nullptr; // Output row buffer
 
     try
     {
@@ -441,8 +434,8 @@ unsigned char *VSImage::ReadJPEG()
         jerr.pub.error_exit = my_error_exit;
         if (setjmp(jerr.setjmp_buffer))
         {
-            //If we get here, the JPEG code has signaled an error.
-            //We need to clean up the JPEG object, and return.
+            // If we get here, the JPEG code has signaled an error.
+            // We need to clean up the JPEG object, and return.
             jpeg_destroy_decompress(&cinfo);
             BOOST_LOG_TRIVIAL(info) << "VSImage ERROR : error reading jpg file";
             BOOST_LOG_TRIVIAL(info) << img_file->GetFilename();
@@ -483,8 +476,8 @@ unsigned char *VSImage::ReadJPEG()
             this->mode = _8BIT;
             break;
         }
-        BOOST_LOG_TRIVIAL(trace) << format("1. Loading a JPEG file : width= %1% , height = %2% , img_color = %3% ") % sizeX % sizeY %
-                                        img_color_type;
+        BOOST_LOG_TRIVIAL(trace) << format("1. Loading a JPEG file : width= %1% , height = %2% , img_color = %3% ") %
+                                        sizeX % sizeY % img_color_type;
         row_pointers = (unsigned char **)malloc(sizeof(unsigned char *) * cinfo.image_height);
 
         this->img_depth = 8;
@@ -541,9 +534,9 @@ unsigned char *VSImage::ReadBMP()
             BOOST_LOG_TRIVIAL(info) << img_file->GetFilename();
             throw(1);
         }
-        //seek back to beginning
+        // seek back to beginning
         img_file->GoTo(SIZEOF_BITMAPFILEHEADER);
-        //long temp;
+        // long temp;
         BITMAPINFOHEADER info;
         img_file->Read(&info, SIZEOF_BITMAPINFOHEADER);
         this->sizeX = le32_to_cpu(info.biWidth);
@@ -556,7 +549,8 @@ unsigned char *VSImage::ReadBMP()
          *       img_file2->GoTo(SIZEOF_BITMAPFILEHEADER);
          *
          *         img_file2->Read(&info1,SIZEOF_BITMAPINFOHEADER);
-         *         if (tex->sizeX != (unsigned int) le32_to_cpu(info1.biWidth)||tex->sizeY!=(unsigned int)le32_to_cpu(info1.biHeight))
+         *         if (tex->sizeX != (unsigned int) le32_to_cpu(info1.biWidth)||tex->sizeY!=(unsigned
+         * int)le32_to_cpu(info1.biHeight))
          *         {
          *             return nullptr;
          *         }
@@ -564,19 +558,23 @@ unsigned char *VSImage::ReadBMP()
          *         if (le16_to_cpu(info1.biBitCount) == 8)
          *         {
          *             for (int i=0; i<256; i++)
-         *                       img_file2->Read(&ptemp1, sizeof(RGBQUAD)); //get rid of the palette for a b&w greyscale alphamap
+         *                       img_file2->Read(&ptemp1, sizeof(RGBQUAD)); //get rid of the palette for a b&w greyscale
+         * alphamap
          *
          *         }
          *  }
          */
         if (le16_to_cpu(info.biBitCount) == 24)
         {
-            mode = _24BIT; //Someone said _24BIT isn't supported by most cards, but PNG and JPEG use it widely without problems, so it must be untrue...
+            mode = _24BIT; // Someone said _24BIT isn't supported by most cards, but PNG and JPEG use it widely without
+                           // problems, so it must be untrue...
             if (img_file2 && img_file2->Valid())
                 mode = _24BITRGBA;
             int ncomp = ((mode == _24BIT) ? 3 : 4);
-            unsigned int cstride = ((sizeof(unsigned char) * 3 * this->sizeX) + 3) & ~3; //BMP rows must be aligned to 32 bits
-            unsigned int astride = ((sizeof(unsigned char) * this->sizeX) + 3) & ~3;     //BMP rows must be aligned to 32 bits
+            unsigned int cstride =
+                ((sizeof(unsigned char) * 3 * this->sizeX) + 3) & ~3; // BMP rows must be aligned to 32 bits
+            unsigned int astride =
+                ((sizeof(unsigned char) * this->sizeX) + 3) & ~3; // BMP rows must be aligned to 32 bits
             unsigned int stride = (sizeof(unsigned char) * ncomp * this->sizeX);
             data = (unsigned char *)malloc(stride * this->sizeY);
             if (data == nullptr)
@@ -643,7 +641,7 @@ unsigned char *VSImage::ReadBMP()
                 ctemp = paltemp[0];
                 paltemp[0] = paltemp[2];
                 paltemp[2] = ctemp;
-                paltemp += 4; //pal size
+                paltemp += 4; // pal size
             }
             if (!data)
                 return nullptr;
@@ -683,9 +681,9 @@ unsigned char *VSImage::ReadDDS()
     {
         BOOST_LOG_TRIVIAL(debug) << format("Loading DDS: %1%") % this->img_file->GetFilename();
 
-        //Skip what we already know.
+        // Skip what we already know.
         img_file->GoTo(4);
-        //Read in bytes to header. Not sure if just reading to struct is endian-safe.
+        // Read in bytes to header. Not sure if just reading to struct is endian-safe.
         char ibuffer[4];
         img_file->Read(ibuffer, 4);
         header.size = POSH_ReadU32FromLittle(ibuffer);
@@ -711,7 +709,7 @@ unsigned char *VSImage::ReadDDS()
         img_file->Read(ibuffer, 4);
         header.dcaps2 = POSH_ReadU32FromLittle(ibuffer);
         img_file->GoTo(128);
-        //Set VSImage attributes
+        // Set VSImage attributes
         this->img_depth = header.pixelFormat.bpp;
         this->sizeX = header.width;
         this->sizeY = header.height;
@@ -778,9 +776,10 @@ unsigned char *VSImage::ReadDDS()
             }
             break;
         default:
-            BOOST_LOG_TRIVIAL(info) << format("VSImage ERROR : DDS Compression Scheme, impossible.[%1% ;%2%;%3%;%4%]!") %
-                                           header.pixelFormat.fourcc[0] % header.pixelFormat.fourcc[1] % header.pixelFormat.fourcc[2] %
-                                           header.pixelFormat.fourcc[3];
+            BOOST_LOG_TRIVIAL(info) << format(
+                                           "VSImage ERROR : DDS Compression Scheme, impossible.[%1% ;%2%;%3%;%4%]!") %
+                                           header.pixelFormat.fourcc[0] % header.pixelFormat.fourcc[1] %
+                                           header.pixelFormat.fourcc[2] % header.pixelFormat.fourcc[3];
             BOOST_LOG_TRIVIAL(info) << img_file->GetFilename();
             throw(1);
         }
@@ -789,7 +788,7 @@ unsigned char *VSImage::ReadDDS()
         height = header.height;
         img_sides = SIDE_SINGLE;
         img_nmips = header.nmips;
-        //Some DDS files may not have mipmaps
+        // Some DDS files may not have mipmaps
         if (header.nmips == 0)
             inputSize = ((width + 3) / 4) * ((height + 3) / 4) * blockSize;
         for (int i = 0; i < header.nmips; ++i)
@@ -804,23 +803,23 @@ unsigned char *VSImage::ReadDDS()
         {
             BOOST_LOG_TRIVIAL(trace) << format("Reading Cubemap %1%") % img_file->GetFilename();
             inputSize = inputSize * 6;
-            this->img_sides =
-                SIDE_POS_X | SIDE_NEG_X | SIDE_POS_Y | SIDE_NEG_Y | SIDE_POS_Z | SIDE_NEG_Z; //all sides, we don't support partial DDS files
-            this->img_color_type = 998;                                                      //Cubemap'd dds
+            this->img_sides = SIDE_POS_X | SIDE_NEG_X | SIDE_POS_Y | SIDE_NEG_Y | SIDE_POS_Z |
+                              SIDE_NEG_Z; // all sides, we don't support partial DDS files
+            this->img_color_type = 998;   // Cubemap'd dds
         }
         else
         {
-            this->img_color_type = 999; //Regular DDS
+            this->img_color_type = 999; // Regular DDS
         }
         s = (unsigned char *)malloc(inputSize + 3);
-        sprintf((char *)s, "%i", header.nmips); //if cubemap, mips per face
+        sprintf((char *)s, "%i", header.nmips); // if cubemap, mips per face
         img_file->Read(s + 2, inputSize);
-        //At the end of execution what we have is the following:
-        //s contains the number of mipmaps then the main texture and all it's mipmaps
-        //sizeY is the height of the initial texture, sizeX is the width.
-        //mode is the compressed format of the texture. It is assumed to be rgba
-        //depth is the depth of the uncompressed image. not sure where this is used
-        //nmaps is the number of mipmaps
+        // At the end of execution what we have is the following:
+        // s contains the number of mipmaps then the main texture and all it's mipmaps
+        // sizeY is the height of the initial texture, sizeX is the width.
+        // mode is the compressed format of the texture. It is assumed to be rgba
+        // depth is the depth of the uncompressed image. not sure where this is used
+        // nmaps is the number of mipmaps
         return s;
     }
     catch (...)
@@ -833,7 +832,7 @@ unsigned char *VSImage::ReadDDS()
 
 void VSImage::AllocatePalette()
 {
-    //FIXME deal with palettes and grayscale with alpha
+    // FIXME deal with palettes and grayscale with alpha
     if (!(img_color_type & PNG_HAS_COLOR) || (img_color_type & PNG_HAS_PALETTE))
     {
         if (!(img_color_type & PNG_HAS_COLOR))
@@ -850,15 +849,8 @@ void VSImage::AllocatePalette()
     }
 }
 
-VSError VSImage::WriteImage(char *filename,
-                            unsigned char *data,
-                            VSImageType type,
-                            unsigned int width,
-                            unsigned int height,
-                            bool alpha,
-                            char bpp,
-                            VSFileType ft,
-                            bool flip)
+VSError VSImage::WriteImage(char *filename, unsigned char *data, VSImageType type, unsigned int width,
+                            unsigned int height, bool alpha, char bpp, VSFileType ft, bool flip)
 {
     this->img_type = type;
     VSFile f;
@@ -874,14 +866,8 @@ VSError VSImage::WriteImage(char *filename,
     return ret;
 }
 
-VSError VSImage::WriteImage(VSFile *pf,
-                            unsigned char *data,
-                            VSImageType type,
-                            unsigned int width,
-                            unsigned int height,
-                            bool alpha,
-                            char bpp,
-                            bool flip)
+VSError VSImage::WriteImage(VSFile *pf, unsigned char *data, VSImageType type, unsigned int width, unsigned int height,
+                            bool alpha, char bpp, bool flip)
 {
     VSError ret = BadFormat;
 
@@ -931,8 +917,8 @@ VSError VSImage::WritePNG(unsigned char *data)
         png_destroy_write_struct(&png_ptr, &info_ptr);
         return BadFormat;
     }
-    //if( !img_file->UseVolume())
-    //For now we always write to standard files
+    // if( !img_file->UseVolume())
+    // For now we always write to standard files
     png_init_io(png_ptr, img_file->GetFP());
 
     png_set_filter(png_ptr, 0, PNG_FILTER_NONE);
@@ -944,15 +930,9 @@ VSError VSImage::WritePNG(unsigned char *data)
     png_set_compression_window_bits(png_ptr, 15);
     png_set_compression_method(png_ptr, 8);
 
-    png_set_IHDR(png_ptr,
-                 info_ptr,
-                 this->sizeX,
-                 this->sizeY,
-                 this->img_depth,
-                 this->img_alpha ? PNG_COLOR_TYPE_RGB_ALPHA : PNG_COLOR_TYPE_RGB,
-                 PNG_INTERLACE_NONE,
-                 PNG_COMPRESSION_TYPE_DEFAULT,
-                 PNG_FILTER_TYPE_DEFAULT);
+    png_set_IHDR(png_ptr, info_ptr, this->sizeX, this->sizeY, this->img_depth,
+                 this->img_alpha ? PNG_COLOR_TYPE_RGB_ALPHA : PNG_COLOR_TYPE_RGB, PNG_INTERLACE_NONE,
+                 PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
 
     png_write_info(png_ptr, info_ptr);
 #if __BYTE_ORDER != __BIG_ENDIAN

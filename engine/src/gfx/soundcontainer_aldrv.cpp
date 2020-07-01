@@ -2,8 +2,7 @@
 #include "soundcontainer_aldrv.h"
 #include "aldrv/audiolib.h"
 
-AldrvSoundContainer::AldrvSoundContainer(const SoundContainer &other)
-    : GameSoundContainer(other), sound(-2)
+AldrvSoundContainer::AldrvSoundContainer(const SoundContainer &other) : GameSoundContainer(other), sound(-2)
 {
 }
 

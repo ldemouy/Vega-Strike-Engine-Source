@@ -1,8 +1,8 @@
+#include "turretai.h"
+#include "cmd/role_bitmask.h"
+#include "cmd/unit_generic.h"
 #include "config_xml.h"
 #include "vs_globals.h"
-#include "turretai.h"
-#include "cmd/unit_generic.h"
-#include "cmd/role_bitmask.h"
 
 using namespace Orders;
 TurretAI::TurretAI() : FaceTargetITTS(false)
@@ -33,7 +33,7 @@ void TurretAI::Execute()
         {
             speed = 1;
             range = 1;
-            mrange = 1; //not much
+            mrange = 1; // not much
         }
         for (auto i = parent->getSubUnits(); (gun = *i) != nullptr; ++i)
         {
@@ -53,7 +53,8 @@ void TurretAI::Execute()
     }
     if (targ)
     {
-        static float dot_cutoff = XMLSupport::parse_float(vs_config->getVariable("AI", "Firing", "TurretDotCutoff", ".4"));
+        static float dot_cutoff =
+            XMLSupport::parse_float(vs_config->getVariable("AI", "Firing", "TurretDotCutoff", ".4"));
         static float missile_prob =
             XMLSupport::parse_float(vs_config->getVariable("AI", "Firing", "TurretMissileProbability", ".05"));
         FaceTargetITTS::Execute();
@@ -68,10 +69,12 @@ void TurretAI::Execute()
             int32_t upg = FactionUtil::GetUpgradeFaction();
             bool isplayerstarship = _Universe->isPlayerStarshipVoid(parent->owner) != nullptr;
 
-            bool shouldfire =
-                ((mag - targ->rSize() - parent->rSize() < range && dot > dot_cutoff) && (isplayerstarship == false || targ->faction == upg || (isplayerstarship && (targ->getRelation((Unit *)parent->owner) < 0 /*now that it is a player, we know it's dereferencable*/
-                                                                                                                                                                    || targ->Target() == (Unit *)parent->owner))) &&
-                 targ->faction != neu);
+            bool shouldfire = ((mag - targ->rSize() - parent->rSize() < range && dot > dot_cutoff) &&
+                               (isplayerstarship == false || targ->faction == upg ||
+                                (isplayerstarship && (targ->getRelation((Unit *)parent->owner) <
+                                                          0 /*now that it is a player, we know it's dereferencable*/
+                                                      || targ->Target() == (Unit *)parent->owner))) &&
+                               targ->faction != neu);
 
             parent->Fire(FireBitmask(parent, shouldfire, rand() < missile_prob * RAND_MAX * SIMULATION_ATOM), true);
             if (!shouldfire)

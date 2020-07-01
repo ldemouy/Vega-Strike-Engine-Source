@@ -9,63 +9,63 @@
 namespace Audio
 {
 
-    Sound::Sound(const std::string &_name, bool streaming) : name(_name)
-    {
-        flags.loaded = false;
-        flags.loading = false;
-        flags.streaming = streaming;
-    }
+Sound::Sound(const std::string &_name, bool streaming) : name(_name)
+{
+    flags.loaded = false;
+    flags.loading = false;
+    flags.streaming = streaming;
+}
 
-    Sound::~Sound()
-    {
-        unload();
-    }
+Sound::~Sound()
+{
+    unload();
+}
 
-    void Sound::load(bool wait)
+void Sound::load(bool wait)
+{
+    if (!isLoaded())
     {
-        if (!isLoaded())
+        if (!isLoading())
         {
-            if (!isLoading())
-            {
-                loadImpl(wait);
-            }
-            if (wait && !isLoaded())
-            {
-                waitLoad();
-            }
+            loadImpl(wait);
+        }
+        if (wait && !isLoaded())
+        {
+            waitLoad();
         }
     }
+}
 
-    void Sound::waitLoad()
-    {
-        while (isLoading())
-            Audio::sleep(10);
-    }
+void Sound::waitLoad()
+{
+    while (isLoading())
+        Audio::sleep(10);
+}
 
-    void Sound::unload()
+void Sound::unload()
+{
+    if (isLoading())
     {
+        abortLoad();
         if (isLoading())
-        {
-            abortLoad();
-            if (isLoading())
-                waitLoad();
-        }
-        if (isLoaded())
-        {
-            unloadImpl();
-            flags.loaded = false;
-        }
+            waitLoad();
     }
-
-    void Sound::onLoaded(bool success)
+    if (isLoaded())
     {
-        flags.loaded = success;
-        flags.loading = false;
+        unloadImpl();
+        flags.loaded = false;
     }
+}
 
-    void Sound::abortLoad()
-    {
-        // Do nothing, there's no background load
-    }
+void Sound::onLoaded(bool success)
+{
+    flags.loaded = success;
+    flags.loading = false;
+}
+
+void Sound::abortLoad()
+{
+    // Do nothing, there's no background load
+}
 
 }; // namespace Audio

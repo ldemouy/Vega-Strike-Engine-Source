@@ -1,10 +1,10 @@
 #ifndef _CMD_BEAM_H_
 #define _CMD_BEAM_H_
-#include "weapon_xml.h"
-#include "gfx/mesh.h"
-#include "unit_collide.h"
 #include "gfx/matrix.h"
+#include "gfx/mesh.h"
 #include "gfx/quaternion.h"
+#include "unit_collide.h"
+#include "weapon_xml.h"
 #include <vector>
 class GFXVertexList;
 class Texture;
@@ -13,7 +13,7 @@ using std::vector;
 
 class Beam
 {
-private:
+  private:
     int32_t sound;
     Transformation local_transformation;
     uint32_t decal;
@@ -21,7 +21,7 @@ private:
     LineCollide CollideInfo;
 
     uint32_t numframes;
-    float speed; //lite speed
+    float speed; // lite speed
     float texturespeed;
     float curlength;
     float range;
@@ -44,17 +44,17 @@ private:
         IMPACT = 1,
         UNSTABLE = 2,
         IMPACTANDUNSTABLE = 3
-    }; //is it right now blowing the enemy to smitheri
+    }; // is it right now blowing the enemy to smitheri
     unsigned char impact;
     bool listen_to_owner;
-    void *owner;    //may be a dead pointer...never dereferenced
-    QVector center; //in world coordinates as of last physics frame...
+    void *owner;    // may be a dead pointer...never dereferenced
+    QVector center; // in world coordinates as of last physics frame...
     Vector direction;
 
     void RecalculateVertices(const Matrix &trans);
     void CollideHuge(const LineCollide &, Unit *targetToCollideWith, Unit *firer, Unit *superunit);
 
-public:
+  public:
     void ListenToOwner(bool listen)
     {
         listen_to_owner = listen;
@@ -70,14 +70,9 @@ public:
     }
     void SetPosition(const QVector &);
     void SetOrientation(const Vector &p, const Vector &q, const Vector &r);
-    void UpdatePhysics(const Transformation &,
-                       const Matrix &,
-                       class Unit *target,
-                       float trackingcone,
-                       Unit *targetToCollideWith /*prevent AI friendly fire--speed up app*/,
-                       float HeatSink,
-                       Unit *firer,
-                       Unit *superunit);
+    void UpdatePhysics(const Transformation &, const Matrix &, class Unit *target, float trackingcone,
+                       Unit *targetToCollideWith /*prevent AI friendly fire--speed up app*/, float HeatSink,
+                       Unit *firer, Unit *superunit);
     void Draw(const Transformation &, const Matrix &, class Unit *target, float trackingcone);
     void Destabilize()
     {

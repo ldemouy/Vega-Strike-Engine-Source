@@ -8,12 +8,14 @@
 namespace Radar
 {
 
-    class NullDisplay : public Display
+class NullDisplay : public Display
+{
+  public:
+    // Shows nothing
+    void Draw(const Sensor &, VSSprite *, VSSprite *)
     {
-    public:
-        // Shows nothing
-        void Draw(const Sensor &, VSSprite *, VSSprite *) {}
-    };
+    }
+};
 
 } // namespace Radar
 

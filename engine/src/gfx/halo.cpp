@@ -1,13 +1,13 @@
-#include "cmd/unit_generic.h"
 #include "halo.h"
+#include "aux_texture.h"
+#include "cmd/unit_generic.h"
+#include "config_xml.h"
+#include "decalqueue.h"
 #include "gldrv/gfxlib.h"
+#include "point_to_cam.h"
 #include "vegastrike.h"
 #include "vs_globals.h"
-#include "aux_texture.h"
-#include "decalqueue.h"
-#include "config_xml.h"
 #include "xml_support.h"
-#include "point_to_cam.h"
 
 static DecalQueue halodecal;
 static vector<GFXQuadList *> halodrawqueue;

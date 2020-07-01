@@ -13,11 +13,11 @@
 #define __ICEAXIS_H__
 enum PointComponent
 {
-	_X = 0,
-	_Y = 1,
-	_Z = 2,
-	_W = 3,
+    _X = 0,
+    _Y = 1,
+    _Z = 2,
+    _W = 3,
 
-	_FORCE_DWORD = 0x7fffffff
+    _FORCE_DWORD = 0x7fffffff
 };
 #endif // __ICEAXES_H__

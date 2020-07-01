@@ -23,27 +23,28 @@
  *  xml Mission written by Alexander Rawass <alexannika@users.sourceforge.net>
  */
 #include <Python.h>
-#include <math.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <errno.h>
-#include <time.h>
 #include <ctype.h>
+#include <errno.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 #ifndef WIN32
-//this file isn't available on my system (all win32 machines?) i dun even know what it has or if we need it as I can compile without it
+// this file isn't available on my system (all win32 machines?) i dun even know what it has or if we need it as I can
+// compile without it
 #include <unistd.h>
 #endif
 
-#include <assert.h>
-#include "cmd/unit_generic.h"
-#include "mission.h"
-#include "flightgroup.h"
+#include "cmd/asteroid_generic.h"
 #include "cmd/briefing.h"
+#include "cmd/nebula_generic.h"
+#include "cmd/unit_factory.h"
+#include "cmd/unit_generic.h"
+#include "flightgroup.h"
+#include "mission.h"
 #include "python/python_class.h"
 #include "savegame.h"
-#include "cmd/unit_factory.h"
-#include "cmd/asteroid_generic.h"
-#include "cmd/nebula_generic.h"
+#include <assert.h>
 
 /* *********************************************************** */
 using std::cerr;
@@ -54,7 +55,7 @@ extern BLENDFUNC parse_alpha(const char *);
 Mission::~Mission()
 {
     VSFileSystem::vs_fprintf(stderr, "Mission Cleanup Not Yet Implemented");
-    //do not delete msgcenter...could be vital
+    // do not delete msgcenter...could be vital
 }
 double Mission::gametime = 0.0;
 int32_t Mission::number_of_ships = 0;
@@ -119,7 +120,7 @@ Unit *Mission::Objective::getOwner()
         Unit *ret = Owner.GetUnit();
         if (ret == nullptr)
         {
-            objective = ""; //unit died
+            objective = ""; // unit died
         }
         return ret;
     }
@@ -168,27 +169,29 @@ bool Mission::checkMission(easyDomNode *node, bool loadscripts)
         }
         else if (((*siter)->Name() == "python") && (!this->nextpythonmission))
         {
-            //I need to get rid of an extra whitespace at the end that expat may have added... Python is VERY strict about that... :(
+            // I need to get rid of an extra whitespace at the end that expat may have added... Python is VERY strict
+            // about that... :(
             string locals = (*siter)->attr_value(textAttr);
-            const char *constdumbstr = locals.c_str(); //get the text XML attribute
-            size_t i = strlen(constdumbstr);           //constdumbstr is the string I wish to copy... i is its length.
-            char *dumbstr = new char[i + 2];           //allocate 2 extra bytes for a double-null-terminated string.
-            strncpy(dumbstr, constdumbstr, i);         //i copy constdumbstr to dumbstr.
-            dumbstr[i] = '\0';                         //I make sure that it has 2 null bytes at the end.
-            dumbstr[i + 1] = '\0';                     //I am allowed to use i+1 because I allocated 2 extra bytes
+            const char *constdumbstr = locals.c_str(); // get the text XML attribute
+            size_t i = strlen(constdumbstr);           // constdumbstr is the string I wish to copy... i is its length.
+            char *dumbstr = new char[i + 2];           // allocate 2 extra bytes for a double-null-terminated string.
+            strncpy(dumbstr, constdumbstr, i);         // i copy constdumbstr to dumbstr.
+            dumbstr[i] = '\0';                         // I make sure that it has 2 null bytes at the end.
+            dumbstr[i + 1] = '\0';                     // I am allowed to use i+1 because I allocated 2 extra bytes
             for (i -= 1; i >= 0; i--)
             {
-                //start from the end-1, or i-1 and set i to that value(i-=1)
+                // start from the end-1, or i-1 and set i to that value(i-=1)
                 if (dumbstr[i] == '\t' || dumbstr[i] == ' ' || dumbstr[i] == '\r' || dumbstr[i] == '\n')
                 {
-                    //I check if dumbstr[i] contains whitespace
-                    dumbstr[i] = '\0'; //if so, I truncate the string
+                    // I check if dumbstr[i] contains whitespace
+                    dumbstr[i] = '\0'; // if so, I truncate the string
                 }
                 else
                 {
-                    dumbstr[i + 1] = '\n'; //otherwise I add a new line (python sometimes gets mad...)
-                    dumbstr[i + 2] = '\0'; //and add a null byte (If i is at the end of the allocated memory, I will use the extra byte
-                    break;                 //get out of the loop so that it doesn't endlessly delete the newlines that I added.
+                    dumbstr[i + 1] = '\n'; // otherwise I add a new line (python sometimes gets mad...)
+                    dumbstr[i + 2] = '\0'; // and add a null byte (If i is at the end of the allocated memory, I will
+                                           // use the extra byte
+                    break; // get out of the loop so that it doesn't endlessly delete the newlines that I added.
                 }
             }
             this->nextpythonmission = dumbstr;
@@ -251,7 +254,7 @@ Mission *Mission::getNthPlayerMission(uint32_t player, int32_t missionnum)
             }
             if (num == missionnum)
             {
-                //Found it!
+                // Found it!
                 activeMis = (*pl);
                 break;
             }
@@ -292,11 +295,11 @@ void Mission::terminateMission()
 
         active_missions->erase(mission);
     }
-    if (this != (*active_missions)[0]) //Shouldn't this always be true?
+    if (this != (*active_missions)[0]) // Shouldn't this always be true?
     {
-        Mission_delqueue.push_back(this); //only delete if we arent' the base mission
+        Mission_delqueue.push_back(this); // only delete if we arent' the base mission
     }
-    //NETFIXME: This routine does not work properly yet.
+    // NETFIXME: This routine does not work properly yet.
     BOOST_LOG_TRIVIAL(info) << boost::format("Terminating mission %1% #%2%") % this->mission_name % queuenum;
     if (queuenum >= 0)
     {
@@ -305,20 +308,26 @@ void Mission::terminateMission()
         // meaning the actual active_scripts index is offset by 1.
         uint32_t num = queuenum - 1;
 
-        vector<std::string> *scripts = &_Universe->AccessCockpit(player_num)->savegame->getMissionStringData("active_scripts");
-        BOOST_LOG_TRIVIAL(info) << boost::format("Terminating mission #%1% - got %2% scripts") % queuenum % scripts->size();
+        vector<std::string> *scripts =
+            &_Universe->AccessCockpit(player_num)->savegame->getMissionStringData("active_scripts");
+        BOOST_LOG_TRIVIAL(info) << boost::format("Terminating mission #%1% - got %2% scripts") % queuenum %
+                                       scripts->size();
         if (num < scripts->size())
         {
             scripts->erase(scripts->begin() + num);
         }
-        vector<std::string> *missions = &_Universe->AccessCockpit(player_num)->savegame->getMissionStringData("active_missions");
-        BOOST_LOG_TRIVIAL(info) << boost::format("Terminating mission #%1% - got %2% missions") % queuenum % missions->size();
+        vector<std::string> *missions =
+            &_Universe->AccessCockpit(player_num)->savegame->getMissionStringData("active_missions");
+        BOOST_LOG_TRIVIAL(info) << boost::format("Terminating mission #%1% - got %2% missions") % queuenum %
+                                       missions->size();
         if (num < missions->size())
         {
             missions->erase(missions->begin() + num);
         }
-        BOOST_LOG_TRIVIAL(info) << boost::format("Terminating mission #%1% - %2% scripts remain") % queuenum % scripts->size();
-        BOOST_LOG_TRIVIAL(info) << boost::format("Terminating mission #%1% - %2% missions remain") % queuenum % missions->size();
+        BOOST_LOG_TRIVIAL(info) << boost::format("Terminating mission #%1% - %2% scripts remain") % queuenum %
+                                       scripts->size();
+        BOOST_LOG_TRIVIAL(info) << boost::format("Terminating mission #%1% - %2% missions remain") % queuenum %
+                                       missions->size();
     }
     if (runtime.pymissions)
     {
@@ -421,7 +430,7 @@ void Mission::checkFlightgroup(easyDomNode *node)
         cout << "not a flightgroup" << endl;
         return;
     }
-    //nothing yet
+    // nothing yet
     string texture = node->attr_value("logo");
     string texture_alpha = node->attr_value("logo_alpha");
     string name = node->attr_value("name");
@@ -495,7 +504,7 @@ void Mission::checkFlightgroup(easyDomNode *node)
         cf.unittype = CreateFlightgroup::BUILDING;
     }
     cf.nr_ships = nr_ships_i;
-    cf.domnode = (node); //don't hijack node
+    cf.domnode = (node); // don't hijack node
 
     cf.fg->pos.i = pos[0];
     cf.fg->pos.j = pos[1];
@@ -551,7 +560,7 @@ Flightgroup *Mission::findFlightgroup(const string &offset_name, const string &f
 
 void Mission::doOrder(easyDomNode *node, Flightgroup *fg)
 {
-    //nothing yet
+    // nothing yet
     string order = node->attr_value("order");
     string target = node->attr_value("target");
     if (order.empty() || target.empty())
@@ -559,8 +568,8 @@ void Mission::doOrder(easyDomNode *node, Flightgroup *fg)
         cout << "you have to give an order and a target" << endl;
         return;
     }
-    //the tmptarget is evaluated later
-    //because the target may be a flightgroup that's not yet defined
+    // the tmptarget is evaluated later
+    // because the target may be a flightgroup that's not yet defined
     fg->ordermap[order] = target;
 }
 
@@ -609,7 +618,7 @@ void Mission::DirectorInitgame()
     this->player_num = _Universe->CurrentCockpit();
     if (nextpythonmission)
     {
-        //CAUSES AN UNRESOLVED EXTERNAL SYMBOL FOR PythonClass::last_instance ?!?!
+        // CAUSES AN UNRESOLVED EXTERNAL SYMBOL FOR PythonClass::last_instance ?!?!
 #ifndef _WIN32
         char *tmp = nextpythonmission;
         while (*tmp)
@@ -622,7 +631,7 @@ void Mission::DirectorInitgame()
         }
 #endif
         runtime.pymissions = pythonMission::FactoryString(nextpythonmission);
-        delete[] nextpythonmission; //delete the allocated memory
+        delete[] nextpythonmission; // delete the allocated memory
         nextpythonmission = nullptr;
         if (!this->unpickleData.empty())
         {
@@ -638,7 +647,7 @@ void Mission::DirectorInitgame()
 void Mission::DirectorLoop()
 {
     double oldgametime = gametime;
-    gametime += SIMULATION_ATOM; //elapsed;
+    gametime += SIMULATION_ATOM; // elapsed;
     if (getTimeCompression() >= .1)
     {
         if (gametime <= oldgametime)
@@ -686,8 +695,8 @@ void Mission::DirectorShipDestroyed(Unit *unit)
 
     if ((fg->faction.length() + fg->type.length() + fg->name.length() + 12 + 30) < sizeof(buf))
     {
-        sprintf(buf, "Ship destroyed: %s:%s:%s-%d", fg->faction.c_str(), fg->type.c_str(),
-                fg->name.c_str(), unit->getFgSubnumber());
+        sprintf(buf, "Ship destroyed: %s:%s:%s-%d", fg->faction.c_str(), fg->type.c_str(), fg->name.c_str(),
+                unit->getFgSubnumber());
     }
     else
     {
@@ -703,7 +712,7 @@ void Mission::DirectorShipDestroyed(Unit *unit)
         {
             BOOST_LOG_TRIVIAL(info) << boost::format("Relaunching %1% wave") % fg->name;
 
-            //launch new wave
+            // launch new wave
             fg->nr_waves_left -= 1;
             fg->nr_ships_left = fg->nr_ships;
 
@@ -764,11 +773,11 @@ Unit *Mission::call_unit_launch(CreateFlightgroup *fg, int32_t type, const strin
     Unit **units = new Unit *[fg->nr_ships];
 
     Unit *par = _Universe->AccessCockpit()->GetParent();
-    CollideMap::iterator metahint[2] = {
-        _Universe->scriptStarSystem()->collidemap[Unit::UNIT_ONLY]->begin(),
-        _Universe->scriptStarSystem()->collidemap[Unit::UNIT_BOLT]->begin()};
+    CollideMap::iterator metahint[2] = {_Universe->scriptStarSystem()->collidemap[Unit::UNIT_ONLY]->begin(),
+                                        _Universe->scriptStarSystem()->collidemap[Unit::UNIT_BOLT]->begin()};
     CollideMap::iterator *hint = metahint;
-    if (par && !is_null(par->location[Unit::UNIT_ONLY]) && !is_null(par->location[Unit::UNIT_BOLT]) && par->activeStarSystem == _Universe->scriptStarSystem())
+    if (par && !is_null(par->location[Unit::UNIT_ONLY]) && !is_null(par->location[Unit::UNIT_BOLT]) &&
+        par->activeStarSystem == _Universe->scriptStarSystem())
     {
         hint = par->location;
     }
@@ -784,7 +793,7 @@ Unit *Mission::call_unit_launch(CreateFlightgroup *fg, int32_t type, const strin
             char *bdst = strdup(fg->fg->type.c_str());
             char *citylights = strdup(fg->fg->type.c_str());
             tex[0] = '\0';
-            bsrc[0] = '\0'; //have at least 1 char
+            bsrc[0] = '\0'; // have at least 1 char
             bdst[0] = '\0';
             citylights[0] = '\0';
             GFXMaterial mat;
@@ -799,11 +808,9 @@ Unit *Mission::call_unit_launch(CreateFlightgroup *fg, int32_t type, const strin
             {
                 s = parse_alpha(bsrc);
             }
-            my_unit = UnitFactory::createPlanet(QVector(0, 0, 0), QVector(0, 0, 0), 0, Vector(0, 0, 0),
-                                                0, 0, radius, tex, "", "", s,
-                                                d, ParseDestinations(destinations),
-                                                QVector(0, 0, 0), nullptr, mat,
-                                                vector<GFXLightLocal>(), faction_nr, nam);
+            my_unit = UnitFactory::createPlanet(QVector(0, 0, 0), QVector(0, 0, 0), 0, Vector(0, 0, 0), 0, 0, radius,
+                                                tex, "", "", s, d, ParseDestinations(destinations), QVector(0, 0, 0),
+                                                nullptr, mat, vector<GFXLightLocal>(), faction_nr, nam);
             free(bsrc);
             free(bdst);
             free(tex);
@@ -812,17 +819,18 @@ Unit *Mission::call_unit_launch(CreateFlightgroup *fg, int32_t type, const strin
         }
         else if (type == NEBULAPTR)
         {
-            my_unit = UnitFactory::createNebula(
-                fg->fg->type.c_str(), false, faction_nr, fg->fg, u + fg->fg->nr_ships - fg->nr_ships);
+            my_unit = UnitFactory::createNebula(fg->fg->type.c_str(), false, faction_nr, fg->fg,
+                                                u + fg->fg->nr_ships - fg->nr_ships);
         }
         else if (type == ASTEROIDPTR)
         {
-            my_unit = UnitFactory::createAsteroid(
-                fg->fg->type.c_str(), faction_nr, fg->fg, u + fg->fg->nr_ships - fg->nr_ships, .01);
+            my_unit = UnitFactory::createAsteroid(fg->fg->type.c_str(), faction_nr, fg->fg,
+                                                  u + fg->fg->nr_ships - fg->nr_ships, .01);
         }
         else
         {
-            my_unit = UnitFactory::createUnit(fg->fg->type.c_str(), false, faction_nr, string(""), fg->fg, u + fg->fg->nr_ships - fg->nr_ships, nullptr);
+            my_unit = UnitFactory::createUnit(fg->fg->type.c_str(), false, faction_nr, string(""), fg->fg,
+                                              u + fg->fg->nr_ships - fg->nr_ships, nullptr);
         }
         units[u] = my_unit;
     }

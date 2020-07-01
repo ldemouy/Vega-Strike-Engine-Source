@@ -23,31 +23,32 @@
  *  xml Mission Scripting written by Alexander Rawass <alexannika@users.sourceforge.net>
  */
 #include "python/python_class.h"
-#include <boost/version.hpp>
 #include <boost/python/class.hpp>
+#include <boost/version.hpp>
 #ifdef HAVE_PYTHON
 #include <Python.h>
 #endif
 
-#include <math.h>
-#include <stdlib.h>
-#include <stdio.h>
 #include <errno.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
 #ifndef WIN32
-//this file isn't available on my system (all win32 machines?) i dun even know what it has or if we need it as I can compile without it
-#include <unistd.h>
+// this file isn't available on my system (all win32 machines?) i dun even know what it has or if we need it as I can
+// compile without it
 #include <pwd.h>
+#include <unistd.h>
 #endif
 
 #include "cmd/unit_generic.h"
 #include "mission.h"
 
 PYTHON_BEGIN_MODULE(Base)
-//Nothing here, but keeps those files that do a "import Base" happy.
+// Nothing here, but keeps those files that do a "import Base" happy.
 PYTHON_END_MODULE(Base)
 
 PYTHON_BEGIN_MODULE(Briefing)
-//Nothing here, but keeps those files that do a "import Briefing" happy.
+// Nothing here, but keeps those files that do a "import Briefing" happy.
 PYTHON_END_MODULE(Briefing)
 
 void InitBase()
@@ -75,7 +76,7 @@ void InitBriefing2()
 
 void Mission::DirectorLoop()
 {
-    gametime += SIMULATION_ATOM; //elapsed;
+    gametime += SIMULATION_ATOM; // elapsed;
 
     try
     {

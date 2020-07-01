@@ -9,13 +9,13 @@
  * Rewritten and adapted to Vegastrike by Daniel Horn
  */
 
-#include <stdio.h>
+#include "quadsquare.h"
+#include "aux_texture.h"
+#include "gldrv/gfxlib.h"
+#include <assert.h>
 #include <float.h>
 #include <math.h>
-#include <assert.h>
-#include "quadsquare.h"
-#include "gldrv/gfxlib.h"
-#include "aux_texture.h"
+#include <stdio.h>
 using std::vector;
 
 unsigned int *quadsquare::VertexAllocated;
@@ -47,31 +47,34 @@ unsigned int quadsquare::SetVertices(GFXVertex *vertexs, const quadcornerdata &p
     for (unsigned int i = 0; i < 5; i++)
     {
         v[i].j = Vertex[i].Y;
-        vertexs[Vertex[i].vertindex].SetTexCoord(nonlinear_trans->TransformS(v[i].i,
-                                                                             (*textures)[Vertex[i].GetTex()].scales),
-                                                 nonlinear_trans->TransformT(v[i].k, (*textures)[Vertex[i].GetTex()].scalet));
+        vertexs[Vertex[i].vertindex].SetTexCoord(
+            nonlinear_trans->TransformS(v[i].i, (*textures)[Vertex[i].GetTex()].scales),
+            nonlinear_trans->TransformT(v[i].k, (*textures)[Vertex[i].GetTex()].scalet));
         vertexs[Vertex[i].vertindex].SetVertex(nonlinear_trans->Transform(v[i].Cast()).Cast());
-        //if (vertexs[Vertex[i].vertindex].y>10000||vertexs[Vertex[i].vertindex].z>32768||vertexs[Vertex[i].vertindex].x>32768)
-        //not important...debug only to catch certain case	    VSFileSystem::Fprintf (stderr,"high %f", vertexs[Vertex[i].vertindex].y);
+        // if
+        // (vertexs[Vertex[i].vertindex].y>10000||vertexs[Vertex[i].vertindex].z>32768||vertexs[Vertex[i].vertindex].x>32768)
+        // not important...debug only to catch certain case	    VSFileSystem::Fprintf (stderr,"high %f",
+        // vertexs[Vertex[i].vertindex].y);
     }
     return half;
 }
 
-//Verts mapping:
-//1-0
+// Verts mapping:
+// 1-0
 //| |
-//2-3
+// 2-3
 //
-//Vertex mapping:
+// Vertex mapping:
 //+-2-+
 //| | |
-//3-0-1
+// 3-0-1
 //| | |
 //+-4-+
 static void InterpolateTextures(VertInfo res[5], VertInfo in[4], const quadcornerdata &cd)
 {
-    //const float epsilon;
-    res[0].SetTex(0.25 * ((((float)in[0].Rem) + in[1].Rem + in[2].Rem + in[3].Rem) / 256. + in[0].Tex + in[1].Tex + in[2].Tex + in[3].Tex));
+    // const float epsilon;
+    res[0].SetTex(0.25 * ((((float)in[0].Rem) + in[1].Rem + in[2].Rem + in[3].Rem) / 256. + in[0].Tex + in[1].Tex +
+                          in[2].Tex + in[3].Tex));
     res[1].SetTex(0.5 * ((((float)in[0].Rem) + in[3].Rem) / 256. + (in[3].Tex) + in[0].Tex));
     res[2].SetTex(0.5 * ((((float)in[0].Rem) + in[1].Rem) / 256. + (in[0].Tex) + in[1].Tex));
     res[3].SetTex(0.5 * ((((float)in[1].Rem) + in[2].Rem) / 256. + (in[1].Tex) + in[2].Tex));
@@ -101,10 +104,10 @@ static void InterpolateTextures(VertInfo res[5], VertInfo in[4], const quadcorne
 quadsquare::quadsquare(quadcornerdata *pcd)
 {
     pcd->Square = this;
-    //Set static to true if/when this node contains real data, and
-    //not just interpolated values.  When static == false, a node
-    //can be deleted by the Update() function if none of its
-    //vertices or children are enabled.
+    // Set static to true if/when this node contains real data, and
+    // not just interpolated values.  When static == false, a node
+    // can be deleted by the Update() function if none of its
+    // vertices or children are enabled.
     Static = false;
     int i;
     for (i = 0; i < 4; i++)
@@ -112,15 +115,16 @@ quadsquare::quadsquare(quadcornerdata *pcd)
     EnabledFlags = 0;
     for (i = 0; i < 2; i++)
         SubEnabledCount[i] = 0;
-    //Set default vertex positions by interpolating from given corners.
-    //Just bilinear interpolation.
+    // Set default vertex positions by interpolating from given corners.
+    // Just bilinear interpolation.
     InterpolateTextures(Vertex, pcd->Verts, *pcd);
     for (i = 0; i < 2; i++)
         Error[i] = 0;
     for (i = 0; i < 4; i++)
-        Error[i + 2] =
-            (unsigned short)(fabs((double)((Vertex[0].Y + pcd->Verts[i].Y) - (Vertex[i + 1].Y + Vertex[((i + 1) & 3) + 1].Y))) * 0.25);
-    //Compute MinY/MaxY based on corner verts.
+        Error[i + 2] = (unsigned short)(fabs((double)((Vertex[0].Y + pcd->Verts[i].Y) -
+                                                      (Vertex[i + 1].Y + Vertex[((i + 1) & 3) + 1].Y))) *
+                                        0.25);
+    // Compute MinY/MaxY based on corner verts.
     MinY = MaxY = (unsigned short)pcd->Verts[0].Y;
     for (i = 1; i < 4; i++)
     {
@@ -132,19 +136,21 @@ quadsquare::quadsquare(quadcornerdata *pcd)
     }
     GFXVertex **vertexs = &(vertices->BeginMutate(0)->vertices);
     GFXVertex v[5];
-    v[0].SetNormal(((*vertexs)[pcd->Verts[0].vertindex].GetNormal() + (*vertexs)[pcd->Verts[1].vertindex].GetNormal() + (*vertexs)[pcd->Verts[2].vertindex].GetNormal() + (*vertexs)[pcd->Verts[3].vertindex].GetNormal()).Normalize());
-    v[1].SetNormal(
-        ((*vertexs)[pcd->Verts[0].vertindex].GetNormal() + (*vertexs)[pcd->Verts[3].vertindex].GetNormal()).Normalize());
-    v[2].SetNormal(
-        ((*vertexs)[pcd->Verts[0].vertindex].GetNormal() + (*vertexs)[pcd->Verts[1].vertindex].GetNormal()).Normalize());
-    v[3].SetNormal(
-        ((*vertexs)[pcd->Verts[1].vertindex].GetNormal() + (*vertexs)[pcd->Verts[2].vertindex].GetNormal()).Normalize());
-    v[4].SetNormal(
-        ((*vertexs)[pcd->Verts[2].vertindex].GetNormal() + (*vertexs)[pcd->Verts[3].vertindex].GetNormal()).Normalize());
-    //FIXME fill in st!
+    v[0].SetNormal(((*vertexs)[pcd->Verts[0].vertindex].GetNormal() + (*vertexs)[pcd->Verts[1].vertindex].GetNormal() +
+                    (*vertexs)[pcd->Verts[2].vertindex].GetNormal() + (*vertexs)[pcd->Verts[3].vertindex].GetNormal())
+                       .Normalize());
+    v[1].SetNormal(((*vertexs)[pcd->Verts[0].vertindex].GetNormal() + (*vertexs)[pcd->Verts[3].vertindex].GetNormal())
+                       .Normalize());
+    v[2].SetNormal(((*vertexs)[pcd->Verts[0].vertindex].GetNormal() + (*vertexs)[pcd->Verts[1].vertindex].GetNormal())
+                       .Normalize());
+    v[3].SetNormal(((*vertexs)[pcd->Verts[1].vertindex].GetNormal() + (*vertexs)[pcd->Verts[2].vertindex].GetNormal())
+                       .Normalize());
+    v[4].SetNormal(((*vertexs)[pcd->Verts[2].vertindex].GetNormal() + (*vertexs)[pcd->Verts[3].vertindex].GetNormal())
+                       .Normalize());
+    // FIXME fill in st!
     for (i = 0; i < 5; i++)
     {
-        //v[i].y= Vertex[i].Y;
+        // v[i].y= Vertex[i].Y;
         if (unusedvertices->size())
         {
             (*vertexs)[unusedvertices->back()] = v[i];
@@ -165,12 +171,12 @@ quadsquare::quadsquare(quadcornerdata *pcd)
     }
     SetVertices(*vertexs, *pcd);
     vertices->EndMutate(*VertexCount);
-    //interpolate from other vertices;
+    // interpolate from other vertices;
 }
 
 quadsquare::~quadsquare()
 {
-    //Recursively delete sub-trees.
+    // Recursively delete sub-trees.
     int i;
     for (i = 0; i < 5; i++)
         unusedvertices->push_back(Vertex[i].vertindex);
@@ -192,7 +198,7 @@ void quadsquare::SetStatic(const quadcornerdata &cd)
     if (Static == false)
     {
         Static = true;
-        //Propagate static status to ancestor nodes.
+        // Propagate static status to ancestor nodes.
         if (cd.Parent && cd.Parent->Square)
             cd.Parent->Square->SetStatic(*cd.Parent);
     }
@@ -200,9 +206,9 @@ void quadsquare::SetStatic(const quadcornerdata &cd)
 
 int quadsquare::CountNodes() const
 {
-    //Debugging function.  Counts the number of nodes in this subtree.
-    int count = 1; //Count ourself.
-    //Count descendants.
+    // Debugging function.  Counts the number of nodes in this subtree.
+    int count = 1; // Count ourself.
+    // Count descendants.
     for (int i = 0; i < 4; i++)
         if (Child[i])
             count += Child[i]->CountNodes();
@@ -213,32 +219,34 @@ int quadsquare::CountNodes() const
  * Returns the height of the heightfield at the specified x,z coordinates.
  * Can be used for collision detection
  */
-float quadsquare::GetHeight(const quadcornerdata &cd, float x, float z, Vector &normal) //const
+float quadsquare::GetHeight(const quadcornerdata &cd, float x, float z, Vector &normal) // const
 {
     int half = 1 << cd.Level;
     float lx = (x - cd.xorg) / float(half);
     float lz = (z - cd.zorg) / float(half);
     int ix = (int)floor(lx);
     int iz = (int)floor(lz);
-    //Clamp.
+    // Clamp.
     if (ix < 0)
-        return -FLT_MAX; //ix = 0;
+        return -FLT_MAX; // ix = 0;
     if (ix > 1)
-        return -FLT_MAX; //ix = 1;
+        return -FLT_MAX; // ix = 1;
     if (iz < 0)
-        return -FLT_MAX; //iz = 0;
+        return -FLT_MAX; // iz = 0;
     if (iz > 1)
-        return -FLT_MAX; ///iz = 1;
+        return -FLT_MAX; /// iz = 1;
 
-    int index = (ix ^ (iz ^ 1)) + (iz << 1); //FIXME gcc computes ix^((iz^1)+(iz<<1)).. Was this the intent? Who can understand this code?
+    int index =
+        (ix ^ (iz ^ 1)) +
+        (iz << 1); // FIXME gcc computes ix^((iz^1)+(iz<<1)).. Was this the intent? Who can understand this code?
     if (Child[index] && Child[index]->Static)
     {
-        //Pass the query down to the child which contains it.
+        // Pass the query down to the child which contains it.
         quadcornerdata q;
         SetupCornerData(&q, cd, index);
         return Child[index]->GetHeight(q, x, z, normal);
     }
-    //Bilinear interpolation.
+    // Bilinear interpolation.
     lx -= ix;
     if (lx <= 0.f)
         lx = 0.f;
@@ -282,15 +290,15 @@ float quadsquare::GetHeight(const quadcornerdata &cd, float x, float z, Vector &
 
 quadsquare *quadsquare::GetFarNeighbor(int dir, const quadcornerdata &cd) const
 {
-    //Traverses the tree in search of the quadsquare neighboring this square to the
-    //specified direction.  0-3 --> { E, N, W, S }.
-    //Returns nullptr if the neighbor is outside the bounds of the tree.
-    //If we don't have a parent, then we don't have a neighbor.
+    // Traverses the tree in search of the quadsquare neighboring this square to the
+    // specified direction.  0-3 --> { E, N, W, S }.
+    // Returns nullptr if the neighbor is outside the bounds of the tree.
+    // If we don't have a parent, then we don't have a neighbor.
     //(Actually, we could have inter-tree connectivity at this level
-    //for connecting separate trees together.)
+    // for connecting separate trees together.)
     if (cd.Parent == 0)
         return neighbor[dir];
-    //Find the parent and the child-index of the square we want to locate or create.
+    // Find the parent and the child-index of the square we want to locate or create.
     quadsquare *p = 0;
     int index = cd.ChildIndex ^ 1 ^ ((dir & 1) << 1);
     bool SameParent = ((dir - cd.ChildIndex) & 2) ? true : false;
@@ -310,15 +318,15 @@ quadsquare *quadsquare::GetFarNeighbor(int dir, const quadcornerdata &cd) const
 
 quadsquare *quadsquare::GetNeighbor(int dir, const quadcornerdata &cd) const
 {
-    //Traverses the tree in search of the quadsquare neighboring this square to the
-    //specified direction.  0-3 --> { E, N, W, S }.
-    //Returns nullptr if the neighbor is outside the bounds of the tree.
-    //If we don't have a parent, then we don't have a neighbor.
+    // Traverses the tree in search of the quadsquare neighboring this square to the
+    // specified direction.  0-3 --> { E, N, W, S }.
+    // Returns nullptr if the neighbor is outside the bounds of the tree.
+    // If we don't have a parent, then we don't have a neighbor.
     //(Actually, we could have inter-tree connectivity at this level
-    //for connecting separate trees together.)
+    // for connecting separate trees together.)
     if (cd.Parent == 0)
         return nullptr;
-    //Find the parent and the child-index of the square we want to locate or create.
+    // Find the parent and the child-index of the square we want to locate or create.
     quadsquare *p = 0;
     int index = cd.ChildIndex ^ 1 ^ ((dir & 1) << 1);
     bool SameParent = ((dir - cd.ChildIndex) & 2) ? true : false;
@@ -347,14 +355,9 @@ void VertInfo::SetTex(float t)
     assert(t - Tex < 1);
 }
 
-void quadsquare::SetCurrentTerrain(unsigned int *VertexAllocated,
-                                   unsigned int *VertexCount,
-                                   GFXVertexList *vertices,
-                                   std::vector<unsigned int> *unvert,
-                                   IdentityTransform *nlt,
-                                   std::vector<TerrainTexture> *tex,
-                                   const Vector &NormScale,
-                                   quadsquare *neighbors[4])
+void quadsquare::SetCurrentTerrain(unsigned int *VertexAllocated, unsigned int *VertexCount, GFXVertexList *vertices,
+                                   std::vector<unsigned int> *unvert, IdentityTransform *nlt,
+                                   std::vector<TerrainTexture> *tex, const Vector &NormScale, quadsquare *neighbors[4])
 {
     normalscale = NormScale;
     neighbor[0] = neighbors[0];
@@ -390,31 +393,35 @@ void quadsquare::AddHeightMap(const quadcornerdata &cd, const HeightMapInfo &hm)
 
 void quadsquare::AddHeightMapAux(const quadcornerdata &cd, const HeightMapInfo &hm)
 {
-    //Sets the height of all samples within the specified rectangular
-    //region using the given array of floats.  Extends the tree to the
-    //level of detail defined by (1 << hm.Scale) as necessary.
-    //If block is outside rectangle, then don't bother.
+    // Sets the height of all samples within the specified rectangular
+    // region using the given array of floats.  Extends the tree to the
+    // level of detail defined by (1 << hm.Scale) as necessary.
+    // If block is outside rectangle, then don't bother.
     int BlockSize = 2 << cd.Level;
-    if (cd.xorg > hm.XOrigin + ((int)(hm.XSize + 2) << hm.Scale) || cd.xorg + BlockSize < hm.XOrigin - (1 << hm.Scale) || cd.zorg > hm.ZOrigin + ((int)(hm.ZSize + 2) << hm.Scale) || cd.zorg + BlockSize < hm.ZOrigin - (1 << hm.Scale))
-        //This square does not touch the given height array area; no need to modify this square or descendants.
+    if (cd.xorg > hm.XOrigin + ((int)(hm.XSize + 2) << hm.Scale) ||
+        cd.xorg + BlockSize < hm.XOrigin - (1 << hm.Scale) ||
+        cd.zorg > hm.ZOrigin + ((int)(hm.ZSize + 2) << hm.Scale) || cd.zorg + BlockSize < hm.ZOrigin - (1 << hm.Scale))
+        // This square does not touch the given height array area; no need to modify this square or descendants.
         return;
     if (cd.Parent && cd.Parent->Square)
-        cd.Parent->Square->EnableChild(cd.ChildIndex, *cd.Parent); //causes parent edge verts to be enabled, possibly causing neighbor blocks to be created.
+        cd.Parent->Square->EnableChild(
+            cd.ChildIndex,
+            *cd.Parent); // causes parent edge verts to be enabled, possibly causing neighbor blocks to be created.
     int i;
     int half = 1 << cd.Level;
-    //Create and update child nodes.
+    // Create and update child nodes.
     for (i = 0; i < 4; i++)
     {
         quadcornerdata q;
         SetupCornerData(&q, cd, i);
         if (Child[i] == nullptr && cd.Level > hm.Scale)
-            //Create child node w/ current (unmodified) values for corner verts.
+            // Create child node w/ current (unmodified) values for corner verts.
             Child[i] = new quadsquare(&q);
-        //Recurse.
+        // Recurse.
         if (Child[i])
             Child[i]->AddHeightMapAux(q, hm);
     }
-    //don't want to bother changing things if the sample won't change things :-)
+    // don't want to bother changing things if the sample won't change things :-)
     int s[5];
     float texture[5];
     s[0] = (int)hm.Sample(cd.xorg + half, cd.zorg + half, texture[0]);
@@ -422,9 +429,9 @@ void quadsquare::AddHeightMapAux(const quadcornerdata &cd, const HeightMapInfo &
     s[2] = (int)hm.Sample(cd.xorg + half, cd.zorg, texture[2]);
     s[3] = (int)hm.Sample(cd.xorg, cd.zorg + half, texture[3]);
     s[4] = (int)hm.Sample(cd.xorg + half, cd.zorg + half * 2, texture[4]);
-    //Modify the vertex heights if necessary, and set the dirty
-    //flag if any modifications occur, so that we know we need to
-    //recompute error data later.
+    // Modify the vertex heights if necessary, and set the dirty
+    // flag if any modifications occur, so that we know we need to
+    // recompute error data later.
     /*
      *  float pos[5];
      *  pos[0] = (cd.xorg + half+ cd.zorg + half);
@@ -436,7 +443,7 @@ void quadsquare::AddHeightMapAux(const quadcornerdata &cd, const HeightMapInfo &
      */
     for (i = 0; i < 5; i++)
     {
-        //Vertex[i].SetTex(((int)((pos[i])/5000))%10);
+        // Vertex[i].SetTex(((int)((pos[i])/5000))%10);
         Vertex[i].SetTex(texture[i]);
         if (s[i] != 0)
         {
@@ -445,8 +452,8 @@ void quadsquare::AddHeightMapAux(const quadcornerdata &cd, const HeightMapInfo &
                 Vertex[i].Y += s[i];
             else
                 Vertex[i].Y = 0;
-            //vertices[Vertex[i].vertindex].x = v[i].i;//FIXME are we necessary?
-            //vertices[Vertex[i].vertindex].z = v[i].k;
+            // vertices[Vertex[i].vertindex].x = v[i].i;//FIXME are we necessary?
+            // vertices[Vertex[i].vertindex].z = v[i].k;
         }
     }
     if (Dirty)
@@ -457,7 +464,7 @@ void quadsquare::AddHeightMapAux(const quadcornerdata &cd, const HeightMapInfo &
     }
     else
     {
-        //Check to see if any child nodes are dirty, and set the dirty flag if so.
+        // Check to see if any child nodes are dirty, and set the dirty flag if so.
         for (i = 0; i < 4; i++)
             if (Child[i] && Child[i]->Dirty)
             {
@@ -470,16 +477,16 @@ void quadsquare::AddHeightMapAux(const quadcornerdata &cd, const HeightMapInfo &
 }
 
 //
-//HeightMapInfo
+// HeightMapInfo
 //
 
 float HeightMapInfo::Sample(int x, int z, float &texture) const
-//Returns the height (y-value) of a point in this heightmap.  The given (x,z) are in
-//world coordinates.  Heights outside this heightmap are considered to be 0.  Heights
-//between sample points are bilinearly interpolated from surrounding points.
-//xxx deal with edges: either force to 0 or over-size the query region....
+// Returns the height (y-value) of a point in this heightmap.  The given (x,z) are in
+// world coordinates.  Heights outside this heightmap are considered to be 0.  Heights
+// between sample points are bilinearly interpolated from surrounding points.
+// xxx deal with edges: either force to 0 or over-size the query region....
 {
-    //Break coordinates into grid-relative coords (ix,iz) and remainder (rx,rz)
+    // Break coordinates into grid-relative coords (ix,iz) and remainder (rx,rz)
     int ix = (x - XOrigin) >> Scale;
     int iz = (z - ZOrigin) >> Scale;
     int mask = (1 << Scale) - 1;

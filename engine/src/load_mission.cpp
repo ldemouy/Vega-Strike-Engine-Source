@@ -1,19 +1,18 @@
-#include "configxml.h"
-#include "cmd/script/mission.h"
-#include "cmd/script/pythonmission.h"
-#include "vs_globals.h"
-#include "star_system_generic.h"
-#include "vs_globals.h"
-#include "cmd/unit_generic.h"
-#include "cmd/unit_factory.h"
-#include "gfx/cockpit_generic.h"
+#include "load_mission.h"
 #include "cmd/ai/aggressive.h"
 #include "cmd/ai/script.h"
 #include "cmd/script/flightgroup.h"
+#include "cmd/script/mission.h"
+#include "cmd/script/pythonmission.h"
+#include "cmd/unit_factory.h"
+#include "cmd/unit_generic.h"
+#include "configxml.h"
+#include "gfx/cockpit_generic.h"
 #include "python/python_class.h"
-#include "savegame.h"
 #include "save_util.h"
-#include "load_mission.h"
+#include "savegame.h"
+#include "star_system_generic.h"
+#include "vs_globals.h"
 
 #include "options.h"
 
@@ -234,7 +233,7 @@ std::string UnpickleAllMissions(char *&buf)
         temp[picklelength] = 0;
         memcpy(temp, buf, picklelength);
         buf += picklelength;
-        //VSFileSystem::vs_read (temp,picklelength,1,fp);
+        // VSFileSystem::vs_read (temp,picklelength,1,fp);
         retval += temp;
         if (i < active_missions.size())
             active_missions[i]->SetUnpickleData(PickledDataSansMissionName(temp));
@@ -255,7 +254,7 @@ void LoadMission(const char *nission_name, const std::string &script, bool loadF
     const char *friendly_mission_name = nission_name;
     if (nission_name[0] == '#')
     {
-        //Allows you to title a mission without loading that file.
+        // Allows you to title a mission without loading that file.
         mission_name = string();
         friendly_mission_name++;
     }
@@ -283,11 +282,11 @@ void LoadMission(const char *nission_name, const std::string &script, bool loadF
     Unit *fighter;
 
     if (active_missions.size() > 0)
-        //Give the mission a name.
+        // Give the mission a name.
         active_missions.back()->mission_name = friendly_mission_name;
     active_missions.back()->player_num = _Universe->CurrentCockpit();
 
     active_missions.back()->DirectorInitgame();
     mission = active_missions[0];
-    //return true;
+    // return true;
 }

@@ -11,43 +11,56 @@
 // Include Guard
 #ifndef __ICEAABB_H__
 #define __ICEAABB_H__
-#include <cmath>
-#include "IcePoint.h"
 #include "IceMatrix3x3.h"
 #include "IceMatrix4x4.h"
+#include "IcePoint.h"
+#include <cmath>
 
 class AABB
 {
-public:
-	//! Constructor
-	inline AABB() {}
-	//! Destructor
-	inline ~AABB() {}
+  public:
+    //! Constructor
+    inline AABB()
+    {
+    }
+    //! Destructor
+    inline ~AABB()
+    {
+    }
 
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/**
-		 *	Setups an AABB from min & max vectors.
-		 *	\param		min			[in] the min point
-		 *	\param		max			[in] the max point
-		 */
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	void SetMinMax(const Point &min, const Point &max)
-	{
-		mCenter = (max + min) * 0.5f;
-		mExtents = (max - min) * 0.5f;
-	}
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     *	Setups an AABB from min & max vectors.
+     *	\param		min			[in] the min point
+     *	\param		max			[in] the max point
+     */
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    void SetMinMax(const Point &min, const Point &max)
+    {
+        mCenter = (max + min) * 0.5f;
+        mExtents = (max - min) * 0.5f;
+    }
 
-	//! Get box center
-	inline void GetCenter(Point &center) const { center = mCenter; }
-	//! Get box extents
-	inline void GetExtents(Point &extents) const { extents = mExtents; }
+    //! Get box center
+    inline void GetCenter(Point &center) const
+    {
+        center = mCenter;
+    }
+    //! Get box extents
+    inline void GetExtents(Point &extents) const
+    {
+        extents = mExtents;
+    }
 
-	//! Get component of the box's center along a given axis
-	inline float GetCenter(uint32_t axis) const { return mCenter[axis]; }
+    //! Get component of the box's center along a given axis
+    inline float GetCenter(uint32_t axis) const
+    {
+        return mCenter[axis];
+    }
 
-private:
-	Point mCenter;	//!< AABB Center
-	Point mExtents; //!< x, y and z extents
+  private:
+    Point mCenter;  //!< AABB Center
+    Point mExtents; //!< x, y and z extents
 };
 
 #endif // __ICEAABB_H__

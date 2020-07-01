@@ -29,36 +29,36 @@
 namespace Occlusion
 {
 
-    /// Initialize occlusion system for a new frame
-    void /*GFXDRVAPI*/ start();
+/// Initialize occlusion system for a new frame
+void /*GFXDRVAPI*/ start();
 
-    /// Finalize occlusion system for a frame, and free up resources
-    void /*GFXDRVAPI*/ end();
+/// Finalize occlusion system for a frame, and free up resources
+void /*GFXDRVAPI*/ end();
 
-    /** 
-     * Register an occluder
-     * 
-     * @param pos The occluder object's center
-     * @param rSize The occluder's radius
-     * @param significant If false, the occluder may be ignored
-     *          if there are other, more significant occluders.
-     *          If true, it will be forcibly considered when
-     *          rendering all objects. Ie: for planets.
-     */
-    void /*GFXDRVAPI*/ addOccluder(const QVector &pos, float rSize, bool significant);
+/**
+ * Register an occluder
+ *
+ * @param pos The occluder object's center
+ * @param rSize The occluder's radius
+ * @param significant If false, the occluder may be ignored
+ *          if there are other, more significant occluders.
+ *          If true, it will be forcibly considered when
+ *          rendering all objects. Ie: for planets.
+ */
+void /*GFXDRVAPI*/ addOccluder(const QVector &pos, float rSize, bool significant);
 
-    /** 
-     * Test occlusion between a light and an object
-     * 
-     * @param lightPos The light's center
-     * @param lightSize The light's radius
-     * @param pos The object's center
-     * @param rSize The object's radius
-     * 
-     * @returns An occlusion factor, with 0 being fully occluded 
-     *          and 1 being fully clear.
-     */
-    float /*GFXDRVAPI*/ testOcclusion(const QVector &lightPos, float lightSize, const QVector &pos, float rSize);
+/**
+ * Test occlusion between a light and an object
+ *
+ * @param lightPos The light's center
+ * @param lightSize The light's radius
+ * @param pos The object's center
+ * @param rSize The object's radius
+ *
+ * @returns An occlusion factor, with 0 being fully occluded
+ *          and 1 being fully clear.
+ */
+float /*GFXDRVAPI*/ testOcclusion(const QVector &lightPos, float lightSize, const QVector &pos, float rSize);
 
 } // namespace Occlusion
 

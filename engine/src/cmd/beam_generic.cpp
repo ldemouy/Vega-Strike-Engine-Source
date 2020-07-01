@@ -1,13 +1,13 @@
-#include "vegastrike.h"
-#include <vector>
-#include "beam.h"
-#include "unit_generic.h"
+#include "../gfx/camera.h"
 #include "aldrv/audiolib.h"
+#include "beam.h"
 #include "configxml.h"
 #include "images.h"
-#include "../gfx/camera.h"
-#include <utility>
+#include "unit_generic.h"
+#include "vegastrike.h"
 #include <cmath>
+#include <utility>
+#include <vector>
 
 using namespace XMLSupport;
 extern double interpolation_blend_factor;
@@ -40,15 +40,15 @@ void ScaleByAlpha(GFXColorVertex &vert, float alpha)
 
 void Beam::Init(const Transformation &trans, const weapon_info &cln, void *own, Unit *firer)
 {
-    //Matrix m;
+    // Matrix m;
     CollideInfo.object.b = nullptr;
     CollideInfo.type = LineCollide::BEAM;
-    //DO NOT DELETE - shared vlist
-    //if (vlist)
-    //delete vlist;
-    local_transformation = trans; //location on ship
-    //cumalative_transformation =trans;
-    //trans.to_matrix (cumalative_transformation_matrix);
+    // DO NOT DELETE - shared vlist
+    // if (vlist)
+    // delete vlist;
+    local_transformation = trans; // location on ship
+    // cumalative_transformation =trans;
+    // trans.to_matrix (cumalative_transformation_matrix);
     speed = cln.Speed;
     texturespeed = cln.PulseSpeed;
     range = cln.Range;
@@ -68,13 +68,15 @@ void Beam::Init(const Transformation &trans, const weapon_info &cln, void *own, 
     impact = ALIVE;
     owner = own;
     numframes = 0;
-    static int radslices = XMLSupport::parse_int(vs_config->getVariable("graphics", "tractor.scoop_rad_slices", "10")) | 1; //Must be odd
-    static int longslices = XMLSupport::parse_int(vs_config->getVariable("graphics", "tractor.scoop_long_slices", "10"));
+    static int radslices =
+        XMLSupport::parse_int(vs_config->getVariable("graphics", "tractor.scoop_rad_slices", "10")) | 1; // Must be odd
+    static int longslices =
+        XMLSupport::parse_int(vs_config->getVariable("graphics", "tractor.scoop_long_slices", "10"));
     lastlength = 0;
     curlength = SIMULATION_ATOM * speed;
     lastthick = 0;
     curthick = SIMULATION_ATOM * radialspeed;
-    if (curthick > thickness) //clamp to max thickness - needed for large simulation atoms
+    if (curthick > thickness) // clamp to max thickness - needed for large simulation atoms
     {
         curthick = thickness;
     }
@@ -82,32 +84,33 @@ void Beam::Init(const Transformation &trans, const weapon_info &cln, void *own, 
     if (!_vlist)
     {
         int32_t numvertex = float_to_int(std::max(48, ((4 * radslices) + 1) * longslices * 4));
-        GFXColorVertex *beam = new GFXColorVertex[numvertex]; //regretably necessary: radslices and longslices come from the config file... so it's at runtime.
+        GFXColorVertex *beam = new GFXColorVertex[numvertex]; // regretably necessary: radslices and longslices come
+                                                              // from the config file... so it's at runtime.
         memset(beam, 0, sizeof(*beam) * numvertex);
-        _vlist = new GFXVertexList(GFXQUAD, numvertex, beam, numvertex, true); //mutable color contained list
+        _vlist = new GFXVertexList(GFXQUAD, numvertex, beam, numvertex, true); // mutable color contained list
         delete[] beam;
     }
-    //Shared vlist - we recalculate it every time, so no loss
+    // Shared vlist - we recalculate it every time, so no loss
     vlist = _vlist;
 #ifdef PERBOLTSOUND
     AUDStartPlaying(sound);
 #endif
 }
 
-//NOTE: The order of the quad's vertices IS important - it ensures symmetric interpolation.
-#define V(xx, yy, zz, ss, tt, aa)     \
-    do                                \
-    {                                 \
-        beam[a].x = xx;               \
-        beam[a].y = yy;               \
-        beam[a].z = zz;               \
-        beam[a].s = ss;               \
-        beam[a].t = tt;               \
-        beam[a].r = this->Col.r * aa; \
-        beam[a].g = this->Col.g * aa; \
-        beam[a].b = this->Col.b * aa; \
-        beam[a].a = 1.0f;             \
-        a++;                          \
+// NOTE: The order of the quad's vertices IS important - it ensures symmetric interpolation.
+#define V(xx, yy, zz, ss, tt, aa)                                                                                      \
+    do                                                                                                                 \
+    {                                                                                                                  \
+        beam[a].x = xx;                                                                                                \
+        beam[a].y = yy;                                                                                                \
+        beam[a].z = zz;                                                                                                \
+        beam[a].s = ss;                                                                                                \
+        beam[a].t = tt;                                                                                                \
+        beam[a].r = this->Col.r * aa;                                                                                  \
+        beam[a].g = this->Col.g * aa;                                                                                  \
+        beam[a].b = this->Col.b * aa;                                                                                  \
+        beam[a].a = 1.0f;                                                                                              \
+        a++;                                                                                                           \
     } while (0)
 
 void Beam::RecalculateVertices(const Matrix &trans)
@@ -117,39 +120,42 @@ void Beam::RecalculateVertices(const Matrix &trans)
     static float hitfadelocation =
         XMLSupport::parse_float(vs_config->getVariable("graphics", "BeamFadeoutHitLength", ".95"));
     static float scoopangle =
-        //In radians - the /2 is because of the way in which we check against the cone.
+        // In radians - the /2 is because of the way in which we check against the cone.
         XMLSupport::parse_float(vs_config->getVariable("physics", "tractor.scoop_fov", "0.5")) / 2;
     static float scooptanangle = (float)tan(scoopangle);
     static bool scoop = XMLSupport::parse_bool(vs_config->getVariable("graphics", "tractor.scoop", "true"));
     static float scoopa =
         XMLSupport::parse_float(vs_config->getVariable("graphics", "tractor.scoop_alpha_multiplier", "2.5"));
     static int32_t radslices =
-        XMLSupport::parse_int(vs_config->getVariable("graphics", "tractor.scoop_rad_slices", "10")) | 1; //Must be odd
+        XMLSupport::parse_int(vs_config->getVariable("graphics", "tractor.scoop_rad_slices", "10")) | 1; // Must be odd
     static int32_t longslices =
         XMLSupport::parse_int(vs_config->getVariable("graphics", "tractor.scoop_long_slices", "10"));
     const float fadeinlength = 4;
     const bool tractor = (damagerate < 0 && phasedamage > 0);
     const bool repulsor = (damagerate > 0 && phasedamage < 0);
     float leftex = -texturespeed * (numframes * SIMULATION_ATOM + interpolation_blend_factor * SIMULATION_ATOM);
-    float righttex = leftex + texturestretch * curlength / curthick; //how long compared to how wide!
-    float len = (impact == ALIVE)
-                    ? (curlength < range ? curlength - speed * SIMULATION_ATOM * (1 - interpolation_blend_factor) : range)
-                    : curlength;
+    float righttex = leftex + texturestretch * curlength / curthick; // how long compared to how wide!
+    float len =
+        (impact == ALIVE)
+            ? (curlength < range ? curlength - speed * SIMULATION_ATOM * (1 - interpolation_blend_factor) : range)
+            : curlength;
     float fadelen = (impact == ALIVE) ? len * fadelocation : len * hitfadelocation;
     const bool doscoop = (scoop && (tractor || repulsor));
     float fadetex = leftex + (righttex - leftex) * fadelocation;
     const float touchtex = leftex - fadeinlength * .5 * texturestretch;
-    float thick = curthick != thickness ? curthick - radialspeed * SIMULATION_ATOM * (1 - interpolation_blend_factor) : thickness;
+    float thick =
+        curthick != thickness ? curthick - radialspeed * SIMULATION_ATOM * (1 - interpolation_blend_factor) : thickness;
     float ethick = (thick / ((thickness > 0) ? thickness : 1.0f)) * (doscoop ? curlength * scooptanangle : 0);
     const float invfadelen = thick * fadeinlength;
-    const float invfadealpha = std::max(0.0f, std::min(1.0f, static_cast<float>(1.0f - std::pow(invfadelen / len, 2.0))));
+    const float invfadealpha =
+        std::max(0.0f, std::min(1.0f, static_cast<float>(1.0f - std::pow(invfadelen / len, 2.0))));
     const float fadealpha = std::max(0.0f, std::min(1.0f, static_cast<float>(1.0f - std::pow(fadelen / len, 2.0))));
     const float endalpha = 0.0f;
     const float peralpha = doscoop ? 0.25f : 0.0f;
     int32_t a = 0;
     if (doscoop)
     {
-        //Do the volumetric thingy
+        // Do the volumetric thingy
         Vector r(_Universe->AccessCamera()->GetR());
         Vector x(trans.getP()), y(trans.getQ()), z(trans.getR());
         r.Normalize();
@@ -231,7 +237,7 @@ void Beam::RecalculateVertices(const Matrix &trans)
     }
     else
     {
-        //main section
+        // main section
         V(0, 0, invfadelen, leftex, 0.5f, invfadealpha);
         V(0, thick, invfadelen, leftex, 1, peralpha * invfadealpha);
         V(0, thick, fadelen, fadetex, 1, peralpha * fadealpha);
@@ -240,7 +246,7 @@ void Beam::RecalculateVertices(const Matrix &trans)
         V(0, 0, fadelen, fadetex, 0.5f, fadealpha);
         V(0, -thick, fadelen, fadetex, 0, peralpha * fadealpha);
         V(0, -thick, invfadelen, leftex, 0, peralpha * invfadealpha);
-        //fade out
+        // fade out
         V(0, 0, fadelen, fadetex, 0.5f, fadealpha);
         V(0, thick, fadelen, fadetex, 1, peralpha * fadealpha);
         V(0, thick, len, righttex, 1, peralpha * endalpha);
@@ -249,7 +255,7 @@ void Beam::RecalculateVertices(const Matrix &trans)
         V(0, 0, len, righttex, 0.5f, endalpha);
         V(0, -thick, len, righttex, 0, peralpha * endalpha);
         V(0, -thick, fadelen, fadetex, 0, peralpha * fadealpha);
-        //fade in
+        // fade in
         V(0, 0, invfadelen, leftex, 0.5f, invfadealpha);
         V(0, thick, invfadelen, leftex, 1, peralpha * invfadealpha);
         V(0, thick, 0, touchtex, 1, peralpha);
@@ -258,7 +264,7 @@ void Beam::RecalculateVertices(const Matrix &trans)
         V(0, 0, 0, touchtex, 0.5f, 1.0f);
         V(0, -thick, 0, touchtex, 0, peralpha);
         V(0, -thick, invfadelen, leftex, 0, peralpha * invfadealpha);
-        //copy and rotate xy plane
+        // copy and rotate xy plane
         for (int32_t i = 0, upto = a; i < upto; i++, a++)
         {
             beam[a] = beam[i];
@@ -276,14 +282,8 @@ void Beam::RemoveFromSystem(bool eradicate)
 {
 }
 
-void Beam::UpdatePhysics(const Transformation &trans,
-                         const Matrix &m,
-                         Unit *targ,
-                         float tracking_cone,
-                         Unit *targetToCollideWith,
-                         float HeatSink,
-                         Unit *firer,
-                         Unit *superunit)
+void Beam::UpdatePhysics(const Transformation &trans, const Matrix &m, Unit *targ, float tracking_cone,
+                         Unit *targetToCollideWith, float HeatSink, Unit *firer, Unit *superunit)
 {
     curlength += SIMULATION_ATOM * speed;
     if (curlength < 0)
@@ -317,7 +317,7 @@ void Beam::UpdatePhysics(const Transformation &trans,
     {
         Destabilize();
     }
-    //to help check for crashing.
+    // to help check for crashing.
     center = cumulative_transformation.position;
     direction = TransformNormal(cumulative_transformation_matrix, Vector(0, 0, 1));
 #ifndef PERFRAMESOUND
@@ -330,7 +330,7 @@ void Beam::UpdatePhysics(const Transformation &trans,
     }
     if (curthick <= 0)
     {
-        curthick = 0; //die die die
+        curthick = 0; // die die die
 #ifdef BEAMCOLQ
         RemoveFromSystem(false);
 #endif
@@ -340,7 +340,7 @@ void Beam::UpdatePhysics(const Transformation &trans,
         CollideHuge(CollideInfo, listen_to_owner ? targetToCollideWith : nullptr, firer, superunit);
         if (!(curlength <= range && curlength > 0))
         {
-            //if curlength just happens to be nan --FIXME THIS MAKES NO SENSE AT ALL --chuck_starchaser
+            // if curlength just happens to be nan --FIXME THIS MAKES NO SENSE AT ALL --chuck_starchaser
             if (curlength > range)
             {
                 curlength = range;
@@ -359,8 +359,10 @@ void Beam::UpdatePhysics(const Transformation &trans,
             RemoveFromSystem(false);
 #endif
             CollideInfo.object.b = this;
-            CollideInfo.hhuge =
-                (((CollideInfo.Maxi.i - CollideInfo.Mini.i) / coltableacc) * ((CollideInfo.Maxi.j - CollideInfo.Mini.j) / coltableacc) * (CollideInfo.Maxi.k - CollideInfo.Mini.k) / coltableacc > tablehuge);
+            CollideInfo.hhuge = (((CollideInfo.Maxi.i - CollideInfo.Mini.i) / coltableacc) *
+                                     ((CollideInfo.Maxi.j - CollideInfo.Mini.j) / coltableacc) *
+                                     (CollideInfo.Maxi.k - CollideInfo.Mini.k) / coltableacc >
+                                 tablehuge);
             CollideInfo.Mini = tmpMini;
             CollideInfo.Maxi = tmpvec;
 #ifdef BEAMCOLQ
@@ -373,7 +375,7 @@ void Beam::UpdatePhysics(const Transformation &trans,
         }
 #endif
     }
-    //Check if collide...that'll change max beam length REAL quick
+    // Check if collide...that'll change max beam length REAL quick
 }
 
 extern Cargo *GetMasterPartList(const char *);
@@ -386,7 +388,7 @@ bool Beam::Collide(Unit *target, Unit *firer, Unit *superunit)
         return false;
     }
     float distance;
-    Vector normal; //apply shields
+    Vector normal; // apply shields
 
     QVector direction(this->direction.Cast());
     QVector end(center + direction.Scale(curlength));
@@ -405,8 +407,8 @@ bool Beam::Collide(Unit *target, Unit *firer, Unit *superunit)
     {
         return false;
     }
-    //A bunch of needed config variables - its best to have them here, so that they're loaded the
-    //very first time Collide() is called. That way, we avoid hiccups.
+    // A bunch of needed config variables - its best to have them here, so that they're loaded the
+    // very first time Collide() is called. That way, we avoid hiccups.
     static float nbig = XMLSupport::parse_float(vs_config->getVariable("physics", "percent_to_tractor", ".1"));
     int32_t upgradesfaction = FactionUtil::GetUpgradeFaction();
     static int cargofaction = FactionUtil::GetFactionIndex("cargo");
@@ -421,7 +423,8 @@ bool Beam::Collide(Unit *target, Unit *firer, Unit *superunit)
     static bool o_fp = XMLSupport::parse_bool(vs_config->getVariable("physics", "tractor.others.force_push", "false"));
     static bool o_fi = XMLSupport::parse_bool(vs_config->getVariable("physics", "tractor.others.force_in", "false"));
     static bool scoop = XMLSupport::parse_bool(vs_config->getVariable("physics", "tractor.scoop", "true"));
-    static float scoopangle = XMLSupport::parse_float(vs_config->getVariable("physics", "tractor.scoop_angle", "0.5")); //In radians
+    static float scoopangle =
+        XMLSupport::parse_float(vs_config->getVariable("physics", "tractor.scoop_angle", "0.5")); // In radians
     static float scoopcosangle = (float)cos(scoopangle);
     static float maxrelspeed =
         XMLSupport::parse_float(vs_config->getVariable("physics", "tractor.max_relative_speed", "150"));
@@ -496,21 +499,24 @@ bool Beam::Collide(Unit *target, Unit *firer, Unit *superunit)
             {
                 fp = d_fp, fi = d_fi;
             }
-            //tractor/repulsor beam!
+            // tractor/repulsor beam!
             if (fp || target->isTractorable(Unit::tractorPush))
             {
-                //Compute relative speed - if it's higher than the maximum, don't accelerate it anymore
-                //FIXME: Should predict the resulting velocity after applying the force,
-                //and adjust the force to match the maximum relative velocity - but the
-                //heterogeneous physics granularity makes it quite hard (it's not owr
-                //own priority the one counting, but the target's).
-                //The current hack - using the target's sim_atom_multiplier, only prevents
-                //aberrations from becoming obvious, but it's not entirely correct.
+                // Compute relative speed - if it's higher than the maximum, don't accelerate it anymore
+                // FIXME: Should predict the resulting velocity after applying the force,
+                // and adjust the force to match the maximum relative velocity - but the
+                // heterogeneous physics granularity makes it quite hard (it's not owr
+                // own priority the one counting, but the target's).
+                // The current hack - using the target's sim_atom_multiplier, only prevents
+                // aberrations from becoming obvious, but it's not entirely correct.
                 float relspeed = target->GetVelocity() * direction.Cast();
                 if (relspeed < maxrelspeed)
                 {
-                    //Modulate force on little mass objects, so they don't slingshot right past you
-                    target->ApplyForce(direction * (appldam / sqrt((target->sim_atom_multiplier > 0) ? target->sim_atom_multiplier : 1.0) * std::min(1.0f, target->GetMass())));
+                    // Modulate force on little mass objects, so they don't slingshot right past you
+                    target->ApplyForce(
+                        direction *
+                        (appldam / sqrt((target->sim_atom_multiplier > 0) ? target->sim_atom_multiplier : 1.0) *
+                         std::min(1.0f, target->GetMass())));
                 }
             }
             float ors_m = o_ors_m, trs_m = o_trs_m, ofs = o_o;
@@ -528,13 +534,14 @@ bool Beam::Collide(Unit *target, Unit *firer, Unit *superunit)
             {
                 ors_m = c_ors_m, trs_m = c_trs_m, ofs = c_o;
             }
-            if ((fi || target->isTractorable(Unit::tractorIn)) && ((center - target->Position()).Magnitude() < (ors_m * owner_rsize + trs_m * target->rSize() + ofs)))
+            if ((fi || target->isTractorable(Unit::tractorIn)) &&
+                ((center - target->Position()).Magnitude() < (ors_m * owner_rsize + trs_m * target->rSize() + ofs)))
             {
                 Unit *un = superunit;
                 if (target->faction == upgradesfaction || owner_rsize * nbig > target->rSize())
                 {
-                    //we have our man!
-                    //lets add our cargo to him
+                    // we have our man!
+                    // lets add our cargo to him
                     Cargo *c = GetMasterPartList(target->name.get().c_str());
                     Cargo tmp;
                     bool isnotcargo = (c == nullptr);
@@ -545,7 +552,7 @@ bool Beam::Collide(Unit *target, Unit *firer, Unit *superunit)
                             isnotcargo = true;
                         }
                     }
-                    //add upgrades as space junk
+                    // add upgrades as space junk
                     if (isnotcargo)
                     {
                         c = &tmp;
@@ -560,12 +567,12 @@ bool Beam::Collide(Unit *target, Unit *firer, Unit *superunit)
                         {
                             tmp.content = target->name;
                             tmp.category = "starships";
-                            static float starshipprice =
-                                XMLSupport::parse_float(vs_config->getVariable("cargo", "junk_starship_price", "100000"));
+                            static float starshipprice = XMLSupport::parse_float(
+                                vs_config->getVariable("cargo", "junk_starship_price", "100000"));
                             static float starshipmass =
                                 XMLSupport::parse_float(vs_config->getVariable("cargo", "junk_starship_mass", "50"));
-                            static float starshipvolume =
-                                XMLSupport::parse_float(vs_config->getVariable("cargo", "junk_starship_volume", "1500"));
+                            static float starshipvolume = XMLSupport::parse_float(
+                                vs_config->getVariable("cargo", "junk_starship_volume", "1500"));
                             tmp.price = starshipprice;
                             tmp.quantity = 1;
                             tmp.mass = starshipmass;
@@ -581,9 +588,8 @@ bool Beam::Collide(Unit *target, Unit *firer, Unit *superunit)
                             un->AddCargo(adder);
                             if (_Universe->isPlayerStarship(un))
                             {
-                                static int tractor_onboard =
-                                    AUDCreateSoundWAV(vs_config->getVariable("unitaudio", "player_tractor_cargo",
-                                                                             "tractor_onboard.wav"));
+                                static int tractor_onboard = AUDCreateSoundWAV(
+                                    vs_config->getVariable("unitaudio", "player_tractor_cargo", "tractor_onboard.wav"));
                                 AUDPlay(tractor_onboard, QVector(0, 0, 0), Vector(0, 0, 0), 1);
                             }
                             else
@@ -591,11 +597,9 @@ bool Beam::Collide(Unit *target, Unit *firer, Unit *superunit)
                                 Unit *tmp = _Universe->AccessCockpit()->GetParent();
                                 if (tmp && tmp->owner == un)
                                 {
-                                    //Subunit of player (a turret)
-                                    static int tractor_onboard_fromturret =
-                                        AUDCreateSoundWAV(vs_config->getVariable("unitaudio",
-                                                                                 "player_tractor_cargo_fromturret",
-                                                                                 "tractor_onboard.wav"));
+                                    // Subunit of player (a turret)
+                                    static int tractor_onboard_fromturret = AUDCreateSoundWAV(vs_config->getVariable(
+                                        "unitaudio", "player_tractor_cargo_fromturret", "tractor_onboard.wav"));
                                     AUDPlay(tractor_onboard_fromturret, QVector(0, 0, 0), Vector(0, 0, 0), 1);
                                 }
                             }
@@ -607,7 +611,8 @@ bool Beam::Collide(Unit *target, Unit *firer, Unit *superunit)
         }
         else
         {
-            target->ApplyDamage(center.Cast() + direction * curlength, normal, appldam, colidee, coltmp, owner, phasdam);
+            target->ApplyDamage(center.Cast() + direction * curlength, normal, appldam, colidee, coltmp, owner,
+                                phasdam);
         }
         return true;
     }

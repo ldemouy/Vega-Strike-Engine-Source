@@ -1,10 +1,10 @@
 #include "cmd/unit_generic.h"
 #include "config_xml.h"
-#include "xml_support.h"
-#include "vs_globals.h"
-#include "universe_util.h"
 #include "gldrv/winsys.h"
 #include "options.h"
+#include "universe_util.h"
+#include "vs_globals.h"
+#include "xml_support.h"
 #include <math.h>
 
 class ShipCommands
@@ -24,7 +24,7 @@ class ShipCommands
     bool bup;
     bool bdown;
 
-public:
+  public:
     virtual ~ShipCommands()
     {
         CommandInterpretor->remCommand(cpymenu);
@@ -32,20 +32,20 @@ public:
     }
     ShipCommands()
     {
-        //create some functors, register them with the command interp {{{
+        // create some functors, register them with the command interp {{{
         cpymenu = new Functor<ShipCommands>(this, &ShipCommands::pymenu);
         CommandInterpretor->addCommand(cpymenu, "pymenu");
         csetkps = new Functor<ShipCommands>(this, &ShipCommands::setkps);
         CommandInterpretor->addCommand(csetkps, "setspeed");
         //}}}
-        //set some local bools false {{{
+        // set some local bools false {{{
         broll = false;
         bleft = false;
         bright = false;
         bup = false;
         bdown = false;
         //}}}
-        //a test menu {{{
+        // a test menu {{{
         {
             static char const python_test[20] = "python test";
             static char const test_string[40] = "This is a test of the menusystem";
@@ -54,22 +54,28 @@ public:
             {
                 mItem *mi = new mItem;
                 mi->autoreprint = true;
-                mi->Name.append("1");                        //argument to access menu
-                mi->display.append("Python One Line input"); //menu's display name
+                mi->Name.append("1");                        // argument to access menu
+                mi->display.append("Python One Line input"); // menu's display name
                 mi->func2call.append("python");
-                mi->inputbit = true;                                     //set single-line input mode
-                mi->selectstring.append("Type a single line of Python"); //call function "Display" with this string
+                mi->inputbit = true;                                     // set single-line input mode
+                mi->selectstring.append("Type a single line of Python"); // call function "Display" with this string
                 CommandInterpretor->addMenuItem(mi);
             }
             {
                 mItem *mi = new mItem;
-                mi->autoreprint = true; //auto-re-print the
-                //menu after this menuitem is finished
-                mi->Name.append("2");                                                                                  //argument to access menu
-                mi->display.append("(Python Multi-Line input)");                                                       //menu's display name
-                mi->func2call.append("python");                                                                        //call this function when this menuitem is called and input is all recieved, user input is appened with a space, along with the action string if there is one. (string generated: "func2call action userinput")
-                mi->inputbit2 = true;                                                                                  //set single-line input mode
-                mi->selectstring.append("Type multiple lines of python input. Use <ENTER> on a line ALONE to finish"); //Call function "Display" with this string
+                mi->autoreprint = true; // auto-re-print the
+                // menu after this menuitem is finished
+                mi->Name.append("2");                            // argument to access menu
+                mi->display.append("(Python Multi-Line input)"); // menu's display name
+                mi->func2call.append(
+                    "python"); // call this function when this menuitem is called and input is all recieved, user input
+                               // is appened with a space, along with the action string if there is one. (string
+                               // generated: "func2call action userinput")
+                mi->inputbit2 = true; // set single-line input mode
+                mi->selectstring.append(
+                    "Type multiple lines of python input. Use <ENTER> on a line ALONE to finish"); // Call function
+                                                                                                   // "Display" with this
+                                                                                                   // string
                 CommandInterpretor->addMenuItem(mi);
             }
         }
@@ -82,8 +88,8 @@ public:
     void roll(bool *isKeyDown);
     void setkps(const char *in);
 };
-//these _would_ work if the physics routines polled the ship_commands object
-//for these bools..
+// these _would_ work if the physics routines polled the ship_commands object
+// for these bools..
 void ShipCommands::pymenu()
 {
     std::string response(CommandInterpretor->setMenu("python test"));

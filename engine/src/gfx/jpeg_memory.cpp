@@ -144,9 +144,8 @@ static void term_source(j_decompress_ptr cinfo)
 extern void jpeg_memory_src(j_decompress_ptr cinfo, unsigned char *ptr, size_t size)
 {
     struct jpeg_source_mgr *src;
-    src = cinfo->src = (struct jpeg_source_mgr *)(*cinfo->mem->alloc_small)((j_common_ptr)cinfo,
-                                                                            JPOOL_PERMANENT,
-                                                                            sizeof(*src));
+    src = cinfo->src =
+        (struct jpeg_source_mgr *)(*cinfo->mem->alloc_small)((j_common_ptr)cinfo, JPOOL_PERMANENT, sizeof(*src));
     src->init_source = init_source;
     src->fill_input_buffer = fill_input_buffer;
     src->skip_input_data = skip_input_data;

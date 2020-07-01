@@ -29,11 +29,11 @@
 
 #include "eventmanager.h"
 
-//For drawing the cursor.
+// For drawing the cursor.
 #include "gfx/aux_texture.h"
 #include "gfx/sprite.h"
 
-//The outside boundaries of the window.
+// The outside boundaries of the window.
 void Window::setRect(const Rect &r)
 {
     m_rect = r;
@@ -47,20 +47,20 @@ void Window::setSizeAndCenter(const Size &size)
     setRect(Rect(-size.width / 2.0, -size.height / 2.0, size.width, size.height));
 }
 
-//Initially display the window.
-//Call this when all the properties and controls of the window are set.
+// Initially display the window.
+// Call this when all the properties and controls of the window are set.
 void Window::open(void)
 {
     globalWindowManager().openWindow(this);
 }
 
-//Done with the window.
+// Done with the window.
 void Window::close(void)
 {
     processCommand("Window::Close", nullptr);
 }
 
-//Manage controls.
+// Manage controls.
 void Window::addControl(Control *c)
 {
     m_controls->addChild(c);
@@ -70,27 +70,27 @@ void Window::deleteControl(Control *c)
     m_controls->deleteControl(c);
 }
 
-//Take a control away from this window and save it elsewhere.
+// Take a control away from this window and save it elsewhere.
 Control *Window::removeControlFromWindow(Control *c)
 {
     return m_controls->removeControlFromGroup(c);
 }
 
-//Find a control using its id.  nullptr returned if none found.
-//Note that the control may be hidden.
+// Find a control using its id.  nullptr returned if none found.
+// Note that the control may be hidden.
 Control *Window::findControlById(const std::string &id)
 {
     return m_controls->findControlById(id);
 }
 
-//Draw/redraw the whole window.
+// Draw/redraw the whole window.
 void Window::draw(void)
 {
     drawBackground();
     m_controls->draw();
 }
 
-//Draw window background.
+// Draw window background.
 void Window::drawBackground(void)
 {
     m_texture.draw(m_rect);
@@ -100,10 +100,12 @@ void Window::drawBackground(void)
         drawRectOutline(m_rect, m_outlineColor, m_outlineWidth);
 }
 
-//Read window properties and controls from an XML file.
-void Window::readFromXml(const std::string &fileName) {}
+// Read window properties and controls from an XML file.
+void Window::readFromXml(const std::string &fileName)
+{
+}
 
-//OVERRIDES
+// OVERRIDES
 bool Window::processMouseDown(const InputEvent &event)
 {
     if (m_controls->processMouseDown(event))
@@ -134,23 +136,25 @@ bool Window::processMouseDrag(const InputEvent &event)
 
 bool Window::processCommand(const EventCommandId &command, Control *control)
 {
-    //The controller should see the command first.
+    // The controller should see the command first.
     if (m_controller != nullptr)
         if (m_controller->processWindowCommand(command, control))
             return true;
-    //Default command responders.
+    // Default command responders.
     if (command == "Window::Close")
     {
-        //Close the window!
-        //CAREFUL!  This may delete this object!  Should be the last line in the function.
+        // Close the window!
+        // CAREFUL!  This may delete this object!  Should be the last line in the function.
         globalWindowManager().closeWindow(this, m_deleteOnClose);
         return true;
     }
     return EventResponder::processCommand(command, control);
 }
 
-//CONSTRUCTION
-Window::Window(void) : m_rect(0.0, 0.0, 0.0, 0.0), m_color(GUI_OPAQUE_BLACK()), m_outlineColor(GUI_CLEAR), m_outlineWidth(1.0), m_deleteOnClose(true), m_controls(nullptr), m_controller(nullptr)
+// CONSTRUCTION
+Window::Window(void)
+    : m_rect(0.0, 0.0, 0.0, 0.0), m_color(GUI_OPAQUE_BLACK()), m_outlineColor(GUI_CLEAR), m_outlineWidth(1.0),
+      m_deleteOnClose(true), m_controls(nullptr), m_controller(nullptr)
 {
     m_controls = new GroupControl();
 }
@@ -163,10 +167,10 @@ Window::~Window(void)
 ///////////////////  WINDOW MANAGER  /////////////////////////
 
 extern void ConditionalCursorDraw(bool);
-//Draw all visible windows.
+// Draw all visible windows.
 void WindowManager::draw()
 {
-    GFXHudMode(true); //Load identity matrices.
+    GFXHudMode(true); // Load identity matrices.
     GFXColorf(GUI_OPAQUE_WHITE());
 
     GFXDisable(DEPTHTEST);
@@ -178,10 +182,10 @@ void WindowManager::draw()
     GFXBlendMode(SRCALPHA, INVSRCALPHA);
     GFXDisable(TEXTURE1);
     GFXEnable(TEXTURE0);
-    //Just loop through all the windows, and remember if anything gets drawn.
-    //Since the first window in the list is drawn first, z-order is
-    //maintained.  First entry is the bottom window, last is the top window.
-    //FIXME mbyron -- I think the event manager needs to get involved with window z-order.
+    // Just loop through all the windows, and remember if anything gets drawn.
+    // Since the first window in the list is drawn first, z-order is
+    // maintained.  First entry is the bottom window, last is the top window.
+    // FIXME mbyron -- I think the event manager needs to get involved with window z-order.
     //(Mouse events should go to windows in zorder, shouldn't they?)
     for (size_t i = 0; i < m_windows.size(); i++)
     {
@@ -190,12 +194,12 @@ void WindowManager::draw()
         if (i < m_windows.size())
             m_windows[i]->draw();
     }
-    //Emulate EndGUIFrame.
+    // Emulate EndGUIFrame.
     static VSSprite MouseVSSprite("mouse.spr", BILINEAR, GFXTRUE);
     static Texture dummy("white.bmp", 0, NEAREST, TEXTURE2D, TEXTURE_2D, GFXTRUE);
     GFXDisable(CULLFACE);
     ConditionalCursorDraw(true);
-    //Figure position of cursor sprite.
+    // Figure position of cursor sprite.
     float sizex = 0.0, sizey = 0.0;
     const Point2 loc = globalEventManager().mouseLoc();
     MouseVSSprite.GetSize(sizex, sizey);
@@ -207,7 +211,7 @@ void WindowManager::draw()
     GFXBlendMode(SRCALPHA, INVSRCALPHA);
     GFXColorf(GUI_OPAQUE_WHITE());
 
-    //Draw the cursor sprite.
+    // Draw the cursor sprite.
     GFXEnable(TEXTURE0);
     GFXDisable(DEPTHTEST);
     GFXDisable(TEXTURE1);
@@ -218,16 +222,16 @@ void WindowManager::draw()
     MouseVSSprite.SetPosition(tempx, tempy);
 }
 
-//A new window has been created and is ready to be drawn.
+// A new window has been created and is ready to be drawn.
 void WindowManager::openWindow(Window *w)
 {
     m_windows.push_back(w);
     globalEventManager().pushResponder(w);
 }
 
-//A window has been closed.
-void WindowManager::closeWindow(Window *w,        //Old window.
-                                bool deleteWindow //True = delete window.
+// A window has been closed.
+void WindowManager::closeWindow(Window *w,        // Old window.
+                                bool deleteWindow // True = delete window.
 )
 {
     vector<Window *>::iterator iter;
@@ -235,25 +239,25 @@ void WindowManager::closeWindow(Window *w,        //Old window.
         if ((*iter) == w)
         {
             m_windows.erase(iter);
-            globalEventManager().removeResponder(w); //Have to do this now.
+            globalEventManager().removeResponder(w); // Have to do this now.
             if (deleteWindow)
                 EventManager::addToDeleteQueue(w);
             break;
         }
 }
 
-//Close all windows.
+// Close all windows.
 void WindowManager::shutDown(void)
 {
     while (m_windows.size() > 0)
         m_windows.back()->close();
-    //m_windows.erase(m_windows.begin());
+    // m_windows.erase(m_windows.begin());
 }
 
-//Pointer to the one, global window manager.
+// Pointer to the one, global window manager.
 WindowManager *globalWindowManagerPtr = nullptr;
 
-//Get the one window manager.
+// Get the one window manager.
 WindowManager &globalWindowManager(void)
 {
     if (globalWindowManagerPtr == nullptr)

@@ -5,8 +5,8 @@
 
 class navscreenoccupied
 {
-private:
-    //bits are down. sectors across. starting at top left of navscreen area
+  private:
+    // bits are down. sectors across. starting at top left of navscreen area
     int sector0;
     int sector1;
     int sector2;
@@ -21,7 +21,7 @@ private:
     float screenskipby4[4];
     bool markreturned;
 
-public:
+  public:
     navscreenoccupied();
     navscreenoccupied(float x_small, float x_large, float y_small, float y_large, bool _markreturned);
 

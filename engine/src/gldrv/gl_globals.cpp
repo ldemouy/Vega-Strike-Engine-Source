@@ -20,27 +20,27 @@
  */
 
 #include "gl_globals.h"
-#include "gldrv/gfxlib.h"
 #include "gfx/matrix.h"
-//Matrix model = {0};
-//Matrix view = {0};
+#include "gldrv/gfxlib.h"
+// Matrix model = {0};
+// Matrix view = {0};
 
-//int sharedcolortable = 0;
+// int sharedcolortable = 0;
 gl_options_t gl_options;
 namespace GFXMatrices
 {
-    Matrix model, view;
-    float projection[16];
-    float invprojection[16];
-    Matrix rotview;
+Matrix model, view;
+float projection[16];
+float invprojection[16];
+Matrix rotview;
 } // namespace GFXMatrices
 
 int gl_vertices_this_frame = 0;
 int gl_batches_this_frame = 0;
 
-//PFNGLMULTITEXCOORD2FARBPROC glMultiTexCoord2fARB;
-//PFNGLCLIENTACTIVETEXTUREARBPROC glClientActiveTextureARB;
-//PFNGLCLIENTACTIVETEXTUREARBPROC glActiveTextureARB;
+// PFNGLMULTITEXCOORD2FARBPROC glMultiTexCoord2fARB;
+// PFNGLCLIENTACTIVETEXTUREARBPROC glClientActiveTextureARB;
+// PFNGLCLIENTACTIVETEXTUREARBPROC glActiveTextureARB;
 #ifdef STATS_QUEUE
 queue<GFXStats> statsqueue;
 

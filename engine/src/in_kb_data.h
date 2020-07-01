@@ -3,9 +3,14 @@
 #include <string>
 class KBData
 {
-public:
-  std::string data;
-  KBData() {}
-  KBData(const std::string &s) { this->data = s; }
+  public:
+    std::string data;
+    KBData()
+    {
+    }
+    KBData(const std::string &s)
+    {
+        this->data = s;
+    }
 };
 #endif

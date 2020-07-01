@@ -21,14 +21,14 @@
 
 #include "vegastrike.h"
 #if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-//For WIN32 debugging.
+// For WIN32 debugging.
 #include <crtdbg.h>
 #endif
 
-#include "navpath.h"
-#include "gfx/cockpit.h"
-#include "navscreen.h"
 #include "configxml.h"
+#include "gfx/cockpit.h"
+#include "navpath.h"
+#include "navscreen.h"
 
 #include <vector>
 using std::vector;
@@ -49,7 +49,7 @@ using std::pair;
 
 //*******************************************************************//
 ////
-//NavPath Class                          //
+// NavPath Class                          //
 ////
 //*******************************************************************//
 
@@ -307,7 +307,7 @@ bool NavPath::evaluate()
         return false;
     if (isAbsolute())
     {
-        //Using a double-rooted BFS search
+        // Using a double-rooted BFS search
         unsigned originIndex = source->initSearchQueue().front();
         unsigned destIndex = destination->initSearchQueue().front();
         if (originIndex == destIndex)
@@ -322,13 +322,15 @@ bool NavPath::evaluate()
         unsigned midNode;
         unsigned midNodePrevOri;
         unsigned midNodePrevDest;
-        midNodePrevOri = midNodePrevDest = 0; //to shut up a warning about possibly used uninitialized --chuck_starchaser
+        midNodePrevOri = midNodePrevDest =
+            0; // to shut up a warning about possibly used uninitialized --chuck_starchaser
         bool oriTurn = true;
         deque<unsigned> *front;
         unsigned visitMark;
         if (originIndex >= visited.size() || destIndex >= visited.size())
         {
-            fprintf(stderr, "(previously) FATAL error with nav system, referencing value too big %d %d with visited size %d\n",
+            fprintf(stderr,
+                    "(previously) FATAL error with nav system, referencing value too big %d %d with visited size %d\n",
                     (int)originIndex, (int)destIndex, (int)visited.size());
             return false;
         }
@@ -336,9 +338,10 @@ bool NavPath::evaluate()
         visited[originIndex] = 1;
         destFront.push_back(destIndex);
         visited[destIndex] = 2;
-        while (oriFront.size() < max_size && destFront.size() < max_size && !oriFront.empty() && !destFront.empty() && !found)
+        while (oriFront.size() < max_size && destFront.size() < max_size && !oriFront.empty() && !destFront.empty() &&
+               !found)
         {
-            //stay within memory bounds in case something goes wrong (it has, unfortunately on occasion)
+            // stay within memory bounds in case something goes wrong (it has, unfortunately on occasion)
             if (oriTurn)
             {
                 front = &oriFront;
@@ -391,7 +394,8 @@ bool NavPath::evaluate()
                 index = prev[index];
                 if (path.size() >= max_size)
                 {
-                    //this prevents some odd "out of memory" crashes we were getting where there might have been a loop in the path somehow
+                    // this prevents some odd "out of memory" crashes we were getting where there might have been a loop
+                    // in the path somehow
                     path.clear();
                     found = false;
                     return false;
@@ -413,7 +417,8 @@ bool NavPath::evaluate()
                     index = prev[index];
                     if (path.size() >= max_size)
                     {
-                        //this prevents some odd "out of memory" crashes we were getting where there might have been a loop in the path somehow
+                        // this prevents some odd "out of memory" crashes we were getting where there might have been a
+                        // loop in the path somehow
                         path.clear();
                         found = false;
                         return false;
@@ -426,7 +431,7 @@ bool NavPath::evaluate()
     }
     else
     {
-        //Using single-rooted BFS search
+        // Using single-rooted BFS search
         vector<unsigned> prev(systemIter.size());
         vector<bool> visited(systemIter.size(), false);
         deque<unsigned> frontier = source->initSearchQueue();
@@ -477,12 +482,13 @@ bool NavPath::evaluate()
                 path.push_front(index);
                 if (path.size() >= max_size)
                 {
-                    //this prevents some odd "out of memory" crashes we were getting where there might have been a loop in the path somehow
+                    // this prevents some odd "out of memory" crashes we were getting where there might have been a loop
+                    // in the path somehow
                     path.clear();
                     found = false;
                     return false;
                 }
-            } while (!origins.count(index)); //While the index is not an origin
+            } while (!origins.count(index)); // While the index is not an origin
         }
         return found;
     }
@@ -491,10 +497,10 @@ bool NavPath::evaluate()
 void NavPath::removeOldPath()
 {
     NavigationSystem::CachedSystemIterator &systemIter = _Universe->AccessCockpit()->AccessNavSystem()->systemIter;
-    //Erase old path
+    // Erase old path
     //*************************
     for (list<unsigned>::iterator i = path.begin(); i != path.end(); ++i)
-        if (systemIter[*i].paths.erase(this)) //This erases this path from the list of paths in system
+        if (systemIter[*i].paths.erase(this)) // This erases this path from the list of paths in system
             if (systemIter[*i].paths.empty())
                 systemIter[*i].part_of_path = false;
     pathNeighbors.clear();
@@ -504,7 +510,7 @@ void NavPath::addNewPath()
 {
     NavigationSystem::CachedSystemIterator &systemIter = _Universe->AccessCockpit()->AccessNavSystem()->systemIter;
 
-    //Inscribe new path
+    // Inscribe new path
     //*************************
 
     list<unsigned>::iterator aux;
@@ -591,7 +597,7 @@ NavPath::~NavPath()
 
 //*******************************************************************//
 ////
-//PathManager Class                          //
+// PathManager Class                          //
 ////
 //*******************************************************************//
 
@@ -704,7 +710,9 @@ void PathManager::dfsVisit(NavPath *path)
     topoOrder.push_front(path);
 }
 
-PathManager::PathManager() {}
+PathManager::PathManager()
+{
+}
 
 PathManager::~PathManager()
 {
@@ -717,7 +725,7 @@ PathManager::~PathManager()
 
 //*******************************************************************//
 ////
-//AbsolutePathNode Class                     //
+// AbsolutePathNode Class                     //
 ////
 //*******************************************************************//
 
@@ -735,7 +743,7 @@ std::deque<unsigned> AbsolutePathNode::initSearchQueue() const
 
 //*******************************************************************//
 ////
-//CurrentPathNode Class                      //
+// CurrentPathNode Class                      //
 ////
 //*******************************************************************//
 
@@ -753,7 +761,7 @@ std::deque<unsigned> CurrentPathNode::initSearchQueue() const
 
 //*******************************************************************//
 ////
-//TargetPathNode Class                       //
+// TargetPathNode Class                       //
 ////
 //*******************************************************************//
 
@@ -771,7 +779,7 @@ std::deque<unsigned> TargetPathNode::initSearchQueue() const
 
 //*******************************************************************//
 ////
-//CriteriaPathNode Class                       //
+// CriteriaPathNode Class                       //
 ////
 //*******************************************************************//
 
@@ -813,7 +821,7 @@ CriteriaPathNode::~CriteriaPathNode()
 
 //*******************************************************************//
 ////
-//ChainPathNode Class                       //
+// ChainPathNode Class                       //
 ////
 //*******************************************************************//
 

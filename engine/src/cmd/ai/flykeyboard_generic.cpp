@@ -1,10 +1,10 @@
-#include "flykeyboard.h"
-#include "cmd/unit_generic.h"
 #include "autodocking.h"
+#include "cmd/unit_generic.h"
 #include "config_xml.h"
-#include "xml_support.h"
-#include "vs_globals.h"
+#include "flykeyboard.h"
 #include "lin_time.h"
+#include "vs_globals.h"
+#include "xml_support.h"
 
 float FlyByKeyboard::clamp_axis(float v)
 {
@@ -50,7 +50,9 @@ void FlyByKeyboard::Destroy()
     Order::Destroy();
 }
 
-FlyByKeyboard::~FlyByKeyboard() {}
+FlyByKeyboard::~FlyByKeyboard()
+{
+}
 
 void FlyByKeyboard::KeyboardUp(float v)
 {

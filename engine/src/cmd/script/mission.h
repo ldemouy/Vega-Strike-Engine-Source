@@ -30,16 +30,16 @@
 //#include <gnuhash.h>
 
 #include <expat.h>
-#include <string>
 #include <fstream>
+#include <string>
 
 #include "easydom.h"
 
 #ifndef VS_MIS_SEL
+#include "cmd/container.h"
+#include "msgcenter.h"
 #include "vegastrike.h"
 #include "vs_globals.h"
-#include "msgcenter.h"
-#include "cmd/container.h"
 class Unit;
 class Order;
 class MessageCenter;
@@ -93,11 +93,11 @@ class missionNode : public tagDomNode
 
 class pythonMission;
 class PythonMissionBaseClass;
-#endif //VS_MIS_SEL
+#endif // VS_MIS_SEL
 
 class Mission
 {
-public:
+  public:
     enum MISSION_AUTO
     {
         AUTO_OFF = -1,
@@ -140,15 +140,15 @@ public:
 
     Mission(const char *configfile, bool loadscripts = true);
     Mission(const char *filename, const std::string &pythonscript, bool loadscripts = true);
-    std::string Pickle();               //returns filename\npickleddata
-    void UnPickle(std::string pickled); //takes in pickeddata
+    std::string Pickle();               // returns filename\npickleddata
+    void UnPickle(std::string pickled); // takes in pickeddata
     void AddFlightgroup(Flightgroup *fg);
     void initMission(bool loadscripts = true);
 
     int getPlayerMissionNumber(); //-1 if not found or invalid player_num.
     static Mission *getNthPlayerMission(uint32_t cp, int32_t num);
 
-    ///alex Please help me make this function...this is called between mission loops
+    /// alex Please help me make this function...this is called between mission loops
     ~Mission();
 
     static int number_of_ships;
@@ -174,9 +174,9 @@ public:
 
     static MessageCenter *msgcenter;
 
-#endif //VS_MIS_SEL
+#endif // VS_MIS_SEL
 
-private:
+  private:
     void ConstructMission(const char *configfile, const std::string &pythonscript, bool loadscripts = true);
     missionNode *top;
 
@@ -189,18 +189,18 @@ private:
     char *nextpythonmission;
     std::string unpickleData;
 
-public:
+  public:
     struct Runtime
     {
         PythonMissionBaseClass *pymissions;
     } runtime;
 
-private:
+  private:
     friend void UnpickleMission(std::string pickled);
 
     void initTagMap();
 
-#endif //VS_MIS_SEL
+#endif // VS_MIS_SEL
 
     bool checkMission(easyDomNode *node, bool loadscripts);
     void doVariables(easyDomNode *node);

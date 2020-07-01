@@ -23,7 +23,7 @@
  *	\author		Pierre Terdiman
  *	\version	1.3
  *	\date		March, 20, 2001
-*/
+ */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -40,27 +40,27 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool AABBTreeOfTrianglesBuilder::ComputeGlobalBox(const uint32_t *primitives, uint32_t nb_prims, AABB &global_box) const
 {
-	// Checkings
-	if (!primitives || !nb_prims)
-		return false;
+    // Checkings
+    if (!primitives || !nb_prims)
+        return false;
 
-	// Initialize global box
-	//TODO: figure out if ironic
-	Point Min(std::numeric_limits<float>::max(), std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
-	Point Max(std::numeric_limits<float>::min(), std::numeric_limits<float>::min(), std::numeric_limits<float>::min());
+    // Initialize global box
+    // TODO: figure out if ironic
+    Point Min(std::numeric_limits<float>::max(), std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
+    Point Max(std::numeric_limits<float>::min(), std::numeric_limits<float>::min(), std::numeric_limits<float>::min());
 
-	// Loop through triangles
-	VertexPointers VP;
-	while (nb_prims--)
-	{
-		// Get current triangle-vertices
-		mIMesh->GetTriangle(VP, *primitives++);
-		// Update global box
-		Min.Min(*VP.Vertex[0]).Min(*VP.Vertex[1]).Min(*VP.Vertex[2]);
-		Max.Max(*VP.Vertex[0]).Max(*VP.Vertex[1]).Max(*VP.Vertex[2]);
-	}
-	global_box.SetMinMax(Min, Max);
-	return true;
+    // Loop through triangles
+    VertexPointers VP;
+    while (nb_prims--)
+    {
+        // Get current triangle-vertices
+        mIMesh->GetTriangle(VP, *primitives++);
+        // Update global box
+        Min.Min(*VP.Vertex[0]).Min(*VP.Vertex[1]).Min(*VP.Vertex[2]);
+        Max.Max(*VP.Vertex[0]).Max(*VP.Vertex[1]).Max(*VP.Vertex[2]);
+    }
+    global_box.SetMinMax(Min, Max);
+    return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -73,22 +73,22 @@ bool AABBTreeOfTrianglesBuilder::ComputeGlobalBox(const uint32_t *primitives, ui
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 float AABBTreeOfTrianglesBuilder::GetSplittingValue(uint32_t index, uint32_t axis) const
 {
-	/*	// Compute center of triangle
-	Point Center;
-	mTriList[index].Center(mVerts, Center);
-	// Return value
-	return Center[axis];*/
+    /*	// Compute center of triangle
+    Point Center;
+    mTriList[index].Center(mVerts, Center);
+    // Return value
+    return Center[axis];*/
 
-	// Compute correct component from center of triangle
-	//	return	(mVerts[mTriList[index].mVRef[0]][axis]
-	//			+mVerts[mTriList[index].mVRef[1]][axis]
-	//			+mVerts[mTriList[index].mVRef[2]][axis])*INV3;
+    // Compute correct component from center of triangle
+    //	return	(mVerts[mTriList[index].mVRef[0]][axis]
+    //			+mVerts[mTriList[index].mVRef[1]][axis]
+    //			+mVerts[mTriList[index].mVRef[2]][axis])*INV3;
 
-	VertexPointers VP;
-	mIMesh->GetTriangle(VP, index);
+    VertexPointers VP;
+    mIMesh->GetTriangle(VP, index);
 
-	// Compute correct component from center of triangle
-	return ((*VP.Vertex[0])[axis] + (*VP.Vertex[1])[axis] + (*VP.Vertex[2])[axis]) * INV3;
+    // Compute correct component from center of triangle
+    return ((*VP.Vertex[0])[axis] + (*VP.Vertex[1])[axis] + (*VP.Vertex[2])[axis]) * INV3;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -101,26 +101,27 @@ float AABBTreeOfTrianglesBuilder::GetSplittingValue(uint32_t index, uint32_t axi
  *	\return		splitting value
  */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-float AABBTreeOfTrianglesBuilder::GetSplittingValue(const uint32_t *primitives, uint32_t nb_prims, const AABB &global_box, uint32_t axis) const
+float AABBTreeOfTrianglesBuilder::GetSplittingValue(const uint32_t *primitives, uint32_t nb_prims,
+                                                    const AABB &global_box, uint32_t axis) const
 {
-	if (mSettings.mRules & SPLIT_GEOM_CENTER)
-	{
-		// Loop through triangles
-		float SplitValue = 0.0f;
-		VertexPointers VP;
-		for (uint32_t i = 0; i < nb_prims; i++)
-		{
-			// Get current triangle-vertices
-			mIMesh->GetTriangle(VP, primitives[i]);
-			// Update split value
-			SplitValue += (*VP.Vertex[0])[axis];
-			SplitValue += (*VP.Vertex[1])[axis];
-			SplitValue += (*VP.Vertex[2])[axis];
-		}
-		return SplitValue / float(nb_prims * 3);
-	}
-	else
-	{
-		return AABBTreeBuilder::GetSplittingValue(primitives, nb_prims, global_box, axis);
-	}
+    if (mSettings.mRules & SPLIT_GEOM_CENTER)
+    {
+        // Loop through triangles
+        float SplitValue = 0.0f;
+        VertexPointers VP;
+        for (uint32_t i = 0; i < nb_prims; i++)
+        {
+            // Get current triangle-vertices
+            mIMesh->GetTriangle(VP, primitives[i]);
+            // Update split value
+            SplitValue += (*VP.Vertex[0])[axis];
+            SplitValue += (*VP.Vertex[1])[axis];
+            SplitValue += (*VP.Vertex[2])[axis];
+        }
+        return SplitValue / float(nb_prims * 3);
+    }
+    else
+    {
+        return AABBTreeBuilder::GetSplittingValue(primitives, nb_prims, global_box, axis);
+    }
 }

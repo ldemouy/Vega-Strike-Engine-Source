@@ -2,8 +2,8 @@
 #define __VS_GLOBALS_H_
 #include <vector>
 
-#include "universe_generic.h"
 #include "command.h"
+#include "universe_generic.h"
 extern commandI *CommandInterpretor;
 extern Universe *_Universe;
 /*
@@ -46,7 +46,7 @@ typedef struct
     char use_logos;
     char use_ship_textures;
     char use_planet_textures;
-    int audio_frequency_mode; //0==11025/8 1==22050/8 2==44100/8  3==11025/16 4==22050/16 5==44100/16
+    int audio_frequency_mode; // 0==11025/8 1==22050/8 2==44100/8  3==11025/16 4==22050/16 5==44100/16
     int sound_enabled;
     int sound_volume;
     int music_volume;
@@ -75,12 +75,11 @@ extern VegaConfig *vs_config;
 
 class Mission;
 extern Mission *mission;
-template <class MyType>
-class LeakVector
+template <class MyType> class LeakVector
 {
     std::vector<MyType> *active_missions;
 
-public:
+  public:
     bool empty() const
     {
         return active_missions->empty();

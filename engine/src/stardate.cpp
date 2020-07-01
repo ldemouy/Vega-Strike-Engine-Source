@@ -20,14 +20,14 @@
 /// since the begin of initial universe time, which in Vega Strike UTCS universe is 3276800
 /// The formatting of the startime into faction specific output is done by the stardate.py script
 
-#include <assert.h>
-#include <iostream>
-#include <vector>
-#include <memory>
 #include "stardate.h"
+#include "cmd/script/mission.h"
 #include "lin_time.h"
 #include "vsfilesystem.h"
-#include "cmd/script/mission.h"
+#include <assert.h>
+#include <iostream>
+#include <memory>
+#include <vector>
 
 using std::cerr;
 using std::cout;
@@ -57,12 +57,12 @@ void StarDate::Init(double time)
     }
 }
 
-//Get the current StarDate time in seconds
+// Get the current StarDate time in seconds
 double StarDate::GetCurrentStarTime(int faction)
 {
-    //Get the number of seconds elapsed since the server start
+    // Get the number of seconds elapsed since the server start
     double time_since_server_started = mission->getGametime() - initial_time;
-    //Add them to the current date
+    // Add them to the current date
     if (initial_star_time == nullptr)
     {
         return time_since_server_started;
@@ -73,8 +73,8 @@ double StarDate::GetCurrentStarTime(int faction)
     }
 }
 
-//Needed to calculate relative message and mission times
-//into stardate
+// Needed to calculate relative message and mission times
+// into stardate
 double StarDate::GetElapsedStarTime(int faction)
 {
     if (initial_star_time == nullptr)
@@ -97,7 +97,7 @@ void StarDate::InitTrek(string date)
 {
     if (initial_star_time != nullptr)
     {
-        //we must be reinitializing;
+        // we must be reinitializing;
         delete[] initial_star_time;
     }
     initial_star_time = 0;
@@ -105,7 +105,8 @@ void StarDate::InitTrek(string date)
     initial_star_time = new double[factions.size()];
     double init_time = this->ConvertTrekDate(date);
     VSFileSystem::vs_dprintf(3, "Initializing stardate from a Trek date for %d factions", factions.size());
-    BOOST_LOG_TRIVIAL(trace) << boost::format("Initializing stardate from a Trek date for %1% factions") % factions.size();
+    BOOST_LOG_TRIVIAL(trace) << boost::format("Initializing stardate from a Trek date for %1% factions") %
+                                    factions.size();
     for (unsigned int i = 0; i < factions.size(); i++)
     {
         initial_star_time[i] = init_time;
@@ -117,7 +118,7 @@ void StarDate::InitTrek(string date)
 /// The second equals our terran second. The minute however has 480 seconds (HOURS_DIV=8)
 /// The hour has 60 minutes and the day has 100 hours
 
-//Convert a StarDate time into a Stardate string
+// Convert a StarDate time into a Stardate string
 string StarDate::ConvertFullTrekDate(double date)
 {
     unsigned int days, hours, minutes, seconds;
@@ -131,13 +132,13 @@ string StarDate::ConvertFullTrekDate(double date)
     hours = (unsigned int)date / 28800;
     // Modulo gives us the number of seconds elapsed in that hour
     date = (unsigned int)date % 28800;
-    //Get the number of minutes elapsed in that hour by dividing by the number of seconds in a minute: 60*8 = 480
+    // Get the number of minutes elapsed in that hour by dividing by the number of seconds in a minute: 60*8 = 480
     minutes = (unsigned int)date / 480;
-    //The remaining seconds in the date
-    //The seconds are counted from 0 to 480 before the minute effectively is incremented
+    // The remaining seconds in the date
+    // The seconds are counted from 0 to 480 before the minute effectively is incremented
     seconds = (unsigned int)date % 480;
 
-    //The hour/minute part is displayed like HHMM divided by HOURS_DIV which is 8 for now
+    // The hour/minute part is displayed like HHMM divided by HOURS_DIV which is 8 for now
     unsigned int hhmm = (hours * 100 + minutes);
 
     sprintf(cdate, "%d.%.4d:%.3d", days, hhmm, seconds);
@@ -161,12 +162,12 @@ string StarDate::ConvertTrekDate(double date)
     return string(cdate);
 }
 
-//Convert a StarDate into a number of seconds
+// Convert a StarDate into a number of seconds
 double StarDate::ConvertTrekDate(string date)
 {
     unsigned int days, hours, minutes, tmphrs, seconds, nb, pos;
     double res;
-    //Replace the dot with 'a' so sscanf won't take it for a decimal symbol
+    // Replace the dot with 'a' so sscanf won't take it for a decimal symbol
     pos = date.find(".");
     date.replace(pos, 1, "a");
     // if (( nb = sscanf( date.c_str(), "%da%4d:%3d", &days, &tmphrs, &seconds )) != 3 ) {
@@ -177,9 +178,9 @@ double StarDate::ConvertTrekDate(string date)
         BOOST_LOG_TRIVIAL(trace) << "!!! ERROR reading date";
     }
 
-    //Extract number of hours
+    // Extract number of hours
     hours = tmphrs / 100;
-    //Extract number of minutes
+    // Extract number of minutes
     minutes = tmphrs % 100;
 
     res = days * 2880000 + hours * 28800 + minutes * 480 + seconds;
@@ -189,19 +190,19 @@ double StarDate::ConvertTrekDate(string date)
     return res;
 }
 
-//Get the current StarDate in a string
+// Get the current StarDate in a string
 string StarDate::GetFullTrekDate(int faction)
 {
     return ConvertFullTrekDate(this->GetCurrentStarTime(faction));
 }
 
-//Get the current StarDate in a string - short format
+// Get the current StarDate in a string - short format
 string StarDate::GetTrekDate(int faction)
 {
     return ConvertTrekDate(this->GetCurrentStarTime(faction));
 }
 
-//Convert the string xxxx.y date format into a float representing the same data xxxx.y
+// Convert the string xxxx.y date format into a float representing the same data xxxx.y
 float StarDate::GetFloatFromTrekDate(int faction)
 {
     float float_date;

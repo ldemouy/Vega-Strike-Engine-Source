@@ -3,30 +3,30 @@
 #ifndef VEGASTRIKE_GFX_RADAR_VIEWAREA_H
 #define VEGASTRIKE_GFX_RADAR_VIEWAREA_H
 
-#include "gfx/vec.h"
 #include "gfx/sprite.h"
+#include "gfx/vec.h"
 
 struct GFXColor; // Edit from class to struct as defined in gfxlib_struct.
 
 namespace Radar
 {
 
-    struct ViewArea
-    {
-        ViewArea();
+struct ViewArea
+{
+    ViewArea();
 
-        void SetSprite(VSSprite *);
+    void SetSprite(VSSprite *);
 
-        Vector Scale(const Vector &) const;
+    Vector Scale(const Vector &) const;
 
-        GFXColor GetColor() const;
+    GFXColor GetColor() const;
 
-        bool IsActive() const;
+    bool IsActive() const;
 
-        VSSprite *sprite;
-        Vector position;
-        Vector size;
-    };
+    VSSprite *sprite;
+    Vector position;
+    Vector size;
+};
 
 } // namespace Radar
 

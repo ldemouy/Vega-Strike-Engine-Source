@@ -19,18 +19,18 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include <queue>
-#include <list>
+#include "in_kb.h"
+#include "gldrv/winsys.h"
+#include "in_handler.h"
+#include "in_kb_data.h"
 #include "vegastrike.h"
 #include "vs_globals.h"
-#include "in_kb.h"
-#include "in_handler.h"
-#include "gldrv/winsys.h"
-#include "in_kb_data.h"
+#include <list>
+#include <queue>
 
 static void DefaultKBHandler(const KBData &, KBSTATE newState) // FIXME ?
 {
-    //do nothing
+    // do nothing
 }
 struct HandlerCall
 {
@@ -47,7 +47,8 @@ KBSTATE keyState[LAST_MODIFIER][WSK_LAST];
 
 static void kbGetInput(int32_t key, int32_t modifiers, bool release, int32_t x, int32_t y)
 {
-    ///FIXME If key is out of array index range, do nothing. This is a quick hack, the underlying cause of invalid parameters ever being given should probably be fixed instead
+    /// FIXME If key is out of array index range, do nothing. This is a quick hack, the underlying cause of invalid
+    /// parameters ever being given should probably be fixed instead
     if (key < 0 || key >= WSK_LAST)
     {
         return;
@@ -126,8 +127,9 @@ void setActiveModifiers(uint32_t mask)
 
 void setActiveModifiersSDL(SDLMod mask)
 {
-    setActiveModifiers(
-        ((mask & (KMOD_LSHIFT | KMOD_RSHIFT)) ? KB_MOD_SHIFT : 0) | ((mask & (KMOD_LCTRL | KMOD_RCTRL)) ? KB_MOD_CTRL : 0) | ((mask & (KMOD_LALT | KMOD_RALT)) ? KB_MOD_ALT : 0));
+    setActiveModifiers(((mask & (KMOD_LSHIFT | KMOD_RSHIFT)) ? KB_MOD_SHIFT : 0) |
+                       ((mask & (KMOD_LCTRL | KMOD_RCTRL)) ? KB_MOD_CTRL : 0) |
+                       ((mask & (KMOD_LALT | KMOD_RALT)) ? KB_MOD_ALT : 0));
 }
 
 uint32_t getActiveModifiers()
@@ -174,7 +176,7 @@ void glut_keyboard_cb(uint32_t ch, uint32_t mod, bool release, int32_t x, int32_
     uint32_t modmask = KB_MOD_MASK;
     if ((WSK_MOD_LSHIFT == (mod & WSK_MOD_LSHIFT)) || (WSK_MOD_RSHIFT == (mod & WSK_MOD_RSHIFT)))
     {
-        //This is ugly, but we have to support legacy config files...
+        // This is ugly, but we have to support legacy config files...
         //...maybe add config option to disable this soooo ugly thing...
         if (!kbHasBinding(ch, KB_MOD_SHIFT))
         {
@@ -191,9 +193,8 @@ void glut_keyboard_cb(uint32_t ch, uint32_t mod, bool release, int32_t x, int32_
     {
         ctrlon = true;
     }
-    //Polling state
-    setActiveModifiers(
-        (shifton ? KB_MOD_SHIFT : 0) | (alton ? KB_MOD_ALT : 0) | (ctrlon ? KB_MOD_CTRL : 0));
+    // Polling state
+    setActiveModifiers((shifton ? KB_MOD_SHIFT : 0) | (alton ? KB_MOD_ALT : 0) | (ctrlon ? KB_MOD_CTRL : 0));
 
     int32_t curmod = getModifier(alton, ctrlon, shifton) & modmask;
     kbGetInput(ch, curmod, release, x, y);
@@ -272,7 +273,7 @@ void BindKey(int32_t key, uint32_t mod, uint32_t player, KBHandler handler, cons
     keyBindings[mod][key].function = handler;
     keyBindings[mod][key].data = data;
     playerBindings[mod][key] = player;
-    handler(std::string(), RESET); //key is not used in handler
+    handler(std::string(), RESET); // key is not used in handler
 }
 
 void UnbindKey(int32_t key, uint32_t mod)

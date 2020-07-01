@@ -22,10 +22,10 @@
 #ifndef PHYSICS_H
 #define PHYSICS_H
 
-#include "vs_math.h"
 #include "gfx/vec.h"
+#include "vs_math.h"
 
-static const float oocc = (float)0.0000000000000000111265005605; //1/c^2
+static const float oocc = (float)0.0000000000000000111265005605; // 1/c^2
 static const float c = (float)299792458.0;
 static const float co10 = (float)29979245.8;
 
@@ -49,7 +49,7 @@ class PhysicsSystem
     int NumActiveTorques;
     Force ActiveTorques[forcemax];
 
-public:
+  public:
     PhysicsSystem(float M, float I, QVector *pos, Vector *p, Vector *q, Vector *r);
     //~PhysicsSystem();
     virtual void Rotate(const Vector &axis);

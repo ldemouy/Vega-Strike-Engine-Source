@@ -1,7 +1,7 @@
 #include "sphere.h"
 #include "ani_texture.h"
-#include "vegastrike.h"
 #include "config_xml.h"
+#include "vegastrike.h"
 #include "vs_globals.h"
 #include "vsfilesystem.h"
 #include "xml_support.h"

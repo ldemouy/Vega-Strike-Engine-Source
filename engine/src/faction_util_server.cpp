@@ -32,7 +32,9 @@ Texture *FactionUtil::createTexture(const char *tex, bool force)
 {
     return nullptr;
 }
-void FactionUtil::LoadFactionPlaylists() {}
+void FactionUtil::LoadFactionPlaylists()
+{
+}
 
 Texture *FactionUtil::getForceLogo(int32_t faction)
 {

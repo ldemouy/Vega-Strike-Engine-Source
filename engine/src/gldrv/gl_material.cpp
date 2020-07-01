@@ -19,8 +19,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "gldrv/gfxlib.h"
 #include "gl_globals.h"
+#include "gldrv/gfxlib.h"
 #include <cstring>
 //#include "gl_globals.h"
 //#include "gfx_transform_vector.h"
@@ -29,7 +29,7 @@ static vector<GFXMaterial> materialinfo;
 static int selectedmaterial = -1;
 void /*GFXDRVAPI*/ GFXSetMaterial(unsigned int &number, const GFXMaterial &material)
 {
-    number = (unsigned int)-1; //intended warning for unsigned....
+    number = (unsigned int)-1; // intended warning for unsigned....
     for (unsigned int i = 0; i < materialinfo.size(); i++)
         if (memcmp(&materialinfo[i], &material, sizeof(GFXMaterial)) == 0)
         {
@@ -38,7 +38,7 @@ void /*GFXDRVAPI*/ GFXSetMaterial(unsigned int &number, const GFXMaterial &mater
         }
     if (number == (unsigned int)(-1))
     {
-        //another intended warning
+        // another intended warning
         number = materialinfo.size();
         materialinfo.push_back(material);
     }
@@ -96,10 +96,8 @@ void /*GFXDRVAPI*/ GFXSelectMaterialAlpha(const unsigned int number, float alpha
     glMaterialfv(GL_FRONT, GL_SHININESS, &materialinfo[number].power);
 }
 const float zerovect[4] = {0.0};
-void /*GFXDRVAPI*/ GFXSelectMaterialHighlights(const unsigned int number,
-                                               const GFXColor &ambient,
-                                               const GFXColor &diffuse,
-                                               const GFXColor &specular,
+void /*GFXDRVAPI*/ GFXSelectMaterialHighlights(const unsigned int number, const GFXColor &ambient,
+                                               const GFXColor &diffuse, const GFXColor &specular,
                                                const GFXColor &emissive)
 {
     selectedmaterial = -1;
@@ -134,7 +132,7 @@ void /*GFXDRVAPI*/ GFXSelectMaterialHighlights(const unsigned int number,
 void /*GFXDRVAPI*/ GFXSelectMaterial(const unsigned int number)
 {
     if (1 || static_cast<int>(number) != selectedmaterial)
-    { //FIXME Last time I checked true or anything was true
+    { // FIXME Last time I checked true or anything was true
         float matvect[4];
         matvect[0] = materialinfo[number].ar;
         matvect[1] = materialinfo[number].ag;

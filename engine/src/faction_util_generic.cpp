@@ -1,11 +1,11 @@
-#include <assert.h>
-#include "faction_generic.h"
-#include "vsfilesystem.h"
-#include "universe_generic.h"
-#include "config_xml.h"
-#include "vs_globals.h"
-#include "gfx/cockpit_generic.h"
 #include "cmd/unit_generic.h"
+#include "config_xml.h"
+#include "faction_generic.h"
+#include "gfx/cockpit_generic.h"
+#include "universe_generic.h"
+#include "vs_globals.h"
+#include "vsfilesystem.h"
+#include <assert.h>
 
 #include "options.h"
 
@@ -103,13 +103,14 @@ void FactionUtil::AdjustIntRelation(const int &Myfaction, const int &TheirFactio
                         if (game_options.AllowCivilWar || Myfaction != TheirFaction)
                         {
                             factions[Myfaction]->faction[TheirFaction].relationship += factor * rank;
-                            if (factions[Myfaction]->faction[TheirFaction].relationship > 1 && game_options.CappedFactionRating)
+                            if (factions[Myfaction]->faction[TheirFaction].relationship > 1 &&
+                                game_options.CappedFactionRating)
                                 factions[Myfaction]->faction[TheirFaction].relationship = 1;
                             if (factions[Myfaction]->faction[TheirFaction].relationship < game_options.min_relationship)
                                 factions[Myfaction]->faction[TheirFaction].relationship = game_options.min_relationship;
                             if (!game_options.AllowNonplayerFactionChange)
                                 factions[TheirFaction]->faction[Myfaction].relationship =
-                                    factions[Myfaction]->faction[TheirFaction].relationship; //reflect if player
+                                    factions[Myfaction]->faction[TheirFaction].relationship; // reflect if player
                         }
                     }
                 }
@@ -119,11 +120,11 @@ void FactionUtil::AdjustIntRelation(const int &Myfaction, const int &TheirFactio
 }
 int32_t FactionUtil::GetPlaylist(const int &myfaction)
 {
-    return factions[myfaction]->playlist; //can be -1
+    return factions[myfaction]->playlist; // can be -1
 }
 const float *FactionUtil::GetSparkColor(const int &myfaction)
 {
-    return factions[myfaction]->sparkcolor; //can be -1
+    return factions[myfaction]->sparkcolor; // can be -1
 }
 uint32_t FactionUtil::GetNumFactions()
 {

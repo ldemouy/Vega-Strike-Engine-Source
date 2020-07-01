@@ -7,10 +7,10 @@ class PipelinedTexture : public Texture
 {
     int current;
     int last;
-    //clone==2 means both current and last are clones 1 means last is a clone
+    // clone==2 means both current and last are clones 1 means last is a clone
     char clone;
 
-public:
+  public:
     bool operator==(const Texture &b)
     {
         return false;

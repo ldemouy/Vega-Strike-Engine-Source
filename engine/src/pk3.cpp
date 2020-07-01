@@ -42,9 +42,9 @@
  */
 
 #include "pk3.h"
+#include "posh.h"
 #include <cstdlib>
 #include <iostream>
-#include "posh.h"
 using std::cerr;
 using std::endl;
 using std::hex;
@@ -62,14 +62,14 @@ struct CPK3::TZipLocalHeader
     unsigned int sig;
     unsigned short version;
     unsigned short flag;
-    unsigned short compression; //COMP_xxxx
+    unsigned short compression; // COMP_xxxx
     unsigned short modTime;
     unsigned short modDate;
     unsigned int crc32;
     unsigned int cSize;
     unsigned int ucSize;
-    unsigned short fnameLen; //Filename string follows header.
-    unsigned short xtraLen;  //Extra field follows filename.
+    unsigned short fnameLen; // Filename string follows header.
+    unsigned short xtraLen;  // Extra field follows filename.
 
     void correctByteOrder()
     {
@@ -127,15 +127,15 @@ struct CPK3::TZipDirFileHeader
     unsigned short verMade;
     unsigned short verNeeded;
     unsigned short flag;
-    unsigned short compression; //COMP_xxxx
+    unsigned short compression; // COMP_xxxx
     unsigned short modTime;
     unsigned short modDate;
     unsigned int crc32;
-    unsigned int cSize;      //Compressed size
-    unsigned int ucSize;     //Uncompressed size
-    unsigned short fnameLen; //Filename string follows header.
-    unsigned short xtraLen;  //Extra field follows filename.
-    unsigned short cmntLen;  //Comment field follows extra field.
+    unsigned int cSize;      // Compressed size
+    unsigned int ucSize;     // Uncompressed size
+    unsigned short fnameLen; // Filename string follows header.
+    unsigned short xtraLen;  // Extra field follows filename.
+    unsigned short cmntLen;  // Comment field follows extra field.
     unsigned short diskStart;
     unsigned short intAttr;
     unsigned int extAttr;
@@ -188,7 +188,7 @@ CPK3::CPK3(const char *filename)
     Open(filename);
 }
 
-static size_t bogus_sizet; //added by chuck_starchaser to squash some warnings
+static size_t bogus_sizet; // added by chuck_starchaser to squash some warnings
 
 bool CPK3::CheckPK3(FILE *f)
 {
@@ -203,17 +203,17 @@ bool CPK3::CheckPK3(FILE *f)
 
     bogus_sizet = fread(&dh, sizeof(dh), 1, f);
     dh.correctByteOrder();
-    //Check
+    // Check
     if (dh.sig != TZipDirHeader::SIGNATURE)
     {
         cerr << "PK3 -- BAD DIR HEADER SIGNATURE, NOT A PK3 FILE !" << endl;
         exit(1);
         return false;
     }
-    //Go to the beginning of the directory.
+    // Go to the beginning of the directory.
     fseek(f, dhOffset - dh.dirSize, SEEK_SET);
 
-    //Allocate the data buffer, and read the whole thing.
+    // Allocate the data buffer, and read the whole thing.
     m_pDirData = new char[dh.dirSize + dh.nDirEntries * sizeof(*m_papDir)];
     if (!m_pDirData)
     {
@@ -224,7 +224,7 @@ bool CPK3::CheckPK3(FILE *f)
     memset(m_pDirData, 0, dh.dirSize + dh.nDirEntries * sizeof(*m_papDir));
     bogus_sizet = fread(m_pDirData, dh.dirSize, 1, f);
 
-    //Now process each entry.
+    // Now process each entry.
     char *pfh = m_pDirData;
     m_papDir = (const TZipDirFileHeader **)(m_pDirData + dh.dirSize);
 
@@ -234,9 +234,9 @@ bool CPK3::CheckPK3(FILE *f)
         TZipDirFileHeader &fh = *(TZipDirFileHeader *)pfh;
         fh.correctByteOrder();
 
-        //Store the address of nth file for quicker access.
+        // Store the address of nth file for quicker access.
         m_papDir[i] = &fh;
-        //Check the directory entry integrity.
+        // Check the directory entry integrity.
         if (fh.sig != TZipDirFileHeader::SIGNATURE)
         {
             cerr << "PK3 -- ERROR BAD DIRECTORY SIGNATURE !" << endl;
@@ -246,11 +246,11 @@ bool CPK3::CheckPK3(FILE *f)
         else
         {
             pfh += sizeof(fh);
-            //Convert UNIX slashes to DOS backlashes.
+            // Convert UNIX slashes to DOS backlashes.
             for (int j = 0; j < fh.fnameLen; j++)
                 if (pfh[j] == '/')
                     pfh[j] = '\\';
-            //Skip name, extra and comment fields.
+            // Skip name, extra and comment fields.
             pfh += fh.fnameLen + fh.xtraLen + fh.cmntLen;
         }
     }
@@ -287,7 +287,7 @@ bool CPK3::ExtractFile(const char *lp_name)
 
 bool CPK3::ExtractFile(const char *lp_name, const char *new_filename)
 {
-    //open file tp write data
+    // open file tp write data
     FILE *new_f = nullptr;
     int size = -1;
 
@@ -303,10 +303,10 @@ bool CPK3::ExtractFile(const char *lp_name, const char *new_filename)
             return true;
         }
     }
-    return false; //probably file not found
+    return false; // probably file not found
 }
 
-//Compares 2 c-strings but do not take into account '/' or '\'
+// Compares 2 c-strings but do not take into account '/' or '\'
 int vsstrcmp(const char *lp, const char *str)
 {
     unsigned int i, ok = 1;
@@ -333,7 +333,7 @@ int CPK3::FileExists(const char *lpname)
             idx = i;
         }
     }
-    //if the file isn't in the archive idx=-1
+    // if the file isn't in the archive idx=-1
     return idx;
 }
 
@@ -352,11 +352,12 @@ char *CPK3::ExtractFile(int index, int *file_size)
     {
         if (true == ReadFile(index, buffer))
         {
-            //everything went well !!!
+            // everything went well !!!
         }
         else
         {
-            cerr << "\nThe file was found in the archive, but I was unable to extract it. Maybe the archive is broken." << endl;
+            cerr << "\nThe file was found in the archive, but I was unable to extract it. Maybe the archive is broken."
+                 << endl;
         }
     }
     *file_size = flength;
@@ -377,7 +378,7 @@ char *CPK3::ExtractFile(const char *lpname, int *file_size)
         if (result == 0)
             index = i;
     }
-    //if the file isn't in the archive
+    // if the file isn't in the archive
     if (index == -1)
         return (nullptr);
     int flength = GetFileLen(index);
@@ -392,7 +393,7 @@ char *CPK3::ExtractFile(const char *lpname, int *file_size)
     {
         if (true == ReadFile(index, buffer))
         {
-            //everything went well !!!
+            // everything went well !!!
         }
         else
         {
@@ -459,10 +460,10 @@ bool CPK3::ReadFile(int i, void *pBuf)
             cerr << " Index TOO BIG !!!" << endl;
         return false;
     }
-    //Quick'n dirty read, the whole file at once.
-    //Ungood if the ZIP has huge files inside
+    // Quick'n dirty read, the whole file at once.
+    // Ungood if the ZIP has huge files inside
 
-    //Go to the actual file and read the local header.
+    // Go to the actual file and read the local header.
     fseek(this->f, m_papDir[i]->hdrOffset, SEEK_SET);
     TZipLocalHeader h;
 
@@ -474,20 +475,21 @@ bool CPK3::ReadFile(int i, void *pBuf)
         cerr << "PK3 - BAD LOCAL HEADER SIGNATURE !!!" << endl;
         return false;
     }
-    //Skip extra fields
+    // Skip extra fields
     fseek(this->f, h.fnameLen + h.xtraLen, SEEK_CUR);
     if (h.compression == TZipLocalHeader::COMP_STORE)
     {
-        //Simply read in raw stored data.
+        // Simply read in raw stored data.
         bogus_sizet = fread(pBuf, h.cSize, 1, this->f);
         return true;
     }
     else if (h.compression != TZipLocalHeader::COMP_DEFLAT)
     {
-        cerr << "BAD Compression level, found=" << h.compression << " - expected=" << TZipLocalHeader::COMP_DEFLAT << endl;
+        cerr << "BAD Compression level, found=" << h.compression << " - expected=" << TZipLocalHeader::COMP_DEFLAT
+             << endl;
         return false;
     }
-    //Alloc compressed data buffer and read the whole stream
+    // Alloc compressed data buffer and read the whole stream
     char *pcData = new char[h.cSize];
     if (!pcData)
     {
@@ -499,7 +501,7 @@ bool CPK3::ReadFile(int i, void *pBuf)
 
     bool ret = true;
 
-    //Setup the inflate stream.
+    // Setup the inflate stream.
     z_stream stream;
     int err, err2;
 
@@ -510,7 +512,7 @@ bool CPK3::ReadFile(int i, void *pBuf)
     stream.zalloc = (alloc_func)0;
     stream.zfree = (free_func)0;
 
-    //Perform inflation. wbits < 0 indicates no zlib header inside the data.
+    // Perform inflation. wbits < 0 indicates no zlib header inside the data.
     err = inflateInit2(&stream, -MAX_WBITS);
     if (err == Z_OK)
     {

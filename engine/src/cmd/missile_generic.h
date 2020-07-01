@@ -12,7 +12,7 @@ class MissileEffect
     void *ownerDoNotDereference;
     void DoApplyDamage(Unit *parent, Unit *un, float distance, float damage_fraction);
 
-public:
+  public:
     void ApplyDamage(Unit *);
     MissileEffect(const QVector &pos, float dam, float pdam, float radius, float radmult, void *owner) : pos(pos)
     {
@@ -33,9 +33,11 @@ public:
 };
 class Missile : public Unit
 {
-public:
-protected:
-    Missile(std::vector<Mesh *> m, bool b, int i) : Unit(m, b, i) {}
+  public:
+  protected:
+    Missile(std::vector<Mesh *> m, bool b, int i) : Unit(m, b, i)
+    {
+    }
     virtual float ExplosionRadius();
     float time;
     float damage;
@@ -47,37 +49,27 @@ protected:
     bool had_target;
     signed char retarget;
 
-public:
+  public:
     void Discharge();
     virtual enum clsptr isUnit() const
     {
         return MISSILEPTR;
     }
 
-protected:
+  protected:
     /// constructor only to be called by UnitFactory
-    Missile(const char *filename,
-            int faction,
-            const string &modifications,
-            const float damage,
-            float phasedamage,
-            float time,
-            float radialeffect,
-            float radmult,
-            float detonation_radius) : Unit(filename, false, faction, modifications), time(time), damage(damage), phasedamage(phasedamage), radial_effect(radialeffect), radial_multiplier(radmult), detonation_radius(detonation_radius), discharged(false), retarget(-1)
+    Missile(const char *filename, int faction, const string &modifications, const float damage, float phasedamage,
+            float time, float radialeffect, float radmult, float detonation_radius)
+        : Unit(filename, false, faction, modifications), time(time), damage(damage), phasedamage(phasedamage),
+          radial_effect(radialeffect), radial_multiplier(radmult), detonation_radius(detonation_radius),
+          discharged(false), retarget(-1)
     {
         maxhull *= 10;
         had_target = false;
     }
 
-    void InitMissile(float ptime,
-                     const float pdamage,
-                     float pphasedamage,
-                     float pradial_effect,
-                     float pradial_multiplier,
-                     float pdetonation_radius,
-                     bool pdischarged,
-                     signed char pretarget)
+    void InitMissile(float ptime, const float pdamage, float pphasedamage, float pradial_effect,
+                     float pradial_multiplier, float pdetonation_radius, bool pdischarged, signed char pretarget)
     {
         time = ptime;
         damage = pdamage;
@@ -91,30 +83,23 @@ protected:
     }
     friend class UnitFactory;
 
-public:
+  public:
     virtual void Kill(bool eraseFromSave = true);
-    virtual void reactToCollision(Unit *smaller,
-                                  const QVector &biglocation,
-                                  const Vector &bignormal,
-                                  const QVector &smalllocation,
-                                  const Vector &smallnormal,
-                                  float dist);
-    virtual void UpdatePhysics2(const Transformation &trans,
-                                const Transformation &old_physical_state,
-                                const Vector &accel,
-                                float difficulty,
-                                const Matrix &transmat,
-                                const Vector &CumulativeVelocity,
-                                bool ResolveLast,
-                                UnitCollection *uc = nullptr);
+    virtual void reactToCollision(Unit *smaller, const QVector &biglocation, const Vector &bignormal,
+                                  const QVector &smalllocation, const Vector &smallnormal, float dist);
+    virtual void UpdatePhysics2(const Transformation &trans, const Transformation &old_physical_state,
+                                const Vector &accel, float difficulty, const Matrix &transmat,
+                                const Vector &CumulativeVelocity, bool ResolveLast, UnitCollection *uc = nullptr);
 
-protected:
+  protected:
     /// default constructor forbidden
-    Missile() {}
+    Missile()
+    {
+    }
     /// copy constructor forbidden
-    //Missile( const Missile& );
+    // Missile( const Missile& );
     /// assignment operator forbidden
-    //Missile& operator=( const Missile& );
+    // Missile& operator=( const Missile& );
 };
 
 #endif

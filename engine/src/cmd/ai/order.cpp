@@ -18,12 +18,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-#include "vegastrike.h"
-#include "cmd/unit_generic.h"
 #include "order.h"
 #include "cmd/collection.h"
+#include "cmd/unit_generic.h"
 #include "communication.h"
 #include "config_xml.h"
+#include "vegastrike.h"
 #include "vs_globals.h"
 using std::list;
 using std::vector;
@@ -145,7 +145,7 @@ bool Order::AttachOrder(Unit *targets1)
     {
         if (subtype & SSELF)
         {
-            return AttachSelfOrder(targets1); //can use attach order to do shit
+            return AttachSelfOrder(targets1); // can use attach order to do shit
         }
 
         return false;
@@ -293,7 +293,7 @@ using std::list;
 using std::vector;
 void Order::AdjustRelationTo(Unit *un, float factor)
 {
-    //virtual stub function
+    // virtual stub function
 }
 
 void Order::Communicate(const CommunicationMessage &c)
@@ -326,8 +326,10 @@ void Order::Communicate(const CommunicationMessage &c)
     {
         if (un != parent)
         {
-            static bool talk_more_helps = XMLSupport::parse_bool(vs_config->getVariable("AI", "talking_faster_helps", "true"));
-            static float talk_factor = XMLSupport::parse_float(vs_config->getVariable("AI", "talk_relation_factor", ".5"));
+            static bool talk_more_helps =
+                XMLSupport::parse_bool(vs_config->getVariable("AI", "talking_faster_helps", "true"));
+            static float talk_factor =
+                XMLSupport::parse_float(vs_config->getVariable("AI", "talk_relation_factor", ".5"));
             if (talk_more_helps || !already_communicated)
                 AdjustRelationTo(un, newC->getDeltaRelation() * talk_factor);
             messagequeue.push_back(newC);
@@ -335,7 +337,9 @@ void Order::Communicate(const CommunicationMessage &c)
     }
 }
 
-void Order::ProcessCommMessage(CommunicationMessage &c) {}
+void Order::ProcessCommMessage(CommunicationMessage &c)
+{
+}
 void Order::ProcessCommunicationMessages(float AICommresponseTime, bool RemoveMessageProcessed)
 {
     float time = AICommresponseTime / SIMULATION_ATOM;
@@ -352,7 +356,8 @@ void Order::ProcessCommunicationMessages(float AICommresponseTime, bool RemoveMe
             if (un)
             {
                 CommunicationMessage c(parent, un, nullptr, 0);
-                if (parent->getRelation(un) >= 0 || (parent->getFlightgroup() && parent->getFlightgroup()->name == "Base"))
+                if (parent->getRelation(un) >= 0 ||
+                    (parent->getFlightgroup() && parent->getFlightgroup()->name == "Base"))
                 {
                     parent->RequestClearance(un);
                     c.SetCurrentState(c.fsm->GetAbleToDockNode(), nullptr, 0);
@@ -388,66 +393,61 @@ void Order::ProcessCommunicationMessages(float AICommresponseTime, bool RemoveMe
 namespace Orders
 {
 
-    void ExecuteFor::Execute()
+void ExecuteFor::Execute()
+{
+    if (child)
     {
-        if (child)
-        {
-            child->SetParent(parent);
-            type = child->getType();
-        }
-        if (time > maxtime)
-        {
-            done = true;
-            return;
-        }
-        time += SIMULATION_ATOM;
-        if (child)
-        {
-            child->Execute();
-        }
+        child->SetParent(parent);
+        type = child->getType();
     }
-
-    Join::Join(Unit *parent, Order *first, Order *second)
-        : Order(first->getType() | second->getType(),
-                first->getSubType()),
-          first(first),
-          second(second)
+    if (time > maxtime)
     {
-        assert((first->getType() & second->getType()) == 0);
-        assert(first->getSubType() == second->getSubType());
-
-        SetParent(parent);
-        EnqueueOrder(first);
-        EnqueueOrder(second);
+        done = true;
+        return;
     }
-
-    void Join::Execute()
+    time += SIMULATION_ATOM;
+    if (child)
     {
-        // Execute both sub-orders
-        Order::Execute();
-        // Wait for both sub-orders to have finished
-        if (first->Done() && second->Done())
-        {
-            done = true;
-        }
+        child->Execute();
     }
+}
 
-    Sequence::Sequence(Unit *parent, Order *order, uint32_t excludeTypes)
-        : Order(order->getType() | excludeTypes,
-                order->getSubType()),
-          order(order)
-    {
-        SetParent(parent);
-        EnqueueOrder(order);
-    }
+Join::Join(Unit *parent, Order *first, Order *second)
+    : Order(first->getType() | second->getType(), first->getSubType()), first(first), second(second)
+{
+    assert((first->getType() & second->getType()) == 0);
+    assert(first->getSubType() == second->getSubType());
 
-    void Sequence::Execute()
+    SetParent(parent);
+    EnqueueOrder(first);
+    EnqueueOrder(second);
+}
+
+void Join::Execute()
+{
+    // Execute both sub-orders
+    Order::Execute();
+    // Wait for both sub-orders to have finished
+    if (first->Done() && second->Done())
     {
-        Order::Execute();
-        if (order->Done())
-        {
-            done = true;
-        }
+        done = true;
     }
+}
+
+Sequence::Sequence(Unit *parent, Order *order, uint32_t excludeTypes)
+    : Order(order->getType() | excludeTypes, order->getSubType()), order(order)
+{
+    SetParent(parent);
+    EnqueueOrder(order);
+}
+
+void Sequence::Execute()
+{
+    Order::Execute();
+    if (order->Done())
+    {
+        done = true;
+    }
+}
 
 } // namespace Orders

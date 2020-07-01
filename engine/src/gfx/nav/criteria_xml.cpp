@@ -21,18 +21,18 @@
 
 #include "vegastrike.h"
 #if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-//For WIN32 debugging.
+// For WIN32 debugging.
 #include <crtdbg.h>
 #endif
 
 #include <assert.h>
+#include <expat.h>
 #include <set>
 #include <string>
-#include <expat.h>
 
 #include "criteria.h"
-#include "xml_support.h"
 #include "vsfilesystem.h"
+#include "xml_support.h"
 
 using XMLSupport::AttributeList;
 using namespace VSFileSystem;
@@ -50,7 +50,9 @@ void CriteriaContains::beginElement(void *userData, const XML_Char *name, const 
     }
 }
 
-void CriteriaContains::endElement(void *userData, const XML_Char *name) {}
+void CriteriaContains::endElement(void *userData, const XML_Char *name)
+{
+}
 
 std::set<std::string> CriteriaContains::getPlanetTypesFromXML(const char *filename) const
 {

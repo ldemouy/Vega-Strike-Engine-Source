@@ -1,44 +1,48 @@
 /***************************************************************************
-*   Copyright (C) 2005 by Matthew Adams                                   *
-*   roguestar191 at comcast dot net                                       *
-*                                                                         *
-*   This program is free software; you can redistribute it and/or modify  *
-*   it under the terms of the GNU General Public License as published by  *
-*   the Free Software Foundation; either version 2 of the License, or     *
-*   (at your option) any later version.                                   *
-*                                                                         *
-*   This program is distributed in the hope that it will be useful,       *
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
-*   GNU General Public License for more details.                          *
-*                                                                         *
-*   You should have received a copy of the GNU General Public License     *
-*   along with this program; if not, write to the                         *
-*   Free Software Foundation, Inc.,                                       *
-*   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
-***************************************************************************/
+ *   Copyright (C) 2005 by Matthew Adams                                   *
+ *   roguestar191 at comcast dot net                                       *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************/
 #include <cstdlib>
+#include <string>
+#include <vector>
 #ifdef FUNCTORS_INC
 #else
 #define FUNCTORS_INC 1
 class Attributes
 {
-public:
+  public:
     Attributes()
     {
         hidden = false;
         webbcmd = false;
         immcmd = false;
     }
-    bool hidden;  //hidden
-    bool webbcmd; //web command
-    bool immcmd;  //immortal command
+    bool hidden;  // hidden
+    bool webbcmd; // web command
+    bool immcmd;  // immortal command
     int32_t type;
-    //nothing returns yet anyway, strings may be the most useful?
+    // nothing returns yet anyway, strings may be the most useful?
     class returnType
     {
-    public:
-        returnType() {}
+      public:
+        returnType()
+        {
+        }
         returnType(const returnType &in)
         {
             if (in.s.size() > 0)
@@ -51,18 +55,19 @@ public:
 
 class TFunctor
 {
-public:
+  public:
     Attributes attribs;
-    virtual ~TFunctor() {}
+    virtual ~TFunctor()
+    {
+    }
     virtual void *Call(std::vector<std::string> &d, int32_t &sock_in, bool *isDown) = 0;
 };
-template <class TClass>
-class Functor : public TFunctor
+template <class TClass> class Functor : public TFunctor
 {
-    //To add a new callback method, add a new fpt type here,
-    //set it to nullptr in nullify, then add it to the list
-    //of if/else in the main Call method.
-private:
+    // To add a new callback method, add a new fpt type here,
+    // set it to nullptr in nullify, then add it to the list
+    // of if/else in the main Call method.
+  private:
     void (TClass::*fpt1)();
     void (TClass::*fpt2)(std::string &);
     void (TClass::*fpt3)(const char *);
@@ -75,26 +80,26 @@ private:
     void (TClass::*fpt10)(std::vector<std::string *> *d, int &sock_in);
     void (TClass::*fpt11)(std::string &, int &);
     void (TClass::*fpt12)(std::vector<std::string *> *, int &, bool);
-    TClass *pt2Object; //pointer to object
-public:
-    //New singularlized call method {{{:
+    TClass *pt2Object; // pointer to object
+  public:
+    // New singularlized call method {{{:
     virtual void *Call(std::vector<std::string> &d, int32_t &sock_in, bool *isDown)
     {
-        //Comments {{{
-        //ok, d[0] == command typed
-        //d[1] == arg1
-        //d[2] == arg2, etc.
-        //sometimes socket can be ignored
+        // Comments {{{
+        // ok, d[0] == command typed
+        // d[1] == arg1
+        // d[2] == arg2, etc.
+        // sometimes socket can be ignored
         //}}}
         if (fpt1 != nullptr)
         {
-            //fpt1() no args {{{
+            // fpt1() no args {{{
             (*pt2Object.*fpt1)();
         }
         //}}}
         else if (fpt2 != nullptr)
         {
-            //fpt2(std::string &)  {{{
+            // fpt2(std::string &)  {{{
             std::string a;
             uint32_t x;
             for (x = 0; x < d.size(); x++)
@@ -107,7 +112,7 @@ public:
         }
         else if (fpt3 != nullptr)
         {
-            //fpt3(const char *); {{{
+            // fpt3(const char *); {{{
             if (d.size() >= 2)
                 (*pt2Object.*fpt3)(d[1].c_str());
             else
@@ -237,7 +242,7 @@ public:
     } //}}}
     void nullify()
     {
-        //Set all the fpt's to null {{{
+        // Set all the fpt's to null {{{
         fpt1 = nullptr;
         fpt2 = nullptr;
         fpt3 = nullptr;
@@ -250,22 +255,22 @@ public:
         fpt10 = nullptr;
         fpt11 = nullptr;
         fpt12 = nullptr;
-    } //Nullify }}}
-      //Constructors, call nullify, set pt2object and function pointer {{{
+    } // Nullify }}}
+      // Constructors, call nullify, set pt2object and function pointer {{{
     Functor(TClass *_pt2Object, void (TClass::*_fpt)())
     {
         nullify();
         pt2Object = _pt2Object;
         fpt1 = _fpt;
     }
-    //1 std::string
+    // 1 std::string
     Functor(TClass *_pt2Object, void (TClass::*_fpt)(std::string &))
     {
         nullify();
         pt2Object = _pt2Object;
         fpt2 = _fpt;
     }
-    //1 c string
+    // 1 c string
     Functor(TClass *_pt2Object, void (TClass::*_fpt)(const char *))
     {
         nullify();
@@ -278,14 +283,14 @@ public:
         pt2Object = _pt2Object;
         fpt4 = _fpt;
     }
-    //2 c strings
+    // 2 c strings
     Functor(TClass *_Obj, void (TClass::*_fpt)(const char *, const char *))
     {
         nullify();
         pt2Object = _Obj;
         fpt5 = _fpt;
     }
-    //1 bool
+    // 1 bool
     Functor(TClass *_Obj, void (TClass::*_fpt)(bool *))
     {
         nullify();
@@ -333,7 +338,9 @@ public:
     }
     //}}}
 
-    virtual ~Functor() {}
+    virtual ~Functor()
+    {
+    }
 };
 
 #endif

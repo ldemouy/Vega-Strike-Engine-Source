@@ -1,8 +1,8 @@
 #ifndef _LINECOLLIDE_H_
 #define _LINECOLLIDE_H_
 
-#include <stdlib.h>
 #include "gfx/vec.h"
+#include <stdlib.h>
 
 /**
  * Line Collide provides a complete container for a unit that is put in a collide hashtable
@@ -14,7 +14,7 @@ class Bolt;
 
 struct LineCollide
 {
-private:
+  private:
     union OBJECT {
         Unit *u;
         Beam *b;
@@ -22,7 +22,7 @@ private:
         int i;
     };
 
-public:
+  public:
     enum collidables
     {
         UNIT,
@@ -32,11 +32,11 @@ public:
         PROJECTILE
     };
 
-    ///The object that this LineCollide approximates
+    /// The object that this LineCollide approximates
     OBJECT object;
-    ///The minimum x,y,z that this object has
+    /// The minimum x,y,z that this object has
     QVector Mini;
-    ///The maximum x,y,z that this object has
+    /// The maximum x,y,z that this object has
     QVector Maxi;
     /**
      * The last item that checked this for collisions
@@ -44,10 +44,10 @@ public:
      */
     void *lastchecked;
 
-    ///Which type of unit it is. Used for subsequently calling object's Accurate collide func
+    /// Which type of unit it is. Used for subsequently calling object's Accurate collide func
     collidables type;
 
-    ///If this object was saved as a huge object (hhuge for dos oddities)
+    /// If this object was saved as a huge object (hhuge for dos oddities)
     bool hhuge;
 
     LineCollide() : Mini(0, 0, 0), Maxi(0, 0, 0), lastchecked(nullptr), type(UNIT), hhuge(false)
@@ -55,7 +55,8 @@ public:
         object.u = nullptr;
     }
 
-    LineCollide(void *objec, collidables typ, const QVector &st, const QVector &en) : Mini(st), Maxi(en), lastchecked(nullptr), type(typ), hhuge(false)
+    LineCollide(void *objec, collidables typ, const QVector &st, const QVector &en)
+        : Mini(st), Maxi(en), lastchecked(nullptr), type(typ), hhuge(false)
     {
         this->object.u = (Unit *)objec;
     }

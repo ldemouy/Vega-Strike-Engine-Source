@@ -9,9 +9,13 @@ typedef unsigned int uint;
 
 class vs_options
 {
-public:
-    vs_options() {}
-    ~vs_options() {}
+  public:
+    vs_options()
+    {
+    }
+    ~vs_options()
+    {
+    }
     void init();
 
     /* General Options */
@@ -95,14 +99,14 @@ public:
     bool disabled_cockpit_allowed;
     std::string splash_screen;
     bool vbo;
-    int num_near_stars; //maybe need to be double
-    int num_far_stars;  //maybe need to be double
+    int num_near_stars; // maybe need to be double
+    int num_far_stars;  // maybe need to be double
     double star_spreading;
     bool usePlanetAtmosphere;
     bool usePlanetFog;
     double reflectivity;
     bool hardware_cursor;
-    bool always_make_smooth_cam; //Not used Yet
+    bool always_make_smooth_cam; // Not used Yet
     double precull_dist;
     bool draw_near_stars_in_front_of_planets;
     bool starblend;
@@ -217,7 +221,7 @@ public:
     std::string callsign;
 
     /* Joystick Options */
-    float joystick_exponent; //joystick axes are 32-bit floats.
+    float joystick_exponent; // joystick axes are 32-bit floats.
     int polling_rate;
     bool force_use_of_joystick;
     bool debug_digital_hatswitch;
@@ -251,7 +255,7 @@ public:
     double star_system_scale;
     double respawn_unit_size;
     float auto_pilot_planet_radius_percent;
-    std::string campaigns; //WRONG SECTION ...change after 0.5
+    std::string campaigns; // WRONG SECTION ...change after 0.5
     uint NumRunningSystems;
     float InactiveSystemTime;
     float jump_radius_scale;

@@ -26,34 +26,56 @@
 #include "force_feedback.h"
 
 #include "vegastrike.h"
-#include "vsfilesystem.h"
 #include "vs_globals.h"
+#include "vsfilesystem.h"
 
 #define FF_DOIT 1
 
-ForceFeedback::ForceFeedback() {}
-ForceFeedback::~ForceFeedback() {}
+ForceFeedback::ForceFeedback()
+{
+}
+ForceFeedback::~ForceFeedback()
+{
+}
 
 bool ForceFeedback::haveFF()
 {
     return false;
 }
-void ForceFeedback::updateForce(float angle, float strength) {}
-void ForceFeedback::updateSpeedEffect(float strength) {}
-void ForceFeedback::playHit(float angle, float strength) {}
-void ForceFeedback::playAfterburner(bool activate) {}
-void ForceFeedback::playLaser() {}
+void ForceFeedback::updateForce(float angle, float strength)
+{
+}
+void ForceFeedback::updateSpeedEffect(float strength)
+{
+}
+void ForceFeedback::playHit(float angle, float strength)
+{
+}
+void ForceFeedback::playAfterburner(bool activate)
+{
+}
+void ForceFeedback::playLaser()
+{
+}
 
-void ForceFeedback::playDurationEffect(uint32_t eff_nr, bool activate) {}
+void ForceFeedback::playDurationEffect(uint32_t eff_nr, bool activate)
+{
+}
 
-void ForceFeedback::playShortEffect(uint32_t eff_nr) {}
+void ForceFeedback::playShortEffect(uint32_t eff_nr)
+{
+}
 
 #if HAVE_FORCE_FEEDBACK
 
 void ForceFeedback::playEffect(uint32_t eff_nr)
 {
 }
-void ForceFeedback::stopEffect(uint32_t eff_nr) {}
-void ForceFeedback::init() {}
+void ForceFeedback::stopEffect(uint32_t eff_nr)
+{
+}
+void ForceFeedback::init()
+{
+}
 
 #endif

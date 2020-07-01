@@ -1,15 +1,15 @@
 #ifndef __BASE_H__
 #define __BASE_H__
-#include <vector>
-#include <string>
 #include "basecomputer.h"
 #include "gfx/hud.h"
 #include "gfx/sprite.h"
-#include <stdio.h>
 #include "gui/glut_support.h"
+#include <stdio.h>
+#include <string>
+#include <vector>
 
-#include "audio/Types.h"
 #include "audio/Source.h"
+#include "audio/Types.h"
 #include <memory>
 
 #define BASE_EXTENSION ".py"
@@ -19,20 +19,20 @@ void RunPython(const char *filnam);
 class BaseInterface
 {
     int32_t curlinkindex;
-    int32_t lastmouseindex; //Last link index to be under the mouse
+    int32_t lastmouseindex; // Last link index to be under the mouse
     MousePointerStyle mousePointerStyle;
     bool enabledj;
     bool terminate_scheduled;
     bool midloop;
     TextPlane curtext;
 
-public:
+  public:
     class Room
     {
-    public:
+      public:
         class Link
         {
-        public:
+          public:
             enum
             {
                 ClickEvent = (1 << 0),
@@ -60,73 +60,102 @@ public:
                 eventMask = mask;
             }
 
-            explicit Link(const std::string &ind, const std::string &pfile) : pythonfile(pfile), alpha(1.0f), index(ind), eventMask(ClickEvent), clickbtn(-1) {}
-            virtual ~Link() {}
+            explicit Link(const std::string &ind, const std::string &pfile)
+                : pythonfile(pfile), alpha(1.0f), index(ind), eventMask(ClickEvent), clickbtn(-1)
+            {
+            }
+            virtual ~Link()
+            {
+            }
 
             virtual void Relink(const std::string &pfile);
         };
         class Goto : public Link
         {
-        public:
+          public:
             int32_t index;
             virtual void Click(::BaseInterface *base, float x, float y, int32_t button, int32_t state);
-            virtual ~Goto() {}
-            explicit Goto(const std::string &ind, const std::string &pythonfile) : Link(ind, pythonfile) {}
+            virtual ~Goto()
+            {
+            }
+            explicit Goto(const std::string &ind, const std::string &pythonfile) : Link(ind, pythonfile)
+            {
+            }
         };
         class Comp : public Link
         {
-        public:
+          public:
             vector<BaseComputer::DisplayMode> modes;
             virtual void Click(::BaseInterface *base, float x, float y, int32_t button, int32_t state);
-            virtual ~Comp() {}
-            explicit Comp(const std::string &ind, const std::string &pythonfile) : Link(ind, pythonfile) {}
+            virtual ~Comp()
+            {
+            }
+            explicit Comp(const std::string &ind, const std::string &pythonfile) : Link(ind, pythonfile)
+            {
+            }
         };
         class Launch : public Link
         {
-        public:
+          public:
             virtual void Click(::BaseInterface *base, float x, float y, int32_t button, int32_t state);
-            virtual ~Launch() {}
-            explicit Launch(const std::string &ind, const std::string &pythonfile) : Link(ind, pythonfile) {}
+            virtual ~Launch()
+            {
+            }
+            explicit Launch(const std::string &ind, const std::string &pythonfile) : Link(ind, pythonfile)
+            {
+            }
         };
         class Eject : public Link
         {
-        public:
+          public:
             virtual void Click(::BaseInterface *base, float x, float y, int32_t button, int32_t state);
-            virtual ~Eject() {}
-            explicit Eject(const std::string &ind, const std::string &pythonfile) : Link(ind, pythonfile) {}
+            virtual ~Eject()
+            {
+            }
+            explicit Eject(const std::string &ind, const std::string &pythonfile) : Link(ind, pythonfile)
+            {
+            }
         };
         class Talk : public Link
         {
-        public:
-            //At the moment, the BaseInterface::Room::Talk class is unused... but I may find a use for it later...
+          public:
+            // At the moment, the BaseInterface::Room::Talk class is unused... but I may find a use for it later...
             std::vector<std::string> say;
             std::vector<std::string> soundfiles;
             int32_t index;
             int32_t curroom;
             virtual void Click(::BaseInterface *base, float x, float y, int32_t button, int32_t state);
             explicit Talk(const std::string &ind, const std::string &pythonfile);
-            virtual ~Talk() {}
+            virtual ~Talk()
+            {
+            }
         };
         class Python : public Link
         {
-        public:
-            Python(const std::string &ind, const std::string &pythonfile) : Link(ind, pythonfile) {}
-            virtual ~Python() {}
+          public:
+            Python(const std::string &ind, const std::string &pythonfile) : Link(ind, pythonfile)
+            {
+            }
+            virtual ~Python()
+            {
+            }
         };
         class BaseObj
         {
-        public:
+          public:
             const std::string index;
             virtual void Draw(::BaseInterface *base);
 
             virtual ~BaseObj()
             {
             }
-            explicit BaseObj(const std::string &ind) : index(ind) {}
+            explicit BaseObj(const std::string &ind) : index(ind)
+            {
+            }
         };
         class BasePython : public BaseObj
         {
-        public:
+          public:
             std::string pythonfile;
             float timeleft;
             float maxtime;
@@ -135,27 +164,24 @@ public:
             virtual ~BasePython()
             {
             }
-            BasePython(const std::string &ind, const std::string &python, float time) : BaseObj(ind), pythonfile(python), timeleft(0), maxtime(time) {}
+            BasePython(const std::string &ind, const std::string &python, float time)
+                : BaseObj(ind), pythonfile(python), timeleft(0), maxtime(time)
+            {
+            }
             virtual void Relink(const std::string &python);
         };
         class BaseText : public BaseObj
         {
-        public:
+          public:
             TextPlane text;
             virtual void Draw(::BaseInterface *base);
 
             virtual ~BaseText()
             {
             }
-            BaseText(const std::string &texts,
-                     float posx,
-                     float posy,
-                     float wid,
-                     float hei,
-                     float charsizemult,
-                     GFXColor backcol,
-                     GFXColor forecol,
-                     const std::string &ind) : BaseObj(ind), text(forecol, backcol)
+            BaseText(const std::string &texts, float posx, float posy, float wid, float hei, float charsizemult,
+                     GFXColor backcol, GFXColor forecol, const std::string &ind)
+                : BaseObj(ind), text(forecol, backcol)
             {
                 text.SetPos(posx, posy);
                 text.SetSize(wid, hei);
@@ -181,29 +207,25 @@ public:
         };
         class BaseShip : public BaseObj
         {
-        public:
+          public:
             virtual void Draw(::BaseInterface *base);
             Matrix mat;
-            virtual ~BaseShip() {}
+            virtual ~BaseShip()
+            {
+            }
 
             explicit BaseShip(const std::string &ind) : BaseObj(ind)
             {
             }
-            BaseShip(float r0,
-                     float r1,
-                     float r2,
-                     float r3,
-                     float r4,
-                     float r5,
-                     float r6,
-                     float r7,
-                     float r8,
-                     QVector pos,
-                     const std::string &ind) : BaseObj(ind), mat(r0, r1, r2, r3, r4, r5, r6, r7, r8, QVector(pos.i / 2, pos.j / 2, pos.k)) {}
+            BaseShip(float r0, float r1, float r2, float r3, float r4, float r5, float r6, float r7, float r8,
+                     QVector pos, const std::string &ind)
+                : BaseObj(ind), mat(r0, r1, r2, r3, r4, r5, r6, r7, r8, QVector(pos.i / 2, pos.j / 2, pos.k))
+            {
+            }
         };
         class BaseVSSprite : public BaseObj
         {
-        public:
+          public:
             virtual void Draw(::BaseInterface *base);
             VSSprite spr;
             std::shared_ptr<Audio::Source> soundsource;
@@ -226,8 +248,10 @@ public:
             }
             bool isPlaying() const;
 
-        protected:
-            BaseVSSprite(const std::string &ind, const VSSprite &sprite) : BaseObj(ind), spr(sprite) {}
+          protected:
+            BaseVSSprite(const std::string &ind, const VSSprite &sprite) : BaseObj(ind), spr(sprite)
+            {
+            }
         };
 
         class BaseVSMovie : public BaseVSSprite
@@ -237,32 +261,45 @@ public:
             bool hidePointer;
             double hidePointerTime;
 
-        public:
-            virtual ~BaseVSMovie() {}
+          public:
+            virtual ~BaseVSMovie()
+            {
+            }
             BaseVSMovie(const std::string &moviefile, const std::string &ind);
             void SetMovie(const std::string &moviefile);
 
             float GetTime() const;
             void SetTime(float t);
 
-            bool GetHidePointer() const { return hidePointer; };
+            bool GetHidePointer() const
+            {
+                return hidePointer;
+            };
             void SetHidePointer(bool hide);
 
-            const std::string &getCallback() const { return callback; }
-            void setCallback(const std::string &callback) { this->callback = callback; }
+            const std::string &getCallback() const
+            {
+                return callback;
+            }
+            void setCallback(const std::string &callback)
+            {
+                this->callback = callback;
+            }
 
             virtual void Draw(::BaseInterface *base);
         };
 
         class BaseTalk : public BaseObj
         {
-        public:
+          public:
             static bool hastalked;
             virtual void Draw(::BaseInterface *base);
-            //Talk * caller;
+            // Talk * caller;
             uint32_t curchar;
             float curtime;
-            virtual ~BaseTalk() {}
+            virtual ~BaseTalk()
+            {
+            }
             std::string message;
             BaseTalk(const std::string &msg, const std::string &ind, bool only_one_talk);
         };
@@ -306,7 +343,10 @@ public:
     void Draw();
 
     void setDJEnabled(bool enabled);
-    bool isDJEnabled() const { return enabledj; }
+    bool isDJEnabled() const
+    {
+        return enabledj;
+    }
 };
 
 #endif

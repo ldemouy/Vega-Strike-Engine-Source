@@ -1,27 +1,16 @@
 #include "ring.h"
+#include "ani_texture.h"
+#include "config_xml.h"
 #include "vegastrike.h"
 #include "vs_globals.h"
-#include "config_xml.h"
 #include "vsfilesystem.h"
 #include "xml_support.h"
-#include "ani_texture.h"
 
-extern int pixelscalesize; //from sphere.cpp
+extern int pixelscalesize; // from sphere.cpp
 
-void RingMesh::InitRing(float iradius,
-                        float oradius,
-                        int slices,
-                        const char *texture,
-                        const QVector &R,
-                        const QVector &S,
-                        int wrapx,
-                        int wrapy,
-                        const BLENDFUNC a,
-                        const BLENDFUNC b,
-                        bool envMapping,
-                        float theta_min,
-                        float theta_max,
-                        FILTER mipmap)
+void RingMesh::InitRing(float iradius, float oradius, int slices, const char *texture, const QVector &R,
+                        const QVector &S, int wrapx, int wrapy, const BLENDFUNC a, const BLENDFUNC b, bool envMapping,
+                        float theta_min, float theta_max, FILTER mipmap)
 {
     int numspheres = slices / 4;
     if (numspheres < 1)
@@ -31,16 +20,19 @@ void RingMesh::InitRing(float iradius,
     ab[2] = '\0';
     ab[1] = b + '0';
     ab[0] = a + '0';
-    hash_name = string("@@Ring") + "#" + texture + "#" + XMLSupport::tostring(slices) + ab + "#" + XMLSupport::tostring(theta_min) + "#" + XMLSupport::tostring(theta_max);
+    hash_name = string("@@Ring") + "#" + texture + "#" + XMLSupport::tostring(slices) + ab + "#" +
+                XMLSupport::tostring(theta_min) + "#" + XMLSupport::tostring(theta_max);
     if (LoadExistant(hash_name, Vector(iradius, iradius, iradius), 0))
         return;
-    oldmesh = AllocNewMeshesEachInSizeofMeshSpace(numspheres); //FIXME::RISKY::MIGHT HAVE DIFFERENT SIZES!! DON"T YOU DARE ADD XTRA VARS TO SphereMesh calsshave to!
+    oldmesh = AllocNewMeshesEachInSizeofMeshSpace(numspheres); // FIXME::RISKY::MIGHT HAVE DIFFERENT SIZES!! DON"T YOU
+                                                               // DARE ADD XTRA VARS TO SphereMesh calsshave to!
     numlods = numspheres;
-    meshHashTable.Put(hash_name = VSFileSystem::GetSharedMeshHashName(hash_name, Vector(iradius, iradius, iradius), 0), oldmesh);
+    meshHashTable.Put(hash_name = VSFileSystem::GetSharedMeshHashName(hash_name, Vector(iradius, iradius, iradius), 0),
+                      oldmesh);
     this->orig = oldmesh;
-    radialSize = oradius; //MAKE SURE FRUSTUM CLIPPING IS DONE CORRECTLY!!!!!
-    //mn = Vector (radialSize,radialSize,radialSize);
-    //mx = Vector (-radialSize,-radialSize,-radialSize);
+    radialSize = oradius; // MAKE SURE FRUSTUM CLIPPING IS DONE CORRECTLY!!!!!
+    // mn = Vector (radialSize,radialSize,radialSize);
+    // mx = Vector (-radialSize,-radialSize,-radialSize);
     mn = Vector(0, 0, 0);
     mx = Vector(0, 0, 0);
     vector<MeshDrawContext> *odq = nullptr;
@@ -100,9 +92,9 @@ void RingMesh::InitRing(float iradius,
             modes[i] = GFXQUADSTRIP;
             QSOffsets[i] = (slices + 1) * 2;
         }
-        //radialSize = .5*(mx-mn).Magnitude();//+.5*oradius;
+        // radialSize = .5*(mx-mn).Magnitude();//+.5*oradius;
         local_pos = (mx + mn) * .5;
-        //local_pos.Set(0,0,0);
+        // local_pos.Set(0,0,0);
         vlist = new GFXVertexList(modes, numvertex, vertexlist, numQuadstrips, QSOffsets);
         delete[] vertexlist;
         delete[] modes;
@@ -112,7 +104,8 @@ void RingMesh::InitRing(float iradius,
         bool found_texture = false;
         if (texlen > 3)
         {
-            if (texture[texlen - 1] == 'i' && texture[texlen - 2] == 'n' && texture[texlen - 3] == 'a' && texture[texlen - 4] == '.')
+            if (texture[texlen - 1] == 'i' && texture[texlen - 2] == 'n' && texture[texlen - 3] == 'a' &&
+                texture[texlen - 4] == '.')
             {
                 found_texture = true;
                 if (Decal.empty())
@@ -124,7 +117,8 @@ void RingMesh::InitRing(float iradius,
         {
             if (Decal.empty())
                 Decal.push_back(nullptr);
-            Decal[0] = new Texture(texture, 0, mipmap, TEXTURE2D, TEXTURE_2D, g_game.use_planet_textures ? GFXTRUE : GFXFALSE);
+            Decal[0] =
+                new Texture(texture, 0, mipmap, TEXTURE2D, TEXTURE_2D, g_game.use_planet_textures ? GFXTRUE : GFXFALSE);
         }
         setEnvMap(envMapping);
         Mesh *oldorig = orig;

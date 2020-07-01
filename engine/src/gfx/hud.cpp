@@ -18,17 +18,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-#include <ctype.h>
-#include "gldrv/gfxlib.h"
-#include "cmd/unit_generic.h"
 #include "hud.h"
-#include "lin_time.h"
+#include "cmd/base.h"
+#include "cmd/unit_generic.h"
+#include "config_xml.h"
 #include "file_main.h"
 #include "gfx/aux_texture.h"
+#include "gldrv/gfxlib.h"
+#include "lin_time.h"
 #include "vs_globals.h"
-#include "config_xml.h"
 #include "xml_support.h"
-#include "cmd/base.h"
+#include <ctype.h>
 //#include "glut.h"
 
 #include "gldrv/gl_globals.h"
@@ -142,7 +142,9 @@ TextPlane::TextPlane(const GFXColor &c, const GFXColor &bgcol)
     SetPos(0, 0);
 }
 
-TextPlane::~TextPlane() {}
+TextPlane::~TextPlane()
+{
+}
 
 int TextPlane::Draw(int offset)
 {
@@ -155,7 +157,8 @@ static unsigned int *CreateLists()
     void *fnt0 = getFont(true, false);
     void *fnt1 = getFont(true, true);
     static bool use_bit = XMLSupport::parse_bool(vs_config->getVariable("graphics", "high_quality_font", "false"));
-    static bool use_display_lists = XMLSupport::parse_bool(vs_config->getVariable("graphics", "text_display_lists", "true"));
+    static bool use_display_lists =
+        XMLSupport::parse_bool(vs_config->getVariable("graphics", "text_display_lists", "true"));
     if (use_display_lists)
     {
         for (unsigned int i = 32; i < 256; i++)
@@ -196,15 +199,8 @@ static float TwoCharToFloat(char a, char b)
 
 void DrawSquare(float left, float right, float top, float bot)
 {
-    float verts[8 * 3] = {
-        left, top, 0,
-        left, bot, 0,
-        right, bot, 0,
-        right, top, 0,
-        right, top, 0,
-        right, bot, 0,
-        left, bot, 0,
-        left, top, 0};
+    float verts[8 * 3] = {left,  top, 0, left,  bot, 0, right, bot, 0, right, top, 0,
+                          right, top, 0, right, bot, 0, left,  bot, 0, left,  top, 0};
     GFXDraw(GFXQUAD, verts, 8);
 }
 
@@ -217,11 +213,7 @@ float charWidth(char c, float myFontMetrics)
     return charwid * myFontMetrics / dubyawid;
 }
 
-bool doNewLine(string::const_iterator begin,
-               string::const_iterator end,
-               float cur_pos,
-               float end_pos,
-               float metrics,
+bool doNewLine(string::const_iterator begin, string::const_iterator end, float cur_pos, float end_pos, float metrics,
                bool last_row)
 {
     if (*begin == '\n')
@@ -241,9 +233,10 @@ int TextPlane::Draw(const string &newText, int offset, bool startlower, bool for
     int retval = 1;
     bool drawbg = (bgcol.a != 0);
     static unsigned int *display_lists = CreateLists();
-    //some stuff to draw the text stuff
+    // some stuff to draw the text stuff
     string::const_iterator text_it = newText.begin();
-    static bool use_bit = force_highquality || XMLSupport::parse_bool(vs_config->getVariable("graphics", "high_quality_font", "false"));
+    static bool use_bit =
+        force_highquality || XMLSupport::parse_bool(vs_config->getVariable("graphics", "high_quality_font", "false"));
     static float font_point = XMLSupport::parse_float(vs_config->getVariable("graphics", "font_point", "16"));
     static bool font_antialias = XMLSupport::parse_bool(vs_config->getVariable("graphics", "font_antialias", "true"));
     void *fnt = getFont();
@@ -303,8 +296,7 @@ int TextPlane::Draw(const string &newText, int offset, bool startlower, bool for
     {
         int numplayers = 1;
         if (_Universe) //_Universe can be nullptr during bootstrap.
-            numplayers = (_Universe->numPlayers() > 3 ? _Universe->numPlayers() / 2
-                                                      : _Universe->numPlayers());
+            numplayers = (_Universe->numPlayers() > 3 ? _Universe->numPlayers() / 2 : _Universe->numPlayers());
         scalex = numplayers * myFontMetrics.i / std_wid;
         scaley = myFontMetrics.j / (119.05 + 33.33);
     }
@@ -324,7 +316,8 @@ int TextPlane::Draw(const string &newText, int offset, bool startlower, bool for
         else
         {
             if (use_bit)
-                shadowlen = glutBitmapWidth(fnt, myc) / (float)(.5 * g_game.x_resolution); //need to use myc -- could have transformed '_' to ' '
+                shadowlen = glutBitmapWidth(fnt, myc) /
+                            (float)(.5 * g_game.x_resolution); // need to use myc -- could have transformed '_' to ' '
             else
                 shadowlen = myFontMetrics.i * glutStrokeWidth(GLUT_STROKE_ROMAN, myc) / std_wid;
         }
@@ -356,14 +349,15 @@ int TextPlane::Draw(const string &newText, int offset, bool startlower, bool for
         }
         else if (*text_it >= 32)
         {
-            //always true
+            // always true
             if (automatte)
             {
                 GFXColorf(this->bgcol);
-                DrawSquare(col - origcol, col - origcol + shadowlen / scalex, -rowheight * .25 / scaley, rowheight * .75 / scaley);
+                DrawSquare(col - origcol, col - origcol + shadowlen / scalex, -rowheight * .25 / scaley,
+                           rowheight * .75 / scaley);
                 GFXColorf(currentCol);
             }
-            //glutStrokeCharacter (GLUT_STROKE_ROMAN,*text_it);
+            // glutStrokeCharacter (GLUT_STROKE_ROMAN,*text_it);
             retval += potentialincrease;
             potentialincrease = 0;
             int lists = display_lists[myc + (isInside() ? 128 : 0)];
@@ -384,10 +378,8 @@ int TextPlane::Draw(const string &newText, int offset, bool startlower, bool for
             if (automatte)
             {
                 GFXColorf(this->bgcol);
-                DrawSquare(col - origcol,
-                           col - origcol + shadowlen * 5 / (.5 * g_game.x_resolution),
-                           -rowheight * .25 / scaley,
-                           rowheight * .75 / scaley);
+                DrawSquare(col - origcol, col - origcol + shadowlen * 5 / (.5 * g_game.x_resolution),
+                           -rowheight * .25 / scaley, rowheight * .75 / scaley);
                 GFXColorf(currentCol);
             }
             col += shadowlen;

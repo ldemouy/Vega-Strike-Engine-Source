@@ -1,14 +1,16 @@
-#include <boost/version.hpp>
-#include <Python.h>
-#include <math.h>
 #include "pythonmission.h"
-#include "python/python_compile.h"
-#include <string>
 #include "python/init.h"
+#include "python/python_compile.h"
+#include <Python.h>
+#include <boost/version.hpp>
+#include <math.h>
+#include <string>
 
-#include "vsfilesystem.h"
 #include "cmd/container.h"
-PythonMissionBaseClass::PythonMissionBaseClass() {}
+#include "vsfilesystem.h"
+PythonMissionBaseClass::PythonMissionBaseClass()
+{
+}
 void PythonMissionBaseClass::Destructor()
 {
     delete this;
@@ -25,12 +27,18 @@ PythonMissionBaseClass::~PythonMissionBaseClass()
                              (unsigned long)(size_t)this, (unsigned int)(size_t)this);
 }
 
-void PythonMissionBaseClass::Execute() {}
-void PythonMissionBaseClass::callFunction(std::string) {}
+void PythonMissionBaseClass::Execute()
+{
+}
+void PythonMissionBaseClass::callFunction(std::string)
+{
+}
 
 std::string PythonMissionBaseClass::Pickle()
 {
     return std::string();
 }
 
-void PythonMissionBaseClass::UnPickle(std::string s) {}
+void PythonMissionBaseClass::UnPickle(std::string s)
+{
+}

@@ -1,49 +1,30 @@
 #include "building.h"
 #include "cont_terrain.h"
 
-GameBuilding::GameBuilding(ContinuousTerrain *parent,
-                           bool vehicle,
-                           const char *filename,
-                           bool SubUnit,
-                           int32_t faction,
-                           const string &modifications,
-                           Flightgroup *fg) : GameUnit<Building>(filename, SubUnit, faction, modifications, fg)
+GameBuilding::GameBuilding(ContinuousTerrain *parent, bool vehicle, const char *filename, bool SubUnit, int32_t faction,
+                           const string &modifications, Flightgroup *fg)
+    : GameUnit<Building>(filename, SubUnit, faction, modifications, fg)
 {
     this->vehicle = vehicle;
     continuous = true;
     this->parent.plane = parent;
 }
 
-GameBuilding::GameBuilding(Terrain *parent,
-                           bool vehicle,
-                           const char *filename,
-                           bool SubUnit,
-                           int32_t faction,
-                           const string &modifications,
-                           Flightgroup *fg) : GameUnit<Building>(filename, SubUnit, faction, modifications, fg)
+GameBuilding::GameBuilding(Terrain *parent, bool vehicle, const char *filename, bool SubUnit, int32_t faction,
+                           const string &modifications, Flightgroup *fg)
+    : GameUnit<Building>(filename, SubUnit, faction, modifications, fg)
 {
     this->vehicle = vehicle;
     continuous = false;
     this->parent.terrain = parent;
 }
 
-void GameBuilding::UpdatePhysics2(const Transformation &trans,
-                                  const Transformation &old_physical_state,
-                                  const Vector &accel,
-                                  float difficulty,
-                                  const Matrix &transmat,
-                                  const Vector &CumulativeVelocity,
-                                  bool ResolveLast,
-                                  UnitCollection *uc)
+void GameBuilding::UpdatePhysics2(const Transformation &trans, const Transformation &old_physical_state,
+                                  const Vector &accel, float difficulty, const Matrix &transmat,
+                                  const Vector &CumulativeVelocity, bool ResolveLast, UnitCollection *uc)
 {
-    GameUnit<Building>::UpdatePhysics2(trans,
-                                       old_physical_state,
-                                       accel,
-                                       difficulty,
-                                       transmat,
-                                       CumulativeVelocity,
-                                       ResolveLast,
-                                       uc);
+    GameUnit<Building>::UpdatePhysics2(trans, old_physical_state, accel, difficulty, transmat, CumulativeVelocity,
+                                       ResolveLast, uc);
     QVector tmp(LocalPosition());
     Vector p, q, r;
     GetOrientation(p, q, r);

@@ -9,26 +9,27 @@
 namespace Audio
 {
 
-    /**
-     * OggCodec factory class, for Ogg audio streams.
-     * @see CodecRegistry to create OggCodec instances.
-     */
-    class OggCodec : public Codec
-    {
-    public:
-        OggCodec();
+/**
+ * OggCodec factory class, for Ogg audio streams.
+ * @see CodecRegistry to create OggCodec instances.
+ */
+class OggCodec : public Codec
+{
+  public:
+    OggCodec();
 
-        virtual ~OggCodec();
+    virtual ~OggCodec();
 
-        /** @see Codec::getExtensions */
-        virtual const Extensions *getExtensions() const;
+    /** @see Codec::getExtensions */
+    virtual const Extensions *getExtensions() const;
 
-        /** @see Codec::canHandle */
-        virtual bool canHandle(const std::string &path, bool canOpen, VSFileSystem::VSFileType type = VSFileSystem::UnknownFile);
+    /** @see Codec::canHandle */
+    virtual bool canHandle(const std::string &path, bool canOpen,
+                           VSFileSystem::VSFileType type = VSFileSystem::UnknownFile);
 
-        /** @see Codec::open */
-        virtual Stream *open(const std::string &path, VSFileSystem::VSFileType type = VSFileSystem::UnknownFile);
-    };
+    /** @see Codec::open */
+    virtual Stream *open(const std::string &path, VSFileSystem::VSFileType type = VSFileSystem::UnknownFile);
+};
 
 }; // namespace Audio
 

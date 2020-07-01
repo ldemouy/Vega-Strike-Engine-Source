@@ -2,8 +2,8 @@
 #define __HALO_H
 
 #include "gldrv/gfxlib.h"
-#include "vec.h"
 #include "quaternion.h"
+#include "vec.h"
 
 #define TranslucentWhite (GFXColor(1, 1, 1, .5))
 #define ZeroQvector (QVector(0, 0, 0))
@@ -16,7 +16,7 @@ class Halo
     int decal;
     int quadnum;
 
-public:
+  public:
     static void ProcessDrawQueue();
 };
 

@@ -1,7 +1,7 @@
 #ifndef _STARSYSGEN_H_
 #define _STARSYSGEN_H_
-#include <vector>
 #include <string>
+#include <vector>
 using std::string;
 using std::vector;
 
@@ -32,11 +32,11 @@ struct SystemInfo
     bool force;
 };
 
-///appends .system
+/// appends .system
 std::string getStarSystemFileName(const std::string &input);
-///finds the name after all / characters and capitalizes the first letter
+/// finds the name after all / characters and capitalizes the first letter
 std::string getStarSystemName(const std::string &in);
-///finds the name before the first /  this is the sector name
+/// finds the name before the first /  this is the sector name
 std::string getStarSystemSector(const std::string &in);
 string getUniversePath();
 void readnames(vector<string> &entity, const char *filename);

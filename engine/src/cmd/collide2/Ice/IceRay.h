@@ -15,18 +15,26 @@
 
 class Ray
 {
-public:
-	//! Constructor
-	inline Ray() {}
-	//! Constructor
-	inline Ray(const Point &orig, const Point &dir) : mOrig(orig), mDir(dir) {}
-	//! Copy constructor
-	inline Ray(const Ray &ray) : mOrig(ray.mOrig), mDir(ray.mDir) {}
-	//! Destructor
-	inline ~Ray() {}
+  public:
+    //! Constructor
+    inline Ray()
+    {
+    }
+    //! Constructor
+    inline Ray(const Point &orig, const Point &dir) : mOrig(orig), mDir(dir)
+    {
+    }
+    //! Copy constructor
+    inline Ray(const Ray &ray) : mOrig(ray.mOrig), mDir(ray.mDir)
+    {
+    }
+    //! Destructor
+    inline ~Ray()
+    {
+    }
 
-	Point mOrig; //!< Ray origin
-	Point mDir;	 //!< Normalized direction
+    Point mOrig; //!< Ray origin
+    Point mDir;  //!< Normalized direction
 };
 
 #endif // __ICERAY_H__

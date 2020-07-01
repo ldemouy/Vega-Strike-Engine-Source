@@ -1,15 +1,15 @@
 #ifndef __UNIT_JUMP_CPP__
 #define __UNIT_JUMP_CPP__
 
-#include "unit.h"
 #include "aldrv/audiolib.h"
-#include "star_system_generic.h"
 #include "cmd/images.h"
-//From star_system_jump.cpp
+#include "star_system_generic.h"
+#include "unit.h"
+// From star_system_jump.cpp
 extern Hashtable<std::string, StarSystem, 127> star_system_table;
 extern std::vector<unorigdest *> pendingjump;
 
-//From star_system_jump.cpp
+// From star_system_jump.cpp
 inline bool CompareDest(Unit *un, StarSystem *origin)
 {
     for (unsigned int i = 0; i < un->GetDestinations().size(); i++)
@@ -38,7 +38,7 @@ bool GameUnit<UnitType>::TransferUnitToSystem(unsigned int kk, StarSystem *&save
     {
         if (Unit::TransferUnitToSystem(pendingjump[kk]->dest))
         {
-            ///eradicating from system, leaving no trace
+            /// eradicating from system, leaving no trace
             ret = true;
 
             Unit *unit;
@@ -83,7 +83,8 @@ bool GameUnit<UnitType>::TransferUnitToSystem(unsigned int kk, StarSystem *&save
             _Universe->setActiveStarSystem(pendingjump[kk]->dest);
             vector<Unit *> possibilities;
             Unit *primary;
-            if (pendingjump[kk]->final_location.i == 0 && pendingjump[kk]->final_location.j == 0 && pendingjump[kk]->final_location.k == 0)
+            if (pendingjump[kk]->final_location.i == 0 && pendingjump[kk]->final_location.j == 0 &&
+                pendingjump[kk]->final_location.k == 0)
                 for (auto iter = pendingjump[kk]->dest->getUnitList().createIterator(); (primary = *iter); ++iter)
                 {
                     vector<Unit *> tmp;
@@ -103,25 +104,27 @@ bool GameUnit<UnitType>::TransferUnitToSystem(unsigned int kk, StarSystem *&save
                 ActivateAnimation(jumpnode);
                 if (jumpnode->isUnit() == UNITPTR)
                 {
-                    QVector Offset(pos.i < 0 ? 1 : -1,
-                                   pos.j < 0 ? 1 : -1,
-                                   pos.k < 0 ? 1 : -1);
+                    QVector Offset(pos.i < 0 ? 1 : -1, pos.j < 0 ? 1 : -1, pos.k < 0 ? 1 : -1);
                     Offset *= jumpnode->rSize() * 2 + this->rSize() * 2;
                     this->SetPosAndCumPos(pos + Offset);
-                    if (is_null(jumpnode->location[Unit::UNIT_ONLY]) == false && is_null(jumpnode->location[Unit::UNIT_BOLT]) == false)
+                    if (is_null(jumpnode->location[Unit::UNIT_ONLY]) == false &&
+                        is_null(jumpnode->location[Unit::UNIT_BOLT]) == false)
                         this->UpdateCollideQueue(pendingjump[kk]->dest, jumpnode->location);
                 }
                 jumpdest += 23231;
             }
             Unit *tester;
             for (unsigned int jjj = 0; jjj < 2; ++jjj)
-                for (auto i = _Universe->activeStarSystem()->getUnitList().createIterator();
-                     (tester = *i) != nullptr; ++i)
+                for (auto i = _Universe->activeStarSystem()->getUnitList().createIterator(); (tester = *i) != nullptr;
+                     ++i)
                     if (tester->isUnit() == UNITPTR && tester != this)
-                        if ((this->LocalPosition() - tester->LocalPosition()).Magnitude() < this->rSize() + tester->rSize())
-                            this->SetCurPosition(this->LocalPosition() + this->cumulative_transformation_matrix.getR() * (4 * (this->rSize() + tester->rSize())));
+                        if ((this->LocalPosition() - tester->LocalPosition()).Magnitude() <
+                            this->rSize() + tester->rSize())
+                            this->SetCurPosition(this->LocalPosition() + this->cumulative_transformation_matrix.getR() *
+                                                                             (4 * (this->rSize() + tester->rSize())));
             DealPossibleJumpDamage(this);
-            static int jumparrive = AUDCreateSound(vs_config->getVariable("unitaudio", "jumparrive", "sfx43.wav"), false);
+            static int jumparrive =
+                AUDCreateSound(vs_config->getVariable("unitaudio", "jumparrive", "sfx43.wav"), false);
             if (dosightandsound)
                 AUDPlay(jumparrive, this->LocalPosition(), this->GetVelocity(), 1);
         }
@@ -148,9 +151,7 @@ bool GameUnit<UnitType>::TransferUnitToSystem(unsigned int kk, StarSystem *&save
             else
             {
                 Unit *targ = nullptr;
-                for (auto i = pendingjump[kk]->dest->getUnitList().createIterator();
-                     (targ = (*i));
-                     ++i)
+                for (auto i = pendingjump[kk]->dest->getUnitList().createIterator(); (targ = (*i)); ++i)
                     if (targ == un)
                         break;
                 if (targ != un)

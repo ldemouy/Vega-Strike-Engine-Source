@@ -21,18 +21,18 @@
 
 #include "vegastrike.h"
 #if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-//For WIN32 debugging.
+// For WIN32 debugging.
 #include <crtdbg.h>
 #endif
 
 #include <assert.h>
 
 #include "criteria.h"
-#include "vs_globals.h"
-#include "gfx/cockpit.h"
 #include "galaxy_xml.h"
+#include "gfx/cockpit.h"
 #include "savegame.h"
 #include "universe_util.h"
+#include "vs_globals.h"
 
 using std::set;
 using std::string;
@@ -191,7 +191,8 @@ CriteriaNot::~CriteriaNot()
 
 /////////////////////////////////////////////////////////////////
 
-CriteriaBinaryOperator::CriteriaBinaryOperator(CriteriaNode *child, CriteriaNode *newNode) : CriteriaParent(child->getParent())
+CriteriaBinaryOperator::CriteriaBinaryOperator(CriteriaNode *child, CriteriaNode *newNode)
+    : CriteriaParent(child->getParent())
 {
     assert(child != nullptr);
     assert(newNode != nullptr);
@@ -353,9 +354,9 @@ bool CriteriaContains::isDestination(unsigned system) const
 {
     string name = _Universe->AccessCockpit()->AccessNavSystem()->systemIter[system].GetName();
 
-    //Check to make sure we have been there in person
-    //Not only for realism
-    //but the systems may have not been created yet.
+    // Check to make sure we have been there in person
+    // Not only for realism
+    // but the systems may have not been created yet.
     string key(string("visited_") + name);
     vector<float> *v = &_Universe->AccessCockpit()->savegame->getMissionData(key);
     if (v->empty())

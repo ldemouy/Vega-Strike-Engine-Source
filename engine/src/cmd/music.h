@@ -1,9 +1,10 @@
 #ifndef _MUSIC_H_
 #define _MUSIC_H_
 #include "container.h"
-#include <vector>
-#include <string>
 #include <list>
+#include <map>
+#include <string>
+#include <vector>
 #if defined(__HAIKU__)
 #include <pthread.h>
 #endif
@@ -11,9 +12,9 @@
 namespace Muzak
 {
 #ifndef _WIN32
-    extern void *readerThread(void *input);
+extern void *readerThread(void *input);
 #else
-    extern DWORD WINAPI readerThread(PVOID input);
+extern DWORD WINAPI readerThread(PVOID input);
 #endif
 }; // namespace Muzak
 
@@ -24,7 +25,7 @@ class Music
     int socketr;
     int socketw;
     UnitContainer p;
-    int song; //currently playing song
+    int song; // currently playing song
     int lastlist;
     float vol;
     float soft_vol;
@@ -84,7 +85,7 @@ class Music
     };
     std::vector<PlayList> playlist;
 
-public:
+  public:
     enum Playlist
     {
         NOLIST = -1,
@@ -122,7 +123,7 @@ public:
     static void Mute(bool mute = true, int layer = -1);
     std::vector<int> sounds_to_stop;
 
-private:
+  private:
     void _StopLater();
     void _StopNow();
     void _GotoSong(std::string mus);
@@ -156,10 +157,10 @@ private:
     volatile bool music_loaded;
     volatile bool killthread;
     volatile bool threadalive;
-    volatile bool music_loading; //Opposite order of music_loaded.
+    volatile bool music_loading; // Opposite order of music_loaded.
     bool freeWav;
     struct AUDSoundProperties *music_load_info;
-    vector<std::string> music_load_list; //reverse order.
+    std::vector<std::string> music_load_list; // reverse order.
 
     void _LoadLastSongAsync();
 

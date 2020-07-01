@@ -1,30 +1,29 @@
+#include "aggressive.h"
+#include "cmd/csv.h"
+#include "cmd/role_bitmask.h"
+#include "cmd/script/flightgroup.h"
+#include "cmd/script/mission.h"
+#include "cmd/unit_find.h"
+#include "cmd/unit_generic.h"
+#include "cmd/unit_util.h"
+#include "communication.h"
+#include "config_xml.h"
+#include "docking.h"
+#include "event_xml.h"
+#include "faction_generic.h"
+#include "flybywire.h"
+#include "gfx/cockpit_generic.h"
+#include "hard_coded_scripts.h"
+#include "lin_time.h"
+#include "python/python_compile.h"
+#include "script.h"
+#include "universe_util.h"
+#include "vs_globals.h"
+#include "vs_random.h"
+#include "warpto.h"
+#include "xml_support.h"
 #include <list>
 #include <vector>
-#include "aggressive.h"
-#include "event_xml.h"
-#include "script.h"
-#include "vs_globals.h"
-#include "config_xml.h"
-#include "xml_support.h"
-#include "cmd/unit_generic.h"
-#include "communication.h"
-#include "cmd/script/flightgroup.h"
-#include "flybywire.h"
-#include "hard_coded_scripts.h"
-#include "cmd/script/mission.h"
-#include "gfx/cockpit_generic.h"
-#include "lin_time.h"
-#include "faction_generic.h"
-#include "cmd/role_bitmask.h"
-#include "cmd/unit_util.h"
-#include "warpto.h"
-#include "cmd/csv.h"
-#include "universe_util.h"
-#include "vs_random.h"
-#include "python/python_compile.h"
-#include "cmd/unit_find.h"
-#include "faction_generic.h"
-#include "docking.h"
 
 extern double aggfire;
 
@@ -154,9 +153,7 @@ static string select_from_space_list(string inp, uint32_t seed)
     return inp;
 }
 
-static AIEvents::ElemAttrMap *getLogicOrInterrupt(string name,
-                                                  int32_t faction,
-                                                  string unittype,
+static AIEvents::ElemAttrMap *getLogicOrInterrupt(string name, int32_t faction, string unittype,
                                                   vsUMap<string, AIEvents::ElemAttrMap *> &mymap,
                                                   int32_t personalityseed)
 {
@@ -189,11 +186,8 @@ static AIEvents::ElemAttrMap *getLogicOrInterrupt(string name,
     return i->second;
 }
 
-static AIEvents::ElemAttrMap *getProperLogicOrInterruptScript(string name,
-                                                              int32_t faction,
-                                                              string unittype,
-                                                              bool interrupt,
-                                                              int32_t personalityseed)
+static AIEvents::ElemAttrMap *getProperLogicOrInterruptScript(string name, int32_t faction, string unittype,
+                                                              bool interrupt, int32_t personalityseed)
 {
     return getLogicOrInterrupt(name, faction, unittype, logic, personalityseed);
 }
@@ -211,15 +205,14 @@ static AIEvents::ElemAttrMap *getProperScript(Unit *me, Unit *targ, bool interru
         }
         return getProperLogicOrInterruptScript("default", fac, nam, interrupt, personalityseed);
     }
-    return getProperLogicOrInterruptScript(ROLES::getRoleEvents(me->attackPreference(),
-                                                                targ->unitRole()),
-                                           me->faction, me->name, interrupt,
-                                           personalityseed);
+    return getProperLogicOrInterruptScript(ROLES::getRoleEvents(me->attackPreference(), targ->unitRole()), me->faction,
+                                           me->name, interrupt, personalityseed);
 }
 
 static float aggressivity = 2.01;
 static int32_t randomtemp;
-AggressiveAI::AggressiveAI(const char *filename, Unit *target) : FireAt(), logic(getProperScript(nullptr, nullptr, "default", randomtemp = rand()))
+AggressiveAI::AggressiveAI(const char *filename, Unit *target)
+    : FireAt(), logic(getProperScript(nullptr, nullptr, "default", randomtemp = rand()))
 {
     currentpriority = 0;
     last_jump_time = 0;
@@ -230,7 +223,7 @@ AggressiveAI::AggressiveAI(const char *filename, Unit *target) : FireAt(), logic
     creationtime = getNewTime();
     jump_time_check = 1;
     last_time_insys = true;
-    logiccurtime = logic->maxtime; //set it to the time allotted
+    logiccurtime = logic->maxtime; // set it to the time allotted
     obedient = true;
     if (aggressivity == 2.01)
     {
@@ -255,9 +248,9 @@ void AggressiveAI::SetParent(Unit *parent1)
         filename = last_directive.substr(0, which);
         interruptname = last_directive.substr(which + 1);
     }
-    last_directive = "b"; //prevent escort race condition
+    last_directive = "b"; // prevent escort race condition
 
-    //INIT stored stuff
+    // INIT stored stuff
     Fshield_prev = parent->graphicOptions.InWarp ? 1 : parent->FShieldData();
     Fshield_rate_old = 0.0;
     Fshield_prev_time = UniverseUtil::GetGameTime();
@@ -320,15 +313,14 @@ bool AggressiveAI::ProcessLogicItem(const AIEvents::AIEvresult &item)
     case DISTANCE:
         value = distance;
         break;
-    case METERDISTANCE:
-    {
+    case METERDISTANCE: {
         Unit *targ = parent->Target();
         if (targ)
         {
             Vector PosDifference = targ->Position().Cast() - parent->Position().Cast();
             float pdmag = PosDifference.Magnitude();
             value = (pdmag - parent->rSize() - targ->rSize());
-            float myvel = PosDifference.Dot(parent->GetVelocity() - targ->GetVelocity()) / value; ///pdmag;
+            float myvel = PosDifference.Dot(parent->GetVelocity() - targ->GetVelocity()) / value; /// pdmag;
             if (myvel > 0)
             {
                 value -= myvel * myvel / (2 * (parent->Limits().retro / parent->GetMass()));
@@ -350,8 +342,7 @@ bool AggressiveAI::ProcessLogicItem(const AIEvents::AIEvresult &item)
     case BSHIELD:
         value = parent->graphicOptions.InWarp ? 1 : parent->BShieldData();
         break;
-    case HULL:
-    {
+    case HULL: {
         value = parent->GetHullPercent();
         break;
     }
@@ -361,12 +352,11 @@ bool AggressiveAI::ProcessLogicItem(const AIEvents::AIEvresult &item)
     case RSHIELD:
         value = parent->graphicOptions.InWarp ? 1 : parent->RShieldData();
         break;
-    case FSHIELD_HEAL_RATE:
-    {
+    case FSHIELD_HEAL_RATE: {
         double delta_t = UniverseUtil::GetGameTime() - Fshield_prev_time;
         if (delta_t > 0.5)
         {
-            //0.5 = reaction time limit for hit rate
+            // 0.5 = reaction time limit for hit rate
             double delta_v = parent->graphicOptions.InWarp ? 1 : parent->FShieldData() - Fshield_prev;
             value = delta_v / delta_t;
             Fshield_rate_old = value;
@@ -379,12 +369,11 @@ bool AggressiveAI::ProcessLogicItem(const AIEvents::AIEvresult &item)
         }
         break;
     }
-    case BSHIELD_HEAL_RATE:
-    {
+    case BSHIELD_HEAL_RATE: {
         double delta_t = UniverseUtil::GetGameTime() - Bshield_prev_time;
         if (delta_t > 0.5)
         {
-            //0.5 = reaction time limit for hit rate
+            // 0.5 = reaction time limit for hit rate
             double delta_v = parent->graphicOptions.InWarp ? 1 : parent->BShieldData() - Bshield_prev;
             value = delta_v / delta_t;
             Bshield_rate_old = value;
@@ -397,12 +386,11 @@ bool AggressiveAI::ProcessLogicItem(const AIEvents::AIEvresult &item)
         }
         break;
     }
-    case LSHIELD_HEAL_RATE:
-    {
+    case LSHIELD_HEAL_RATE: {
         double delta_t = UniverseUtil::GetGameTime() - Lshield_prev_time;
         if (delta_t > 0.5)
         {
-            //0.5 = reaction time limit for hit rate
+            // 0.5 = reaction time limit for hit rate
             double delta_v = parent->graphicOptions.InWarp ? 1 : parent->LShieldData() - Lshield_prev;
             value = delta_v / delta_t;
             Lshield_rate_old = value;
@@ -415,12 +403,11 @@ bool AggressiveAI::ProcessLogicItem(const AIEvents::AIEvresult &item)
         }
         break;
     }
-    case RSHIELD_HEAL_RATE:
-    {
+    case RSHIELD_HEAL_RATE: {
         double delta_t = UniverseUtil::GetGameTime() - Rshield_prev_time;
         if (delta_t > 0.5)
         {
-            //0.5 = reaction time limit for hit rate
+            // 0.5 = reaction time limit for hit rate
             double delta_v = parent->graphicOptions.InWarp ? 1 : parent->RShieldData() - Rshield_prev;
             value = delta_v / delta_t;
             Rshield_rate_old = value;
@@ -445,12 +432,11 @@ bool AggressiveAI::ProcessLogicItem(const AIEvents::AIEvresult &item)
     case RARMOR_HEAL_RATE:
         value = 0.5;
         break;
-    case HULL_HEAL_RATE:
-    {
+    case HULL_HEAL_RATE: {
         double delta_t = UniverseUtil::GetGameTime() - Hull_prev_time;
         if (delta_t > 0.5)
         {
-            //0.5 = reaction time limit for hit rate
+            // 0.5 = reaction time limit for hit rate
             double delta_v = parent->GetHullPercent() - Hull_prev;
             value = delta_v / delta_t;
             Hull_rate_old = value;
@@ -463,8 +449,7 @@ bool AggressiveAI::ProcessLogicItem(const AIEvents::AIEvresult &item)
         }
         break;
     }
-    case TARGET_FACES_YOU:
-    {
+    case TARGET_FACES_YOU: {
         value = 0.0;
         Unit *targ = parent->Target();
         if (targ)
@@ -480,8 +465,7 @@ bool AggressiveAI::ProcessLogicItem(const AIEvents::AIEvresult &item)
         }
         break;
     }
-    case TARGET_IN_FRONT_OF_YOU:
-    {
+    case TARGET_IN_FRONT_OF_YOU: {
         value = 0.0;
         Unit *targ = parent->Target();
         if (targ)
@@ -497,8 +481,7 @@ bool AggressiveAI::ProcessLogicItem(const AIEvents::AIEvresult &item)
         }
         break;
     }
-    case TARGET_GOING_YOUR_DIRECTION:
-    {
+    case TARGET_GOING_YOUR_DIRECTION: {
         value = 0.0;
         Unit *targ = parent->Target();
         if (targ)
@@ -531,7 +514,7 @@ bool AggressiveAI::ProcessLogicItem(const AIEvents::AIEvresult &item)
 
 bool AggressiveAI::ProcessLogic(AIEvents::ElemAttrMap &logi, bool inter)
 {
-    //go through the logic.
+    // go through the logic.
     bool retval = false;
 
     for (auto i = logi.result.begin(); i != logi.result.end(); i++)
@@ -548,7 +531,7 @@ bool AggressiveAI::ProcessLogic(AIEvents::ElemAttrMap &logi, bool inter)
         }
         if (trueit && j == i->end())
         {
-            //do it
+            // do it
             if (j != i->begin())
             {
                 j--;
@@ -597,9 +580,7 @@ Unit *GetThreat(Unit *parent, Unit *leader)
     Unit *un = nullptr;
     bool targetted = false;
     float mindist = FLT_MAX;
-    for (auto ui = _Universe->activeStarSystem()->getUnitList().createIterator();
-         (un = *ui);
-         ++ui)
+    for (auto ui = _Universe->activeStarSystem()->getUnitList().createIterator(); (un = *ui); ++ui)
         if (parent->getRelation(un) < 0)
         {
             float d = (un->Position() - leader->Position()).Magnitude();
@@ -689,21 +670,18 @@ bool AggressiveAI::ProcessCurrentFgDirective(Flightgroup *fg)
                             parent->Target(targ);
                             parent->SetTurretAI();
                             parent->TargetTurret(targ);
-                            //if I am the capship, go into defensive mode.
+                            // if I am the capship, go into defensive mode.
                             if (parent == leaderowner)
                             {
-                                //get in front of me
+                                // get in front of me
                                 parent->TurretFAW();
 
                                 c.SetCurrentState(c.fsm->GetYesNode(), nullptr, 0);
-                                Order *ord = new Orders::MatchLinearVelocity(parent->ClampVelocity(Vector(0,
-                                                                                                          0,
-                                                                                                          0),
-                                                                                                   true),
-                                                                             true, false, true);
+                                Order *ord = new Orders::MatchLinearVelocity(
+                                    parent->ClampVelocity(Vector(0, 0, 0), true), true, false, true);
                                 ord->SetParent(parent);
                                 ReplaceOrder(ord);
-                                //facing forward
+                                // facing forward
                                 ord = new Orders::FaceTarget(false, 3);
                                 ord->SetParent(parent);
                                 ReplaceOrder(ord);
@@ -730,7 +708,7 @@ bool AggressiveAI::ProcessCurrentFgDirective(Flightgroup *fg)
                         }
                     }
                 }
-                //a is now used for AI, for backward compatibility. do not use for player
+                // a is now used for AI, for backward compatibility. do not use for player
             }
             else if (fg->directive.find("a") != string::npos || fg->directive.find("A") != string::npos)
             {
@@ -779,14 +757,10 @@ bool AggressiveAI::ProcessCurrentFgDirective(Flightgroup *fg)
                             {
                                 o->Communicate(c);
                             }
-                            static float esc_percent = XMLSupport::parse_float(vs_config->getVariable("AI",
-                                                                                                      "Targetting",
-                                                                                                      "EscortDistance",
-                                                                                                      "10.0"));
-                            static float turn_leader = XMLSupport::parse_float(vs_config->getVariable("AI",
-                                                                                                      "Targetting",
-                                                                                                      "TurnLeaderDist",
-                                                                                                      "5.0"));
+                            static float esc_percent = XMLSupport::parse_float(
+                                vs_config->getVariable("AI", "Targetting", "EscortDistance", "10.0"));
+                            static float turn_leader = XMLSupport::parse_float(
+                                vs_config->getVariable("AI", "Targetting", "TurnLeaderDist", "5.0"));
                             int32_t fgnum = parent->getFgSubnumber();
                             if (parent->getFlightgroup())
                             {
@@ -810,7 +784,8 @@ bool AggressiveAI::ProcessCurrentFgDirective(Flightgroup *fg)
                             }
                             float left = fgnum % 2 ? 1 : -1;
 
-                            double dist = esc_percent * (1 + abs(fgnum - 1) / 2) * left * (parent->rSize() + leader->rSize());
+                            double dist =
+                                esc_percent * (1 + abs(fgnum - 1) / 2) * left * (parent->rSize() + leader->rSize());
                             Order *ord = new Orders::FormUp(QVector(dist, 0, -fabs(dist)));
                             ord->SetParent(parent);
                             ReplaceOrder(ord);
@@ -829,14 +804,14 @@ bool AggressiveAI::ProcessCurrentFgDirective(Flightgroup *fg)
                     }
                 }
             }
-            //IAmDave - hold position command
+            // IAmDave - hold position command
             else if (fg->directive.find("s") != string::npos || fg->directive.find("S") != string::npos)
             {
                 Order *ord = new Orders::MatchVelocity(Vector(0, 0, 0), Vector(0, 0, 0), true, false);
                 ord->SetParent(parent);
                 ReplaceOrder(ord);
             }
-            //IAmDave - dock at target command start...
+            // IAmDave - dock at target command start...
             else if (fg->directive.find("t") != string::npos || fg->directive.find("T") != string::npos)
             {
                 Unit *targ = fg->target.GetUnit();
@@ -845,7 +820,8 @@ bool AggressiveAI::ProcessCurrentFgDirective(Flightgroup *fg)
                     Order *ord;
                     if (targ->IsBase())
                     {
-                        ord = new Orders::DockingOps(targ, new Orders::MatchVelocity(Vector(0, 0, 0), Vector(0, 0, 0), true, false), true, true);
+                        ord = new Orders::DockingOps(
+                            targ, new Orders::MatchVelocity(Vector(0, 0, 0), Vector(0, 0, 0), true, false), true, true);
                     }
                     else
                     {
@@ -855,7 +831,7 @@ bool AggressiveAI::ProcessCurrentFgDirective(Flightgroup *fg)
                     ReplaceOrder(ord);
                 }
             }
-            //IAmDave - ...dock at target command end.
+            // IAmDave - ...dock at target command end.
             else if (fg->directive.find("l") != string::npos || fg->directive.find("L") != string::npos)
             {
                 if (leader != nullptr)
@@ -867,19 +843,15 @@ bool AggressiveAI::ProcessCurrentFgDirective(Flightgroup *fg)
                         {
                             last_time_insys = true;
                             CommunicationMessage c(parent, leader, nullptr, 0);
-                            //this order is only valid for cargo wingmen, other wingmen will not comply
+                            // this order is only valid for cargo wingmen, other wingmen will not comply
                             c.SetCurrentState(c.fsm->GetYesNode(), nullptr, 0);
                             Order *o = leader->getAIState();
                             if (o)
                                 o->Communicate(c);
-                            static float esc_percent = XMLSupport::parse_float(vs_config->getVariable("AI",
-                                                                                                      "Targetting",
-                                                                                                      "EscortDistance",
-                                                                                                      "10.0"));
-                            static float turn_leader = XMLSupport::parse_float(vs_config->getVariable("AI",
-                                                                                                      "Targetting",
-                                                                                                      "TurnLeaderDist",
-                                                                                                      "5.0"));
+                            static float esc_percent = XMLSupport::parse_float(
+                                vs_config->getVariable("AI", "Targetting", "EscortDistance", "10.0"));
+                            static float turn_leader = XMLSupport::parse_float(
+                                vs_config->getVariable("AI", "Targetting", "TurnLeaderDist", "5.0"));
                             int32_t fgnum = parent->getFgSubnumber();
                             if (parent->getFlightgroup())
                             {
@@ -902,26 +874,27 @@ bool AggressiveAI::ProcessCurrentFgDirective(Flightgroup *fg)
                                 fgnum += tempnum;
                             }
                             /*
-                            *  // this does the job for real! "parent" is executor, "leader" is commander
-                            *
-                            *  // moves where you want it to
-                            *  // moves flat out in front of parent unit (to allow for tractoring)
-                            *                 Order * ord = new Orders::FormUp(QVector(position*parent->radial_size,0,fabs(dist)));
-                            *             ord->SetParent (parent);
-                            *             ReplaceOrder (ord);
-                            *  // faces same direction as leader
-                            *  //		  ord = new Orders::FaceDirection(dist*turn_leader);
-                            *  // faces opposite direction as leader, as in, stare at me in the face please
-                            *                 ord = new Orders::FaceDirection(-dist*turn_leader);
-                            *             ord->SetParent (parent);
-                            *             ReplaceOrder (ord);
-                            */
+                             *  // this does the job for real! "parent" is executor, "leader" is commander
+                             *
+                             *  // moves where you want it to
+                             *  // moves flat out in front of parent unit (to allow for tractoring)
+                             *                 Order * ord = new
+                             * Orders::FormUp(QVector(position*parent->radial_size,0,fabs(dist))); ord->SetParent
+                             * (parent); ReplaceOrder (ord);
+                             *  // faces same direction as leader
+                             *  //		  ord = new Orders::FaceDirection(dist*turn_leader);
+                             *  // faces opposite direction as leader, as in, stare at me in the face please
+                             *                 ord = new Orders::FaceDirection(-dist*turn_leader);
+                             *             ord->SetParent (parent);
+                             *             ReplaceOrder (ord);
+                             */
 
                             int alternate = fgnum % 2 ? 1 : -1;
                             float psize = parent->radial_size;
                             int Ypos = 0;
                             int Xpos = 0;
-                            //nice square formation, how many of these are you going to have anyway? Max 9, then go back. Should be enough.
+                            // nice square formation, how many of these are you going to have anyway? Max 9, then go
+                            // back. Should be enough.
                             switch (fgnum % 9)
                             {
                             case 0:
@@ -966,45 +939,44 @@ bool AggressiveAI::ProcessCurrentFgDirective(Flightgroup *fg)
                             }
                             float dist = (leader->radial_size + parent->radial_size * 2);
                             float formdist = esc_percent * (1 + fgnum * 2) * alternate * (dist);
-                            //if i am a cargo wingman, get into a dockable position
+                            // if i am a cargo wingman, get into a dockable position
                             if (parentowner == leader)
                             {
                                 // move in front
                                 Order *ord = new Orders::FormUp(QVector(0, 0, fabs(dist)));
                                 ord->SetParent(parent);
                                 ReplaceOrder(ord);
-                                //facing me
+                                // facing me
                                 ord = new Orders::FaceDirection(-dist * turn_leader);
                                 EnqueueOrderFirst(ord);
                             }
-                            //if i am a cargo wingman and so is the player, get into a dockable position with the leader
+                            // if i am a cargo wingman and so is the player, get into a dockable position with the
+                            // leader
                             else if (parentowner && leaderowner && (parentowner == leaderowner))
                             {
                                 const Unit *leaderownerun =
-                                    (leaderowner == leader ? leader : (leaderowner == parent ? parent : findUnitInStarsystem(leaderowner)));
+                                    (leaderowner == leader
+                                         ? leader
+                                         : (leaderowner == parent ? parent : findUnitInStarsystem(leaderowner)));
                                 float qdist = (parent->rSize() + leaderownerun->rSize());
                                 Order *ord =
-                                    new Orders::MoveTo(leaderownerun->Position() + Vector(0.5 * Xpos * psize,
-                                                                                          0.5 * Ypos * psize,
-                                                                                          0.5 * qdist),
+                                    new Orders::MoveTo(leaderownerun->Position() +
+                                                           Vector(0.5 * Xpos * psize, 0.5 * Ypos * psize, 0.5 * qdist),
                                                        true, 4);
                                 ord->SetParent(parent);
                                 ReplaceOrder(ord);
-                                //facing it
+                                // facing it
                                 ord = new Orders::FaceDirection(-qdist * turn_leader);
                                 ord->SetParent(parent);
                                 ReplaceOrder(ord);
                             }
-                            //if i am the capship, go into defensive mode
+                            // if i am the capship, go into defensive mode
                             else if (parent == leaderowner)
                             {
                                 parent->SetTurretAI();
                                 TurretFAW(parent);
-                                Order *ord = new Orders::MatchLinearVelocity(parent->ClampVelocity(Vector(0,
-                                                                                                          0,
-                                                                                                          0),
-                                                                                                   true),
-                                                                             true, false, true);
+                                Order *ord = new Orders::MatchLinearVelocity(
+                                    parent->ClampVelocity(Vector(0, 0, 0), true), true, false, true);
                                 ord->SetParent(parent);
                                 ReplaceOrder(ord);
                                 if (parent->Target() != nullptr)
@@ -1020,10 +992,10 @@ bool AggressiveAI::ProcessCurrentFgDirective(Flightgroup *fg)
                             }
                             else
                             {
-                                //if i'm not a cargo wingman, just form up somewhat loosely.
+                                // if i'm not a cargo wingman, just form up somewhat loosely.
                                 parentowner = parent;
-                                Order *ord =
-                                    new Orders::FormUp(QVector(5 * Xpos * psize, 5 * Ypos * psize, -fabs(formdist) + Ypos * psize + Xpos * psize));
+                                Order *ord = new Orders::FormUp(QVector(5 * Xpos * psize, 5 * Ypos * psize,
+                                                                        -fabs(formdist) + Ypos * psize + Xpos * psize));
                                 ord->SetParent(parent);
                                 ReplaceOrder(ord);
                                 ord = new Orders::FaceDirection(dist * turn_leader);
@@ -1048,7 +1020,7 @@ bool AggressiveAI::ProcessCurrentFgDirective(Flightgroup *fg)
                     if (LeaderPosition.Magnitude() > 0 || leader->InCorrectStarSystem(_Universe->activeStarSystem()))
                     {
                         retval = true;
-                        if (LeaderPosition.Magnitude() == 0) //only read the position the first time
+                        if (LeaderPosition.Magnitude() == 0) // only read the position the first time
                         {
                             LeaderPosition = leader->Position();
                         }
@@ -1056,12 +1028,10 @@ bool AggressiveAI::ProcessCurrentFgDirective(Flightgroup *fg)
                         {
                             last_time_insys = true;
                             CommunicationMessage c(parent, leader, nullptr, 0);
-                            //this order is only valid for cargo wingmen, other wingmen will not comply
+                            // this order is only valid for cargo wingmen, other wingmen will not comply
                             c.SetCurrentState(c.fsm->GetYesNode(), nullptr, 0);
-                            static float turn_leader = XMLSupport::parse_float(vs_config->getVariable("AI",
-                                                                                                      "Targetting",
-                                                                                                      "TurnLeaderDist",
-                                                                                                      "5.0"));
+                            static float turn_leader = XMLSupport::parse_float(
+                                vs_config->getVariable("AI", "Targetting", "TurnLeaderDist", "5.0"));
                             int32_t fgnum = parent->getFgSubnumber();
                             if (parent->getFlightgroup())
                             {
@@ -1083,25 +1053,26 @@ bool AggressiveAI::ProcessCurrentFgDirective(Flightgroup *fg)
                                 fgnum += tempnum;
                             }
                             /*
-                            *  // this does the job for real! "parent" is executor, "leader" is commander
-                            *
-                            *  // moves where you want it to
-                            *  // moves flat out in front of parent unit (to allow for tractoring)
-                            *                 Order * ord = new Orders::FormUp(QVector(position*parent->radial_size,0,fabs(dist)));
-                            *             ord->SetParent (parent);
-                            *             ReplaceOrder (ord);
-                            *  // faces same direction as leader
-                            *  //		  ord = new Orders::FaceDirection(dist*turn_leader);
-                            *  // faces opposite direction as leader, as in, stare at me in the face please
-                            *                 ord = new Orders::FaceDirection(-dist*turn_leader);
-                            *             ord->SetParent (parent);
-                            *             ReplaceOrder (ord);
-                            */
+                             *  // this does the job for real! "parent" is executor, "leader" is commander
+                             *
+                             *  // moves where you want it to
+                             *  // moves flat out in front of parent unit (to allow for tractoring)
+                             *                 Order * ord = new
+                             * Orders::FormUp(QVector(position*parent->radial_size,0,fabs(dist))); ord->SetParent
+                             * (parent); ReplaceOrder (ord);
+                             *  // faces same direction as leader
+                             *  //		  ord = new Orders::FaceDirection(dist*turn_leader);
+                             *  // faces opposite direction as leader, as in, stare at me in the face please
+                             *                 ord = new Orders::FaceDirection(-dist*turn_leader);
+                             *             ord->SetParent (parent);
+                             *             ReplaceOrder (ord);
+                             */
 
                             float psize = parent->radial_size;
                             int32_t Ypos = 0;
                             int32_t Xpos = 0;
-                            //nice square formation, how many of these are you going to have anyway? Max 9, then go back. Should be enough.
+                            // nice square formation, how many of these are you going to have anyway? Max 9, then go
+                            // back. Should be enough.
                             switch (fgnum % 9)
                             {
                             case 0:
@@ -1144,25 +1115,23 @@ bool AggressiveAI::ProcessCurrentFgDirective(Flightgroup *fg)
                                 Xpos = 0;
                                 Ypos = 0;
                             }
-                            //if i am a cargo wingman go close for pickup
-                            //if i am the capship, go close for pickup
+                            // if i am a cargo wingman go close for pickup
+                            // if i am the capship, go close for pickup
                             if ((parent->owner == leader->owner) || parent->owner == leader)
                             {
-                                //float left= fgnum%2?1:-1;
+                                // float left= fgnum%2?1:-1;
                                 float qdist = (1.5 * parent->rSize() + 1.5 * leader->rSize());
-                                Order *ord =
-                                    new Orders::MoveTo(LeaderPosition + Vector(0.5 * Xpos * psize,
-                                                                               0.5 * Ypos * psize,
-                                                                               0.5 * qdist),
-                                                       true, 4);
+                                Order *ord = new Orders::MoveTo(
+                                    LeaderPosition + Vector(0.5 * Xpos * psize, 0.5 * Ypos * psize, 0.5 * qdist), true,
+                                    4);
                                 ord->SetParent(parent);
                                 ReplaceOrder(ord);
-                                //facing it
+                                // facing it
                                 ord = new Orders::FaceDirection(-qdist * turn_leader);
                                 ord->SetParent(parent);
                                 ReplaceOrder(ord);
                             }
-                            //if i'm not a cargo wingman, IT'S NOT MY PROBLEM.
+                            // if i'm not a cargo wingman, IT'S NOT MY PROBLEM.
                             else
                             {
                                 parent->owner = parent;
@@ -1221,18 +1190,14 @@ bool AggressiveAI::ProcessCurrentFgDirective(Flightgroup *fg)
                                     c.SetCurrentState(c.fsm->GetYesNode(), nullptr, 0);
                                     parent->Target(th);
                                     parent->TargetTurret(th);
-                                    //if I am the capship, go into defensive mode.
+                                    // if I am the capship, go into defensive mode.
                                     if (parent == leader->owner)
                                     {
-                                        //parent->Target(parent);
+                                        // parent->Target(parent);
                                         parent->SetTurretAI();
                                         TurretFAW(parent);
-                                        Order *ord =
-                                            new Orders::MatchLinearVelocity(parent->ClampVelocity(Vector(0,
-                                                                                                         0,
-                                                                                                         0),
-                                                                                                  true),
-                                                                            true, false, true);
+                                        Order *ord = new Orders::MatchLinearVelocity(
+                                            parent->ClampVelocity(Vector(0, 0, 0), true), true, false, true);
                                         ord->SetParent(parent);
                                         ReplaceOrder(ord);
                                         if (parent->Target() != nullptr)
@@ -1304,17 +1269,13 @@ bool AggressiveAI::ProcessCurrentFgDirective(Flightgroup *fg)
                                     }
                                     parent->Target(th);
                                     parent->TargetTurret(th);
-                                    //if I am the capship, go into defensive mode.
+                                    // if I am the capship, go into defensive mode.
                                     if (parent == leaderowner)
                                     {
                                         parent->SetTurretAI();
                                         parent->TurretFAW();
-                                        Order *ord =
-                                            new Orders::MatchLinearVelocity(parent->ClampVelocity(Vector(0,
-                                                                                                         0,
-                                                                                                         0),
-                                                                                                  true),
-                                                                            true, false, true);
+                                        Order *ord = new Orders::MatchLinearVelocity(
+                                            parent->ClampVelocity(Vector(0, 0, 0), true), true, false, true);
                                         ord->SetParent(parent);
                                         ReplaceOrder(ord);
                                         if (parent->Target() != nullptr)
@@ -1360,17 +1321,15 @@ extern void LeadMe(Unit *un, string directive, string speech, bool changetarget)
 
 void AggressiveAI::ReCommandWing(Flightgroup *fg)
 {
-    static float time_to_recommand_wing = XMLSupport::parse_float(vs_config->getVariable("AI",
-                                                                                         "Targetting",
-                                                                                         "TargetCommandierTime",
-                                                                                         "100"));
+    static float time_to_recommand_wing =
+        XMLSupport::parse_float(vs_config->getVariable("AI", "Targetting", "TargetCommandierTime", "100"));
     static bool verbose_debug = XMLSupport::parse_bool(vs_config->getVariable("data", "verbose_debug", "false"));
     if (fg != nullptr)
     {
         Unit *lead;
         if (overridable(fg->directive))
         {
-            //computer won't override capital orders
+            // computer won't override capital orders
             if (nullptr != (lead = fg->leader.GetUnit()))
             {
                 if (float(rand()) / RAND_MAX < SIMULATION_ATOM / time_to_recommand_wing)
@@ -1442,7 +1401,8 @@ static Unit *ChooseNavPoint(Unit *parent, Unit **otherdest, float *lurk_on_arriv
     float sysrel = UnitUtil::getRelationFromFaction(parent, stats->system_faction);
     static float lurk_time = XMLSupport::parse_float(vs_config->getVariable("AI", "lurk_time", "600"));
     static float select_time = XMLSupport::parse_float(vs_config->getVariable("AI", "fg_nav_select_time", "120"));
-    static float hostile_select_time = XMLSupport::parse_float(vs_config->getVariable("AI", "pirate_nav_select_time", "400"));
+    static float hostile_select_time =
+        XMLSupport::parse_float(vs_config->getVariable("AI", "pirate_nav_select_time", "400"));
     static int32_t num_ships_per_roid =
         XMLSupport::parse_int(vs_config->getVariable("AI", "num_pirates_per_asteroid_field", "12"));
     bool civilian = FactionUtil::isCitizenInt(parent->faction);
@@ -1470,7 +1430,7 @@ static Unit *ChooseNavPoint(Unit *parent, Unit **otherdest, float *lurk_on_arriv
     }
     else
     {
-        int32_t k = (int32_t)(getNewTime() / timehash); //two minutes
+        int32_t k = (int32_t)(getNewTime() / timehash); // two minutes
         string key = UnitUtil::getFlightgroupName(parent);
 
         for (auto start = key.begin(); start != key.end(); start++)
@@ -1489,28 +1449,29 @@ static Unit *ChooseNavPoint(Unit *parent, Unit **otherdest, float *lurk_on_arriv
     bool asteroidhide = false;
     if (stats->friendlycount > 0 && stats->enemycount > 0)
     {
-        asteroidhide = (secondRand < stats->enemycount / (float)stats->friendlycount) && (secondRand < num_ships_per_roid * stats->navs[2].size() / (float)stats->enemycount);
+        asteroidhide = (secondRand < stats->enemycount / (float)stats->friendlycount) &&
+                       (secondRand < num_ships_per_roid * stats->navs[2].size() / (float)stats->enemycount);
     }
-    bool siege = stats->enemycount > 2 * stats->friendlycount; //rough approx
-    int32_t whichlist = 1;                                     //friendly
+    bool siege = stats->enemycount > 2 * stats->friendlycount; // rough approx
+    int32_t whichlist = 1;                                     // friendly
     std::string fgname = UnitUtil::getFlightgroupName(parent);
 
     bool insys = (parent->GetJumpStatus().drive == -2) || fgname.find(insysString) != std::string::npos;
     std::string::size_type whereconvoy = fgname.find(arrowString);
     bool convoy = (whereconvoy != std::string::npos);
-    size_t total_size = stats->navs[0].size() + stats->navs[whichlist].size(); //friendly and neutral
+    size_t total_size = stats->navs[0].size() + stats->navs[whichlist].size(); // friendly and neutral
     static bool bad_units_lurk = XMLSupport::parse_bool(vs_config->getVariable("AI", "hostile_lurk", "true"));
     if (hostile && bad_units_lurk)
     {
         if (anarchy && !siege)
         {
             whichlist = 2;
-            total_size = stats->navs[0].size() + stats->navs[whichlist].size(); //asteroids and neutrals
+            total_size = stats->navs[0].size() + stats->navs[whichlist].size(); // asteroids and neutrals
         }
         else
         {
             whichlist = 2;
-            total_size = stats->navs[whichlist].size(); //just asteroids
+            total_size = stats->navs[whichlist].size(); // just asteroids
         }
     }
     else if (civilian)
@@ -1523,12 +1484,13 @@ static Unit *ChooseNavPoint(Unit *parent, Unit **otherdest, float *lurk_on_arriv
         else if (insys || convoy)
         {
             whichlist = 1;
-            total_size = stats->navs[1].size(); //don't go to jump point
+            total_size = stats->navs[1].size(); // don't go to jump point
         }
     }
-    if (hostile && ((anarchy == false && asteroidhide == false) || total_size == 0) && civilian == false && bad_units_lurk)
+    if (hostile && ((anarchy == false && asteroidhide == false) || total_size == 0) && civilian == false &&
+        bad_units_lurk)
     {
-        //hit and run
+        // hit and run
         Unit *a = GetRandomNav(stats->navs, firstRand);
         Unit *b = GetRandomNav(stats->navs, thirdRand);
         if (a == b)
@@ -1538,7 +1500,8 @@ static Unit *ChooseNavPoint(Unit *parent, Unit **otherdest, float *lurk_on_arriv
         if (a != b)
         {
             int retrycount = maxrand;
-            while (--retrycount > 0 && (UnitUtil::getDistance(a, b) < parent->GetComputerData().radar.maxrange * 4 || a == b))
+            while (--retrycount > 0 &&
+                   (UnitUtil::getDistance(a, b) < parent->GetComputerData().radar.maxrange * 4 || a == b))
             {
                 b = GetRandomNav(stats->navs, additionalrand[retrycount]);
             }
@@ -1574,8 +1537,9 @@ static Unit *ChooseNavPoint(Unit *parent, Unit **otherdest, float *lurk_on_arriv
                 }
                 else
                 {
-                    total_size = stats->navs[whichlist].size() + stats->navs[0].size(); //no such jump point--have to random-walk it
-                    //maybe one day we can incorporate some sort of route planning
+                    total_size = stats->navs[whichlist].size() +
+                                 stats->navs[0].size(); // no such jump point--have to random-walk it
+                    // maybe one day we can incorporate some sort of route planning
                 }
             }
         }
@@ -1585,7 +1549,7 @@ static Unit *ChooseNavPoint(Unit *parent, Unit **otherdest, float *lurk_on_arriv
             if (firstRand >= stats->navs[whichlist].size())
             {
                 firstRand -= stats->navs[whichlist].size();
-                whichlist = 0; //allows you to look for both neutral and ally lists
+                whichlist = 0; // allows you to look for both neutral and ally lists
             }
             return stats->navs[whichlist][firstRand].GetUnit();
         }
@@ -1603,14 +1567,10 @@ static Unit *ChooseNearNavPoint(Unit *parent, Unit *suggestion, QVector location
     float dist = FLT_MAX;
     Unit *un;
     NearestNavOrCapshipLocator nnl;
-    findObjects(_Universe->activeStarSystem()->collidemap[Unit::UNIT_ONLY],
-                parent->location[Unit::UNIT_ONLY],
-                &nnl);
+    findObjects(_Universe->activeStarSystem()->collidemap[Unit::UNIT_ONLY], parent->location[Unit::UNIT_ONLY], &nnl);
     return nnl.retval.unit;
-    //DEAD CODE
-    for (auto i = _Universe->activeStarSystem()->getUnitList().createIterator();
-         (un = *i) != nullptr;
-         ++i)
+    // DEAD CODE
+    for (auto i = _Universe->activeStarSystem()->getUnitList().createIterator(); (un = *i) != nullptr; ++i)
     {
         if (UnitUtil::isSignificant(un) && un != parent)
         {
@@ -1623,7 +1583,7 @@ static Unit *ChooseNearNavPoint(Unit *parent, Unit *suggestion, QVector location
         }
     }
     return candidate;
-    //END DEAD CODE
+    // END DEAD CODE
 }
 
 bool CloseEnoughToNavOrDest(Unit *parent, Unit *navUnit, QVector nav)
@@ -1648,13 +1608,10 @@ class FlyTo : public Orders::MoveTo
     float creationtime;
     UnitContainer destUnit;
 
-public:
-    FlyTo(const QVector &target,
-          bool aft,
-          bool terminating = true,
-          float creationtime = 0,
-          int32_t leniency = 6,
-          Unit *destUnit = nullptr) : MoveTo(target, aft, leniency, terminating)
+  public:
+    FlyTo(const QVector &target, bool aft, bool terminating = true, float creationtime = 0, int32_t leniency = 6,
+          Unit *destUnit = nullptr)
+        : MoveTo(target, aft, leniency, terminating)
     {
         this->creationtime = creationtime;
         this->destUnit = destUnit;
@@ -1676,7 +1633,9 @@ public:
         static float mintime = XMLSupport::parse_float(vs_config->getVariable("AI", "min_time_to_auto", "25"));
         if (getNewTime() - creationtime > mintime)
         {
-            if (_Universe->AccessCockpit()->autoInProgress() && (!_Universe->AccessCockpit()->unitInAutoRegion(parent)) && (un = ChooseNearNavPoint(parent, destUnit.GetUnit(), targetlocation, 0)) != nullptr)
+            if (_Universe->AccessCockpit()->autoInProgress() &&
+                (!_Universe->AccessCockpit()->unitInAutoRegion(parent)) &&
+                (un = ChooseNearNavPoint(parent, destUnit.GetUnit(), targetlocation, 0)) != nullptr)
             {
                 WarpToP(parent, un, true);
             }
@@ -1694,14 +1653,11 @@ public:
 
 static Vector randVector()
 {
-    return Vector((rand() / (float)RAND_MAX) * 2 - 1, (rand() / (float)RAND_MAX) * 2 - 1, (rand() / (float)RAND_MAX) * 2 - 1);
+    return Vector((rand() / (float)RAND_MAX) * 2 - 1, (rand() / (float)RAND_MAX) * 2 - 1,
+                  (rand() / (float)RAND_MAX) * 2 - 1);
 }
 
-static void GoTo(AggressiveAI *ai,
-                 Unit *parent,
-                 const QVector &nav,
-                 float creationtime,
-                 bool boonies = false,
+static void GoTo(AggressiveAI *ai, Unit *parent, const QVector &nav, float creationtime, bool boonies = false,
                  Unit *destUnit = nullptr)
 {
     static bool can_afterburn = XMLSupport::parse_bool(vs_config->getVariable("AI", "afterburn_to_no_enemies", "true"));
@@ -1725,7 +1681,8 @@ void AggressiveAI::ExecuteNoEnemies()
         Unit *dest = ChooseNavPoint(parent, &otherdest, &this->lurk_on_arrival);
         if (dest)
         {
-            static bool can_warp_to = XMLSupport::parse_bool(vs_config->getVariable("AI", "warp_to_no_enemies", "true"));
+            static bool can_warp_to =
+                XMLSupport::parse_bool(vs_config->getVariable("AI", "warp_to_no_enemies", "true"));
             static float mintime = XMLSupport::parse_float(vs_config->getVariable("AI", "min_time_to_auto", "25"));
             if (getNewTime() - creationtime > mintime)
             {
@@ -1733,7 +1690,8 @@ void AggressiveAI::ExecuteNoEnemies()
                 {
                     WarpToP(parent, dest, true);
                 }
-                else if (_Universe->AccessCockpit()->autoInProgress() && !_Universe->AccessCockpit()->unitInAutoRegion(parent))
+                else if (_Universe->AccessCockpit()->autoInProgress() &&
+                         !_Universe->AccessCockpit()->unitInAutoRegion(parent))
                 {
                     WarpToP(parent, dest, true);
                 }
@@ -1754,8 +1712,8 @@ void AggressiveAI::ExecuteNoEnemies()
                 {
                     dir *= 2;
                     dir += (unitdir * safetyspacing);
-                    dir +=
-                        ((randVector() * randspacingfactor / 4.0f) + (unitdir * randspacingfactor)) * ((parent->rSize() > (safetyspacing / 5)) ? (safetyspacing / 5) : (parent->rSize()));
+                    dir += ((randVector() * randspacingfactor / 4.0f) + (unitdir * randspacingfactor)) *
+                           ((parent->rSize() > (safetyspacing / 5)) ? (safetyspacing / 5) : (parent->rSize()));
                 }
             }
             nav = dest->Position() + dir;
@@ -1793,12 +1751,14 @@ void AggressiveAI::ExecuteNoEnemies()
             Unit *dest = ChooseNearNavPoint(parent, navDestination.GetUnit(), parent->Position(), parent->rSize());
             if (dest)
             {
-                if (fgname.find(insysString) == string::npos && dest->GetDestinations().size() > 0 && UniverseUtil::systemInMemory(dest->GetDestinations()[0]))
+                if (fgname.find(insysString) == string::npos && dest->GetDestinations().size() > 0 &&
+                    UniverseUtil::systemInMemory(dest->GetDestinations()[0]))
                 {
                     parent->ActivateJumpDrive(0);
-                    parent->Target(dest); //fly there, baby!
+                    parent->Target(dest); // fly there, baby!
                 }
-                else if (dest->GetDestinations().size() == 0 && false == UnitUtil::isCapitalShip(parent) && UnitUtil::isDockableUnit(dest))
+                else if (dest->GetDestinations().size() == 0 && false == UnitUtil::isCapitalShip(parent) &&
+                         UnitUtil::isDockableUnit(dest))
                 {
                     Order *ai = parent->aistate;
                     parent->aistate = nullptr;
@@ -1806,27 +1766,28 @@ void AggressiveAI::ExecuteNoEnemies()
                 }
                 else
                 {
-                    ExecuteNoEnemies(); //find a new place to go
+                    ExecuteNoEnemies(); // find a new place to go
                 }
             }
             else
             {
-                ExecuteNoEnemies(); //no suitable docking point found, recursive call which will take door1
-                //go dock to the nav point
+                ExecuteNoEnemies(); // no suitable docking point found, recursive call which will take door1
+                // go dock to the nav point
             }
         }
         else if (lurk_on_arrival > 0)
         {
             lurk_on_arrival -= SIMULATION_ATOM;
-            //slowdown
-            parent->Thrust(-parent->GetMass() * parent->UpCoordinateLevel(parent->GetVelocity()) / SIMULATION_ATOM, false);
+            // slowdown
+            parent->Thrust(-parent->GetMass() * parent->UpCoordinateLevel(parent->GetVelocity()) / SIMULATION_ATOM,
+                           false);
             parent->graphicOptions.InWarp = 0;
             if (lurk_on_arrival <= 0)
             {
                 nav = QVector(0, 0, 0);
-                ExecuteNoEnemies(); //select new place to go
+                ExecuteNoEnemies(); // select new place to go
             }
-            //have to do something while here.
+            // have to do something while here.
         }
         else
         {
@@ -1838,13 +1799,14 @@ void AggressiveAI::ExecuteNoEnemies()
 void AggressiveAI::AfterburnerJumpTurnTowards(Unit *target)
 {
     AfterburnTurnTowards(this, parent);
-    static float jump_time_limit = XMLSupport::parse_float(vs_config->getVariable("AI", "force_jump_after_time", "120"));
+    static float jump_time_limit =
+        XMLSupport::parse_float(vs_config->getVariable("AI", "force_jump_after_time", "120"));
     if (jump_time_check == 0)
     {
         float dist = (target->Position() - parent->Position()).MagnitudeSquared();
         if (last_jump_distance < dist || last_jump_time > jump_time_limit)
         {
-            //force jump
+            // force jump
             last_jump_time = 0;
             if (target->GetDestinations().size())
             {
@@ -1867,7 +1829,7 @@ void AggressiveAI::Execute()
     {
         printf("kewl");
     }
-    jump_time_check++; //just so we get a nicely often wrapping var;
+    jump_time_check++; // just so we get a nicely often wrapping var;
     jump_time_check %= 5;
     Flightgroup *fg = parent->getFlightgroup();
     double firetime = queryTime();
@@ -1940,7 +1902,8 @@ void AggressiveAI::Execute()
                 }
                 else if (parent->GetJumpStatus().drive < 0)
                 {
-                    static bool AIjumpCheat = XMLSupport::parse_bool(vs_config->getVariable("AI", "jump_cheat", "true"));
+                    static bool AIjumpCheat =
+                        XMLSupport::parse_bool(vs_config->getVariable("AI", "jump_cheat", "true"));
                     if (AIjumpCheat)
                     {
                         parent->jump.drive = 0;
@@ -1988,7 +1951,8 @@ void AggressiveAI::Execute()
         {
             if (target)
             {
-                static bool can_warp_to = XMLSupport::parse_bool(vs_config->getVariable("AI", "warp_to_enemies", "true"));
+                static bool can_warp_to =
+                    XMLSupport::parse_bool(vs_config->getVariable("AI", "warp_to_enemies", "true"));
                 if (can_warp_to || _Universe->AccessCockpit()->autoInProgress())
                     WarpToP(parent, target, false);
                 logiccurtime -= SIMULATION_ATOM;
@@ -2026,7 +1990,8 @@ void AggressiveAI::Execute()
         {
             mag = 1 / mag;
         }
-        parent->SetVelocity(parent->GetVelocity() * (mag * parent->GetComputerData().max_speed() / getTimeCompression()));
+        parent->SetVelocity(parent->GetVelocity() *
+                            (mag * parent->GetComputerData().max_speed() / getTimeCompression()));
         parent->NetLocalForce = parent->NetForce = Vector(0, 0, 0);
     }
     target = parent->Target();

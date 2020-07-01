@@ -18,11 +18,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-#include "macosx_math.h"
-#include "lin_time.h"
 #include "physics.h"
 #include "gfx/quaternion.h"
-PhysicsSystem::PhysicsSystem(float M, float I, QVector *pos, Vector *p, Vector *q, Vector *r) : mass(M), MomentOfInertia(I), NetForce(0, 0, 0), NetTorque(0, 0, 0), AngularVelocity(0, 0, 0), Velocity(0, 0, 0), pos(pos), p(p), q(q), r(r)
+#include "lin_time.h"
+#include "macosx_math.h"
+PhysicsSystem::PhysicsSystem(float M, float I, QVector *pos, Vector *p, Vector *q, Vector *r)
+    : mass(M), MomentOfInertia(I), NetForce(0, 0, 0), NetTorque(0, 0, 0), AngularVelocity(0, 0, 0), Velocity(0, 0, 0),
+      pos(pos), p(p), q(q), r(r)
 {
     NumActiveForces = 0;
     NumActiveTorques = 0;
@@ -99,7 +101,7 @@ void PhysicsSystem::JettisonReactionMass(const Vector &Direction, float speed, f
 
 void PhysicsSystem::JettisonMass(const Vector &Direction, float speed, float jmass)
 {
-    mass -= jmass; //fuel is sent out
+    mass -= jmass; // fuel is sent out
     JettisonReactionMass(Direction, speed, jmass);
 }
 
@@ -157,7 +159,7 @@ void PhysicsSystem::ApplyImpulses(float Time)
             ActiveTorques[i].F = ActiveTorques[NumActiveTorques - 1].F;
             ActiveTorques[i].t = ActiveTorques[NumActiveTorques - 1].t;
             --NumActiveTorques;
-            --i; //so the loop goes through the active force that was just switched places with
+            --i; // so the loop goes through the active force that was just switched places with
         }
         else
         {
@@ -173,7 +175,7 @@ void PhysicsSystem::ApplyImpulses(float Time)
             ActiveForces[i].F = ActiveForces[NumActiveForces - 1].F;
             ActiveForces[i].t = ActiveForces[NumActiveForces - 1].t;
             NumActiveForces--;
-            i--; //so the loop goes through the active force that was just switched places with
+            i--; // so the loop goes through the active force that was just switched places with
         }
         else
         {
@@ -184,8 +186,8 @@ void PhysicsSystem::ApplyImpulses(float Time)
     temptorque = temptorque * (0.5 / MomentOfInertia);
     Rotate(AngularVelocity + 0.5 * temptorque);
     AngularVelocity += temptorque;
-    tempforce = tempforce * (0.5 / mass); //acceleration
-    //now the fuck with it... add relitivity to the picture here
+    tempforce = tempforce * (0.5 / mass); // acceleration
+    // now the fuck with it... add relitivity to the picture here
     if (fabs(Velocity.i) + fabs(Velocity.j) + fabs(Velocity.k) > co10)
     {
         float magvel = Velocity.Magnitude();

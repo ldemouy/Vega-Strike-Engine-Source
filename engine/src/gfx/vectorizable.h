@@ -3,18 +3,17 @@
 
 #include <boost/static_assert.hpp>
 
-#include <vector>
 #include "aligned.h"
+#include <vector>
 
 /**
  * Defines classes as vectorizable, and defines means of vectorization.
  * The default implementation makes all classes non-vectorizable, so vectorizable
  * classes must be defined as such.
  */
-template <typename T>
-class vectorizable_traits
+template <typename T> class vectorizable_traits
 {
-public:
+  public:
     static const bool vectorizable = false;
     static const size_t components_per_element = 1;
     typedef T component_type;
@@ -72,10 +71,9 @@ public:
 /**
  * All primitive types are trivially vectorizable
  */
-template <typename T>
-class primitive_vectorizable_traits
+template <typename T> class primitive_vectorizable_traits
 {
-public:
+  public:
     static const bool vectorizable = true;
     static const size_t components_per_element = 1;
     typedef T component_type;
@@ -133,20 +131,19 @@ public:
 /**
  * Helper base class for struct-based vectorizables
  */
-template <typename E, typename T, int COMPS>
-class struct_vectorizable_traits
+template <typename E, typename T, int COMPS> class struct_vectorizable_traits
 {
-public:
+  public:
     static const bool vectorizable = true;
     static const size_t components_per_element = COMPS;
     typedef T component_type;
     typedef E element_type;
     typedef E vector_type;
 
-private:
+  private:
     BOOST_STATIC_ASSERT(sizeof(element_type) == (sizeof(component_type) * COMPS));
 
-public:
+  public:
     /**
      * Returns the number of elements a vectorizable instance has.
      * Each element has components_per_element components.
@@ -195,54 +192,43 @@ public:
     }
 };
 
-template <>
-class vectorizable_traits<unsigned char> : public primitive_vectorizable_traits<unsigned char>
+template <> class vectorizable_traits<unsigned char> : public primitive_vectorizable_traits<unsigned char>
 {
 };
-template <>
-class vectorizable_traits<char> : public primitive_vectorizable_traits<char>
+template <> class vectorizable_traits<char> : public primitive_vectorizable_traits<char>
 {
 };
-template <>
-class vectorizable_traits<unsigned short> : public primitive_vectorizable_traits<unsigned short>
+template <> class vectorizable_traits<unsigned short> : public primitive_vectorizable_traits<unsigned short>
 {
 };
-template <>
-class vectorizable_traits<short> : public primitive_vectorizable_traits<short>
+template <> class vectorizable_traits<short> : public primitive_vectorizable_traits<short>
 {
 };
-template <>
-class vectorizable_traits<unsigned int> : public primitive_vectorizable_traits<unsigned int>
+template <> class vectorizable_traits<unsigned int> : public primitive_vectorizable_traits<unsigned int>
 {
 };
-template <>
-class vectorizable_traits<int> : public primitive_vectorizable_traits<int>
+template <> class vectorizable_traits<int> : public primitive_vectorizable_traits<int>
 {
 };
-template <>
-class vectorizable_traits<unsigned long> : public primitive_vectorizable_traits<unsigned long>
+template <> class vectorizable_traits<unsigned long> : public primitive_vectorizable_traits<unsigned long>
 {
 };
-template <>
-class vectorizable_traits<long> : public primitive_vectorizable_traits<long>
+template <> class vectorizable_traits<long> : public primitive_vectorizable_traits<long>
 {
 };
-template <>
-class vectorizable_traits<float> : public primitive_vectorizable_traits<float>
+template <> class vectorizable_traits<float> : public primitive_vectorizable_traits<float>
 {
 };
-template <>
-class vectorizable_traits<double> : public primitive_vectorizable_traits<double>
+template <> class vectorizable_traits<double> : public primitive_vectorizable_traits<double>
 {
 };
 
 /**
  * All vectors of vectorizable types are vectorizable
  */
-template <typename T, typename A>
-class vectorizable_traits<std::vector<T, A>>
+template <typename T, typename A> class vectorizable_traits<std::vector<T, A>>
 {
-public:
+  public:
     static const bool vectorizable = true;
     static const size_t components_per_element = 1;
     typedef T element_type;

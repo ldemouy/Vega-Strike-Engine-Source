@@ -1,12 +1,12 @@
 #include "flybywire.h"
+#include "cmd/unit_generic.h"
+#include "config_xml.h"
+#include "gfx/cockpit_generic.h"
+#include "lin_time.h"
 #include "vegastrike.h"
+#include "vs_globals.h"
 #include <math.h>
 #include <stdio.h>
-#include "cmd/unit_generic.h"
-#include "lin_time.h"
-#include "gfx/cockpit_generic.h"
-#include "vs_globals.h"
-#include "config_xml.h"
 #define VELTHRESHOLD .1
 #define ANGVELTHRESHOLD .01
 
@@ -16,43 +16,38 @@ using Orders::MatchVelocity;
 
 using Orders::MatchAngularVelocity;
 
-//Careful with this macro!!! I can't wrap it in do{...}while(0) because it declares variables that are then
-//used by code that follows. Be sure it's never instantiated like a single statement body of a conditional
-//or loop, or the formatter might remove the braces and then you'll be in a heap of trouble looking for the
-//bug... --chuck_starchaser.
-#define MATCHLINVELSETUP()                                                      \
-    Unit *match = parent->VelocityReference();                                  \
-    Vector desired(desired_velocity);                                           \
-    Vector FrameOfRef(0,                                                        \
-                      0,                                                        \
-                      0);                                                       \
-    if (match != nullptr)                                                          \
-    {                                                                           \
-        float dif1, dif2;                                                       \
-        match->GetVelocityDifficultyMult(dif1);                                 \
-        dif1 *=                                                                 \
-            match->graphicOptions.WarpFieldStrength;                            \
-        parent->GetVelocityDifficultyMult(dif2);                                \
-        if (match->graphicOptions.WarpFieldStrength > 1)                        \
-        {                                                                       \
-            dif2 *= parent->graphicOptions.WarpFieldStrength;                   \
-        }                                                                       \
-        FrameOfRef =                                                            \
-            parent->ToLocalCoordinates(match->GetWarpVelocity() * dif1 / dif2); \
-    }                                                                           \
-    if (!LocalVelocity)                                                         \
-    {                                                                           \
-        desired = parent->ToLocalCoordinates(                                   \
-            desired);                                                           \
-    }                                                                           \
-    Vector velocity(                                                            \
-        parent->UpCoordinateLevel(parent->GetVelocity()))
+// Careful with this macro!!! I can't wrap it in do{...}while(0) because it declares variables that are then
+// used by code that follows. Be sure it's never instantiated like a single statement body of a conditional
+// or loop, or the formatter might remove the braces and then you'll be in a heap of trouble looking for the
+// bug... --chuck_starchaser.
+#define MATCHLINVELSETUP()                                                                                             \
+    Unit *match = parent->VelocityReference();                                                                         \
+    Vector desired(desired_velocity);                                                                                  \
+    Vector FrameOfRef(0, 0, 0);                                                                                        \
+    if (match != nullptr)                                                                                              \
+    {                                                                                                                  \
+        float dif1, dif2;                                                                                              \
+        match->GetVelocityDifficultyMult(dif1);                                                                        \
+        dif1 *= match->graphicOptions.WarpFieldStrength;                                                               \
+        parent->GetVelocityDifficultyMult(dif2);                                                                       \
+        if (match->graphicOptions.WarpFieldStrength > 1)                                                               \
+        {                                                                                                              \
+            dif2 *= parent->graphicOptions.WarpFieldStrength;                                                          \
+        }                                                                                                              \
+        FrameOfRef = parent->ToLocalCoordinates(match->GetWarpVelocity() * dif1 / dif2);                               \
+    }                                                                                                                  \
+    if (!LocalVelocity)                                                                                                \
+    {                                                                                                                  \
+        desired = parent->ToLocalCoordinates(desired);                                                                 \
+    }                                                                                                                  \
+    Vector velocity(parent->UpCoordinateLevel(parent->GetVelocity()))
 
-#define MATCHLINVELEXECUTE()                                                                                                        \
-    do                                                                                                                              \
-    {                                                                                                                               \
-        parent->Thrust((parent->GetMass() * (parent->ClampVelocity(desired, afterburn) + FrameOfRef - velocity) / SIMULATION_ATOM), \
-                       afterburn);                                                                                                  \
+#define MATCHLINVELEXECUTE()                                                                                           \
+    do                                                                                                                 \
+    {                                                                                                                  \
+        parent->Thrust((parent->GetMass() * (parent->ClampVelocity(desired, afterburn) + FrameOfRef - velocity) /      \
+                        SIMULATION_ATOM),                                                                              \
+                       afterburn);                                                                                     \
     } while (0)
 
 /**
@@ -70,13 +65,16 @@ void MatchLinearVelocity::Execute()
         static int i = 0;
         if (i++ % 1000 == 0)
         {
-            std::cerr << "cannot execute suborders as Linear Velocity Matcher" << std::endl; // error printout just in case
+            std::cerr << "cannot execute suborders as Linear Velocity Matcher"
+                      << std::endl; // error printout just in case
         }
     }
     MATCHLINVELSETUP();
     if (willfinish)
     {
-        if ((done = fabs(desired.i + FrameOfRef.i - velocity.i) < VELTHRESHOLD && fabs(desired.j + FrameOfRef.j - velocity.j) < VELTHRESHOLD && fabs(desired.k + FrameOfRef.k - velocity.k) < VELTHRESHOLD))
+        if ((done = fabs(desired.i + FrameOfRef.i - velocity.i) < VELTHRESHOLD &&
+                    fabs(desired.j + FrameOfRef.j - velocity.j) < VELTHRESHOLD &&
+                    fabs(desired.k + FrameOfRef.k - velocity.k) < VELTHRESHOLD))
             return;
     }
     MATCHLINVELEXECUTE();
@@ -99,7 +97,7 @@ void Orders::MatchRoll::Execute()
     if (willfinish)
         if (fabs(desired_roll - angvel.k) < ANGVELTHRESHOLD)
             return;
-    //prevent matchangvel from resetting this (kinda a hack)
+    // prevent matchangvel from resetting this (kinda a hack)
     parent->ApplyLocalTorque(parent->GetMoment() * Vector(0, 0, desired_roll - angvel.k) / SIMULATION_ATOM);
     parent->ApplyLocalTorque(parent->GetMoment() * Vector(0, 0, desired_roll - angvel.k) / SIMULATION_ATOM);
 }
@@ -116,10 +114,12 @@ void MatchAngularVelocity::Execute()
         desired = parent->ToLocalCoordinates(desired);
     if (willfinish)
     {
-        if ((done = fabs(desired.i - angvel.i) < ANGVELTHRESHOLD && fabs(desired.j - angvel.j) < ANGVELTHRESHOLD && fabs(desired.k - angvel.k) < ANGVELTHRESHOLD))
+        if ((done = fabs(desired.i - angvel.i) < ANGVELTHRESHOLD && fabs(desired.j - angvel.j) < ANGVELTHRESHOLD &&
+                    fabs(desired.k - angvel.k) < ANGVELTHRESHOLD))
             return;
     }
-    parent->ApplyLocalTorque(parent->GetMoment() * (desired - parent->UpCoordinateLevel(parent->GetAngularVelocity())) / SIMULATION_ATOM);
+    parent->ApplyLocalTorque(parent->GetMoment() * (desired - parent->UpCoordinateLevel(parent->GetAngularVelocity())) /
+                             SIMULATION_ATOM);
 }
 
 MatchAngularVelocity::~MatchAngularVelocity()
@@ -137,7 +137,8 @@ void MatchVelocity::Execute()
     MATCHLINVELSETUP();
     if (willfinish)
     {
-        if ((done = done && fabs(desired.i - velocity.i) < VELTHRESHOLD && fabs(desired.j - velocity.j) < VELTHRESHOLD && fabs(desired.k - velocity.k) < VELTHRESHOLD))
+        if ((done = done && fabs(desired.i - velocity.i) < VELTHRESHOLD &&
+                    fabs(desired.j - velocity.j) < VELTHRESHOLD && fabs(desired.k - velocity.k) < VELTHRESHOLD))
             return;
     }
     MATCHLINVELEXECUTE();
@@ -153,12 +154,13 @@ MatchVelocity::~MatchVelocity()
 
 static bool getControlType()
 {
-    static bool control = XMLSupport::parse_bool(vs_config->getVariable("physics", "CarControl",
-                                                                        "false"));
+    static bool control = XMLSupport::parse_bool(vs_config->getVariable("physics", "CarControl", "false"));
     return control;
 }
 
-FlyByWire::FlyByWire() : MatchVelocity(Vector(0, 0, 0), Vector(0, 0, 0), true, false, false), sheltonslide(false), controltype(!getControlType())
+FlyByWire::FlyByWire()
+    : MatchVelocity(Vector(0, 0, 0), Vector(0, 0, 0), true, false, false), sheltonslide(false),
+      controltype(!getControlType())
 {
     DesiredShiftVelocity = Vector(0, 0, 0);
     DirectThrust = Vector(0, 0, 0);
@@ -183,28 +185,25 @@ void FlyByWire::Stop(float per)
 void FlyByWire::Right(float per)
 {
     desired_ang_velocity +=
-        (-per * (per > 0 ? parent->GetComputerData().max_yaw_left : parent->GetComputerData().max_yaw_right) / getTimeCompression()) * Vector(
-                                                                                                                                           0,
-                                                                                                                                           1,
-                                                                                                                                           0);
+        (-per * (per > 0 ? parent->GetComputerData().max_yaw_left : parent->GetComputerData().max_yaw_right) /
+         getTimeCompression()) *
+        Vector(0, 1, 0);
 }
 
 void FlyByWire::Up(float per)
 {
     desired_ang_velocity +=
-        (-per * (per > 0 ? parent->GetComputerData().max_pitch_down : parent->GetComputerData().max_pitch_up) / getTimeCompression()) * Vector(
-                                                                                                                                            1,
-                                                                                                                                            0,
-                                                                                                                                            0);
+        (-per * (per > 0 ? parent->GetComputerData().max_pitch_down : parent->GetComputerData().max_pitch_up) /
+         getTimeCompression()) *
+        Vector(1, 0, 0);
 }
 
 void FlyByWire::RollRight(float per)
 {
     desired_ang_velocity +=
-        (-per * (per > 0 ? parent->GetComputerData().max_roll_left : parent->GetComputerData().max_roll_right) / getTimeCompression()) * Vector(
-                                                                                                                                             0,
-                                                                                                                                             0,
-                                                                                                                                             1);
+        (-per * (per > 0 ? parent->GetComputerData().max_roll_left : parent->GetComputerData().max_roll_right) /
+         getTimeCompression()) *
+        Vector(0, 0, 1);
 }
 
 void FlyByWire::Afterburn(float per)
@@ -218,9 +217,9 @@ void FlyByWire::Afterburn(float per)
         DirectThrust += Vector(0, 0, parent->Limits().afterburn * per);
     if (parent == _Universe->AccessCockpit()->GetParent())
     {
-        //printf("afterburn is %d\n",afterburn); // DELETEME WTF all this force feedback code and its unused.
-        //COMMENTED BECAUSE OF SERVER -- NEED TO REINTEGRATE IT IN ANOTHER WAY
-        //forcefeedback->playAfterburner(afterburn);
+        // printf("afterburn is %d\n",afterburn); // DELETEME WTF all this force feedback code and its unused.
+        // COMMENTED BECAUSE OF SERVER -- NEED TO REINTEGRATE IT IN ANOTHER WAY
+        // forcefeedback->playAfterburner(afterburn);
     }
 }
 
@@ -245,7 +244,8 @@ void FlyByWire::Accel(float per)
     cpu->set_speed += per * cpu->max_speed() * SIMULATION_ATOM;
     if (cpu->set_speed > cpu->max_speed())
         cpu->set_speed = cpu->max_speed();
-    static float reverse_speed_limit = XMLSupport::parse_float(vs_config->getVariable("physics", "reverse_speed_limit", "1.0"));
+    static float reverse_speed_limit =
+        XMLSupport::parse_float(vs_config->getVariable("physics", "reverse_speed_limit", "1.0"));
     if (cpu->set_speed < -cpu->max_speed() * reverse_speed_limit)
         cpu->set_speed = -cpu->max_speed() * reverse_speed_limit;
     afterburn = false;
@@ -294,23 +294,19 @@ void FlyByWire::Execute()
     Vector des_vel_bak(desired_velocity);
     if (!inertial_flight_model)
     {
-        //Must translate the thrust values to velocities, which is somewhat cumbersome.
-        Vector Limit(
-            parent->Limits().lateral, parent->Limits().vertical,
-            ((DirectThrust.k > 0) ? parent->Limits().forward : parent->Limits().retro));
+        // Must translate the thrust values to velocities, which is somewhat cumbersome.
+        Vector Limit(parent->Limits().lateral, parent->Limits().vertical,
+                     ((DirectThrust.k > 0) ? parent->Limits().forward : parent->Limits().retro));
         if (Limit.i <= 1)
             Limit.i = 1;
         if (Limit.j <= 1)
             Limit.j = 1;
         if (Limit.k <= 1)
             Limit.k = 1;
-        Vector DesiredDrift(
-            DirectThrust.i / Limit.i,
-            DirectThrust.j / Limit.j,
-            DirectThrust.k / Limit.k);
-        //Now, scale so that maximum shift velocity is max_speed
+        Vector DesiredDrift(DirectThrust.i / Limit.i, DirectThrust.j / Limit.j, DirectThrust.k / Limit.k);
+        // Now, scale so that maximum shift velocity is max_speed
         DesiredDrift *= parent->GetComputerData().max_speed();
-        //And apply
+        // And apply
         DesiredShiftVelocity += DesiredDrift;
     }
     if (DesiredShiftVelocity.i || DesiredShiftVelocity.j || DesiredShiftVelocity.k)
@@ -338,11 +334,13 @@ void FlyByWire::Execute()
         parent->GetComputerData().set_speed = stolen_setspeed_value;
         stolen_setspeed = false;
     }
-    static double collidepanic = XMLSupport::parse_float(vs_config->getVariable("physics", "collision_inertial_time", "1.25"));
+    static double collidepanic =
+        XMLSupport::parse_float(vs_config->getVariable("physics", "collision_inertial_time", "1.25"));
     Cockpit *tempcp = _Universe->isPlayerStarship(parent);
-    if (((sheltonslide || inertial_flight_model || !controltype) && (!desireThrust)) || (tempcp && ((getNewTime() - tempcp->TimeOfLastCollision) < collidepanic)))
+    if (((sheltonslide || inertial_flight_model || !controltype) && (!desireThrust)) ||
+        (tempcp && ((getNewTime() - tempcp->TimeOfLastCollision) < collidepanic)))
     {
-        MatchAngularVelocity::Execute(); //only match turning
+        MatchAngularVelocity::Execute(); // only match turning
         if (inertial_flight_model)
             parent->Thrust(DirectThrust, afterburn);
     }

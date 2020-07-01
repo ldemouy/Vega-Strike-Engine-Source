@@ -1,11 +1,11 @@
 #include "nebula_generic.h"
-#include "vegastrike.h"
-#include "vsfilesystem.h"
-#include <assert.h>
 #include "configxml.h"
+#include "vegastrike.h"
 #include "vs_globals.h"
-#include <sys/stat.h>
+#include "vsfilesystem.h"
 #include "xml_support.h"
+#include <assert.h>
+#include <sys/stat.h>
 #undef BOOST_NO_CWCHAR
 
 using namespace XMLSupport;
@@ -28,7 +28,9 @@ void Nebula::beginElement(void *Userdata, const XML_Char *name, const XML_Char *
     ((Nebula *)Userdata)->beginElem(std::string(name), AttributeList(atts));
 }
 
-static void Nebula_endElement(void *Userdata, const XML_Char *) {}
+static void Nebula_endElement(void *Userdata, const XML_Char *)
+{
+}
 
 void Nebula::beginElem(const std::string &name, const AttributeList &atts)
 {
@@ -133,31 +135,23 @@ void Nebula::InitNebula(const char *unitfile, bool SubU, int faction, Flightgrou
     LoadXML(fullpath.c_str());
 }
 
-Nebula::Nebula(const char *unitfile, bool SubU, int faction, Flightgroup *fg, int fg_snumber) : Unit(unitfile, SubU, faction, string(""), fg, fg_snumber)
+Nebula::Nebula(const char *unitfile, bool SubU, int faction, Flightgroup *fg, int fg_snumber)
+    : Unit(unitfile, SubU, faction, string(""), fg, fg_snumber)
 {
     this->InitNebula(unitfile, SubU, faction, fg, fg_snumber);
 }
 
-void Nebula::reactToCollision(Unit *smaller,
-                              const QVector &biglocation,
-                              const Vector &bignormal,
-                              const QVector &smalllocation,
-                              const Vector &smallnormal,
-                              float dist)
+void Nebula::reactToCollision(Unit *smaller, const QVector &biglocation, const Vector &bignormal,
+                              const QVector &smalllocation, const Vector &smallnormal, float dist)
 {
     if (fogme)
         SetNebula(this);
     smaller->SetNebula(this);
 }
 
-void Nebula::UpdatePhysics2(const Transformation &trans,
-                            const Transformation &old_physical_state,
-                            const Vector &accel,
-                            float difficulty,
-                            const Matrix &transmat,
-                            const Vector &CumulativeVelocity,
-                            bool ResolveLast,
-                            UnitCollection *uc)
+void Nebula::UpdatePhysics2(const Transformation &trans, const Transformation &old_physical_state, const Vector &accel,
+                            float difficulty, const Matrix &transmat, const Vector &CumulativeVelocity,
+                            bool ResolveLast, UnitCollection *uc)
 {
     Unit::UpdatePhysics2(trans, old_physical_state, accel, difficulty, transmat, CumulativeVelocity, ResolveLast, uc);
 }

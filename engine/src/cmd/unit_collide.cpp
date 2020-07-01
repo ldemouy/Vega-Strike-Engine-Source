@@ -1,25 +1,25 @@
 /// Unit mesh collision detection
 /// Provides various functions for collision detection
 
-#include "vegastrike.h"
 #include "beam.h"
+#include "vegastrike.h"
 
 #include "bolt.h"
 #include "gfx/mesh.h"
-#include "unit_collide.h"
 #include "physics.h"
+#include "unit_collide.h"
 
 #include "collide2/CSopcodecollider.h"
-#include "collide2/csgeom2/optransfrm.h"
 #include "collide2/basecollider.h"
+#include "collide2/csgeom2/optransfrm.h"
 
 #include "hashtable.h"
 
-#include <string>
-#include "vs_globals.h"
-#include "configxml.h"
 #include "collide.h"
+#include "configxml.h"
+#include "vs_globals.h"
 #include "vsfilesystem.h"
+#include <string>
 
 static bool operator==(const Collidable &a, const Collidable &b)
 {
@@ -56,14 +56,9 @@ void Unit::RemoveFromSystem()
                         }
                         if (**i < **j)
                         {
-                            printf("(%f %f %f) and (%f %f %f) %f < %f %d!!!",
-                                   (**i).GetPosition().i,
-                                   (**i).GetPosition().j,
-                                   (**i).GetPosition().k,
-                                   (**j).GetPosition().i,
-                                   (**j).GetPosition().j,
-                                   (**j).GetPosition().k,
-                                   (**i).GetPosition().MagnitudeSquared(),
+                            printf("(%f %f %f) and (%f %f %f) %f < %f %d!!!", (**i).GetPosition().i,
+                                   (**i).GetPosition().j, (**i).GetPosition().k, (**j).GetPosition().i,
+                                   (**j).GetPosition().j, (**j).GetPosition().k, (**i).GetPosition().MagnitudeSquared(),
                                    (**j).GetPosition().MagnitudeSquared(),
                                    (**i).GetPosition().MagnitudeSquared() < (**j).GetPosition().MagnitudeSquared());
                         }
@@ -102,7 +97,8 @@ void Unit::UpdateCollideQueue(StarSystem *ss, CollideMap::iterator hint[NUM_COLL
 
 void Unit::CollideAll()
 {
-    static bool noUnitCollisions = XMLSupport::parse_bool(vs_config->getVariable("physics", "no_unit_collisions", "false"));
+    static bool noUnitCollisions =
+        XMLSupport::parse_bool(vs_config->getVariable("physics", "no_unit_collisions", "false"));
     if (isSubUnit() || killed || noUnitCollisions)
         return;
     for (unsigned int locind = 0; locind < NUM_COLLIDE_MAPS; ++locind)
@@ -114,12 +110,10 @@ void Unit::CollideAll()
 
 Vector Vabs(const Vector &in)
 {
-    return Vector(in.i >= 0 ? in.i : -in.i,
-                  in.j >= 0 ? in.j : -in.j,
-                  in.k >= 0 ? in.k : -in.k);
+    return Vector(in.i >= 0 ? in.i : -in.i, in.j >= 0 ? in.j : -in.j, in.k >= 0 ? in.k : -in.k);
 }
 
-//Slated for removal 0.5
+// Slated for removal 0.5
 Matrix WarpMatrixForCollisions(Unit *un, const Matrix &ctm)
 {
     if (un->GetWarpVelocity().MagnitudeSquared() * SIMULATION_ATOM * SIMULATION_ATOM < un->rSize() * un->rSize())
@@ -146,26 +140,21 @@ Matrix WarpMatrixForCollisions(Unit *un, const Matrix &ctm)
     }
 }
 
-//do each of these bubbled subunits collide with the other unit?
+// do each of these bubbled subunits collide with the other unit?
 bool Unit::Inside(const QVector &target, const float radius, Vector &normal, float &dist)
 {
     if (!querySphere(target, radius))
         return false;
     normal = (target - Position()).Cast();
     ::Normalize(normal);
-    //if its' in the sphre, that's enough
+    // if its' in the sphre, that's enough
     if (isPlanet())
         return true;
     return false;
 }
 
-bool Unit::InsideCollideTree(Unit *smaller,
-                             QVector &bigpos,
-                             Vector &bigNormal,
-                             QVector &smallpos,
-                             Vector &smallNormal,
-                             bool bigasteroid,
-                             bool smallasteroid)
+bool Unit::InsideCollideTree(Unit *smaller, QVector &bigpos, Vector &bigNormal, QVector &smallpos, Vector &smallNormal,
+                             bool bigasteroid, bool smallasteroid)
 {
     if (smaller->colTrees == nullptr || this->colTrees == nullptr)
         return false;
@@ -178,15 +167,15 @@ bool Unit::InsideCollideTree(Unit *smaller,
 
     csReversibleTransform bigtransform(bigger->cumulative_transformation_matrix);
     csReversibleTransform smalltransform(smaller->cumulative_transformation_matrix);
-    smalltransform.SetO2TTranslation(csVector3(smaller->cumulative_transformation_matrix.p - bigger->cumulative_transformation_matrix.p));
+    smalltransform.SetO2TTranslation(
+        csVector3(smaller->cumulative_transformation_matrix.p - bigger->cumulative_transformation_matrix.p));
     bigtransform.SetO2TTranslation(csVector3(0, 0, 0));
-    //we're only gonna lerp the positions for speed here... gahh!
+    // we're only gonna lerp the positions for speed here... gahh!
 
     // Check for shield collisions here prior to checking for mesh on mesh or ray collisions below.
     csOPCODECollider *tmpCol = smaller->colTrees->colTree(smaller, bigger->GetWarpVelocity());
-    if (tmpCol && (tmpCol->Collide(*bigger->colTrees->colTree(bigger,
-                                                              smaller->GetWarpVelocity()),
-                                   &smalltransform, &bigtransform)))
+    if (tmpCol && (tmpCol->Collide(*bigger->colTrees->colTree(bigger, smaller->GetWarpVelocity()), &smalltransform,
+                                   &bigtransform)))
     {
         csCollisionPair *mycollide = csOPCODECollider::GetCollisions();
         unsigned int numHits = csOPCODECollider::GetCollisionPairCount();
@@ -212,10 +201,12 @@ bool Unit::InsideCollideTree(Unit *smaller,
             return true;
         }
     }
-    static float rsizelim = XMLSupport::parse_float(vs_config->getVariable("physics", "smallest_subunit_to_collide", ".2"));
+    static float rsizelim =
+        XMLSupport::parse_float(vs_config->getVariable("physics", "smallest_subunit_to_collide", ".2"));
     clsptr bigtype = bigasteroid ? ASTEROIDPTR : bigger->isUnit();
     clsptr smalltype = smallasteroid ? ASTEROIDPTR : smaller->isUnit();
-    if (bigger->SubUnits.empty() == false && (bigger->graphicOptions.RecurseIntoSubUnitsOnCollision == true || bigtype == ASTEROIDPTR))
+    if (bigger->SubUnits.empty() == false &&
+        (bigger->graphicOptions.RecurseIntoSubUnitsOnCollision == true || bigtype == ASTEROIDPTR))
     {
         auto i = bigger->getSubUnits();
         float rad = smaller->rSize();
@@ -234,7 +225,8 @@ bool Unit::InsideCollideTree(Unit *smaller,
             }
         }
     }
-    if (smaller->SubUnits.empty() == false && (smaller->graphicOptions.RecurseIntoSubUnitsOnCollision == true || smalltype == ASTEROIDPTR))
+    if (smaller->SubUnits.empty() == false &&
+        (smaller->graphicOptions.RecurseIntoSubUnitsOnCollision == true || smalltype == ASTEROIDPTR))
     {
         auto i = smaller->getSubUnits();
         float rad = bigger->rSize();
@@ -251,8 +243,8 @@ bool Unit::InsideCollideTree(Unit *smaller,
             }
         }
     }
-    //FIXME
-    //doesn't check all i*j options of subunits vs subunits
+    // FIXME
+    // doesn't check all i*j options of subunits vs subunits
     return false;
 }
 
@@ -263,25 +255,27 @@ inline float mysqr(float a)
 
 bool Unit::Collide(Unit *target)
 {
-    //now first OF ALL make sure they're within bubbles of each other...
+    // now first OF ALL make sure they're within bubbles of each other...
     if ((Position() - target->Position()).MagnitudeSquared() > mysqr(radial_size + target->radial_size))
         return false;
     clsptr targetisUnit = target->isUnit();
     clsptr thisisUnit = this->isUnit();
-    static float NEBULA_SPACE_DRAG = XMLSupport::parse_float(vs_config->getVariable("physics", "nebula_space_drag", "0.01"));
+    static float NEBULA_SPACE_DRAG =
+        XMLSupport::parse_float(vs_config->getVariable("physics", "nebula_space_drag", "0.01"));
     if (targetisUnit == NEBULAPTR)
-        //why? why not?
+        // why? why not?
         this->Velocity *= (1 - NEBULA_SPACE_DRAG);
-    if (target == this || ((targetisUnit != NEBULAPTR && thisisUnit != NEBULAPTR) && (owner == target || target->owner == this || (owner != nullptr && target->owner == owner))))
+    if (target == this || ((targetisUnit != NEBULAPTR && thisisUnit != NEBULAPTR) &&
+                           (owner == target || target->owner == this || (owner != nullptr && target->owner == owner))))
         return false;
     if (targetisUnit == ASTEROIDPTR && thisisUnit == ASTEROIDPTR)
         return false;
     std::multimap<Unit *, Unit *> *last_collisions = &_Universe->activeStarSystem()->last_collisions;
     last_collisions->insert(std::pair<Unit *, Unit *>(this, target));
-    //unit v unit? use point sampling?
+    // unit v unit? use point sampling?
     if ((this->DockedOrDocking() & (DOCKED_INSIDE | DOCKED)) || (target->DockedOrDocking() & (DOCKED_INSIDE | DOCKED)))
         return false;
-    //now do some serious checks
+    // now do some serious checks
     Unit *bigger;
     Unit *smaller;
     if (radial_size < target->radial_size)
@@ -294,9 +288,9 @@ bool Unit::Collide(Unit *target)
         bigger = this;
         smaller = target;
     }
-    bool usecoltree = (this->colTrees && target->colTrees)
-                          ? this->colTrees->colTree(this, Vector(0, 0, 0)) && target->colTrees->colTree(this, Vector(0, 0, 0))
-                          : false;
+    bool usecoltree = (this->colTrees && target->colTrees) ? this->colTrees->colTree(this, Vector(0, 0, 0)) &&
+                                                                 target->colTrees->colTree(this, Vector(0, 0, 0))
+                                                           : false;
     if (usecoltree)
     {
         QVector bigpos, smallpos;
@@ -340,7 +334,7 @@ float globQueryShell(QVector st, QVector dir, float radius)
     c = c - temp1 * temp1;
     b = 2.0f * (dir.Dot(st));
     a = dir.Dot(dir);
-    //b^2-4ac
+    // b^2-4ac
     c = b * b - 4.0f * a * c;
     if (c < 0 || a == 0)
         return 0.0f;
@@ -364,12 +358,12 @@ float globQuerySphere(QVector start, QVector end, QVector pos, float radius)
 }
 
 /*
-    * This is our ray / bolt collision routine for now.
-    * Basically, this is called on a ship unit to see if any ray or bolt given by some simple vectors collide with it
-    *  We should probably first check against shields and then against the colTree to see if we hit the shields first
-    *  Not sure yet if that would work though...  more importantly, we might have to modify end in here in order
-    *  to tell calling code that the bolt should stop at a given point.
-*/
+ * This is our ray / bolt collision routine for now.
+ * Basically, this is called on a ship unit to see if any ray or bolt given by some simple vectors collide with it
+ *  We should probably first check against shields and then against the colTree to see if we hit the shields first
+ *  Not sure yet if that would work though...  more importantly, we might have to modify end in here in order
+ *  to tell calling code that the bolt should stop at a given point.
+ */
 Unit *Unit::rayCollide(const QVector &start, const QVector &end, Vector &norm, float &distance)
 {
     Unit *tmp;
@@ -415,10 +409,10 @@ Unit *Unit::rayCollide(const QVector &start, const QVector &end, Vector &norm, f
             // Retrieve the correct scale'd collider from the unit's collide tree.
             csOPCODECollider *tmpCol = this->colTrees->colTree(this, this->GetWarpVelocity());
             QVector del(end - start);
-            //Normalize(del);
+            // Normalize(del);
             norm = ((start + del * distance) - Position()).Cast();
             Normalize(norm);
-            //RAY COLLIDE does not yet set normal, use that of the sphere center to current loc
+            // RAY COLLIDE does not yet set normal, use that of the sphere center to current loc
             if (tmpCol == nullptr)
             {
 
@@ -429,13 +423,14 @@ Unit *Unit::rayCollide(const QVector &start, const QVector &end, Vector &norm, f
                 // compute real distance
                 distance = (end - start).Magnitude() * distance;
 
-                // NOTE:   Here is where we need to retrieve the point on the ray that we collided with the mesh, and set it to end, create the normal and set distance
+                // NOTE:   Here is where we need to retrieve the point on the ray that we collided with the mesh, and
+                // set it to end, create the normal and set distance
                 BOOST_LOG_TRIVIAL(trace) << boost::format("Beam collide with %1$p, distance %2%") % this % distance;
                 return (this);
             }
         }
         else
-        { //no col trees = a sphere
+        { // no col trees = a sphere
             // compute real distance
             distance = (end - start).Magnitude() * distance;
 
@@ -457,15 +452,16 @@ bool Unit::querySphere(const QVector &pnt, float err) const
 
     Vector TargetPoint(tmpo->getP());
 #ifdef VARIABLE_LENGTH_PQR
-    //adjust the ship radius by the scale of local coordinates
+    // adjust the ship radius by the scale of local coordinates
     double SizeScaleFactor = sqrt(TargetPoint.Dot(TargetPoint));
 #endif
     if (nummesh() < 1 && isPlanet())
     {
         TargetPoint = (tmpo->p - pnt).Cast();
-        if (TargetPoint.Dot(TargetPoint) < err * err + radial_size * radial_size
+        if (TargetPoint.Dot(TargetPoint) < err * err +
+                                               radial_size * radial_size
 #ifdef VARIABLE_LENGTH_PQR
-                                                           * SizeScaleFactor * SizeScaleFactor
+                                                   * SizeScaleFactor * SizeScaleFactor
 #endif
                                                +
 #ifdef VARIABLE_LENGTH_PQR
@@ -479,9 +475,10 @@ bool Unit::querySphere(const QVector &pnt, float err) const
         for (i = 0; i < nummesh(); i++)
         {
             TargetPoint = (Transform(*tmpo, meshdata[i]->Position().Cast()) - pnt).Cast();
-            if (TargetPoint.Dot(TargetPoint) < err * err + meshdata[i]->rSize() * meshdata[i]->rSize()
+            if (TargetPoint.Dot(TargetPoint) < err * err +
+                                                   meshdata[i]->rSize() * meshdata[i]->rSize()
 #ifdef VARIABLE_LENGTH_PQR
-                                                               * SizeScaleFactor * SizeScaleFactor
+                                                       * SizeScaleFactor * SizeScaleFactor
 #endif
                                                    +
 #ifdef VARIABLE_LENGTH_PQR
@@ -526,7 +523,7 @@ float Unit::querySphere(const QVector &start, const QVector &end, float min_radi
     }
 }
 
-//does not check inside sphere
+// does not check inside sphere
 float Unit::querySphereNoRecurse(const QVector &start, const QVector &end, float min_radius) const
 {
     unsigned int i;
@@ -540,11 +537,11 @@ float Unit::querySphereNoRecurse(const QVector &start, const QVector &end, float
         double a, b, c;
         QVector st = start - Transform(cumulative_transformation_matrix, meshdata[i]->Position().Cast());
 
-        QVector dir = end - start; //now start and end are based on mesh's position
+        QVector dir = end - start; // now start and end are based on mesh's position
         c = st.Dot(st);
         double temp1 = (min_radius + meshdata[i]->rSize());
-        //if (st.MagnitudeSquared()<temp1*temp1) //UNCOMMENT if you want inside sphere to count...otherwise...
-        //return 1.0e-6;
+        // if (st.MagnitudeSquared()<temp1*temp1) //UNCOMMENT if you want inside sphere to count...otherwise...
+        // return 1.0e-6;
         if (min_radius != -FLT_MAX)
             c = c - temp1 * temp1;
         else
@@ -554,7 +551,7 @@ float Unit::querySphereNoRecurse(const QVector &start, const QVector &end, float
 #endif
         b = 2.0f * (dir.Dot(st));
         a = dir.Dot(dir);
-        //b^2-4ac
+        // b^2-4ac
         if (min_radius != -FLT_MAX)
             c = b * b - 4.0f * a * c;
         else

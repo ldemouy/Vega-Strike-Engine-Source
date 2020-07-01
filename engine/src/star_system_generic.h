@@ -1,14 +1,14 @@
 #ifndef _GENERICSYSTEM_H_
 #define _GENERICSYSTEM_H_
-#include <expat.h>
-#include <string>
-#include <vector>
-#include "xml_support.h"
-#include "gldrv/gfxlib_struct.h"
-#include "gfx/vec.h"
 #include "cmd/collection.h"
 #include "cmd/container.h"
+#include "gfx/vec.h"
+#include "gldrv/gfxlib_struct.h"
+#include "xml_support.h"
+#include <expat.h>
 #include <map>
+#include <string>
+#include <vector>
 class Stars;
 class Planet;
 class ClickList;
@@ -19,7 +19,7 @@ class ContinuousTerrain;
 class Universe;
 class CollideMap;
 class Texture;
-//class TextPlane;
+// class TextPlane;
 struct AtmosphericFogMesh
 {
     std::string meshname;
@@ -41,7 +41,7 @@ struct AtmosphericFogMesh
     AtmosphericFogMesh();
 };
 
-//class Atmosphere;
+// class Atmosphere;
 /**
  * Star System
  * Scene management for a star system
@@ -50,8 +50,8 @@ struct AtmosphericFogMesh
 const unsigned int SIM_QUEUE_SIZE = 128;
 class StarSystem
 {
-protected:
-    ///Starsystem XML Struct For use with XML loading
+  protected:
+    /// Starsystem XML Struct For use with XML loading
     struct StarXML
     {
         Terrain *parentterrain;
@@ -79,10 +79,10 @@ protected:
     void beginElement(const std::string &name, const XMLSupport::AttributeList &attributes);
     void endElement(const std::string &name);
 
-public:
+  public:
     struct Statistics
     {
-        //neutral, friendly, enemy
+        // neutral, friendly, enemy
         std::vector<UnitContainer> navs[3];
         vsUMap<std::string, UnitContainer> jumpPoints;
         int system_faction;
@@ -105,8 +105,8 @@ public:
     StarSystem(const char *filename, const Vector &centroid = Vector(0, 0, 0), const float timeofyear = 0);
     virtual ~StarSystem();
 
-protected:
-    ///Physics is divided into 3 stages spread over 3 frames
+  protected:
+    /// Physics is divided into 3 stages spread over 3 frames
     enum PHYSICS_STAGE
     {
         MISSION_SIMULATION,
@@ -114,9 +114,9 @@ protected:
         PHY_NUM
     } current_stage;
 
-    ///Stars, planets, etc. Orbital mechanics precalculated
+    /// Stars, planets, etc. Orbital mechanics precalculated
 
-protected:
+  protected:
     std::vector<Terrain *> terrains;
     std::vector<ContinuousTerrain *> contterrains;
     /// Everything to be drawn. Folded missiles in here oneday
@@ -126,47 +126,49 @@ protected:
     unsigned int current_sim_location;
     /// Objects subject to global gravitron physics (disabled)
     unsigned char no_collision_time;
-    ///system name
+    /// system name
     char *name;
     std::string filename;
     UnitCollection::UnitIterator sigIter;
-    ///to track the next given physics frame
+    /// to track the next given physics frame
     double time;
-    ///The background associated with this system
-    //Background * bg;
-    ///The moving, fading stars
+    /// The background associated with this system
+    // Background * bg;
+    /// The moving, fading stars
     Stars *stars;
-    ///The Light Map corresponding for the BP for spheremapping
-    //Texture *LightMap[6];
+    /// The Light Map corresponding for the BP for spheremapping
+    // Texture *LightMap[6];
     void AddStarsystemToUniverse(const std::string &filename);
     void RemoveStarsystemFromUniverse();
     friend class Universe;
     int lightcontext;
     std::vector<class MissileEffect *> dischargedMissiles;
-    unsigned int zone; //short fix
-public:
+    unsigned int zone; // short fix
+  public:
     std::multimap<Unit *, Unit *> last_collisions;
-    //short fix
+    // short fix
     void SetZone(unsigned int zonenum)
     {
         this->zone = zonenum;
     }
     unsigned int GetZone()
     {
-        //short fix
+        // short fix
         return this->zone;
     }
     virtual void AddMissileToQueue(class MissileEffect *);
     virtual void UpdateMissiles();
     void UpdateUnitPhysics(bool firstframe);
-    ///Requeues the unit so that it is simulated ASAP.
+    /// Requeues the unit so that it is simulated ASAP.
     void RequestPhysics(Unit *un, unsigned int queue);
-    virtual void activateLightMap(int stage = 1) {}
+    virtual void activateLightMap(int stage = 1)
+    {
+    }
     virtual Texture *getLightMap()
     {
         return nullptr;
     }
-    ///activates the light map texture
+    /// activates the light map texture
     virtual unsigned int numTerrain()
     {
         return 0;
@@ -175,16 +177,22 @@ public:
     {
         return 0;
     }
-    ///Draws a frame of action, interpolating between physics frames
-    virtual void Draw(bool DrawCockpit = true) {}
+    /// Draws a frame of action, interpolating between physics frames
+    virtual void Draw(bool DrawCockpit = true)
+    {
+    }
     /// update a simulation atom ExecuteDirector must be false if star system is just loaded before mission is loaded
     void Update(float priority, bool executeDirector);
-    //This one is temporarly used on server side
+    // This one is temporarly used on server side
     void Update(float priority);
-    ///re-enables the included lights and terrains
-    virtual void SwapIn() {}
-    ///Disables included lights and terrains
-    virtual void SwapOut() {}
+    /// re-enables the included lights and terrains
+    virtual void SwapIn()
+    {
+    }
+    /// Disables included lights and terrains
+    virtual void SwapOut()
+    {
+    }
     virtual Terrain *getTerrain(unsigned int which)
     {
         return nullptr;
@@ -201,7 +209,7 @@ public:
     {
         return nullptr;
     }
-    ///Gets the current simulation frame
+    /// Gets the current simulation frame
     unsigned int getCurrentSimFrame() const
     {
         return current_sim_location;
@@ -209,14 +217,14 @@ public:
 
     void ExecuteUnitAI();
     class CollideTable *collidetable;
-    //0 = UNIT_ONLY 1 = UNIT_BOLT...use enum from Unit::
+    // 0 = UNIT_ONLY 1 = UNIT_BOLT...use enum from Unit::
     CollideMap *collidemap[2];
     class bolt_draw *bolts;
     static void beginElement(void *userData, const XML_Char *name, const XML_Char **atts);
     static void endElement(void *userData, const XML_Char *name);
     std::string getFileName() const;
     std::string getName();
-    ///Loads the star system from an XML file
+    /// Loads the star system from an XML file
     UnitCollection &getUnitList()
     {
         return drawList;
@@ -227,20 +235,27 @@ public:
     }
     Unit *nextSignificantUnit();
     /// returns xy sorted bounding spheres of all units in current view
-    ///Adds to draw list
+    /// Adds to draw list
     void AddUnit(Unit *unit);
-    ///Removes from draw list
+    /// Removes from draw list
     bool RemoveUnit(Unit *unit);
-    bool JumpTo(Unit *unit, Unit *jumppoint, const std::string &system, bool force = false, bool save_coordinates = false /*for intersystem transit the long way*/);
+    bool JumpTo(Unit *unit, Unit *jumppoint, const std::string &system, bool force = false,
+                bool save_coordinates = false /*for intersystem transit the long way*/);
     static void ProcessPendingJumps();
-    virtual void VolitalizeJumpAnimation(const int ani) {}
-    virtual void DoJumpingComeSightAndSound(Unit *un) {}
+    virtual void VolitalizeJumpAnimation(const int ani)
+    {
+    }
+    virtual void DoJumpingComeSightAndSound(Unit *un)
+    {
+    }
     virtual int DoJumpingLeaveSightAndSound(Unit *un)
     {
         return -1;
     }
-    //friend class Atmosphere;
-    virtual void createBackground(StarSystem::StarXML *xml) {}
+    // friend class Atmosphere;
+    virtual void createBackground(StarSystem::StarXML *xml)
+    {
+    }
 };
 bool PendingJumpsEmpty();
 double calc_blend_factor(double frac, int priority, unsigned int when_it_will_be_simulated, int cur_simulation_frame);

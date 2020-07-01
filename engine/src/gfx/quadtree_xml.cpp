@@ -1,10 +1,10 @@
-#include "quadtree.h"
-#include "xml_support.h"
-#include "gldrv/gfxlib.h"
 #include "ani_texture.h"
-#include <assert.h>
+#include "gldrv/gfxlib.h"
+#include "quadtree.h"
 #include "vsfilesystem.h"
 #include "vsimage.h"
+#include "xml_support.h"
+#include <assert.h>
 
 using namespace VSFileSystem;
 
@@ -48,85 +48,83 @@ using XMLSupport::EnumMap;
 
 namespace TerrainXML
 {
-    //
+//
 
-    enum Names
-    {
-        UNKNOWN,
-        TEXTURE,
-        TERRAIN,
-        MATERIAL,
-        DATA,
-        LEVEL,
-        BLEND,
-        FFILE,
-        ALPHAFILE,
-        TERRAINFILE,
-        DETAIL,
-        STATICDETAIL,
-        REFLECT,
-        COLOR,
-        SCALE,
-        ORIGINX,
-        SCALES,
-        ORIGINY,
-        SCALET,
-        SPHERESIZEX,
-        SPHERESIZEZ,
-        TERRAINAMBIENT,
-        TERRAINDIFFUSE,
-        TERRAINSPECULAR,
-        TERRAINEMISSIVE,
-        RED,
-        GREEN,
-        BLUE,
-        ALPHA,
-        POWER,
-        RADIUS,
-        ANIMATIONFILE
-    };
+enum Names
+{
+    UNKNOWN,
+    TEXTURE,
+    TERRAIN,
+    MATERIAL,
+    DATA,
+    LEVEL,
+    BLEND,
+    FFILE,
+    ALPHAFILE,
+    TERRAINFILE,
+    DETAIL,
+    STATICDETAIL,
+    REFLECT,
+    COLOR,
+    SCALE,
+    ORIGINX,
+    SCALES,
+    ORIGINY,
+    SCALET,
+    SPHERESIZEX,
+    SPHERESIZEZ,
+    TERRAINAMBIENT,
+    TERRAINDIFFUSE,
+    TERRAINSPECULAR,
+    TERRAINEMISSIVE,
+    RED,
+    GREEN,
+    BLUE,
+    ALPHA,
+    POWER,
+    RADIUS,
+    ANIMATIONFILE
+};
 
-    const EnumMap::Pair element_names[] = {
-        EnumMap::Pair("UNKNOWN", UNKNOWN),
-        EnumMap::Pair("Terrain", TERRAIN),
-        EnumMap::Pair("Texture", TEXTURE),
-        EnumMap::Pair("Material", MATERIAL),
-        EnumMap::Pair("Data", DATA),
-        EnumMap::Pair("Ambient", TERRAINAMBIENT),
-        EnumMap::Pair("Diffuse", TERRAINDIFFUSE),
-        EnumMap::Pair("Specular", TERRAINSPECULAR),
-        EnumMap::Pair("Emissive", TERRAINEMISSIVE)};
+const EnumMap::Pair element_names[] = {EnumMap::Pair("UNKNOWN", UNKNOWN),
+                                       EnumMap::Pair("Terrain", TERRAIN),
+                                       EnumMap::Pair("Texture", TEXTURE),
+                                       EnumMap::Pair("Material", MATERIAL),
+                                       EnumMap::Pair("Data", DATA),
+                                       EnumMap::Pair("Ambient", TERRAINAMBIENT),
+                                       EnumMap::Pair("Diffuse", TERRAINDIFFUSE),
+                                       EnumMap::Pair("Specular", TERRAINSPECULAR),
+                                       EnumMap::Pair("Emissive", TERRAINEMISSIVE)};
 
-    const EnumMap::Pair attribute_names[] = {
-        EnumMap::Pair("UNKNOWN", UNKNOWN),
-        EnumMap::Pair("Detail", DETAIL),
-        EnumMap::Pair("StaticDetail", STATICDETAIL),
-        EnumMap::Pair("Level", LEVEL),
-        EnumMap::Pair("Blend", BLEND),
-        EnumMap::Pair("File", FFILE),
-        EnumMap::Pair("AlphaFile", ALPHAFILE),
-        EnumMap::Pair("Animation", ANIMATIONFILE),
-        EnumMap::Pair("TerrainFile", TERRAINFILE),
-        EnumMap::Pair("Reflect", REFLECT),
-        EnumMap::Pair("Color", COLOR),
-        EnumMap::Pair("Scale", SCALE),
-        EnumMap::Pair("ScaleS", SCALES),
-        EnumMap::Pair("ScaleT", SCALET),
-        EnumMap::Pair("OriginX", ORIGINX),
-        EnumMap::Pair("OriginY", ORIGINY),
-        EnumMap::Pair("red", RED),
-        EnumMap::Pair("green", GREEN),
-        EnumMap::Pair("blue", BLUE),
-        EnumMap::Pair("alpha", ALPHA),
-        EnumMap::Pair("power", POWER),
-        EnumMap::Pair("radius", RADIUS),
-        EnumMap::Pair("SphereWidth", SPHERESIZEX),
-        EnumMap::Pair("SphereHeight", SPHERESIZEZ)};
+const EnumMap::Pair attribute_names[] = {EnumMap::Pair("UNKNOWN", UNKNOWN),
+                                         EnumMap::Pair("Detail", DETAIL),
+                                         EnumMap::Pair("StaticDetail", STATICDETAIL),
+                                         EnumMap::Pair("Level", LEVEL),
+                                         EnumMap::Pair("Blend", BLEND),
+                                         EnumMap::Pair("File", FFILE),
+                                         EnumMap::Pair("AlphaFile", ALPHAFILE),
+                                         EnumMap::Pair("Animation", ANIMATIONFILE),
+                                         EnumMap::Pair("TerrainFile", TERRAINFILE),
+                                         EnumMap::Pair("Reflect", REFLECT),
+                                         EnumMap::Pair("Color", COLOR),
+                                         EnumMap::Pair("Scale", SCALE),
+                                         EnumMap::Pair("ScaleS", SCALES),
+                                         EnumMap::Pair("ScaleT", SCALET),
+                                         EnumMap::Pair("OriginX", ORIGINX),
+                                         EnumMap::Pair("OriginY", ORIGINY),
+                                         EnumMap::Pair("red", RED),
+                                         EnumMap::Pair("green", GREEN),
+                                         EnumMap::Pair("blue", BLUE),
+                                         EnumMap::Pair("alpha", ALPHA),
+                                         EnumMap::Pair("power", POWER),
+                                         EnumMap::Pair("radius", RADIUS),
+                                         EnumMap::Pair("SphereWidth", SPHERESIZEX),
+                                         EnumMap::Pair("SphereHeight", SPHERESIZEZ)};
 
-    const EnumMap element_map(element_names, 9);
-    const EnumMap attribute_map(attribute_names, 24);
+const EnumMap element_map(element_names, 9);
+const EnumMap attribute_map(attribute_names, 24);
 
-    //end namespace
+// end namespace
 } // namespace TerrainXML
 
 using XMLSupport::Attribute;
@@ -332,7 +330,9 @@ void QuadTree::beginElement(const string &name, const AttributeList &attributes)
     }
 }
 
-void QuadTree::endElement(const string &name) {}
+void QuadTree::endElement(const string &name)
+{
+}
 
 void QuadTree::SetXSizes(int mX, unsigned int maxX)
 {
@@ -353,7 +353,7 @@ void QuadTree::SetZSizes(int mZ, unsigned int maxZ)
 void QuadTree::LoadXML(const char *filename, const Vector &Scales, const float Radius)
 {
     std::vector<unsigned int> ind;
-    //FILE* inFile = VSFileSystem::vs_open (filename, "r");
+    // FILE* inFile = VSFileSystem::vs_open (filename, "r");
     VSFile f;
     VSError err = f.OpenReadOnly(filename, UnknownFile);
     if (err > Ok)
@@ -409,26 +409,27 @@ void QuadTree::LoadXML(const char *filename, const Vector &Scales, const float R
         hm.XOrigin = (int)xml->data[i].OriginX;
         hm.ZOrigin = (int)xml->data[i].OriginY;
         hm.Scale = xml->data[i].scale;
-        //FILE * fp;
-        //fp = VSFileSystem::vs_open (xml->data[i].file.c_str(),"rb");
+        // FILE * fp;
+        // fp = VSFileSystem::vs_open (xml->data[i].file.c_str(),"rb");
         Texture tex;
         err = f.OpenReadOnly(xml->data[i].file.c_str(), UnknownFile);
         if (err <= Ok)
         {
-            //hm.Data = (short *) readImage (fp,bpp, format, hm.XSize,hm.ZSize, palette, &heightmapTransform,false);
+            // hm.Data = (short *) readImage (fp,bpp, format, hm.XSize,hm.ZSize, palette, &heightmapTransform,false);
             hm.Data = (short *)tex.ReadImage(&f, &heightmapTransform, false);
             hm.XSize = tex.sizeX;
             hm.ZSize = tex.sizeY;
             f.Close();
         }
-        //LoadData();
+        // LoadData();
         unsigned long xsize = 0;
         unsigned long zsize = 0;
-        //fp = VSFileSystem::vs_open (xml->data[i].terrainfile.c_str(),"rb");
+        // fp = VSFileSystem::vs_open (xml->data[i].terrainfile.c_str(),"rb");
         f.OpenReadOnly(xml->data[i].terrainfile.c_str(), UnknownFile);
         if (err <= Ok)
         {
-            //hm.terrainmap = (unsigned char *)readImage (fp, bpp, format, xsize, zsize, palette, &terrainTransform,true);
+            // hm.terrainmap = (unsigned char *)readImage (fp, bpp, format, xsize, zsize, palette,
+            // &terrainTransform,true);
             hm.terrainmap = (unsigned char *)tex.ReadImage(&f, &terrainTransform, true);
             xsize = tex.sizeX;
             zsize = tex.sizeY;
@@ -445,53 +446,45 @@ void QuadTree::LoadXML(const char *filename, const Vector &Scales, const float R
                 biggest = false;
                 if (Radius != 0 && xml->radius != 0)
                 {
-                    nonlinear_transform = new SphericalTransform(xml->SphereSizeX < 0 ? hm.XSize << hm.Scale : xml->SphereSizeX,
-                                                                 Radius < 0 ? xml->radius : Radius,
-                                                                 xml->SphereSizeZ < 0 ? hm.ZSize << hm.Scale : xml->SphereSizeZ);
+                    nonlinear_transform =
+                        new SphericalTransform(xml->SphereSizeX < 0 ? hm.XSize << hm.Scale : xml->SphereSizeX,
+                                               Radius < 0 ? xml->radius : Radius,
+                                               xml->SphereSizeZ < 0 ? hm.ZSize << hm.Scale : xml->SphereSizeZ);
                 }
                 else
                 {
                     nonlinear_transform = new IdentityTransform();
-                    //only happens the first time!
+                    // only happens the first time!
                 }
                 GFXVertex *v = vertices.BeginMutate(0)->vertices;
                 float xmax = (hm.XOrigin + (hm.XSize << hm.Scale));
                 float zmax = (hm.ZOrigin + (hm.ZSize << hm.Scale));
                 v[0].SetVertex(nonlinear_transform->Transform(Vector(xmax, 0, hm.ZOrigin)));
-                v[0].SetTexCoord(nonlinear_transform->TransformS(xmax,
-                                                                 xml->scales),
+                v[0].SetTexCoord(nonlinear_transform->TransformS(xmax, xml->scales),
                                  nonlinear_transform->TransformT(hm.ZOrigin, xml->scalet));
                 Vector Norm0(nonlinear_transform->TransformNormal(v[0].GetConstVertex(), Vector(0, 1, 0)));
                 v[0].SetNormal(Vector(Norm0.i * Scales.i, Norm0.j * Scales.j, Norm0.k * Scales.k));
                 v[1].SetVertex(nonlinear_transform->Transform(Vector(hm.XOrigin, 0, hm.ZOrigin)));
-                v[1].SetTexCoord(nonlinear_transform->TransformS(hm.XOrigin,
-                                                                 xml->scales),
+                v[1].SetTexCoord(nonlinear_transform->TransformS(hm.XOrigin, xml->scales),
                                  nonlinear_transform->TransformT(hm.ZOrigin, xml->scalet));
                 Norm0 = (nonlinear_transform->TransformNormal(v[1].GetConstVertex(), Vector(0, 1, 0)));
                 v[1].SetNormal(Vector(Norm0.i * Scales.i, Norm0.j * Scales.j, Norm0.k * Scales.k));
 
                 v[2].SetVertex(nonlinear_transform->Transform(Vector(hm.XOrigin, 0, zmax)));
-                v[2].SetTexCoord(nonlinear_transform->TransformS(hm.XOrigin,
-                                                                 xml->scales),
+                v[2].SetTexCoord(nonlinear_transform->TransformS(hm.XOrigin, xml->scales),
                                  nonlinear_transform->TransformT(zmax, xml->scalet));
                 Norm0 = (nonlinear_transform->TransformNormal(v[2].GetConstVertex(), Vector(0, 1, 0)));
                 v[2].SetNormal(Vector(Norm0.i * Scales.i, Norm0.j * Scales.j, Norm0.k * Scales.k));
 
                 v[3].SetVertex(nonlinear_transform->Transform(Vector(xmax, 0, zmax)));
-                v[3].SetTexCoord(nonlinear_transform->TransformS(zmax,
-                                                                 xml->scales),
+                v[3].SetTexCoord(nonlinear_transform->TransformS(zmax, xml->scales),
                                  nonlinear_transform->TransformT(zmax, xml->scalet));
                 Norm0 = (nonlinear_transform->TransformNormal(v[3].GetConstVertex(), Vector(0, 1, 0)));
                 v[3].SetNormal(Vector(Norm0.i * Scales.i, Norm0.j * Scales.j, Norm0.k * Scales.k));
                 vertices.EndMutate();
-                quadsquare::SetCurrentTerrain(&VertexAllocated,
-                                              &VertexCount,
-                                              &vertices,
-                                              &unusedvertices,
-                                              nonlinear_transform,
-                                              &textures,
-                                              Vector(1.0F / Scales.i, 1.0F / Scales.j, 1.0F / Scales.k),
-                                              neighbors);
+                quadsquare::SetCurrentTerrain(&VertexAllocated, &VertexCount, &vertices, &unusedvertices,
+                                              nonlinear_transform, &textures,
+                                              Vector(1.0F / Scales.i, 1.0F / Scales.j, 1.0F / Scales.k), neighbors);
                 root = new quadsquare(&RootCornerData);
             }
             root->AddHeightMap(RootCornerData, hm);
@@ -501,16 +494,10 @@ void QuadTree::LoadXML(const char *filename, const Vector &Scales, const float R
     }
     if (biggest)
     {
-        quadsquare::SetCurrentTerrain(&VertexAllocated,
-                                      &VertexCount,
-                                      &vertices,
-                                      &unusedvertices,
-                                      nonlinear_transform,
-                                      &textures,
-                                      Vector(1.0F / Scales.i, 1.0F / Scales.j, 1.0F / Scales.k),
-                                      neighbors);
+        quadsquare::SetCurrentTerrain(&VertexAllocated, &VertexCount, &vertices, &unusedvertices, nonlinear_transform,
+                                      &textures, Vector(1.0F / Scales.i, 1.0F / Scales.j, 1.0F / Scales.k), neighbors);
         root = new quadsquare(&RootCornerData);
     }
-    //root->StaticCullData (RootCornerData,xml->detail);
+    // root->StaticCullData (RootCornerData,xml->detail);
     delete xml;
 }

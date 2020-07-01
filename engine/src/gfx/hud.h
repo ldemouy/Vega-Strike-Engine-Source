@@ -22,25 +22,25 @@
 #ifndef __HUD_H
 #define __HUD_H
 
-#include <string>
-#include "vec.h"
 #include "gldrv/gfxlib_struct.h"
+#include "vec.h"
+#include <string>
 class Texture;
 
 class TextPlane
 {
     std::string myText;
 
-    //Texture *myFont;
-    Vector myFontMetrics; //i = width, j = height
+    // Texture *myFont;
+    Vector myFontMetrics; // i = width, j = height
     Vector myDims;
     int numlet;
     /*
- *  struct GlyphPosition {
- *       float left, right, top, bottom;
- *  } myGlyphPos[256];
- */
-public:
+     *  struct GlyphPosition {
+     *       float left, right, top, bottom;
+     *  } myGlyphPos[256];
+     */
+  public:
     GFXColor col, bgcol;
     TextPlane(const struct GFXColor &col = GFXColor(1, 1, 1, 1), const struct GFXColor &bgcol = GFXColor(0, 0, 0, 0));
     ~TextPlane();
@@ -74,11 +74,8 @@ public:
         x = myDims.i;
         y = myDims.j;
     }
-    int Draw(int offset = 0); //returns number of lines
-    int Draw(const std::string &text,
-             int offset = 0,
-             bool start_one_line_lower = false,
-             bool force_highquality = false,
+    int Draw(int offset = 0); // returns number of lines
+    int Draw(const std::string &text, int offset = 0, bool start_one_line_lower = false, bool force_highquality = false,
              bool automatte = false);
     void SetText(const std::string &newText)
     {

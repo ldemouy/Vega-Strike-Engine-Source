@@ -1,5 +1,5 @@
-#include "flykeyboard.h"
 #include "autodocking.h"
+#include "flykeyboard.h"
 
 FlyByKeyboard::FlyByKeyboard(unsigned int whichplayer) : FlyByWire(), axis_key(0, 0, 0)
 {

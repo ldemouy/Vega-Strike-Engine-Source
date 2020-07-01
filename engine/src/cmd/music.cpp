@@ -1,38 +1,38 @@
+#include <algorithm>
 #include <map>
 #include <set>
-#include <algorithm>
 #ifdef _WIN32
 #ifndef NOMINMAX
 #define NOMINMAX
-#endif //tells VCC not to generate min/max macros
-#include <windows.h>
-#include <io.h>
-#include <fcntl.h>
-#include <process.h>
-#include <string.h>
-#include <stdio.h>
+#endif // tells VCC not to generate min/max macros
 #include <direct.h>
+#include <fcntl.h>
+#include <io.h>
+#include <process.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <windows.h>
 #endif
 
 #include "vegastrike.h"
 #include "vs_globals.h"
 
 #include "aldrv/audiolib.h"
-#include "universe.h"
-#include "star_system.h"
-#include "vs_globals.h"
+#include "base.h"
+#include "collection.h"
 #include "config_xml.h"
 #include "lin_time.h"
-#include "collection.h"
-#include "unit_generic.h"
-#include "vsfilesystem.h"
 #include "music.h"
-#include "base.h"
+#include "star_system.h"
+#include "unit_generic.h"
+#include "universe.h"
+#include "vs_globals.h"
+#include "vsfilesystem.h"
 
 #include "python/python_compile.h"
 
-//To allow for loading in another thread, we must handle some AL vars ourselves...
+// To allow for loading in another thread, we must handle some AL vars ourselves...
 #include "aldrv/al_globals.h"
 #include "options.h"
 
@@ -47,7 +47,7 @@ static void print_check_err(int errorcode, const char *str)
 #ifndef _WIN32
     if (errorcode)
     {
-        static char const unknown_error[16] = "Unknown error"; //added by chuck_starchaser to get rid of warning
+        static char const unknown_error[16] = "Unknown error"; // added by chuck_starchaser to get rid of warning
         char const *err = strerror(errorcode);
         if (!err)
             err = unknown_error;
@@ -56,11 +56,11 @@ static void print_check_err(int errorcode, const char *str)
 #endif
 }
 
-//where func is the evaluation of func, and #func is the string form.
-#define checkerr(func)                    \
-    do                                    \
-    {                                     \
-        print_check_err(((func)), #func); \
+// where func is the evaluation of func, and #func is the string form.
+#define checkerr(func)                                                                                                 \
+    do                                                                                                                 \
+    {                                                                                                                  \
+        print_check_err(((func)), #func);                                                                              \
     } while (0)
 
 Music::Music(Unit *parent) : random(false), p(parent), song(-1), thread_initialized(false)
@@ -85,11 +85,11 @@ Music::Music(Unit *parent) : random(false), p(parent), song(-1), thread_initiali
     pthread_mutexattr_init(&checkme);
     pthread_mutexattr_settype(&checkme, PTHREAD_MUTEX_ERRORCHECK);
     checkerr(pthread_mutex_init(&musicinfo_mutex, &checkme));
-#else  //ERRORCHECK_MUTEX
+#else  // ERRORCHECK_MUTEX
     checkerr(pthread_mutex_init(&musicinfo_mutex, nullptr));
-#endif //!ERRORCHECK_MUTEX
+#endif //! ERRORCHECK_MUTEX
 
-    //Lock it immediately, since the loader will want to wait for its first data upon creation.
+    // Lock it immediately, since the loader will want to wait for its first data upon creation.
     checkerr(pthread_mutex_lock(&musicinfo_mutex));
 #endif //!_WIN32
     if (!game_options.Music)
@@ -100,15 +100,16 @@ Music::Music(Unit *parent) : random(false), p(parent), song(-1), thread_initiali
     else
         maxhull = 1;
     int i;
-    const char *listvars[MAXLIST] = {"battleplaylist", "peaceplaylist", "panicplaylist", "victoryplaylist", "lossplaylist"};
+    const char *listvars[MAXLIST] = {"battleplaylist", "peaceplaylist", "panicplaylist", "victoryplaylist",
+                                     "lossplaylist"};
     const char *deflistvars[MAXLIST] = {"battle.m3u", "peace.m3u", "panic.m3u", "victory.m3u", "loss.m3u"};
     for (i = 0; i < MAXLIST; i++)
         LoadMusic(vs_config->getVariable("audio", listvars[i], deflistvars[i]).c_str());
     soft_vol_up_latency = XMLSupport::parse_float(vs_config->getVariable("audio", "music_volume_up_latency", "15"));
     soft_vol_down_latency = XMLSupport::parse_float(vs_config->getVariable("audio", "music_volume_down_latency", "2"));
-    //Hardware volume = 1
+    // Hardware volume = 1
     _SetVolume(1, true);
-    //Software volume = from config
+    // Software volume = from config
     _SetVolume(XMLSupport::parse_float(vs_config->getVariable("audio", "music_volume", ".5")), false);
 }
 
@@ -133,7 +134,7 @@ void Music::_SetVolume(float vol, bool hardware, float latency_override)
     if (vol < 0)
         vol = 0;
     this->vol = vol;
-    this->soft_vol = vol; //for now fixme for fading
+    this->soft_vol = vol; // for now fixme for fading
     for (std::list<int>::const_iterator iter = playingSource.begin(); iter != playingSource.end(); iter++)
         AUDSoundGain(*iter, soft_vol, true);
 }
@@ -143,7 +144,7 @@ bool Music::LoadMusic(const char *file)
     using namespace VSFileSystem;
     if (!game_options.Music)
         return true;
-    //Loads a playlist so try to open a file in datadir or homedir
+    // Loads a playlist so try to open a file in datadir or homedir
     VSFile f;
     VSError err = f.OpenReadOnly(file, UnknownFile);
     if (err > Ok)
@@ -218,7 +219,8 @@ int Music::SelectTracks(int layer)
             int whichsong = (random ? rand() : playlist[lastlist].counter++) % playlist[lastlist].size();
             int spincount = 10;
             std::list<std::string> &recent = muzak[(layer >= 0) ? layer : 0].recent_songs;
-            while (random && (--spincount > 0) && (std::find(recent.begin(), recent.end(), playlist[lastlist][whichsong]) != recent.end()))
+            while (random && (--spincount > 0) &&
+                   (std::find(recent.begin(), recent.end(), playlist[lastlist][whichsong]) != recent.end()))
                 whichsong = (random ? rand() : playlist[lastlist].counter++) % playlist[lastlist].size();
             if (spincount <= 0)
                 recent.clear();
@@ -243,80 +245,80 @@ int Music::SelectTracks(int layer)
 
 namespace Muzak
 {
-    std::map<std::string, AUDSoundProperties> cachedSongs;
+std::map<std::string, AUDSoundProperties> cachedSongs;
 
 #ifndef _WIN32
+void *
+#else
+DWORD WINAPI
+#endif
+readerThread(
+#ifdef _WIN32
+    PVOID
+#else
     void *
-#else
-    DWORD WINAPI
 #endif
-    readerThread(
-#ifdef _WIN32
-        PVOID
-#else
-        void *
-#endif
-            input)
+        input)
+{
+    Music *me = (Music *)input;
+    me->threadalive = 1;
+    while (!me->killthread)
     {
-        Music *me = (Music *)input;
-        me->threadalive = 1;
-        while (!me->killthread)
+#ifdef _WIN32
+        WaitForSingleObject(me->musicinfo_mutex, INFINITE);
+#else
+        checkerr(pthread_mutex_lock(&me->musicinfo_mutex));
+#endif
+        if (me->killthread)
+            break;
+        me->music_loading = true;
+        me->music_loaded = false;
+        me->music_load_info->success = false;
+        size_t len = me->music_load_info->hashname.length();
+        char *songname = (char *)malloc(len + 1);
+        songname[len] = '\0';
+        memcpy(songname, me->music_load_info->hashname.data(), len);
+        std::map<std::string, AUDSoundProperties>::iterator wherecache = cachedSongs.find(songname);
+        bool foundcache = wherecache != cachedSongs.end();
+        static std::string cachable_songs = vs_config->getVariable("audio", "cache_songs", "../music/land.ogg");
+        bool docacheme = cachable_songs.find(songname) != std::string::npos;
+        if (foundcache == false && docacheme)
         {
-#ifdef _WIN32
-            WaitForSingleObject(me->musicinfo_mutex, INFINITE);
-#else
-            checkerr(pthread_mutex_lock(&me->musicinfo_mutex));
-#endif
-            if (me->killthread)
-                break;
-            me->music_loading = true;
-            me->music_loaded = false;
-            me->music_load_info->success = false;
-            size_t len = me->music_load_info->hashname.length();
-            char *songname = (char *)malloc(len + 1);
-            songname[len] = '\0';
-            memcpy(songname, me->music_load_info->hashname.data(), len);
-            std::map<std::string, AUDSoundProperties>::iterator wherecache = cachedSongs.find(songname);
-            bool foundcache = wherecache != cachedSongs.end();
-            static std::string cachable_songs = vs_config->getVariable("audio", "cache_songs", "../music/land.ogg");
-            bool docacheme = cachable_songs.find(songname) != std::string::npos;
-            if (foundcache == false && docacheme)
-            {
-                me->music_load_info->wave = nullptr;
-                cachedSongs[songname] = *me->music_load_info;
-                wherecache = cachedSongs.find(songname);
-            }
-#ifdef _WIN32
-            ReleaseMutex(me->musicinfo_mutex);
-#else
-            checkerr(pthread_mutex_unlock(&me->musicinfo_mutex));
-#endif
-            {
-                me->freeWav = true;
-                if (foundcache)
-                {
-                    *me->music_load_info = wherecache->second;
-                    me->freeWav = false;
-                }
-                else if (!AUDLoadSoundFile(songname, me->music_load_info, true))
-                {
-                    VSFileSystem::vs_dprintf(1, "Failed to load music file \"%s\"", songname);
-                }
-            }
-            if (me->freeWav && docacheme)
-            {
-                me->freeWav = false;
-                wherecache->second = *me->music_load_info;
-            }
-            free(songname);
-            me->music_loaded = true;
-            while (me->music_loaded)
-                micro_sleep(10000); //10ms of busywait for now... wait until end of frame.
+            me->music_load_info->wave = nullptr;
+            cachedSongs[songname] = *me->music_load_info;
+            wherecache = cachedSongs.find(songname);
         }
-
-        me->threadalive = 0;
-        return nullptr;
+#ifdef _WIN32
+        ReleaseMutex(me->musicinfo_mutex);
+#else
+        checkerr(pthread_mutex_unlock(&me->musicinfo_mutex));
+#endif
+        {
+            me->freeWav = true;
+            if (foundcache)
+            {
+                *me->music_load_info = wherecache->second;
+                me->freeWav = false;
+            }
+            else if (!AUDLoadSoundFile(songname, me->music_load_info, true))
+            {
+                VSFileSystem::vs_dprintf(1, "Failed to load music file \"%s\"", songname);
+            }
+        }
+        if (me->freeWav && docacheme)
+        {
+            me->freeWav = false;
+            wherecache->second = *me->music_load_info;
+        }
+        free(songname);
+        me->music_loaded = true;
+        while (me->music_loaded)
+            micro_sleep(10000); // 10ms of busywait for now... wait until end of frame.
     }
+
+    me->threadalive = 0;
+    return nullptr;
+}
 } // namespace Muzak
 
 void Music::_LoadLastSongAsync()
@@ -328,7 +330,7 @@ void Music::_LoadLastSongAsync()
     if (!music_load_info)
         return;
     if (music_loading)
-        //No touching anything here!
+        // No touching anything here!
         return;
     std::string song = music_load_list.back();
 
@@ -344,7 +346,7 @@ void Music::_LoadLastSongAsync()
                 playingSource.push_back(source);
             if (playingSource.size() == 1)
             {
-                //Start playing if first in list.
+                // Start playing if first in list.
                 _StopNow();
                 AUDStartPlaying(playingSource.front());
                 AUDSoundGain(playingSource.front(), vol, true);
@@ -369,7 +371,7 @@ void Music::Listen()
         {
             if (music_loaded)
             {
-                //fprintf(stderr,"LOADED is true\n");
+                // fprintf(stderr,"LOADED is true\n");
 #ifdef _WIN32
                 int trylock_ret = 0;
                 if (WaitForSingleObject(musicinfo_mutex, 0) == WAIT_TIMEOUT)
@@ -387,8 +389,8 @@ void Music::Listen()
                     checkerr(trylock_ret);
                 }
                 music_loading = false;
-                music_loaded = false; //once the loading thread sees this, it will try to grab a lock and wait.
-                                      //The lock will only be achieved once the next song is put in the queue.
+                music_loaded = false; // once the loading thread sees this, it will try to grab a lock and wait.
+                                      // The lock will only be achieved once the next song is put in the queue.
 
 #ifdef HAVE_AL
                 if (music_load_info->success && music_load_info->wave)
@@ -403,7 +405,7 @@ void Music::Listen()
 #endif
                 if (playingSource.size() == 1)
                 {
-                    //Start playing if first in list.
+                    // Start playing if first in list.
                     _StopNow();
                     AUDStartPlaying(playingSource.front());
                     AUDStreamingSound(playingSource.front());
@@ -412,7 +414,7 @@ void Music::Listen()
                 music_load_list.pop_back();
                 if (!music_load_list.empty())
                     _LoadLastSongAsync();
-                return; //Returns if finished loading, since the AUDIsPlaying() could fail right now.
+                return; // Returns if finished loading, since the AUDIsPlaying() could fail right now.
             }
         }
         if (!playingSource.empty())
@@ -427,7 +429,8 @@ void Music::Listen()
                     AUDSoundGain(playingSource.front(), vol, true);
                 }
             }
-        if (playingSource.empty() && muzak[muzak_cross_index].playingSource.empty() && music_load_list.empty() && muzak[muzak_cross_index].music_load_list.empty())
+        if (playingSource.empty() && muzak[muzak_cross_index].playingSource.empty() && music_load_list.empty() &&
+            muzak[muzak_cross_index].music_load_list.empty())
         {
             cur_song_file = "";
             _Skip();
@@ -484,9 +487,9 @@ void Music::_GotoSong(std::string mus)
         if (mus == cur_song_file || mus.length() == 0)
             return;
         cur_song_file = mus;
-        _StopLater(); //Kill all our currently playing songs.
+        _StopLater(); // Kill all our currently playing songs.
 
-        music_load_list = rsplit(mus, "|"); //reverse order.
+        music_load_list = rsplit(mus, "|"); // reverse order.
         if (!thread_initialized)
         {
 #ifdef _WIN32
@@ -511,13 +514,13 @@ void Music::GotoSong(int whichlist, int whichsong, bool skip, int layer)
 {
     if (game_options.Music)
     {
-        if (whichsong != NOLIST && whichlist != NOLIST && whichlist < (int)playlist.size() && whichsong < (int)playlist[whichlist].size())
+        if (whichsong != NOLIST && whichlist != NOLIST && whichlist < (int)playlist.size() &&
+            whichsong < (int)playlist[whichlist].size())
         {
             if (muzak[(layer >= 0) ? layer : 0].lastlist != whichlist)
             {
-                static bool clear =
-                    XMLSupport::parse_bool(vs_config->getVariable("audio", "shuffle_songs.clear_history_on_list_change",
-                                                                  "true"));
+                static bool clear = XMLSupport::parse_bool(
+                    vs_config->getVariable("audio", "shuffle_songs.clear_history_on_list_change", "true"));
                 if (clear)
                 {
                     std::list<std::string> &recent = muzak[(layer >= 0) ? layer : 0].recent_songs;
@@ -568,7 +571,10 @@ void Music::_SkipRandSong(int whichlist, int layer)
             lastlist = whichlist;
             static bool random = XMLSupport::parse_bool(vs_config->getVariable("audio", "shuffle_songs", "true"));
             if (playlist[whichlist].size())
-                GotoSong(whichlist, random ? randInt(playlist[whichlist].size()) : playlist[whichlist].counter++ % playlist[whichlist].size(), true, layer);
+                GotoSong(whichlist,
+                         random ? randInt(playlist[whichlist].size())
+                                : playlist[whichlist].counter++ % playlist[whichlist].size(),
+                         true, layer);
             else
                 fprintf(stderr, "Error no songs in playlist %d\n", whichlist);
             return;
@@ -606,7 +612,8 @@ void Music::_SkipRandList(int layer)
     {
         static bool random = XMLSupport::parse_bool(vs_config->getVariable("audio", "shuffle_songs", "true"));
         if (!playlist[i].empty())
-            GotoSong(i, random ? randInt(playlist[i].size()) : playlist[i].counter++ % playlist[i].size(), false, layer);
+            GotoSong(i, random ? randInt(playlist[i].size()) : playlist[i].counter++ % playlist[i].size(), false,
+                     layer);
     }
 }
 
@@ -671,13 +678,13 @@ Music::~Music()
 #else
         checkerr(pthread_mutex_unlock(&musicinfo_mutex));
 #endif
-        int spindown = 50; //Thread has 5 seconds to close down.
+        int spindown = 50; // Thread has 5 seconds to close down.
         while (threadalive && (spindown-- > 0))
             micro_sleep(100000);
         if (threadalive)
             threadalive = false;
     }
-    //Kill the thread.
+    // Kill the thread.
 }
 
 void incmusicvol(const KBData &, KBSTATE a)
@@ -707,8 +714,8 @@ void Music::CleanupMuzak()
 {
     if (muzak)
     {
-        //Multithreading issues... don't care to waste time here waiting to get the lock back.
-        //Let the OS clean up this mess!
+        // Multithreading issues... don't care to waste time here waiting to get the lock back.
+        // Let the OS clean up this mess!
         muzak = nullptr;
         muzak_count = 0;
     }
@@ -809,8 +816,10 @@ void Music::Mute(bool mute, int layer)
         return;
     if (muzak)
     {
-        static float muting_fadeout = XMLSupport::parse_float(vs_config->getVariable("audio", "music_muting_fadeout", "0.2"));
-        static float muting_fadein = XMLSupport::parse_float(vs_config->getVariable("audio", "music_muting_fadeout", "0.5"));
+        static float muting_fadeout =
+            XMLSupport::parse_float(vs_config->getVariable("audio", "music_muting_fadeout", "0.2"));
+        static float muting_fadein =
+            XMLSupport::parse_float(vs_config->getVariable("audio", "music_muting_fadeout", "0.5"));
         if (layer < 0)
         {
             for (int i = 0; i < muzak_count; i++)
@@ -855,13 +864,13 @@ void Music::SetLoops(int numloops, int layer)
     {
         if (layer < 0)
         {
-            //This only will apply to the crossfading channel (layers 0 && 1)
+            // This only will apply to the crossfading channel (layers 0 && 1)
             SetLoops(numloops, 0);
             SetLoops(numloops, 1);
         }
         else if ((layer >= 0) && (layer < muzak_count))
         {
-            //Specific channel
+            // Specific channel
             muzak[layer].loopsleft = numloops;
         }
     }

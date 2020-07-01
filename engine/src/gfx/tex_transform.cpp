@@ -1,7 +1,7 @@
 #include "vsimage.h"
 
-#include <string.h>
 #include <png.h>
+#include <string.h>
 
 unsigned char *texTransform(int &bpp, int &color_type, unsigned long &width, unsigned long &height, unsigned char **rp)
 {
@@ -18,14 +18,12 @@ unsigned char *texTransform(int &bpp, int &color_type, unsigned long &width, uns
     return data;
 }
 
-unsigned char *heightmapTransform(int &bpp,
-                                  int &color_type,
-                                  unsigned long &width,
-                                  unsigned long &height,
+unsigned char *heightmapTransform(int &bpp, int &color_type, unsigned long &width, unsigned long &height,
                                   unsigned char **row_pointers)
 {
     unsigned short *dat = (unsigned short *)malloc(sizeof(unsigned short) * width * height);
-    if ((bpp == 8 && color_type == PNG_COLOR_TYPE_RGB_ALPHA) || color_type == PNG_COLOR_TYPE_GRAY || color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
+    if ((bpp == 8 && color_type == PNG_COLOR_TYPE_RGB_ALPHA) || color_type == PNG_COLOR_TYPE_GRAY ||
+        color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
     {
         if (bpp == 8 && color_type == PNG_COLOR_TYPE_GRAY)
         {
@@ -38,14 +36,15 @@ unsigned char *heightmapTransform(int &bpp,
         }
         else
         {
-            if ((bpp == 16 && color_type == PNG_COLOR_TYPE_GRAY) || (bpp == 8 && color_type == PNG_COLOR_TYPE_GRAY_ALPHA))
+            if ((bpp == 16 && color_type == PNG_COLOR_TYPE_GRAY) ||
+                (bpp == 8 && color_type == PNG_COLOR_TYPE_GRAY_ALPHA))
             {
                 for (unsigned int i = 0; i < height; i++)
                     memcpy(&dat[i * width], row_pointers[i], sizeof(unsigned short) * width);
             }
             else
             {
-                //type is RGBA32 or GrayA32
+                // type is RGBA32 or GrayA32
                 for (unsigned int i = 0; i < height; i++)
                 {
                     unsigned long iwid = i * width;
@@ -69,7 +68,7 @@ unsigned char *heightmapTransform(int &bpp,
         }
         else if (color_type == PNG_COLOR_TYPE_RGB_ALPHA)
         {
-            ///16 bit colors...take Red
+            /// 16 bit colors...take Red
             for (unsigned int i = 0; i < height; i++)
             {
                 unsigned long iwid = i * width;
@@ -83,14 +82,12 @@ unsigned char *heightmapTransform(int &bpp,
     return (unsigned char *)dat;
 }
 
-unsigned char *terrainTransform(int &bpp,
-                                int &color_type,
-                                unsigned long &width,
-                                unsigned long &height,
+unsigned char *terrainTransform(int &bpp, int &color_type, unsigned long &width, unsigned long &height,
                                 unsigned char **row_pointers)
 {
     unsigned char *dat = (unsigned char *)malloc(sizeof(unsigned char) * width * height);
-    if ((bpp == 8 && color_type == PNG_COLOR_TYPE_RGB_ALPHA) || color_type == PNG_COLOR_TYPE_GRAY || color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
+    if ((bpp == 8 && color_type == PNG_COLOR_TYPE_RGB_ALPHA) || color_type == PNG_COLOR_TYPE_GRAY ||
+        color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
     {
         if (bpp == 8 && color_type == PNG_COLOR_TYPE_GRAY)
         {
@@ -99,7 +96,8 @@ unsigned char *terrainTransform(int &bpp,
         }
         else
         {
-            if ((bpp == 16 && color_type == PNG_COLOR_TYPE_GRAY) || (bpp == 8 && color_type == PNG_COLOR_TYPE_GRAY_ALPHA))
+            if ((bpp == 16 && color_type == PNG_COLOR_TYPE_GRAY) ||
+                (bpp == 8 && color_type == PNG_COLOR_TYPE_GRAY_ALPHA))
             {
                 for (unsigned int i = 0; i < height; i++)
                 {
@@ -110,7 +108,7 @@ unsigned char *terrainTransform(int &bpp,
             }
             else
             {
-                //type is RGBA32 or GrayA32
+                // type is RGBA32 or GrayA32
                 for (unsigned int i = 0; i < height; i++)
                 {
                     unsigned long iwid = i * width;
@@ -134,7 +132,7 @@ unsigned char *terrainTransform(int &bpp,
         }
         else if (color_type == PNG_COLOR_TYPE_RGB_ALPHA)
         {
-            ///16 bit colors...take Red
+            /// 16 bit colors...take Red
             for (unsigned int i = 0; i < height; i++)
             {
                 unsigned long iwid = i * width;

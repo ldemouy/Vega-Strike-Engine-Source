@@ -1,10 +1,10 @@
-#include "faction_generic.h"
-#include "unit_generic.h"
 #include "pilot.h"
 #include "ai/order.h"
-#include "universe_util.h"
 #include "cmd/unit_util.h"
 #include "configxml.h"
+#include "faction_generic.h"
+#include "unit_generic.h"
+#include "universe_util.h"
 
 #include <vector>
 
@@ -23,7 +23,7 @@ Pilot::Pilot(int faction)
 void Pilot::SetComm(Unit *parent)
 {
     this->faction = parent->faction;
-    //GET BETTER REACTION TIME AND RANK HERE
+    // GET BETTER REACTION TIME AND RANK HERE
     comm_face = FactionUtil::GetRandCommAnimation(faction, parent, gender);
 }
 
@@ -36,7 +36,8 @@ float Pilot::adjustSpecificRelationship(Unit *parent, void *aggressor, float fac
         bool abovezero = (*i).second + rel < 0;
         if (!abovezero)
         {
-            static float slowrel = XMLSupport::parse_float(vs_config->getVariable("AI", "SlowDiplomacyForEnemies", ".25"));
+            static float slowrel =
+                XMLSupport::parse_float(vs_config->getVariable("AI", "SlowDiplomacyForEnemies", ".25"));
             factor *= slowrel;
         }
         (*i).second += factor;
@@ -49,7 +50,8 @@ float Pilot::adjustSpecificRelationship(Unit *parent, void *aggressor, float fac
         bool abovezero = (*i).second < lessrel;
         if (!abovezero)
         {
-            static float slowrel = XMLSupport::parse_float(vs_config->getVariable("AI", "SlowDiplomacyForEnemies", ".25"));
+            static float slowrel =
+                XMLSupport::parse_float(vs_config->getVariable("AI", "SlowDiplomacyForEnemies", ".25"));
             factor *= slowrel;
         }
         (*i).second += factor;

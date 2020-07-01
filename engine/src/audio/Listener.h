@@ -5,190 +5,217 @@
 #define __AUDIO_LISTENER_H__INCLUDED__
 
 #include "Exceptions.h"
+#include "RenderableListener.h"
 #include "Types.h"
 #include <memory>
-#include "RenderableListener.h"
 
 namespace Audio
 {
 
-    /**
-     * Listener class
-     *
-     * @remarks This class represents a scene listener. Its interface is quite simple.
-     *      It's possible that scene managers (scenes) will provide their own implementation.
-     *      @par This class is not abstract, its interface is simple enough so that Listener
-     *      acts both as interface and basic implementation.
+/**
+ * Listener class
+ *
+ * @remarks This class represents a scene listener. Its interface is quite simple.
+ *      It's possible that scene managers (scenes) will provide their own implementation.
+ *      @par This class is not abstract, its interface is simple enough so that Listener
+ *      acts both as interface and basic implementation.
+ */
+class Listener
+{
+    LVector3 position;
+    Vector3 atDirection;
+    Vector3 upDirection;
+    Vector3 velocity;
+
+    Scalar radius;
+
+    Scalar gain;
+
+    Range<Scalar> cosAngleRange;
+
+    std::shared_ptr<UserData> userDataPtr;
+    std::shared_ptr<RenderableListener> rendererDataPtr;
+
+    Matrix3 worldToLocal;
+
+  protected:
+    /** Notify implementations after position and/or attributes changes
+     * @remarks Implementations use the "dirty" member struct to precisely know and
+     *      track what changed and what didn't. Call reset() when synchronized.
      */
-    class Listener
+    struct Dirty
     {
-        LVector3 position;
-        Vector3 atDirection;
-        Vector3 upDirection;
-        Vector3 velocity;
-
-        Scalar radius;
-
-        Scalar gain;
-
-        Range<Scalar> cosAngleRange;
-
-        std::shared_ptr<UserData> userDataPtr;
-        std::shared_ptr<RenderableListener> rendererDataPtr;
-
-        Matrix3 worldToLocal;
-
-    protected:
-        /** Notify implementations after position and/or attributes changes
-         * @remarks Implementations use the "dirty" member struct to precisely know and 
-         *      track what changed and what didn't. Call reset() when synchronized.
-         */
-        struct Dirty
+        Dirty() : location(0), attributes(0), gain(0)
         {
-            Dirty()
-                : location(0),
-                  attributes(0),
-                  gain(0)
-            {
-            }
-
-            /** position, velocity & direction */
-            int32_t location : 1;
-
-            /** min/max angle, radius, pf radius ratios, reference freqs */
-            int32_t attributes : 1;
-
-            /** min/max angle, radius, pf radius ratios, reference freqs */
-            int32_t gain : 1;
-
-            void reset()
-            {
-                location = 0;
-                attributes = 0;
-                gain = 0;
-            }
-
-            void setAll()
-            {
-                location = 1;
-                attributes = 1;
-                gain = 1;
-            }
-        } dirty;
-
-    public:
-        /** Construct a default listener with default parameters */
-        Listener();
-
-        virtual ~Listener();
-
-        /** Return the listener's central position in 3D space */
-        LVector3 getPosition() const { return position; }
-
-        /** Set the listener's central position in 3D space */
-        void setPosition(LVector3 x)
-        {
-            position = x;
-            dirty.location = 1;
         }
 
-        /** Return the listener's front direction */
-        Vector3 getAtDirection() const { return atDirection; }
+        /** position, velocity & direction */
+        int32_t location : 1;
 
-        /** Return the listener's up direction */
-        Vector3 getUpDirection() const { return upDirection; }
+        /** min/max angle, radius, pf radius ratios, reference freqs */
+        int32_t attributes : 1;
 
-        /** Set the listener's orientation */
-        void setOrientation(Vector3 at, Vector3 up)
+        /** min/max angle, radius, pf radius ratios, reference freqs */
+        int32_t gain : 1;
+
+        void reset()
         {
-            atDirection = at;
-            upDirection = up;
-            dirty.location = 1;
+            location = 0;
+            attributes = 0;
+            gain = 0;
         }
 
-        /** Return the listener's velocity */
-        Vector3 getVelocity() const { return velocity; }
-
-        /** Set the listener's velocity */
-        void setVelocity(Vector3 x)
+        void setAll()
         {
-            velocity = x;
-            dirty.location = 1;
+            location = 1;
+            attributes = 1;
+            gain = 1;
         }
+    } dirty;
 
-        /** Return the listener's minimum/maximum perception angle
-         * @remarks A listener's sound perception may be directional or omnidirectional. 
-         *      Perception will be full within minimum directional drift. Further drift 
-         *      will attenuate the sound until it reaches maximum attenuation by the maximum 
-         *      perception angle. Notice that maximum attenuation may not be full silence.
-         */
-        Range<Scalar> getAngleRange() const;
+  public:
+    /** Construct a default listener with default parameters */
+    Listener();
 
-        /** @see getAngleRange */
-        void setAngleRange(Range<Scalar> r);
+    virtual ~Listener();
 
-        /** @see getAngleRange @remarks This version returns cosine-angles rather than radians, much quicker */
-        Range<Scalar> getCosAngleRange() const { return cosAngleRange; }
+    /** Return the listener's central position in 3D space */
+    LVector3 getPosition() const
+    {
+        return position;
+    }
 
-        /** @see getAngleRange @remarks This version takes cosine-angles rather than radians, much quicker */
-        void setCosAngleRange(Range<Scalar> r)
-        {
-            cosAngleRange = r;
-            dirty.attributes = 1;
-        }
+    /** Set the listener's central position in 3D space */
+    void setPosition(LVector3 x)
+    {
+        position = x;
+        dirty.location = 1;
+    }
 
-        /** Get the listener's radius */
-        Scalar getRadius() const { return radius; }
+    /** Return the listener's front direction */
+    Vector3 getAtDirection() const
+    {
+        return atDirection;
+    }
 
-        /** Set the listener's radius */
-        void setRadius(Scalar r)
-        {
-            radius = r;
-            dirty.attributes = 1;
-        }
+    /** Return the listener's up direction */
+    Vector3 getUpDirection() const
+    {
+        return upDirection;
+    }
 
-        /** Get the listener's gain */
-        Scalar getGain() const { return gain; }
+    /** Set the listener's orientation */
+    void setOrientation(Vector3 at, Vector3 up)
+    {
+        atDirection = at;
+        upDirection = up;
+        dirty.location = 1;
+    }
 
-        /** Set the listener's gain */
-        void setGain(Scalar g)
-        {
-            gain = g;
-            dirty.gain = 1;
-        }
+    /** Return the listener's velocity */
+    Vector3 getVelocity() const
+    {
+        return velocity;
+    }
 
-        /** Get renderer-specific data associated (and destroyed) with this sound source */
-        std::shared_ptr<RenderableListener> getRenderable() const { return rendererDataPtr; }
+    /** Set the listener's velocity */
+    void setVelocity(Vector3 x)
+    {
+        velocity = x;
+        dirty.location = 1;
+    }
 
-        /** Set renderer-specific data to be associated (and destroyed) with this sound source */
-        void setRenderable(std::shared_ptr<RenderableListener> ptr)
-        {
-            rendererDataPtr = ptr;
-            dirty.setAll();
-        }
+    /** Return the listener's minimum/maximum perception angle
+     * @remarks A listener's sound perception may be directional or omnidirectional.
+     *      Perception will be full within minimum directional drift. Further drift
+     *      will attenuate the sound until it reaches maximum attenuation by the maximum
+     *      perception angle. Notice that maximum attenuation may not be full silence.
+     */
+    Range<Scalar> getAngleRange() const;
 
-        /** Get user-specific data associated (and destroyed) with this listener */
-        std::shared_ptr<UserData> getUserData() const { return userDataPtr; }
+    /** @see getAngleRange */
+    void setAngleRange(Range<Scalar> r);
 
-        /** Set user-specific data to be associated (and destroyed) with this listener */
-        void setUserData(std::shared_ptr<UserData> ptr) { userDataPtr = ptr; }
+    /** @see getAngleRange @remarks This version returns cosine-angles rather than radians, much quicker */
+    Range<Scalar> getCosAngleRange() const
+    {
+        return cosAngleRange;
+    }
 
-        /** @see RenderableListener::update
-         * @param flags see RenderableListener::UpdateFlags
-         * @note It's not just a convenience, the abstract listener has to update
-         *      its internal dirty flags and other things as well.
-         */
-        void update(int32_t flags);
+    /** @see getAngleRange @remarks This version takes cosine-angles rather than radians, much quicker */
+    void setCosAngleRange(Range<Scalar> r)
+    {
+        cosAngleRange = r;
+        dirty.attributes = 1;
+    }
 
-        /**
-         * Return the direction 'dir' in a local coordinate system centered at
-         * the listener's position, with the -Z axis pointing forward,
-         * +X pointing rightward and +Y pointing upwards (the OpenGL way).
-         * @note The attributes used are those set during the last update()
-         * @note The behavior is unspecified if there was no previous call to update().
-         */
-        Vector3 toLocalDirection(Vector3 dir) const;
-    };
+    /** Get the listener's radius */
+    Scalar getRadius() const
+    {
+        return radius;
+    }
+
+    /** Set the listener's radius */
+    void setRadius(Scalar r)
+    {
+        radius = r;
+        dirty.attributes = 1;
+    }
+
+    /** Get the listener's gain */
+    Scalar getGain() const
+    {
+        return gain;
+    }
+
+    /** Set the listener's gain */
+    void setGain(Scalar g)
+    {
+        gain = g;
+        dirty.gain = 1;
+    }
+
+    /** Get renderer-specific data associated (and destroyed) with this sound source */
+    std::shared_ptr<RenderableListener> getRenderable() const
+    {
+        return rendererDataPtr;
+    }
+
+    /** Set renderer-specific data to be associated (and destroyed) with this sound source */
+    void setRenderable(std::shared_ptr<RenderableListener> ptr)
+    {
+        rendererDataPtr = ptr;
+        dirty.setAll();
+    }
+
+    /** Get user-specific data associated (and destroyed) with this listener */
+    std::shared_ptr<UserData> getUserData() const
+    {
+        return userDataPtr;
+    }
+
+    /** Set user-specific data to be associated (and destroyed) with this listener */
+    void setUserData(std::shared_ptr<UserData> ptr)
+    {
+        userDataPtr = ptr;
+    }
+
+    /** @see RenderableListener::update
+     * @param flags see RenderableListener::UpdateFlags
+     * @note It's not just a convenience, the abstract listener has to update
+     *      its internal dirty flags and other things as well.
+     */
+    void update(int32_t flags);
+
+    /**
+     * Return the direction 'dir' in a local coordinate system centered at
+     * the listener's position, with the -Z axis pointing forward,
+     * +X pointing rightward and +Y pointing upwards (the OpenGL way).
+     * @note The attributes used are those set during the last update()
+     * @note The behavior is unspecified if there was no previous call to update().
+     */
+    Vector3 toLocalDirection(Vector3 dir) const;
+};
 
 }; // namespace Audio
 

@@ -26,12 +26,12 @@
 #ifndef _VEGASIMPLECONFIG_H_
 #define _VEGASIMPLECONFIG_H_
 
-#include <expat.h>
-#include <string>
-#include "xml_support.h"
 #include "easydom.h"
-#include <map>
 #include "gldrv/gfxlib_struct.h"
+#include "xml_support.h"
+#include <expat.h>
+#include <map>
+#include <string>
 
 using std::map;
 using std::string;
@@ -40,14 +40,14 @@ using XMLSupport::AttributeList;
 
 class vColor
 {
-public:
+  public:
     string name;
     float r, g, b, a;
 };
 
 class configNode : public easyDomNode
 {
-public:
+  public:
     vColor *color;
 };
 
@@ -63,7 +63,7 @@ class configNodeFactory : public easyDomFactory<configNode>
 
 class VegaConfig
 {
-public:
+  public:
     explicit VegaConfig(const char *configfile);
     virtual ~VegaConfig();
 #define MAX_AXIS 32
@@ -94,9 +94,11 @@ public:
     {
         return variables;
     }
-    virtual void bindKeys() {}
+    virtual void bindKeys()
+    {
+    }
 
-protected:
+  protected:
     string getVariable(configNode *section, string name, string defaultval);
     configNode *variables;
     configNode *bindings;
@@ -104,7 +106,7 @@ protected:
     map<string, string> map_variables;
     map<string, vColor> map_colors;
     int32_t hs_value_index;
-    //vector<vColor *> colors;
+    // vector<vColor *> colors;
     bool checkConfig(configNode *node);
     void doVariables(configNode *node);
     void checkSection(configNode *node, enum section_t section_type);
@@ -113,10 +115,18 @@ protected:
     void doVar(string prefix, configNode *node);
     void doColors(configNode *node);
     bool checkColor(string prefix, configNode *node);
-    virtual void doBindings(configNode *node) {}
-    virtual void checkBind(configNode *node) {}
-    virtual void doAxis(configNode *node) {}
-    virtual void checkHatswitch(int32_t nr, configNode *node) {}
+    virtual void doBindings(configNode *node)
+    {
+    }
+    virtual void checkBind(configNode *node)
+    {
+    }
+    virtual void doAxis(configNode *node)
+    {
+    }
+    virtual void checkHatswitch(int32_t nr, configNode *node)
+    {
+    }
 };
 
 #endif //_VEGACONFIG_H_

@@ -23,8 +23,8 @@
 #include "gldrv/gfxlib.h"
 #include "vegastrike.h"
 #include "vs_globals.h"
-#include <stdio.h>
 #include "vsfilesystem.h"
+#include <stdio.h>
 
 GFXQuadList::GFXQuadList(GFXBOOL color) : numVertices(0), numQuads(0)
 {

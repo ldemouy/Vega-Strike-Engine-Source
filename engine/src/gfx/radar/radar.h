@@ -3,9 +3,9 @@
 #ifndef VEGASTRIKE_GFX_RADAR_RADAR_H
 #define VEGASTRIKE_GFX_RADAR_RADAR_H
 
+#include <memory>
 #include <string>
 #include <vector>
-#include <memory>
 
 class Unit;
 class VSSprite;
@@ -13,35 +13,47 @@ class VSSprite;
 namespace Radar
 {
 
-    class Sensor;
+class Sensor;
 
-    // Draws radar on display
-    class Display
+// Draws radar on display
+class Display
+{
+  public:
+    virtual ~Display()
     {
-    public:
-        virtual ~Display() {}
+    }
 
-        virtual void Draw(const Sensor &sensor, VSSprite *, VSSprite *) = 0;
+    virtual void Draw(const Sensor &sensor, VSSprite *, VSSprite *) = 0;
 
-        virtual void OnDockEnd() {}
-        virtual void OnJumpBegin() {}
-        virtual void OnJumpEnd() {}
-        virtual void OnPauseBegin() {}
-        virtual void OnPauseEnd() {}
-    };
-
-    struct Type
+    virtual void OnDockEnd()
     {
-        enum Value
-        {
-            NullDisplay,
-            SphereDisplay,
-            BubbleDisplay,
-            PlaneDisplay
-        };
-    };
+    }
+    virtual void OnJumpBegin()
+    {
+    }
+    virtual void OnJumpEnd()
+    {
+    }
+    virtual void OnPauseBegin()
+    {
+    }
+    virtual void OnPauseEnd()
+    {
+    }
+};
 
-    std::unique_ptr<Display> Factory(Type::Value);
+struct Type
+{
+    enum Value
+    {
+        NullDisplay,
+        SphereDisplay,
+        BubbleDisplay,
+        PlaneDisplay
+    };
+};
+
+std::unique_ptr<Display> Factory(Type::Value);
 
 } // namespace Radar
 

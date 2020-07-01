@@ -1,18 +1,22 @@
-#include <stdlib.h>
 #include "gldrv/sdds.h"
 #include "vs_globals.h"
+#include <stdlib.h>
 
 #ifndef GETL16
 #define GETL16(buf) (((unsigned short)(buf)[0]) | ((unsigned short)(buf)[1] << 8))
 #endif
 #ifndef GETL64
-#define GETL64(buf) \
-    (((unsigned int)(buf)[0]) | ((unsigned long long)(buf)[1] << 8) | ((unsigned long long)(buf)[2] << 16) | ((unsigned long long)(buf)[3] << 24) | ((unsigned long long)(buf)[4] << 32) | ((unsigned long long)(buf)[5] << 40) | ((unsigned long long)(buf)[6] << 48) | ((unsigned long long)(buf)[7] << 56))
+#define GETL64(buf)                                                                                                    \
+    (((unsigned int)(buf)[0]) | ((unsigned long long)(buf)[1] << 8) | ((unsigned long long)(buf)[2] << 16) |           \
+     ((unsigned long long)(buf)[3] << 24) | ((unsigned long long)(buf)[4] << 32) |                                     \
+     ((unsigned long long)(buf)[5] << 40) | ((unsigned long long)(buf)[6] << 48) |                                     \
+     ((unsigned long long)(buf)[7] << 56))
 #endif
 
 /*	Software decompression for DDS files, helper functions */
 
-void decode_color_block(unsigned char *RESTRICT dst, unsigned char *RESTRICT src, int w, int h, int rowbytes, TEXTUREFORMAT format)
+void decode_color_block(unsigned char *RESTRICT dst, unsigned char *RESTRICT src, int w, int h, int rowbytes,
+                        TEXTUREFORMAT format)
 {
     int i, x, y;
     unsigned int indexes, idx;
@@ -127,7 +131,8 @@ void decode_dxt5_alpha(unsigned char *RESTRICT dst, unsigned char *RESTRICT src,
     }
 }
 
-void ddsDecompress(unsigned char *&RESTRICT buffer, unsigned char *&RESTRICT data, TEXTUREFORMAT internformat, int height, int width)
+void ddsDecompress(unsigned char *&RESTRICT buffer, unsigned char *&RESTRICT data, TEXTUREFORMAT internformat,
+                   int height, int width)
 {
     unsigned char *pos_out = nullptr, *pos_in = nullptr;
     int bpp = 4;

@@ -1,20 +1,20 @@
 #include "in_joystick.h"
 
-#include "flyjoystick.h"
-#include "firekeyboard.h"
-#include "flykeyboard.h"
-#include "vs_globals.h"
 #include "config_xml.h"
+#include "firekeyboard.h"
+#include "flyjoystick.h"
+#include "flykeyboard.h"
 #include "in_kb_data.h"
+#include "vs_globals.h"
 
 FlyByJoystick::FlyByJoystick(unsigned int configfile) : FlyByKeyboard(configfile)
 {
     for (int i = 0; i < MAX_JOYSTICKS; i++)
         if ((unsigned int)joystick[i]->player == configfile)
             whichjoystick.push_back(i);
-            //remember keybindings from config file?
+            // remember keybindings from config file?
 
-            //this below is outdated
+            // this below is outdated
 #if 0
     //why does the compiler not allow this?//check out my queued events section in firekeyboard.cpp
     BindButton( 0, FireKeyboard::FireKey );
@@ -60,14 +60,20 @@ void FlyByJoystick::Execute()
         XMLSupport::parse_bool(vs_config->getVariable("joystick", "nonlinear_throttle_nav", "true"));
     static bool nonlinear_throttle_combat =
         XMLSupport::parse_bool(vs_config->getVariable("joystick", "nonlinear_throttle_combat", "false"));
-    static float expfactorn = XMLSupport::parse_float(vs_config->getVariable("joystick", "nonlinear_expfactor_nav", "6.0"));
+    static float expfactorn =
+        XMLSupport::parse_float(vs_config->getVariable("joystick", "nonlinear_expfactor_nav", "6.0"));
     static float pfactorn = XMLSupport::parse_float(vs_config->getVariable("joystick", "nonlinear_pfactor_nav", "2.0"));
-    static float expamountn = XMLSupport::parse_float(vs_config->getVariable("joystick", "nonlinear_expamount_nav", "1.0"));
+    static float expamountn =
+        XMLSupport::parse_float(vs_config->getVariable("joystick", "nonlinear_expamount_nav", "1.0"));
     static float pamountn = XMLSupport::parse_float(vs_config->getVariable("joystick", "nonlinear_pamount_nav", "0.0"));
-    static float expfactorc = XMLSupport::parse_float(vs_config->getVariable("joystick", "nonlinear_expfactor_combat", "6.0"));
-    static float pfactorc = XMLSupport::parse_float(vs_config->getVariable("joystick", "nonlinear_pfactor_combat", "2.0"));
-    static float expamountc = XMLSupport::parse_float(vs_config->getVariable("joystick", "nonlinear_expamount_combat", "1.0"));
-    static float pamountc = XMLSupport::parse_float(vs_config->getVariable("joystick", "nonlinear_pamount_combat", "0.0"));
+    static float expfactorc =
+        XMLSupport::parse_float(vs_config->getVariable("joystick", "nonlinear_expfactor_combat", "6.0"));
+    static float pfactorc =
+        XMLSupport::parse_float(vs_config->getVariable("joystick", "nonlinear_pfactor_combat", "2.0"));
+    static float expamountc =
+        XMLSupport::parse_float(vs_config->getVariable("joystick", "nonlinear_expamount_combat", "1.0"));
+    static float pamountc =
+        XMLSupport::parse_float(vs_config->getVariable("joystick", "nonlinear_pamount_combat", "0.0"));
     desired_ang_velocity = Vector(0, 0, 0);
     for (unsigned int i = 0; i < this->whichjoystick.size(); i++)
     {
@@ -185,23 +191,23 @@ void FlyByJoystick::Execute()
                     if (axis_value > 1)
                         axis_value = 1;
                     if (axis_value < -1)
-                        axis_value = -1; //this code due to paolodinca
+                        axis_value = -1; // this code due to paolodinca
 
-                    //put axis from 0 to 2
+                    // put axis from 0 to 2
                     axis_value++;
-                    //put axis from 0 to 1
-                    axis_value = axis_value / 2; //thanks!
+                    // put axis from 0 to 1
+                    axis_value = axis_value / 2; // thanks!
                     if (nonlinear_throttle_nav && !cpu->combat_mode)
                     {
                         static float norm = float(exp(expfactorn) - 1);
-                        axis_value =
-                            float(expamountn * (exp(expfactorn * axis_value) - 1) / norm + pamountn * pow(axis_value, pfactorn));
+                        axis_value = float(expamountn * (exp(expfactorn * axis_value) - 1) / norm +
+                                           pamountn * pow(axis_value, pfactorn));
                     }
                     else if (nonlinear_throttle_combat && cpu->combat_mode)
                     {
                         static float norm = float(exp(expfactorc) - 1);
-                        axis_value =
-                            float(expamountc * (exp(expfactorc * axis_value) - 1) / norm + pamountc * pow(axis_value, pfactorc));
+                        axis_value = float(expamountc * (exp(expfactorc * axis_value) - 1) / norm +
+                                           pamountc * pow(axis_value, pfactorc));
                     }
                     cpu->set_speed = axis_value * cpu->max_speed();
                     desired_velocity = Vector(0, 0, cpu->set_speed);
@@ -211,4 +217,6 @@ void FlyByJoystick::Execute()
     }
     FlyByKeyboard::Execute(false);
 }
-FlyByJoystick::~FlyByJoystick() {}
+FlyByJoystick::~FlyByJoystick()
+{
+}

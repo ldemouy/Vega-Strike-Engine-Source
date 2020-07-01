@@ -17,23 +17,23 @@ string retrievedata(string data, string type)
     {
         if (data[counter] == '=')
         {
-            //find an =
+            // find an =
             int tempcounter = counter;
             teststring = "";
             while (tempcounter > 0)
             {
-                //count backwards to find its start
+                // count backwards to find its start
                 tempcounter = tempcounter - 1;
                 testchar = data[tempcounter];
                 if ((testchar == '"') || (tempcounter == 0) || (testchar == ' '))
                 {
-                    //found its start
+                    // found its start
                     if (tempcounter == 0)
                         teststring = testchar + teststring;
-                    //if(testchar == ' ')
-                    //teststring = ' ' + teststring;
+                    // if(testchar == ' ')
+                    // teststring = ' ' + teststring;
 
-                    //kill spaces at front and back
+                    // kill spaces at front and back
                     //***********************************
                     int startspaces = 0;
                     int endspaces = teststring.size() - 1;
@@ -45,22 +45,23 @@ string retrievedata(string data, string type)
                     for (int j = startspaces; j <= endspaces; j++)
                         possibletype = possibletype + teststring[j];
                     //***********************************
-                    //if match, return the data afterwards
+                    // if match, return the data afterwards
                     //***********************************
                     if (possibletype == type)
                     {
-                        //cout << possibletype;
+                        // cout << possibletype;
                         size_t returncounter = counter;
                         string returnstring = "";
-                        returncounter += 1; //pass the =
+                        returncounter += 1; // pass the =
                         while (data[returncounter] == ' ')
                             returncounter += 1;
-                        returncounter += 1;                //pass the "
-                        while (data[returncounter] == ' ') //pass starting spaces in answer
+                        returncounter += 1;                // pass the "
+                        while (data[returncounter] == ' ') // pass starting spaces in answer
                             returncounter += 1;
                         while (returncounter < (data.size() - 1))
                         {
-                            if ((data[returncounter] == '"') || (data[returncounter] == ' ')) //read upto the second comment
+                            if ((data[returncounter] == '"') ||
+                                (data[returncounter] == ' ')) // read upto the second comment
                                 break;
                             returnstring = returnstring + data[returncounter];
                             returncounter += 1;

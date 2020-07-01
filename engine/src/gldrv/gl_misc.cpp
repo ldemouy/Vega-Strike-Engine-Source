@@ -1,4 +1,4 @@
-/* 
+/*
  * Vega Strike
  * Copyright (C) 2001-2002 Daniel Horn & Alan Shieh
  *
@@ -22,13 +22,13 @@
 #define GL_MISC_CPP
 #include "gl_globals.h"
 #undef GL_MISC_CPP
-#include "vegastrike.h"
-#include "gldrv/gfxlib.h"
-#include "vs_globals.h"
-#include "gl_light.h"
 #include "config_xml.h"
-#include "winsys.h"
+#include "gl_light.h"
+#include "gldrv/gfxlib.h"
 #include "options.h"
+#include "vegastrike.h"
+#include "vs_globals.h"
+#include "winsys.h"
 
 // disable clientside draw for debugging purposes
 //#define NODRAW 1
@@ -45,9 +45,8 @@ bool GFXMultiTexAvailable()
 void GFXCircle(float x, float y, float wid, float hei)
 {
     float segmag =
-        (Vector(wid * g_game.x_resolution, 0,
-                0) -
-         Vector(wid * g_game.x_resolution * cos(2. * M_PI / 360.0), hei * g_game.y_resolution * sin(2. * M_PI / 360.0), 0))
+        (Vector(wid * g_game.x_resolution, 0, 0) - Vector(wid * g_game.x_resolution * cos(2. * M_PI / 360.0),
+                                                          hei * g_game.y_resolution * sin(2. * M_PI / 360.0), 0))
             .Magnitude();
     int accuracy = (int)(360.0f * game_options.circle_accuracy * (1.0f < segmag ? 1.0 : segmag));
     if (accuracy < 4)
@@ -65,8 +64,8 @@ void GFXCircle(float x, float y, float wid, float hei)
     GFXDraw(GFXLINESTRIP, &verts[0], accuracy + 1);
 }
 
-static void /*GFXDRVAPI*/ GFXDrawSetup(POLYTYPE type, const float data[], int vnum,
-                                       int vsize, int csize, int tsize0, int tsize1)
+static void /*GFXDRVAPI*/ GFXDrawSetup(POLYTYPE type, const float data[], int vnum, int vsize, int csize, int tsize0,
+                                       int tsize1)
 {
     assert(data && vsize);
     int stride = sizeof(float) * (vsize + csize + tsize0 + tsize1);
@@ -109,8 +108,8 @@ static void /*GFXDRVAPI*/ GFXDrawSetup(POLYTYPE type, const float data[], int vn
     }
 }
 
-static void /*GFXDRVAPI*/ GFXDrawCleanup(POLYTYPE type, const float data[], int vnum,
-                                         int vsize, int csize, int tsize0, int tsize1)
+static void /*GFXDRVAPI*/ GFXDrawCleanup(POLYTYPE type, const float data[], int vnum, int vsize, int csize, int tsize0,
+                                         int tsize1)
 {
     if (gl_options.Multitexture)
     {
@@ -138,8 +137,7 @@ static void /*GFXDRVAPI*/ GFXDrawCleanup(POLYTYPE type, const float data[], int 
     glDisableClientState(GL_VERTEX_ARRAY);
 }
 
-void /*GFXDRVAPI*/ GFXDraw(POLYTYPE type, const float data[], int vnum,
-                           int vsize, int csize, int tsize0, int tsize1)
+void /*GFXDRVAPI*/ GFXDraw(POLYTYPE type, const float data[], int vnum, int vsize, int csize, int tsize0, int tsize1)
 {
 #ifndef NODRAW
     if (vnum <= 0)
@@ -153,9 +151,8 @@ void /*GFXDRVAPI*/ GFXDraw(POLYTYPE type, const float data[], int vnum,
 #endif
 }
 
-void /*GFXDRVAPI*/ GFXDrawElements(POLYTYPE type,
-                                   const float data[], int vnum, const unsigned char indices[], int nelem,
-                                   int vsize, int csize, int tsize0, int tsize1)
+void /*GFXDRVAPI*/ GFXDrawElements(POLYTYPE type, const float data[], int vnum, const unsigned char indices[],
+                                   int nelem, int vsize, int csize, int tsize0, int tsize1)
 {
 #ifndef NODRAW
     if (vnum <= 0 || nelem <= 0)
@@ -172,9 +169,8 @@ void /*GFXDRVAPI*/ GFXDrawElements(POLYTYPE type,
 #endif
 }
 
-void /*GFXDRVAPI*/ GFXDrawElements(POLYTYPE type,
-                                   const float data[], int vnum, const unsigned short indices[], int nelem,
-                                   int vsize, int csize, int tsize0, int tsize1)
+void /*GFXDRVAPI*/ GFXDrawElements(POLYTYPE type, const float data[], int vnum, const unsigned short indices[],
+                                   int nelem, int vsize, int csize, int tsize0, int tsize1)
 {
 #ifndef NODRAW
     if (vnum <= 0 || nelem <= 0)
@@ -191,8 +187,7 @@ void /*GFXDRVAPI*/ GFXDrawElements(POLYTYPE type,
 #endif
 }
 
-void /*GFXDRVAPI*/ GFXDrawElements(POLYTYPE type,
-                                   const float data[], int vnum, const unsigned int indices[], int nelem,
+void /*GFXDRVAPI*/ GFXDrawElements(POLYTYPE type, const float data[], int vnum, const unsigned int indices[], int nelem,
                                    int vsize, int csize, int tsize0, int tsize1)
 {
 #ifndef NODRAW
@@ -234,13 +229,13 @@ void /*GFXDRVAPI*/ GFXBindElementBuffer(unsigned int element_data)
 
 void /*GFXDRVAPI*/ GFXBeginScene()
 {
-    GFXLoadIdentity(MODEL); //bad this should instead load the cached view matrix
+    GFXLoadIdentity(MODEL); // bad this should instead load the cached view matrix
     light_rekey_frame();
 }
 
 void /*GFXDRVAPI*/ GFXEndScene()
 {
-    winsys_swap_buffers(); //swap the buffers
+    winsys_swap_buffers(); // swap the buffers
 #ifdef NODRAW
     GFXClear(GFXTRUE);
 #endif
@@ -248,7 +243,8 @@ void /*GFXDRVAPI*/ GFXEndScene()
 
 void /*GFXDRVAPI*/ GFXClear(const GFXBOOL colorbuffer, const GFXBOOL depthbuffer, const GFXBOOL stencilbuffer)
 {
-    glClear((colorbuffer ? GL_COLOR_BUFFER_BIT : 0) | (depthbuffer ? GL_DEPTH_BUFFER_BIT : 0) | (stencilbuffer ? GL_STENCIL_BUFFER_BIT : 0));
+    glClear((colorbuffer ? GL_COLOR_BUFFER_BIT : 0) | (depthbuffer ? GL_DEPTH_BUFFER_BIT : 0) |
+            (stencilbuffer ? GL_STENCIL_BUFFER_BIT : 0));
 }
 
 GFXBOOL /*GFXDRVAPI*/ GFXCapture(char *filename)
@@ -341,7 +337,7 @@ void /*GFXDRVAPI*/ GFXColorf(const GFXColor &col)
 GFXColor GFXColorf()
 {
     float col[4];
-    glGetFloatv(GL_CURRENT_COLOR, col); //It's best this way, we don't use it much, anyway.
+    glGetFloatv(GL_CURRENT_COLOR, col); // It's best this way, we don't use it much, anyway.
     return GFXColor(col[0], col[1], col[2], col[3]);
 }
 
@@ -376,11 +372,11 @@ GFXBOOL GFXEndList()
 
 void GFXCallList(int list)
 {
-    //VSFileSystem::Fprintf (stderr,"CallListStart");///causes crash with GF2 privaledge instruction on Win2k in certain instances
-    //fflush (stderr);
+    // VSFileSystem::Fprintf (stderr,"CallListStart");///causes crash with GF2 privaledge instruction on Win2k in
+    // certain instances fflush (stderr);
     glCallList(list);
-    //VSFileSystem::Fprintf (stderr,"CallListEnd");
-    //fflush (stderr);
+    // VSFileSystem::Fprintf (stderr,"CallListEnd");
+    // fflush (stderr);
 }
 
 void GFXDeleteList(int list)
@@ -409,7 +405,5 @@ Vector GFXDeviceToEye(int x, int y)
 {
     float l, r, b, t, n, f;
     GFXGetFrustumVars(true, &l, &r, &b, &t, &n, &f);
-    return Vector((l + (r - l) * float(x) / g_game.x_resolution),
-                  (t + (b - t) * float(y) / g_game.y_resolution),
-                  n);
+    return Vector((l + (r - l) * float(x) / g_game.x_resolution), (t + (b - t) * float(y) / g_game.y_resolution), n);
 }

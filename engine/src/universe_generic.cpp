@@ -1,25 +1,25 @@
 /// Various universe and star system helper functions
 ///
 
-#include <stdio.h>
-#include <fcntl.h>
-#include <algorithm>
 #include "universe_generic.h"
-#include "galaxy_xml.h"
-#include "galaxy_gen.h"
-#include "gfx/cockpit_generic.h"
-#include "cmd/unit_generic.h"
-#include "vs_globals.h"
-#include "xml_support.h"
-#include "cmd/script/mission.h"
-#include "vsfilesystem.h"
-#include "save_util.h"
-#include "cmd/unit_util.h"
-#include "universe_util.h"
 #include "cmd/csv.h"
 #include "cmd/role_bitmask.h"
+#include "cmd/script/mission.h"
+#include "cmd/unit_generic.h"
+#include "cmd/unit_util.h"
+#include "galaxy_gen.h"
+#include "galaxy_xml.h"
+#include "gfx/cockpit_generic.h"
 #include "options.h"
+#include "save_util.h"
+#include "universe_util.h"
+#include "vs_globals.h"
+#include "vsfilesystem.h"
+#include "xml_support.h"
+#include <algorithm>
 #include <boost/graph/graph_concepts.hpp>
+#include <fcntl.h>
+#include <stdio.h>
 
 using namespace GalaxyXML;
 
@@ -191,8 +191,7 @@ Universe::Universe(int argc, char **argv, const char *galaxy_str, bool server)
     this->Init(galaxy_str);
 }
 
-Universe::Universe()
-    : current_cockpit(0), script_system(nullptr)
+Universe::Universe() : current_cockpit(0), script_system(nullptr)
 {
 }
 
@@ -206,7 +205,7 @@ void Universe::LoadStarSystem(StarSystem *s)
 {
     std::cerr << "Loading a starsystem" << std::endl;
     star_system.push_back(s);
-    SortStarSystems(star_system, s); //dont' want instadie
+    SortStarSystems(star_system, s); // dont' want instadie
 }
 
 bool Universe::StillExists(StarSystem *s)
@@ -225,7 +224,7 @@ void Universe::netLock(bool enable)
 
 void Universe::UnloadStarSystem(StarSystem *s)
 {
-    //not sure what to do here? serialize?
+    // not sure what to do here? serialize?
 }
 
 StarSystem *Universe::Init(string systemfile, const Vector &centr, const string planetname)
@@ -276,7 +275,7 @@ void Universe::Generate1(const char *file, const char *jumpback)
         ss_generating(true);
     VSFile f;
     VSError err = f.OpenReadOnly(file, SystemFile);
-    //If the file is not found we generate a system
+    // If the file is not found we generate a system
     if (err > Ok)
         MakeStarSystem(file, galaxy.get(), RemoveDotSystem(jumpback), count);
 }
@@ -288,7 +287,7 @@ void Universe::Generate2(StarSystem *ss)
     pushActiveStarSystem(ss);
     for (unsigned int tume = 0; tume <= game_options.num_times_to_simulate_new_star_system * SIM_QUEUE_SIZE + 1; ++tume)
         ss->UpdateUnitPhysics(true);
-    //notify the director that a new system is loaded (gotta have at least one active star system)
+    // notify the director that a new system is loaded (gotta have at least one active star system)
     StarSystem *old_script_system = script_system;
     script_system = ss;
     VSFileSystem::vs_fprintf(stderr, "Loading Star System %s\n", ss->getFileName().c_str());
@@ -335,7 +334,7 @@ StarSystem *Universe::GenerateStarSystem(const char *file, const char *jumpback,
 void Universe::Update()
 {
     for (unsigned int i = 0; i < star_system.size(); ++i)
-        //Calls the update function for server
+        // Calls the update function for server
         star_system[i]->Update((i == 0) ? 1 : game_options.InactiveSystemTime / i);
 }
 

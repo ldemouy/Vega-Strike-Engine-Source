@@ -25,12 +25,12 @@
 
 #include "quaternion.h"
 
-#include "audio/Types.h"
 #include "audio/Source.h"
+#include "audio/Types.h"
 #include <memory>
 namespace VSFileSystem
 {
-    class VSFile;
+class VSFile;
 };
 
 class Texture;
@@ -45,38 +45,41 @@ class VSSprite
     float rotation;
     Texture *surface;
     bool isAnimation;
-    //For private use only
-    VSSprite() : surface(0) {}
+    // For private use only
+    VSSprite() : surface(0)
+    {
+    }
 
-public:
-    //Construct a sprite out of a spritefile
+  public:
+    // Construct a sprite out of a spritefile
     VSSprite(const char *file, enum FILTER texturefilter = BILINEAR, GFXBOOL force = GFXFALSE);
-    //Construct a sprite out of a preloaded texture
+    // Construct a sprite out of a preloaded texture
     //@Note will take ownership of 'surface'
-    VSSprite(Texture *surface, float xcenter, float ycenter, float width, float height, float s = 0.f, float t = 0.f, bool isAnimation = false);
+    VSSprite(Texture *surface, float xcenter, float ycenter, float width, float height, float s = 0.f, float t = 0.f,
+             bool isAnimation = false);
     VSSprite(const VSSprite &source);
     ~VSSprite();
-    //Return true if sprite was loaded successfully
+    // Return true if sprite was loaded successfully
     bool LoadSuccess() const;
     void Draw();
     /**
- * Draw at specified coordinates given by 4 endpoints.
- *
- * @param ll lower-left corner
- * @param lr lower-right corner
- * @param ur upper-right corner
- * @param ul upper-left corner
- * @note Disregards sprite position but not maxs/maxt coordinates.
- */
+     * Draw at specified coordinates given by 4 endpoints.
+     *
+     * @param ll lower-left corner
+     * @param lr lower-right corner
+     * @param ur upper-right corner
+     * @param ul upper-left corner
+     * @note Disregards sprite position but not maxs/maxt coordinates.
+     */
     void DrawHere(Vector &ll, Vector &lr, Vector &ur, Vector &ul);
-    //Add specified rotation to an already-rotated sprite
+    // Add specified rotation to an already-rotated sprite
     void Rotate(const float &rad)
     {
         rotation += rad;
     }
     void SetRotation(const float &rot);
     void GetRotation(float &rot);
-    //Loads the sprite's texture from the given file
+    // Loads the sprite's texture from the given file
     //@deprecated Unused?
     void ReadTexture(VSFileSystem::VSFile *f);
     void GetST(float &s, float &t);
@@ -91,7 +94,7 @@ public:
     bool Done() const;
     void Reset();
     std::shared_ptr<Audio::Source> GetTimeSource() const;
-    //float &Rotation(){return rotation;};
+    // float &Rotation(){return rotation;};
     Texture *getTexture()
     {
         return surface;

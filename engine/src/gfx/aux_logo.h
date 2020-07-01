@@ -21,41 +21,37 @@
 #ifndef LOGO_H_
 #define LOGO_H_
 
-#include "matrix.h"
 #include "gldrv/gfxlib.h"
 #include "hashtable.h"
+#include "matrix.h"
 #include "vec.h"
 
 #include <vector>
 
-//struct glVertex;
+// struct glVertex;
 class Mesh;
 class Texture;
 class Logo
 {
     int numlogos;
-    //glVertex **LogoCorner;
+    // glVertex **LogoCorner;
     GFXVertexList *vlist;
     Texture *Decal;
     static Hashtable<int, Logo, 257> decalHash;
-    Logo() {}
+    Logo()
+    {
+    }
 
-protected:
+  protected:
     friend class Mesh;
-    int refcount;              //number of references to draw_queue
-    Logo *owner_of_draw_queue; //owner of the draw_queue
+    int refcount;              // number of references to draw_queue
+    Logo *owner_of_draw_queue; // owner of the draw_queue
     vector<DrawContext> *draw_queue;
     bool will_be_drawn;
     void ProcessDrawQueue();
 
-public:
-    Logo(int numberlogos,
-         Vector *center,
-         Vector *normal,
-         float *sizes,
-         float *rotations,
-         float offset,
-         Texture *Dec,
+  public:
+    Logo(int numberlogos, Vector *center, Vector *normal, float *sizes, float *rotations, float offset, Texture *Dec,
          Vector *Ref);
     Logo(const Logo &rval)
     {

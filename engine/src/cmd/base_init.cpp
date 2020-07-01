@@ -5,14 +5,14 @@
 #include <boost/python.hpp>
 typedef boost::python::dict BoostPythonDictionary;
 
-#include <boost/python/object.hpp>
 #include <boost/python/dict.hpp>
+#include <boost/python/object.hpp>
 
-#include <Python.h>
-#include "python/python_class.h"
 #include "base.h"
 #include "base_util.h"
+#include "python/python_class.h"
 #include "vsfilesystem.h"
+#include <Python.h>
 
 static BoostPythonDictionary GetEventDataPython()
 {

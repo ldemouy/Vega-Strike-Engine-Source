@@ -51,23 +51,23 @@
 
 void InvertPRMatrix(Matrix4x4 &dest, const Matrix4x4 &src)
 {
-	dest.m[0][0] = src.m[0][0];
-	dest.m[1][0] = src.m[0][1];
-	dest.m[2][0] = src.m[0][2];
-	dest.m[3][0] = -(src.m[3][0] * src.m[0][0] + src.m[3][1] * src.m[0][1] + src.m[3][2] * src.m[0][2]);
+    dest.m[0][0] = src.m[0][0];
+    dest.m[1][0] = src.m[0][1];
+    dest.m[2][0] = src.m[0][2];
+    dest.m[3][0] = -(src.m[3][0] * src.m[0][0] + src.m[3][1] * src.m[0][1] + src.m[3][2] * src.m[0][2]);
 
-	dest.m[0][1] = src.m[1][0];
-	dest.m[1][1] = src.m[1][1];
-	dest.m[2][1] = src.m[1][2];
-	dest.m[3][1] = -(src.m[3][0] * src.m[1][0] + src.m[3][1] * src.m[1][1] + src.m[3][2] * src.m[1][2]);
+    dest.m[0][1] = src.m[1][0];
+    dest.m[1][1] = src.m[1][1];
+    dest.m[2][1] = src.m[1][2];
+    dest.m[3][1] = -(src.m[3][0] * src.m[1][0] + src.m[3][1] * src.m[1][1] + src.m[3][2] * src.m[1][2]);
 
-	dest.m[0][2] = src.m[2][0];
-	dest.m[1][2] = src.m[2][1];
-	dest.m[2][2] = src.m[2][2];
-	dest.m[3][2] = -(src.m[3][0] * src.m[2][0] + src.m[3][1] * src.m[2][1] + src.m[3][2] * src.m[2][2]);
+    dest.m[0][2] = src.m[2][0];
+    dest.m[1][2] = src.m[2][1];
+    dest.m[2][2] = src.m[2][2];
+    dest.m[3][2] = -(src.m[3][0] * src.m[2][0] + src.m[3][1] * src.m[2][1] + src.m[3][2] * src.m[2][2]);
 
-	dest.m[0][3] = 0.0f;
-	dest.m[1][3] = 0.0f;
-	dest.m[2][3] = 0.0f;
-	dest.m[3][3] = 1.0f;
+    dest.m[0][3] = 0.0f;
+    dest.m[1][3] = 0.0f;
+    dest.m[2][3] = 0.0f;
+    dest.m[3][3] = 1.0f;
 }

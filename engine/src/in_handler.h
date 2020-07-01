@@ -29,44 +29,53 @@ typedef void (*INDISPATCH)(int32_t x, int32_t y);
 
 class InputListener
 {
-public:
+  public:
     int32_t *mousex, *mousey;
-    KBSTATE (*keystate)
-    [KEYMAP_SIZE];
+    KBSTATE (*keystate)[KEYMAP_SIZE];
 
     Unit *parent;
 
     InputListener(Unit *parent)
     {
         this->parent = parent;
-        //int a;
-        //mousex = mousey = 0;
-        //ZeroMemory(keystate, sizeof(keystate));
+        // int a;
+        // mousex = mousey = 0;
+        // ZeroMemory(keystate, sizeof(keystate));
     }
 
     virtual void MoveMouse(int32_t x, int32_t y)
     {
-        //mousex = x;
-        //mousey = y;
+        // mousex = x;
+        // mousey = y;
     }
-    virtual void MoveMouse(int32_t *x, int32_t *y, int32_t num) {}
+    virtual void MoveMouse(int32_t *x, int32_t *y, int32_t num)
+    {
+    }
     virtual void KeyDown(int32_t key)
     {
-        //keystate[key] = 1;
+        // keystate[key] = 1;
     }
-    virtual void KeyDown(int32_t *key, int32_t num) {}
+    virtual void KeyDown(int32_t *key, int32_t num)
+    {
+    }
     virtual void KeyUp(int32_t key)
     {
-        //keystate[key] = 0;
+        // keystate[key] = 0;
     }
-    virtual void KeyUp(int32_t *key, int32_t num) {}
+    virtual void KeyUp(int32_t *key, int32_t num)
+    {
+    }
 
-    virtual void Activate() {}
-    virtual void Deactivate() {}
+    virtual void Activate()
+    {
+    }
+    virtual void Deactivate()
+    {
+    }
 
-    //InHandler &Dispatch(); // Drives the input dispatcher, for switching input states
-    //InHandler &Revert(); // return to the previous state
+    // InHandler &Dispatch(); // Drives the input dispatcher, for switching input states
+    // InHandler &Revert(); // return to the previous state
 };
 
-//const InputListener End;
+// const InputListener End;
 #endif

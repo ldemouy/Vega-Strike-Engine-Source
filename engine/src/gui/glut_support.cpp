@@ -1,38 +1,36 @@
 /***************************************************************************
-*                           glut_support.cpp  -  description
-*                           --------------------------
-*                           begin                : December 28, 2001
-*                           copyright            : (C) 2001 by David Ranger
-*                           email                : ussreliant@users.sourceforge.net
-***************************************************************************/
+ *                           glut_support.cpp  -  description
+ *                           --------------------------
+ *                           begin                : December 28, 2001
+ *                           copyright            : (C) 2001 by David Ranger
+ *                           email                : ussreliant@users.sourceforge.net
+ ***************************************************************************/
 
 /***************************************************************************
-*                                                                         *
-*   This program is free software; you can redistribute it and/or modify  *
-*   it under the terms of the GNU General Public License as published by  *
-*   the Free Software Foundation; either version 2 of the License, or     *
-*   any later version.                                                    *
-*                                                                         *
-***************************************************************************/
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   any later version.                                                    *
+ *                                                                         *
+ ***************************************************************************/
 
-#include <png.h>
 #include "glut_support.h"
-#include "gfx/sprite.h"
-#include "vs_globals.h"
-#include "gfx/aux_texture.h"
-#include "vs_globals.h"
 #include "config_xml.h"
+#include "gfx/aux_texture.h"
+#include "gfx/sprite.h"
 #include "gfx/vsimage.h"
-#include "vsfilesystem.h"
 #include "gldrv/gl_globals.h"
+#include "vs_globals.h"
+#include "vsfilesystem.h"
+#include <png.h>
 using namespace VSFileSystem;
 
-#define isspAce(chr) \
-    ((chr == '\t') || (chr == '\n') || (chr == '\v') || (chr == '\f') || (chr == '\r') || (chr == ' '))
+#define isspAce(chr) ((chr == '\t') || (chr == '\n') || (chr == '\v') || (chr == '\f') || (chr == '\r') || (chr == ' '))
 
 float colors[] = {1, 1, 1, 1};
 
-//x,y must be -1 to 1, with -1,-1 being the bottom left corner. x,y must be the top left corner to draw
+// x,y must be -1 to 1, with -1,-1 being the bottom left corner. x,y must be the top left corner to draw
 void ShowColor(float x, float y, float wid, float hei, float red, float green, float blue, float alpha)
 {
     float cols[4] = {red, green, blue, alpha};
@@ -41,7 +39,7 @@ void ShowColor(float x, float y, float wid, float hei, float red, float green, f
         printf("Cannot draw color with negative height or width\n");
         return;
     }
-    //Make sure we don't exceed the program
+    // Make sure we don't exceed the program
     if (x + wid > 1)
         wid = 1 - x;
     if (y - hei < -1)
@@ -98,7 +96,7 @@ void ShowText(float x, float y, float wid, int size, const char *str, int no_end
     glScalef(font_size, font_size, 1);
     end = no_end ? 0 : glutStrokeWidth(GLUT_STROKE_ROMAN, 'A');
     end /= 2500;
-    //if (no_end == 1) { end = 0; }
+    // if (no_end == 1) { end = 0; }
     int h = 0;
     for (cur = 0; str[cur] != '\0'; cur++)
     {
@@ -154,8 +152,8 @@ void SetSoftwareMousePosition(int x, int y)
  */
 void StartGUIFrame(GFXBOOL clr)
 {
-    //glutSetCursor(GLUT_CURSOR_INHERIT);
-    //GFXViewPort (0,0,g_game.x_resolution,g_game.y_resolution);
+    // glutSetCursor(GLUT_CURSOR_INHERIT);
+    // GFXViewPort (0,0,g_game.x_resolution,g_game.y_resolution);
     GFXHudMode(true);
     GFXColor4f(1, 1, 1, 1);
 
@@ -181,7 +179,8 @@ void DrawGlutMouse(int mousex, int mousey, VSSprite *spr)
     spr->GetSize(sizex, sizey);
     float tempx = 0, tempy = 0;
     spr->GetPosition(tempx, tempy);
-    spr->SetPosition(tempx + -1 + .5 * sizex + float(mousex) / (.5 * g_game.x_resolution), tempy + 1 + .5 * sizey - float(mousey) / (.5 * g_game.y_resolution));
+    spr->SetPosition(tempx + -1 + .5 * sizex + float(mousex) / (.5 * g_game.x_resolution),
+                     tempy + 1 + .5 * sizey - float(mousey) / (.5 * g_game.y_resolution));
     spr->Draw();
     GFXDisable(TEXTURE0);
     GFXEnable(TEXTURE0);
@@ -214,7 +213,7 @@ void EndGUIFrame(MousePointerStyle pointerStyle)
 
         DrawGlutMouse(mmx, mmy, whichSprite);
 
-        //GFXEndScene();bad things...only call this once
+        // GFXEndScene();bad things...only call this once
         GFXHudMode(false);
         GFXEnable(CULLFACE);
         ConditionalCursorDraw(true);

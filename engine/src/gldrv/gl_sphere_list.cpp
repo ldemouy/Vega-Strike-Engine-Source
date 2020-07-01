@@ -1,7 +1,7 @@
-#include "gldrv/gfxlib.h"
-#include "gldrv/gfxlib_struct.h"
 #include "gfx/matrix.h"
 #include "gl_globals.h"
+#include "gldrv/gfxlib.h"
+#include "gldrv/gfxlib_struct.h"
 #include <assert.h>
 
 void GFXSphereVertexList::Draw()
@@ -89,8 +89,8 @@ GFXSphereVertexList::GFXSphereVertexList(float radius, int detail, bool Insideou
         int i, j, imin, imax;
         float nsign = Insideout ? -1.0 : 1.0;
         float normalscale = reverse_normals ? -1.0 : 1.0;
-        int fir = 0; //Insideout?1:0;
-        int sec = 1; //Insideout?0:1;
+        int fir = 0; // Insideout?1:0;
+        int sec = 1; // Insideout?0:1;
         /* Code below adapted from gluSphere */
         drho = (rho_max - rho_min) / (float)stacks;
         dtheta = (theta_max - theta_min) / (float)slices;
@@ -103,10 +103,10 @@ GFXSphereVertexList::GFXSphereVertexList(float radius, int detail, bool Insideou
         imax = stacks;
 
         int numQuadstrips = stacks;
-        //numQuadstrips = 0;
+        // numQuadstrips = 0;
         int *QSOffsets = new int[numQuadstrips];
 
-        //draw intermediate stacks as quad strips
+        // draw intermediate stacks as quad strips
         int numvertex = stacks * (slices + 1) * 2;
         GFXVertex *vertexlist = new GFXVertex[numvertex];
 
@@ -115,7 +115,7 @@ GFXSphereVertexList::GFXSphereVertexList(float radius, int detail, bool Insideou
         /*   SetOrientation(Vector(1,0,0),
          *    Vector(0,0,-1),
          *    Vector(0,1,0));//that's the way prop*/
-        //taken care of in loading
+        // taken care of in loading
 
         float rhol[2];
         float thetal[2];
@@ -126,7 +126,7 @@ GFXSphereVertexList::GFXSphereVertexList(float radius, int detail, bool Insideou
         for (i = imin; i < imax; i++)
         {
             GFXVertex *vertexlist = vl + (i * (slices + 1) * 2);
-            g_rho(i + 1) = (i + 1) * drho + rho_min; //FIXME These macros are horrible
+            g_rho(i + 1) = (i + 1) * drho + rho_min; // FIXME These macros are horrible
 
             s = 0.0;
             g_theta(0) = 0;
@@ -141,12 +141,12 @@ GFXSphereVertexList::GFXSphereVertexList(float radius, int detail, bool Insideou
                 y = ty * z;
                 z = nsign * cos(g_rho(i));
 
-                //normal
+                // normal
                 vertexlist[j * 2 + fir].i = x * normalscale;
                 vertexlist[j * 2 + fir].k = -y * normalscale;
                 vertexlist[j * 2 + fir].j = z * normalscale;
 
-                //tangent
+                // tangent
                 vertexlist[j * 2 + fir].tx = -ty * normalscale;
                 vertexlist[j * 2 + fir].tz = -tx * normalscale;
                 vertexlist[j * 2 + fir].ty = 0;
@@ -154,11 +154,11 @@ GFXSphereVertexList::GFXSphereVertexList(float radius, int detail, bool Insideou
 #define GetS(theta, theta_min, theta_max) (1 - (theta - theta_min) / (theta_max - theta_min))
 #define GetT(rho, rho_min, rho_max) (1 - (rho - rho_min) / (rho_max - rho_min))
 
-                //texcoords
-                vertexlist[j * 2 + fir].s = GetS(g_theta(j), theta_min, theta_max); //1-s;
-                vertexlist[j * 2 + fir].t = GetT(g_rho(i), rho_min, rho_max);       //t;
+                // texcoords
+                vertexlist[j * 2 + fir].s = GetS(g_theta(j), theta_min, theta_max); // 1-s;
+                vertexlist[j * 2 + fir].t = GetT(g_rho(i), rho_min, rho_max);       // t;
 
-                //position
+                // position
                 vertexlist[j * 2 + fir].x = x * radius;
                 vertexlist[j * 2 + fir].z = -y * radius;
                 vertexlist[j * 2 + fir].y = z * radius;
@@ -168,22 +168,22 @@ GFXSphereVertexList::GFXSphereVertexList(float radius, int detail, bool Insideou
                 y = ty * z;
                 z = nsign * cos(g_rho(i + 1));
 
-                //normal
+                // normal
                 vertexlist[j * 2 + sec].i = x * normalscale;
                 vertexlist[j * 2 + sec].k = -y * normalscale;
                 vertexlist[j * 2 + sec].j = z * normalscale;
 
-                //tangent
+                // tangent
                 vertexlist[j * 2 + sec].tx = -ty * normalscale;
                 vertexlist[j * 2 + sec].tz = -tx * normalscale;
                 vertexlist[j * 2 + sec].ty = 0;
                 vertexlist[j * 2 + sec].tw = nsign * normalscale;
 
-                //texcoords
-                vertexlist[j * 2 + sec].s = GetS(g_theta(j), theta_min, theta_max); //1-s;
-                vertexlist[j * 2 + sec].t = GetT(g_rho(i + 1), rho_min, rho_max);   //t - dt;
+                // texcoords
+                vertexlist[j * 2 + sec].s = GetS(g_theta(j), theta_min, theta_max); // 1-s;
+                vertexlist[j * 2 + sec].t = GetT(g_rho(i + 1), rho_min, rho_max);   // t - dt;
 
-                //position
+                // position
                 vertexlist[j * 2 + sec].x = x * radius;
                 vertexlist[j * 2 + sec].z = -y * radius;
                 vertexlist[j * 2 + sec].y = z * radius;

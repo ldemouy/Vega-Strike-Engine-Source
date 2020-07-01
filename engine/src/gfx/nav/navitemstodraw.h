@@ -1,4 +1,4 @@
-//This draws the mouse cursor
+// This draws the mouse cursor
 //**********************************
 void NavigationSystem::DrawCursor(float x, float y, float wid, float hei, const GFXColor &col)
 {
@@ -7,12 +7,13 @@ void NavigationSystem::DrawCursor(float x, float y, float wid, float hei, const 
         XMLSupport::parse_bool(vs_config->getVariable("graphics", "nav", "modern_mouse_cursor", "true"));
     if (modern_nav_cursor)
     {
-        static string mouse_cursor_sprite = vs_config->getVariable("graphics", "nav", "mouse_cursor_sprite", "mouse.spr");
+        static string mouse_cursor_sprite =
+            vs_config->getVariable("graphics", "nav", "mouse_cursor_sprite", "mouse.spr");
         static VSSprite MouseVSSprite(mouse_cursor_sprite.c_str(), BILINEAR, GFXTRUE);
         GFXBlendMode(SRCALPHA, INVSRCALPHA);
         GFXColorf(GUI_OPAQUE_WHITE());
 
-        //Draw the cursor sprite.
+        // Draw the cursor sprite.
         GFXEnable(TEXTURE0);
         GFXDisable(DEPTHTEST);
         GFXDisable(TEXTURE1);
@@ -60,7 +61,7 @@ void NavigationSystem::DrawCursor(float x, float y, float wid, float hei, const 
 }
 //**********************************
 
-//This draws the grid over the nav screen area
+// This draws the grid over the nav screen area
 //**********************************
 void NavigationSystem::DrawGrid(float &x1, float &x2, float &y1, float &y2, const GFXColor &col)
 {
@@ -95,7 +96,7 @@ void NavigationSystem::DrawGrid(float &x1, float &x2, float &y1, float &y2, cons
 }
 //**********************************
 
-//This will draw a circle over the screen
+// This will draw a circle over the screen
 //**********************************
 void NavigationSystem::DrawCircle(float x, float y, float size, const GFXColor &col)
 {
@@ -109,10 +110,7 @@ void NavigationSystem::DrawCircle(float x, float y, float size, const GFXColor &
     verts.clear();
     for (float i = 0; i < 2 * M_PI + M_PI / 10; i += M_PI / 10)
     {
-        verts.insert(
-            x + 0.5 * size * cos(i),
-            y + 0.5 * size * sin(i),
-            0);
+        verts.insert(x + 0.5 * size * cos(i), y + 0.5 * size * sin(i), 0);
     }
     GFXDraw(GFXLINESTRIP, verts);
 
@@ -120,7 +118,7 @@ void NavigationSystem::DrawCircle(float x, float y, float size, const GFXColor &
 }
 //**********************************
 
-//This will draw a half circle, centered at the top 1/4 center
+// This will draw a half circle, centered at the top 1/4 center
 //**********************************
 void NavigationSystem::DrawHalfCircleTop(float x, float y, float size, const GFXColor &col)
 {
@@ -134,10 +132,7 @@ void NavigationSystem::DrawHalfCircleTop(float x, float y, float size, const GFX
     verts.clear();
     for (float i = 0; i < M_PI + M_PI / 10; i += M_PI / 10)
     {
-        verts.insert(
-            x + 0.5 * size * cos(i),
-            y + 0.5 * size * sin(i) - 0.25 * size,
-            0);
+        verts.insert(x + 0.5 * size * cos(i), y + 0.5 * size * sin(i) - 0.25 * size, 0);
     }
     GFXDraw(GFXLINESTRIP, verts);
 
@@ -145,7 +140,7 @@ void NavigationSystem::DrawHalfCircleTop(float x, float y, float size, const GFX
 }
 //**********************************
 
-//This will draw a half circle, centered at the bottom 1/4 center
+// This will draw a half circle, centered at the bottom 1/4 center
 //**********************************
 void NavigationSystem::DrawHalfCircleBottom(float x, float y, float size, const GFXColor &col)
 {
@@ -159,10 +154,7 @@ void NavigationSystem::DrawHalfCircleBottom(float x, float y, float size, const 
     verts.clear();
     for (float i = M_PI; i < 2 * M_PI + M_PI / 10; i += M_PI / 10)
     {
-        verts.insert(
-            x + 0.5 * size * cos(i),
-            y + 0.5 * size * sin(i) + 0.25 * size,
-            0);
+        verts.insert(x + 0.5 * size * cos(i), y + 0.5 * size * sin(i) + 0.25 * size, 0);
     }
     GFXDraw(GFXLINESTRIP, verts);
 
@@ -170,7 +162,7 @@ void NavigationSystem::DrawHalfCircleBottom(float x, float y, float size, const 
 }
 //**********************************
 
-//This will draw a planet icon. circle + lightning thingy
+// This will draw a planet icon. circle + lightning thingy
 //**********************************
 void NavigationSystem::DrawPlanet(float x, float y, float size, const GFXColor &col)
 {
@@ -183,14 +175,8 @@ void NavigationSystem::DrawPlanet(float x, float y, float size, const GFXColor &
     verts.clear();
     for (float i = 0; i < 2 * M_PI; i += M_PI / 10)
     {
-        verts.insert(
-            x + 0.5 * size * cos(i),
-            y + 0.5 * size * sin(i),
-            0);
-        verts.insert(
-            x + 0.5 * size * cos(i + M_PI / 10),
-            y + 0.5 * size * sin(i + M_PI / 10),
-            0);
+        verts.insert(x + 0.5 * size * cos(i), y + 0.5 * size * sin(i), 0);
+        verts.insert(x + 0.5 * size * cos(i + M_PI / 10), y + 0.5 * size * sin(i + M_PI / 10), 0);
     }
     verts.insert(x - 0.5 * size, y, 0);
     verts.insert(x, y + 0.2 * size, 0);
@@ -204,7 +190,7 @@ void NavigationSystem::DrawPlanet(float x, float y, float size, const GFXColor &
 }
 //**********************************
 
-//This will draw a station icon. 3x3 grid
+// This will draw a station icon. 3x3 grid
 //**********************************
 void NavigationSystem::DrawStation(float x, float y, float size, const GFXColor &col)
 {
@@ -218,25 +204,13 @@ void NavigationSystem::DrawStation(float x, float y, float size, const GFXColor 
     verts.clear();
     for (int i = 0; i < 4; i++)
     {
-        verts.insert(
-            x - 0.5 * size,
-            y - 0.5 * size + i * segment,
-            0);
-        verts.insert(
-            x + 0.5 * size,
-            y - 0.5 * size + i * segment,
-            0);
+        verts.insert(x - 0.5 * size, y - 0.5 * size + i * segment, 0);
+        verts.insert(x + 0.5 * size, y - 0.5 * size + i * segment, 0);
     }
     for (int i = 0; i < 4; i++)
     {
-        verts.insert(
-            x - 0.5 * size + i * segment,
-            y - 0.5 * size,
-            0);
-        verts.insert(
-            x - 0.5 * size + i * segment,
-            y + 0.5 * size,
-            0);
+        verts.insert(x - 0.5 * size + i * segment, y - 0.5 * size, 0);
+        verts.insert(x - 0.5 * size + i * segment, y + 0.5 * size, 0);
     }
     GFXDraw(GFXLINE, verts);
 
@@ -244,7 +218,7 @@ void NavigationSystem::DrawStation(float x, float y, float size, const GFXColor 
 }
 //**********************************
 
-//This will draw a jump node icon
+// This will draw a jump node icon
 //**********************************
 void NavigationSystem::DrawJump(float x, float y, float size, const GFXColor &col)
 {
@@ -257,14 +231,8 @@ void NavigationSystem::DrawJump(float x, float y, float size, const GFXColor &co
     verts.clear();
     for (float i = 0; i < 2 * M_PI; i += M_PI / 10)
     {
-        verts.insert(
-            x + 0.5 * size * cos(i),
-            y + 0.5 * size * sin(i),
-            0);
-        verts.insert(
-            x + 0.5 * size * cos(i + M_PI / 10),
-            y + 0.5 * size * sin(i + M_PI / 10),
-            0);
+        verts.insert(x + 0.5 * size * cos(i), y + 0.5 * size * sin(i), 0);
+        verts.insert(x + 0.5 * size * cos(i + M_PI / 10), y + 0.5 * size * sin(i + M_PI / 10), 0);
     }
     verts.insert(x, y + 0.5 * size, 0);
     verts.insert(x + 0.125 * size, y + 0.125 * size, 0);
@@ -289,7 +257,7 @@ void NavigationSystem::DrawJump(float x, float y, float size, const GFXColor &co
 
 //**********************************
 
-//This will draw a missile icon
+// This will draw a missile icon
 //**********************************
 void NavigationSystem::DrawMissile(float x, float y, float size, const GFXColor &col)
 {
@@ -342,7 +310,7 @@ void NavigationSystem::DrawMissile(float x, float y, float size, const GFXColor 
 }
 //**********************************
 
-//This will draw a square set of corners
+// This will draw a square set of corners
 //**********************************
 void NavigationSystem::DrawTargetCorners(float x, float y, float size, const GFXColor &col)
 {
@@ -352,54 +320,12 @@ void NavigationSystem::DrawTargetCorners(float x, float y, float size, const GFX
     GFXBlendMode(SRCALPHA, INVSRCALPHA);
 
     const float verts[16 * 3] = {
-        x - 0.5f * size,
-        y + 0.5f * size,
-        0,
-        x - 0.3f * size,
-        y + 0.5f * size,
-        0,
-        x - 0.5f * size,
-        y + 0.5f * size,
-        0,
-        x - 0.5f * size,
-        y + 0.3f * size,
-        0,
-        x + 0.5f * size,
-        y + 0.5f * size,
-        0,
-        x + 0.3f * size,
-        y + 0.5f * size,
-        0,
-        x + 0.5f * size,
-        y + 0.5f * size,
-        0,
-        x + 0.5f * size,
-        y + 0.3f * size,
-        0,
-        x - 0.5f * size,
-        y - 0.5f * size,
-        0,
-        x - 0.3f * size,
-        y - 0.5f * size,
-        0,
-        x - 0.5f * size,
-        y - 0.5f * size,
-        0,
-        x - 0.5f * size,
-        y - 0.3f * size,
-        0,
-        x + 0.5f * size,
-        y - 0.5f * size,
-        0,
-        x + 0.3f * size,
-        y - 0.5f * size,
-        0,
-        x + 0.5f * size,
-        y - 0.5f * size,
-        0,
-        x + 0.5f * size,
-        y - 0.3f * size,
-        0,
+        x - 0.5f * size, y + 0.5f * size, 0, x - 0.3f * size, y + 0.5f * size, 0, x - 0.5f * size, y + 0.5f * size, 0,
+        x - 0.5f * size, y + 0.3f * size, 0, x + 0.5f * size, y + 0.5f * size, 0, x + 0.3f * size, y + 0.5f * size, 0,
+        x + 0.5f * size, y + 0.5f * size, 0, x + 0.5f * size, y + 0.3f * size, 0, x - 0.5f * size, y - 0.5f * size, 0,
+        x - 0.3f * size, y - 0.5f * size, 0, x - 0.5f * size, y - 0.5f * size, 0, x - 0.5f * size, y - 0.3f * size, 0,
+        x + 0.5f * size, y - 0.5f * size, 0, x + 0.3f * size, y - 0.5f * size, 0, x + 0.5f * size, y - 0.5f * size, 0,
+        x + 0.5f * size, y - 0.3f * size, 0,
     };
     GFXDraw(GFXLINE, verts, 16);
 
@@ -407,7 +333,7 @@ void NavigationSystem::DrawTargetCorners(float x, float y, float size, const GFX
 }
 //**********************************
 
-//This will draw an oriented circle
+// This will draw an oriented circle
 //**********************************
 void NavigationSystem::DrawNavCircle(float x, float y, float size, float rot_x, float rot_y, const GFXColor &col)
 {

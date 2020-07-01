@@ -4,58 +4,58 @@
 #include <string>
 bool AUDInit();
 void AUDDestroy();
-///Sets the size in which all sounds are going to be played
+/// Sets the size in which all sounds are going to be played
 void AUDListenerSize(const float &size);
 void AUDListener(const QVector &pos, const Vector &vel);
 QVector AUDListenerLocation();
-///Checks if sounds are still playing
+/// Checks if sounds are still playing
 void AUDRefreshSounds();
-///Will the sound be played
+/// Will the sound be played
 void AUDListenerOrientation(const Vector &i, const Vector &j, const Vector &k);
 void AUDListenerGain(const float &gain);
 float AUDGetListenerGain();
-///creates a buffer if one doesn't already exists, and then creates a source
+/// creates a buffer if one doesn't already exists, and then creates a source
 int32_t AUDCreateSoundWAV(const std::string &, const bool LOOP = false);
-///creates a buffer for an mp3 sound if one doesn't already exist, then creates a source
+/// creates a buffer for an mp3 sound if one doesn't already exist, then creates a source
 int32_t AUDCreateSoundMP3(const std::string &, const bool LOOP = false);
-///creates a buffer if one doesn't already exists, and then creates a source
+/// creates a buffer if one doesn't already exists, and then creates a source
 int32_t AUDCreateMusicWAV(const std::string &, const bool LOOP = false);
-///creates a buffer for an mp3 sound if one doesn't already exist, then creates a source
+/// creates a buffer for an mp3 sound if one doesn't already exist, then creates a source
 int32_t AUDCreateMusicMP3(const std::string &, const bool LOOP = false);
-///copies other sound loaded through AUDCreateSound
+/// copies other sound loaded through AUDCreateSound
 int32_t AUDCreateSound(int32_t sound, const bool LOOP = false);
-///guesses the type of sound by extension
+/// guesses the type of sound by extension
 int32_t AUDCreateSound(const std::string &, const bool LOOP = false);
-///guesses the type of sound by extension
+/// guesses the type of sound by extension
 int32_t AUDCreateMusic(const std::string &, const bool LOOP = false);
 void AUDStopAllSounds(int32_t except_this_one = -1);
 int32_t AUDHighestSoundPlaying();
-///deletes a given sound
+/// deletes a given sound
 void AUDDeleteSound(int32_t sound, bool music = false);
-///Changes the velocity and/or position of a given sound
+/// Changes the velocity and/or position of a given sound
 void AUDAdjustSound(const int32_t &sound, const QVector &pos, const Vector &vel);
-///Setup the sound as a streaming source (this means right now only that it doesn't do 3D positional stuff)
+/// Setup the sound as a streaming source (this means right now only that it doesn't do 3D positional stuff)
 void AUDStreamingSound(const int32_t &sound);
-///Changes the gain of a loaded sound
+/// Changes the gain of a loaded sound
 void AUDSoundGain(int32_t sound, float gain, bool music = false);
-///Is a loaded sound still playing
+/// Is a loaded sound still playing
 bool AUDIsPlaying(const int32_t &sound);
-///Stops a loaded sound
+/// Stops a loaded sound
 void AUDStopPlaying(const int32_t &sound);
-///Plays a loaded sound
+/// Plays a loaded sound
 void AUDStartPlaying(const int32_t &sound);
-///Queries if the sound should be culled. If not, plays
+/// Queries if the sound should be culled. If not, plays
 void AUDPlay(const int32_t &sound, const QVector &pos, const Vector &vel, const float gain);
-///Pauses a loaded sound
+/// Pauses a loaded sound
 void AUDPausePlaying(const int32_t &sound);
-///Changes the volume (generally 0 or between 1 and 1000)
+/// Changes the volume (generally 0 or between 1 and 1000)
 void AUDChangeVolume(float volume);
 float AUDGetVolume();
-///changes the scale used for doppler...generally between 0 for off or .01 and 10
+/// changes the scale used for doppler...generally between 0 for off or .01 and 10
 void AUDChangeDoppler(float doppler);
-///Gets the current playback position in seconds (precision is system&driver-dependant)
+/// Gets the current playback position in seconds (precision is system&driver-dependant)
 float AUDGetCurrentPosition(const int32_t &sound);
-///Gets current doppler val
+/// Gets current doppler val
 float AUDGetDoppler();
 //#define PERFRAMESOUND
 #endif

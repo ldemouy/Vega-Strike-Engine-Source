@@ -25,9 +25,9 @@
 #include "staticdisplay.h"
 #include <vector>
 
-//See cpp file for detailed descriptions of classes, functions, etc.
+// See cpp file for detailed descriptions of classes, functions, etc.
 
-//The TextInputDisplay class is used to get text input from the user.
+// The TextInputDisplay class is used to get text input from the user.
 
 class TextInputDisplay : public StaticDisplay
 {
@@ -37,9 +37,9 @@ class TextInputDisplay : public StaticDisplay
     bool isFocused;
     char passwordChar;
 
-public:
+  public:
     TextInputDisplay(std::vector<unsigned int> *keyboard_input_queue, const char *disallowed);
-    //OVERRIDES - used for focusing input.
+    // OVERRIDES - used for focusing input.
     virtual void processUnfocus(const InputEvent &event);
     virtual bool processMouseDown(const InputEvent &event);
     virtual bool processKeypress(unsigned int pressedKey);

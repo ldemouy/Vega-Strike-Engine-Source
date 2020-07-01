@@ -1,8 +1,7 @@
-#include <string>
 #include "SharedPool.h"
+#include <string>
 
-template <typename T, typename RT>
-SharedPool<T, RT> *SharedPool<T, RT>::ms_singleton = 0;
+template <typename T, typename RT> SharedPool<T, RT> *SharedPool<T, RT>::ms_singleton = 0;
 
 template <typename T, typename RT>
 SharedPool<T, RT>::SharedPool()
@@ -18,8 +17,7 @@ SharedPool<T, RT>::SharedPool()
         ms_singleton = this;
 }
 
-template <typename T, typename RT>
-SharedPool<T, RT>::~SharedPool()
+template <typename T, typename RT> SharedPool<T, RT>::~SharedPool()
 {
     if (ms_singleton == this)
         ms_singleton = 0;

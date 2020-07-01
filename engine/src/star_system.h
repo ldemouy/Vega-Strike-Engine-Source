@@ -1,10 +1,10 @@
 #ifndef _SYSTEM_H_
 #define _SYSTEM_H_
 
-#include <expat.h>
-#include "star_system_generic.h"
 #include "gldrv/gfxlib.h"
 #include "gldrv/gfxlib_struct.h"
+#include "star_system_generic.h"
+#include <expat.h>
 class ClickList;
 class TextPlane;
 
@@ -20,24 +20,24 @@ class Atmosphere;
  **/
 class GameStarSystem : public StarSystem
 {
-private:
+  private:
     /// Objects subject to global gravitron physics (disabled)
-    ///The background associated with this system
+    /// The background associated with this system
     Background *bg;
-    ///The Light Map corresponding for the BP for spheremapping
+    /// The Light Map corresponding for the BP for spheremapping
     Texture *LightMap[6];
-    //vector <class MissileEffect *> dischargedMissiles;
-public:
+    // vector <class MissileEffect *> dischargedMissiles;
+  public:
     virtual ~GameStarSystem();
     GameStarSystem(const char *filename, const Vector &centr = Vector(0, 0, 0), const float timeofyear = 0);
-    //void UpdateUnitPhysics(bool firstframe);
-    //class CollideTable *collidetable;
-    //class bolt_draw *bolts;
+    // void UpdateUnitPhysics(bool firstframe);
+    // class CollideTable *collidetable;
+    // class bolt_draw *bolts;
     Background *getBackground()
     {
         return bg;
     }
-    ///activates the light map texture
+    /// activates the light map texture
     void activateLightMap(int stage = 1);
     Texture *getLightMap();
     static void DrawJumpStars();
@@ -57,19 +57,19 @@ public:
     {
         return contterrains.size();
     }
-    ///Loads the star system from an XML file
+    /// Loads the star system from an XML file
     /// returns xy sorted bounding spheres of all units in current view
     ClickList *getClickList();
-    ///Adds to draw list
-    ///Draws a frame of action, interpolating between physics frames
+    /// Adds to draw list
+    /// Draws a frame of action, interpolating between physics frames
     void Draw(bool DrawCockpit = true);
     /// update a simulation atom ExecuteDirector must be false if star system is just loaded before mission is loaded
     void Update(float priority, bool executeDirector);
-    ///re-enables the included lights and terrains
+    /// re-enables the included lights and terrains
     void SwapIn();
-    ///Disables included lights and terrains
+    /// Disables included lights and terrains
     void SwapOut();
-    //bool JumpTo (Unit * unit, Unit * jumppoint, const std::string &system);
+    // bool JumpTo (Unit * unit, Unit * jumppoint, const std::string &system);
     virtual void VolitalizeJumpAnimation(const int ani);
     virtual void DoJumpingComeSightAndSound(Unit *un);
     virtual int DoJumpingLeaveSightAndSound(Unit *un);

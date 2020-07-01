@@ -1,6 +1,6 @@
 #include "vsfilesystem.h"
 
-//using namespace VSFileSystem;
+// using namespace VSFileSystem;
 using VSFileSystem::CockpitFile;
 using VSFileSystem::vs_fprintf;
 bool NavigationSystem::ParseFile(string filename)
@@ -11,18 +11,18 @@ bool NavigationSystem::ParseFile(string filename)
     char next = ' ';
     int totalitems = 0;
 
-    //ifstream dataset_file;
-    //dataset_file.open("navdata.xml");
+    // ifstream dataset_file;
+    // dataset_file.open("navdata.xml");
     VSFile f;
     VSError err = f.OpenReadOnly("nav/navdata.xml", CockpitFile);
-    //if (dataset_file.fail())
+    // if (dataset_file.fail())
     if (err > Ok)
         return 0;
     while (!f.Eof())
     {
         if (next == '<')
         {
-            //trap <*>
+            // trap <*>
             //- know what type it is
             f.Read(&next, 1); //
             while (next != '>')
@@ -34,7 +34,7 @@ bool NavigationSystem::ParseFile(string filename)
             }                                   //
             if (expression[0] == '!')
             {
-                //doesnt catch comment in comment
+                // doesnt catch comment in comment
                 while ((expression[expression.size() - 1] != '>') || (expression[expression.size() - 2] != '-'))
                 {
                     expression = expression + next;
@@ -45,20 +45,20 @@ bool NavigationSystem::ParseFile(string filename)
             }
             if ((expression[0] != '/') && (expression[expression.size() - 1] != '/'))
             {
-                //starter
+                // starter
                 tag = expression;
                 expression = "";
             }
             else if (expression[0] == '/')
             {
-                //terminator = no more to be done
+                // terminator = no more to be done
                 data = "";
                 tag = "";
                 expression = "";
             }
             else if (expression[expression.size() - 1] == '/')
             {
-                //data
+                // data
                 data = expression;
                 if (tag == "console")
                 {
@@ -351,7 +351,7 @@ bool NavigationSystem::ParseFile(string filename)
                     configmode = configmode_;
                 }
                 data = "";
-                //tag = "";
+                // tag = "";
                 expression = "";
                 continue;
             }
@@ -361,7 +361,7 @@ bool NavigationSystem::ParseFile(string filename)
             }
         }
         f.Read(&next, 1);
-        //do something
+        // do something
     }
     f.Close();
     if (totalitems == 0)

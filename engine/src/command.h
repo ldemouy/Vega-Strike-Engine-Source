@@ -1,20 +1,20 @@
 #ifndef COMMANDINTERP
 #define COMMANDINTERP
 
+#include "functors.h"
+#include "in.h"
+#include "rendertext.h" //menusystem
 #include <iostream>
 #include <string>
 #include <vector>
-#include "functors.h"
-#include "rendertext.h" //menusystem
-#include "in.h"
 
 //#include "areas.h" //must be at the bottom
 
-//this class is ONLY used by commandI.
-//it encapsulates a function pointer, with a name and an ARG_TYPE.
+// this class is ONLY used by commandI.
+// it encapsulates a function pointer, with a name and an ARG_TYPE.
 class coms
 {
-public:
+  public:
     virtual ~coms();
     coms(TFunctor *t_in);
     coms(coms *oldCom);
@@ -23,14 +23,14 @@ public:
     TFunctor *functor;
 };
 
-//hmm so how do we do menus. Should they be done right in here?
-//two classes, menu class, menuitem class, and a vector of menu's.
-//and a vector of menuitems on the menu class.
+// hmm so how do we do menus. Should they be done right in here?
+// two classes, menu class, menuitem class, and a vector of menu's.
+// and a vector of menuitems on the menu class.
 class mItem
 {
-    //no destructor is made for this item, there do not need to be ANY
-    //pointers here.
-public:
+    // no destructor is made for this item, there do not need to be ANY
+    // pointers here.
+  public:
     //~mItem(){}
     mItem()
     {
@@ -38,28 +38,28 @@ public:
         inputbit2 = false;
         autoreprint = false;
     }
-    std::string Name;      //menuitem name
-    std::string action;    //menuitem action -- arguments for the com
-    std::string display;   //display txt
-                           //object all menuitems *should* have but may not.
-    std::string func2call; //function 2 call
-                           //coms *COM; //don't ever DELETE this pointer!
-                           //and don't ever use a NEW on it either!
-                           //it should be an existing coms object in the command
-                           //vector!!!
-    bool inputbit;         //if this menuitem expects input from the user
+    std::string Name;    // menuitem name
+    std::string action;  // menuitem action -- arguments for the com
+    std::string display; // display txt
+                         // object all menuitems *should* have but may not.
+    std::string func2call; // function 2 call
+                           // coms *COM; //don't ever DELETE this pointer!
+                           // and don't ever use a NEW on it either!
+                           // it should be an existing coms object in the command
+                           // vector!!!
+    bool inputbit; // if this menuitem expects input from the user
     bool inputbit2;
-    bool autoreprint;         //autoreprint the menu after it's called
-    std::string menubuf;      //holds a buffer to be executed later
-                              //if inputbit2 is true.
-    std::string selectstring; //string to be displayed when selected
-    std::string predisplay;   //call virtual function Display(std::string &)
-                              //using this string, IF it's larger than 0.
+    bool autoreprint;    // autoreprint the menu after it's called
+    std::string menubuf; // holds a buffer to be executed later
+                         // if inputbit2 is true.
+    std::string selectstring; // string to be displayed when selected
+    std::string predisplay;   // call virtual function Display(std::string &)
+                            // using this string, IF it's larger than 0.
 };
 
 class menu
 {
-public:
+  public:
     virtual ~menu();
     menu()
     {
@@ -78,43 +78,43 @@ public:
         Display.append(d_in);
         escape.append(e_in);
     }
-    std::string Name;           //menuname
-    std::string Display;        //display string.
-    std::vector<mItem *> items; //items on the menu.
-    bool selected;              //is an item selected?
-    mItem *iselected;           //selected item in this menu
-    std::string escape;         //escape string \n\r for enter
-    bool noescape;              //escaping this menu not allowed
-    bool autoselect;            //autoselect menuitem below
-    mItem *aselect;             //item to autoselect
-    bool defaultInput;          //enable defaultinput mItem below
-    mItem *idefaultInput;       //if a menu item isn't selected while in a menu
-    //and the input isn't a menuitem name, sent it to this menuitem
-    //example usage: password menu, don't need to press 1 but you still can
+    std::string Name;           // menuname
+    std::string Display;        // display string.
+    std::vector<mItem *> items; // items on the menu.
+    bool selected;              // is an item selected?
+    mItem *iselected;           // selected item in this menu
+    std::string escape;         // escape string \n\r for enter
+    bool noescape;              // escaping this menu not allowed
+    bool autoselect;            // autoselect menuitem below
+    mItem *aselect;             // item to autoselect
+    bool defaultInput;          // enable defaultinput mItem below
+    mItem *idefaultInput;       // if a menu item isn't selected while in a menu
+    // and the input isn't a menuitem name, sent it to this menuitem
+    // example usage: password menu, don't need to press 1 but you still can
 };
 
 class commandI : public RText
 {
-private:
-    //new command interpretor
-    //static std::vector<coms *> commands; //our vector of POINTERS
-    //to encapsulated COM objects. (see top of this file)
+  private:
+    // new command interpretor
+    // static std::vector<coms *> commands; //our vector of POINTERS
+    // to encapsulated COM objects. (see top of this file)
     coms *findCommand(const char *comm, int &sock_in);
-    //mud *World; //to print to the charactor - server object
+    // mud *World; //to print to the charactor - server object
     menu *lastmenuadded;
     std::vector<menu *> menus;
-    menu *menu_in;                 //menu currently in
-    std::vector<menu *> menustack; //stack menus
-                                   //for nested menus.
+    menu *menu_in;                 // menu currently in
+    std::vector<menu *> menustack; // stack menus
+                                   // for nested menus.
     bool menumode;
-    //object *player; -- player object
+    // object *player; -- player object
     std::string lastcommand;
 
-public:
+  public:
     virtual ~commandI();
     commandI();
-    //commandI(mud *mud_in);
-    //commandI(mud *mud_in, object *player_in);
+    // commandI(mud *mud_in);
+    // commandI(mud *mud_in, object *player_in);
     bool console;
     bool immortal;
     static void keypress(int32_t code, int32_t modifiers, bool isDown, int32_t x, int32_t y);
@@ -122,39 +122,39 @@ public:
     {
         return menumode;
     }
-    //creates a coms object, adds it to the command vector
-    //if args is not supplied it assumes your function
-    //has no arguements (not even a void)
-    void help(std::string &d);                        //help command, should read a help file
-    void addCommand(TFunctor *com, const char *name); //add a downcasted Functor
+    // creates a coms object, adds it to the command vector
+    // if args is not supplied it assumes your function
+    // has no arguements (not even a void)
+    void help(std::string &d);                        // help command, should read a help file
+    void addCommand(TFunctor *com, const char *name); // add a downcasted Functor
     void remCommand(char *name);
-    void remCommand(TFunctor *com);            //use this now if possible
+    void remCommand(TFunctor *com);            // use this now if possible
     void dummy(std::vector<std::string *> *d); //{return;}; //first thing to be added to the vecto
     void prompt();
-    void pcommands(); //lists all the commands to the socket
-                      //commands.at(0), returned by findcommand if nothing els                       //is found.
+    void pcommands(); // lists all the commands to the socket
+                      // commands.at(0), returned by findcommand if nothing els                       //is found.
     bool execute(std::string *incommand, bool isDown, int32_t sock_in = 0);
     bool fexecute(std::string *incommand, bool isDown, int32_t sock_in = 0);
-    //so far ONLY void XXX:XXX(bool *) is called even if isDown
-    //is false. Everything else is only called when isDown is true.
-    //Cube string stuff
-    //splits up input by line using strsep() (renamed for microsoft windows compatibility)
+    // so far ONLY void XXX:XXX(bool *) is called even if isDown
+    // is false. Everything else is only called when isDown is true.
+    // Cube string stuff
+    // splits up input by line using strsep() (renamed for microsoft windows compatibility)
     bool execCommand(std::string *string, bool isDown);
     bool addMenu(menu *menu2add);
     bool addMenuItem(mItem *mitem2add, menu * = nullptr);
-    //the args added at addMenu are appended when the
-    //menuitem is called
+    // the args added at addMenu are appended when the
+    // menuitem is called
     bool callMenu(char *name, char *args, std::string &s2manip);
-    std::string setMenu(std::string name);       //force a menu set.
-    std::string displaymenu();                   //utility to display the current menu
-    void breakmenu();                            //utility to force a break from all menus
-    virtual std::string display(std::string &s); //build parts
-    //of the menu, eg, if(s.compare("SHIPNAME") == 0 )return editingship->Name;
+    std::string setMenu(std::string name);       // force a menu set.
+    std::string displaymenu();                   // utility to display the current menu
+    void breakmenu();                            // utility to force a break from all menus
+    virtual std::string display(std::string &s); // build parts
+    // of the menu, eg, if(s.compare("SHIPNAME") == 0 )return editingship->Name;
 };
 
 class RegisterPythonWithCommandInterpreter
 {
-public:
+  public:
     explicit RegisterPythonWithCommandInterpreter(commandI *cI);
     void runPy(std::string &argsin);
 };
@@ -176,7 +176,7 @@ enum
 
 namespace ConsoleKeys
 {
-    extern void BringConsole(const KBData &, KBSTATE a);
+extern void BringConsole(const KBData &, KBSTATE a);
 }
 //#include "areas.h"
 #endif

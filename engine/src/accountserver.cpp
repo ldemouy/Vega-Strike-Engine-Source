@@ -22,8 +22,8 @@
 #include <stdlib.h>
 #include <string>
 using std::string;
-#include "networking/acctserver.h"
 #include "lin_time.h"
+#include "networking/acctserver.h"
 
 void VSExit(int32_t code)
 {

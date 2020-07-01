@@ -6,7 +6,7 @@ class StreamTexture : public Texture
     FILTER filtertype;
     int handle;
 
-public:
+  public:
     StreamTexture(int width, int height, enum FILTER filtertype, unsigned char *origdata);
     ~StreamTexture();
     unsigned char *Map();

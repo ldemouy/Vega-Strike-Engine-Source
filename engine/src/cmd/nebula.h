@@ -5,25 +5,20 @@
 
 class GameNebula : public GameUnit<Nebula>
 {
-protected:
+  protected:
     /// constructor only to be called by UnitFactory
     GameNebula(const char *unitfile, bool SubU, int faction, Flightgroup *fg = nullptr, int fg_snumber = 0);
 
     friend class UnitFactory;
 
-public:
-    virtual void UpdatePhysics2(const Transformation &trans,
-                                const Transformation &old_physical_state,
-                                const Vector &accel,
-                                float difficulty,
-                                const Matrix &transmat,
-                                const Vector &CumulativeVelocity,
-                                bool ResolveLast,
-                                UnitCollection *uc = nullptr);
+  public:
+    virtual void UpdatePhysics2(const Transformation &trans, const Transformation &old_physical_state,
+                                const Vector &accel, float difficulty, const Matrix &transmat,
+                                const Vector &CumulativeVelocity, bool ResolveLast, UnitCollection *uc = nullptr);
     void SetFogState();
     void PutInsideCam(int);
 
-private:
+  private:
     /// default constructor forbidden
     GameNebula();
     /// copy constructor forbidden

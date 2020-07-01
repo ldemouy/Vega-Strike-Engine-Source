@@ -23,43 +23,43 @@
  *  xml Mission Scripting written by Alexander Rawass <alexannika@users.sourceforge.net>
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <errno.h>
-#include <time.h>
-#include <ctype.h>
 #include <assert.h>
+#include <ctype.h>
+#include <errno.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 #ifndef WIN32
-//this file isn't available on my system (all win32 machines?) i dun even know what it has or if we need it as I can compile without it
+// this file isn't available on my system (all win32 machines?) i dun even know what it has or if we need it as I can
+// compile without it
 #include <unistd.h>
 #endif
+#include "cmd/unit_factory.h"
 #include "cmd/unit_generic.h"
-#include "cmd/unit_factory.h"
-#include <expat.h>
 #include "xml_support.h"
+#include <expat.h>
 
-#include "vegastrike.h"
-#include "cmd/collection.h"
-#include "cmd/planet_generic.h"
-#include "cmd/ai/order.h"
 #include "cmd/ai/aggressive.h"
-#include "mission.h"
-#include "easydom.h"
-#include "msgcenter.h"
-#include "flightgroup.h"
-#include "vs_globals.h"
-#include "configxml.h"
-#include "gfx/cockpit_generic.h"
-#include "cmd/images.h"
-#include "savegame.h"
-#include "cmd/nebula_generic.h"
-#include "hashtable.h"
-#include "flightgroup.h"
-#include "cmd/unit_factory.h"
+#include "cmd/ai/order.h"
 #include "cmd/asteroid_generic.h"
-#include "gldrv/gfxlib.h"
+#include "cmd/collection.h"
+#include "cmd/images.h"
+#include "cmd/nebula_generic.h"
 #include "cmd/pilot.h"
+#include "cmd/planet_generic.h"
+#include "cmd/unit_factory.h"
 #include "cmd/unit_util.h"
+#include "configxml.h"
+#include "easydom.h"
+#include "flightgroup.h"
+#include "gfx/cockpit_generic.h"
+#include "gldrv/gfxlib.h"
+#include "hashtable.h"
+#include "mission.h"
+#include "msgcenter.h"
+#include "savegame.h"
+#include "vegastrike.h"
+#include "vs_globals.h"
 
 extern Unit &GetUnitMasterPartList();
 extern bool PlanetHasLights(Unit *un);

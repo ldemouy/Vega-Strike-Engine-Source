@@ -1,29 +1,29 @@
-#include <boost/version.hpp>
 #include <boost/python/class.hpp>
+#include <boost/version.hpp>
 
 #include <Python.h>
 #include <compile.h>
 #include <eval.h>
 #include <stdio.h>
 
+#include "config_xml.h"
 #include "python/python_class.h"
 #include "python/python_compile.h"
-#include "config_xml.h"
+#include "pythonai.h"
 #include "vs_globals.h"
 #include "vsfilesystem.h"
-#include "pythonai.h"
 using namespace Orders;
 PythonAI *PythonAI::last_ai = nullptr;
 PythonAI::PythonAI(PyObject *self_, float reaction_time, float aggressivity) : FireAt(reaction_time, aggressivity)
 {
     self = self_;
-    //boost::python:
-    Py_XINCREF(self); //by passing this to whoami, we are counting on them to Destruct us
+    // boost::python:
+    Py_XINCREF(self); // by passing this to whoami, we are counting on them to Destruct us
     last_ai = this;
 }
 void PythonAI::Destruct()
 {
-    Py_XDECREF(self); //this should destroy SELF
+    Py_XDECREF(self); // this should destroy SELF
 }
 void PythonAI::default_Execute(FireAt &self_)
 {

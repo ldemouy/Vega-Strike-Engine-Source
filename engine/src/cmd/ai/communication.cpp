@@ -1,16 +1,16 @@
 #include "communication.h"
-#include "vs_globals.h"
-#include "config_xml.h"
-#include <assert.h>
 #include "aldrv/audiolib.h"
+#include "config_xml.h"
 #include "options.h"
-#include <math.h>
+#include "vs_globals.h"
 #include <algorithm>
+#include <assert.h>
+#include <math.h>
 
 using namespace XMLSupport;
 FSM::FSM(const std::string &filename)
 {
-    //loads a conversation finite state machine with deltaRelation weight transition from an XML?
+    // loads a conversation finite state machine with deltaRelation weight transition from an XML?
     if (filename.empty())
     {
         nodes.push_back(Node::MakeNode("welcome to cachunkcachunk.com", 0));
@@ -231,19 +231,17 @@ void FSM::Node::AddSound(std::string soundfile, uint8_t sex, float gain)
 
 int32_t FSM::getCommMessageMood(int32_t curstate, float mood, float randomresponse, float relationship) const
 {
-    const FSM::Node *n = (uint32_t)curstate < nodes.size() ? (&nodes[curstate]) : (&nodes[getDefaultState(relationship)]);
+    const FSM::Node *n =
+        (uint32_t)curstate < nodes.size() ? (&nodes[curstate]) : (&nodes[getDefaultState(relationship)]);
     mood += -randomresponse + 2 * randomresponse * ((float)rand()) / RAND_MAX;
 
     int32_t choice = 0;
 
     vector<uint32_t> good;
     vector<uint32_t> bad;
-    static float pos_limit = XMLSupport::parse_float(vs_config->getVariable("AI",
-                                                                            "LowestPositiveCommChoice",
-                                                                            "0"));
-    static float neg_limit = XMLSupport::parse_float(vs_config->getVariable("AI",
-                                                                            "LowestNegativeCommChoice",
-                                                                            "-.00001"));
+    static float pos_limit = XMLSupport::parse_float(vs_config->getVariable("AI", "LowestPositiveCommChoice", "0"));
+    static float neg_limit =
+        XMLSupport::parse_float(vs_config->getVariable("AI", "LowestNegativeCommChoice", "-.00001"));
     for (uint32_t i = 0; i < n->edges.size(); i++)
     {
         float md = nodes[n->edges[i]].messagedelta;
@@ -292,7 +290,7 @@ int32_t FSM::getDefaultState(float relationship) const
             {
                 if ((newbestchoice == bestchoice && rand() % 2) || newbestchoice < bestchoice)
                 {
-                    //to make sure some variety happens
+                    // to make sure some variety happens
                     fitmood = newfitmood;
                     choice = i;
                     bestchoice = newbestchoice;
@@ -354,7 +352,7 @@ float roundclamp(float i)
 
 void CommunicationMessage::SetAnimation(std::vector<Animation *> *ani, uint8_t sex)
 {
-    this->sex = sex; //for audio
+    this->sex = sex; // for audio
     if (ani)
     {
         if (ani->size() > 0)
@@ -387,10 +385,7 @@ void CommunicationMessage::SetCurrentState(int32_t msg, std::vector<Animation *>
     assert(this->curstate >= 0);
 }
 
-CommunicationMessage::CommunicationMessage(Unit *send,
-                                           Unit *recv,
-                                           int32_t messagechoice,
-                                           std::vector<Animation *> *ani,
+CommunicationMessage::CommunicationMessage(Unit *send, Unit *recv, int32_t messagechoice, std::vector<Animation *> *ani,
                                            uint8_t sex)
 {
     Init(send, recv);
@@ -404,12 +399,8 @@ CommunicationMessage::CommunicationMessage(Unit *send,
     assert(this->curstate >= 0);
 }
 
-CommunicationMessage::CommunicationMessage(Unit *send,
-                                           Unit *recv,
-                                           int32_t laststate,
-                                           int32_t thisstate,
-                                           std::vector<Animation *> *ani,
-                                           uint8_t sex)
+CommunicationMessage::CommunicationMessage(Unit *send, Unit *recv, int32_t laststate, int32_t thisstate,
+                                           std::vector<Animation *> *ani, uint8_t sex)
 {
     Init(send, recv);
     prevstate = laststate;
@@ -425,12 +416,8 @@ CommunicationMessage::CommunicationMessage(Unit *send, Unit *recv, std::vector<A
     assert(this->curstate >= 0);
 }
 
-CommunicationMessage::CommunicationMessage(Unit *send,
-                                           Unit *recv,
-                                           const CommunicationMessage &prevstate,
-                                           int32_t curstate,
-                                           std::vector<Animation *> *ani,
-                                           uint8_t sex)
+CommunicationMessage::CommunicationMessage(Unit *send, Unit *recv, const CommunicationMessage &prevstate,
+                                           int32_t curstate, std::vector<Animation *> *ani, uint8_t sex)
 {
     Init(send, recv);
     this->prevstate = prevstate.curstate;
@@ -474,12 +461,13 @@ RGBstring colorToString(GFXColor col)
 
 RGBstring GetRelationshipRGBstring(float rel)
 {
-    static GFXColor color_enemy = vs_config->getColor("relation_enemy", vs_config->getColor("enemy",
-                                                                                            GFXColor(1.0, 0.0, 0.0, 1.0))); // red   - like target
-    static GFXColor color_friend = vs_config->getColor("relation_friend", vs_config->getColor("friend",
-                                                                                              GFXColor(0.0, 1.0, 0.0, 1.0))); // green - like target
-    static GFXColor color_neutral = vs_config->getColor("relation_neutral", vs_config->getColor("black_and_white",
-                                                                                                GFXColor(1.0, 1.0, 1.0, 1.0))); // white - NOT like target
+    static GFXColor color_enemy = vs_config->getColor(
+        "relation_enemy", vs_config->getColor("enemy", GFXColor(1.0, 0.0, 0.0, 1.0))); // red   - like target
+    static GFXColor color_friend = vs_config->getColor(
+        "relation_friend", vs_config->getColor("friend", GFXColor(0.0, 1.0, 0.0, 1.0))); // green - like target
+    static GFXColor color_neutral = vs_config->getColor(
+        "relation_neutral",
+        vs_config->getColor("black_and_white", GFXColor(1.0, 1.0, 1.0, 1.0))); // white - NOT like target
     GFXColor color;
     if (rel == 0)
     {
@@ -508,7 +496,8 @@ uint32_t DoSpeech(Unit *unit, Unit *player_unit, const FSM::Node &node)
 {
     static float scale_rel_color =
         XMLSupport::parse_float(vs_config->getVariable("graphics", "hud", "scale_relationship_color", "10.0"));
-    static std::string ownname_RGBstr = colorToString(vs_config->getColor("player_name", GFXColor(0.0, 0.2, 1.0))).str; // bluish
+    static std::string ownname_RGBstr =
+        colorToString(vs_config->getColor("player_name", GFXColor(0.0, 0.2, 1.0))).str; // bluish
     uint32_t dummy = 0;
     string speech = node.GetMessage(dummy);
     string myname("[Static]");
@@ -518,7 +507,8 @@ uint32_t DoSpeech(Unit *unit, Unit *player_unit, const FSM::Node &node)
         Flightgroup *flight_group = unit->getFlightgroup();
         if (flight_group && flight_group->name != "base" && flight_group->name != "Base")
         {
-            myname = flight_group->name + " " + XMLSupport::tostring(unit->getFgSubnumber()) + ", " + unit->getFullname();
+            myname =
+                flight_group->name + " " + XMLSupport::tostring(unit->getFgSubnumber()) + ", " + unit->getFullname();
         }
         else if (myname.length() == 0)
         {
@@ -538,7 +528,8 @@ uint32_t DoSpeech(Unit *unit, Unit *player_unit, const FSM::Node &node)
         }
     }
     mission->msgcenter->add(myname, "all",
-                            GetRelationshipColorString(node.messagedelta * scale_rel_color) + speech + "#000000"); //multiply by 2 so colors are easier to tell
+                            GetRelationshipColorString(node.messagedelta * scale_rel_color) + speech +
+                                "#000000"); // multiply by 2 so colors are easier to tell
     return dummy;
 }
 

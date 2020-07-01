@@ -18,32 +18,32 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-#include <stdio.h>
-#include <fcntl.h>
-#include "gldrv/gfxlib.h"
 #include "universe.h"
-#include "lin_time.h"
-#include "in.h"
-#include "gfx/aux_texture.h"
-#include "profile.h"
-#include "gfx/cockpit.h"
-#include "cmd/weapon_xml.h"
-#include "galaxy_xml.h"
-#include <algorithm>
-#include "config_xml.h"
-#include "vs_globals.h"
-#include "xml_support.h"
 #include "aldrv/audiolib.h"
 #include "cmd/script/mission.h"
 #include "cmd/unit.h"
+#include "cmd/weapon_xml.h"
+#include "config_xml.h"
+#include "galaxy_xml.h"
+#include "gfx/aux_texture.h"
+#include "gfx/cockpit.h"
+#include "gldrv/gfxlib.h"
+#include "in.h"
 #include "in_kb.h"
 #include "in_kb_data.h"
 #include "in_main.h"
+#include "lin_time.h"
+#include "profile.h"
+#include "vs_globals.h"
+#include "xml_support.h"
+#include <algorithm>
+#include <fcntl.h>
+#include <stdio.h>
 #if defined(__APPLE__)
 #import <sys/param.h>
 #endif
-#include "savegame.h"
 #include "gfx/screenshot.h"
+#include "savegame.h"
 #include "universe_util.h"
 
 #include <algorithm>
@@ -52,7 +52,7 @@
 
 #include "options.h"
 
-///Decides whether to toast the jump star from the cache
+/// Decides whether to toast the jump star from the cache
 using std::find;
 using std::string;
 using std::vector;
@@ -76,15 +76,15 @@ extern void bootstrap_first_loop();
 void GameUniverse::Init(int argc, char **argv, const char *galaxy)
 {
     current_cockpit = 0;
-    //Select drivers
+    // Select drivers
 #if defined(__APPLE__)
-    //get the current working directory so when glut trashes it we can restore.
+    // get the current working directory so when glut trashes it we can restore.
     char pwd[MAXPATHLEN];
     getcwd(pwd, MAXPATHLEN);
 #endif
     GFXInit(argc, argv);
 #if defined(__APPLE__)
-    //Restore it
+    // Restore it
     chdir(pwd);
 #endif
     StartGFX();
@@ -92,7 +92,7 @@ void GameUniverse::Init(int argc, char **argv, const char *galaxy)
 
     hud_camera = Camera();
 
-    //Hasten splash screen loading, to cover up lengthy universe initialization
+    // Hasten splash screen loading, to cover up lengthy universe initialization
     bootstrap_first_loop();
 
     this->Universe::Init(galaxy);
@@ -113,7 +113,7 @@ GameUniverse::~GameUniverse()
     GFXShutdown();
 }
 
-//sets up all the stuff... in this case the ships to be rendered
+// sets up all the stuff... in this case the ships to be rendered
 
 void GameUniverse::SetupCockpits(vector<string> playerNames)
 {
@@ -241,7 +241,8 @@ static void UpdateTimeCompressionSounds()
             }
             else
             {
-                if (lasttimecompress > 0 && loop_snds.ptr[lastsoundfile].sound >= 0 && AUDIsPlaying(loop_snds.ptr[lastsoundfile].sound))
+                if (lasttimecompress > 0 && loop_snds.ptr[lastsoundfile].sound >= 0 &&
+                    AUDIsPlaying(loop_snds.ptr[lastsoundfile].sound))
                     AUDStopPlaying(loop_snds.ptr[lastsoundfile].sound);
                 loop_snds.ptr[soundfile].playsound();
                 burst_snds.ptr[soundfile].playsound();
@@ -302,7 +303,7 @@ void GameUniverse::StartDraw()
     {
         SetActiveCockpit(i);
         pushActiveStarSystem(AccessCockpit(i)->activeStarSystem);
-        ProcessInput(i); //input neesd to be taken care of;
+        ProcessInput(i); // input neesd to be taken care of;
         popActiveStarSystem();
     }
     if (screenshotkey)
@@ -312,14 +313,14 @@ void GameUniverse::StartDraw()
         screenshotkey = false;
     }
     GFXEndScene();
-    //so we don't starve the audio thread
+    // so we don't starve the audio thread
     micro_sleep(getmicrosleep());
 
-    //remove systems not recently visited?
+    // remove systems not recently visited?
     static int sorttime = 0;
     if (game_options.garbagecollectfrequency != 0)
     {
-        //don't want to delete something when there is something pending to jump therexo
+        // don't want to delete something when there is something pending to jump therexo
         if (PendingJumpsEmpty())
         {
             if ((++sorttime) % game_options.garbagecollectfrequency == 1)
@@ -327,8 +328,8 @@ void GameUniverse::StartDraw()
                 SortStarSystems(star_system, active_star_system.back());
                 if (star_system.size() > game_options.numoldsystems && game_options.deleteoldsystems)
                 {
-                    if (std::find(active_star_system.begin(), active_star_system.end(),
-                                  star_system.back()) == active_star_system.end())
+                    if (std::find(active_star_system.begin(), active_star_system.end(), star_system.back()) ==
+                        active_star_system.end())
                     {
                         delete star_system.back();
                         star_system.pop_back();

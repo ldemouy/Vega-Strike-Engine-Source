@@ -1,20 +1,22 @@
-#include "cmd/unit_generic.h"
 #include "loc_select.h"
+#include "cmd/unit_generic.h"
 #include "gldrv/gfxlib.h"
 #include "in_kb.h"
 #include "vs_globals.h"
 #include <stdio.h>
-LocationSelect::LocationSelect(Vector start, Vector Plane1,
-                               Vector Plane2 /*, System * par */) : LocSelAni("locationselect.ani", true, .5, MIPMAP, true), LocSelUpAni("locationselect_up.ani", true, .5, MIPMAP, false)
+LocationSelect::LocationSelect(Vector start, Vector Plane1, Vector Plane2 /*, System * par */)
+    : LocSelAni("locationselect.ani", true, .5, MIPMAP, true),
+      LocSelUpAni("locationselect_up.ani", true, .5, MIPMAP, false)
 {
-    //parentScene = par;
+    // parentScene = par;
     CrosshairSize = 2;
     MoveLocation(start, Plane1, Plane2);
 }
-LocationSelect::LocationSelect(Vector start, Vector Plane1, Vector Plane2,
-                               Vector Plane3 /*, Scene* par */) : LocSelAni("locationselect.ani", true, .5, MIPMAP, true), LocSelUpAni("locationselect_up.ani", true, .5, MIPMAP, false)
+LocationSelect::LocationSelect(Vector start, Vector Plane1, Vector Plane2, Vector Plane3 /*, Scene* par */)
+    : LocSelAni("locationselect.ani", true, .5, MIPMAP, true),
+      LocSelUpAni("locationselect_up.ani", true, .5, MIPMAP, false)
 {
-    //parentScene=par;
+    // parentScene=par;
     CrosshairSize = 2;
     MoveLocation(start, Plane1, Plane2, Plane3);
 }
@@ -77,10 +79,10 @@ QVector &LocationSelect::Position()
 
 void LocationSelect::MoveLocation(Vector start, Vector Plane1, Vector Plane2)
 {
-    //BindKey (1,LocationSelect::MouseMoveHandle);
-    //UnbindMouse (getMouseDrawFunc()); //don't draw the mouse
-    //BindKey (']',::incConstant);
-    //BindKey ('[',::decConstant);
+    // BindKey (1,LocationSelect::MouseMoveHandle);
+    // UnbindMouse (getMouseDrawFunc()); //don't draw the mouse
+    // BindKey (']',::incConstant);
+    // BindKey ('[',::decConstant);
     LocalPosition = QVector(0, 0, 0);
     MakeRVector(Plane1, Plane2, r);
     p = Plane1;
@@ -90,8 +92,8 @@ void LocationSelect::MoveLocation(Vector start, Vector Plane1, Vector Plane2)
 }
 void LocationSelect::MoveLocation(Vector start, Vector Plane1, Vector Plane2, Vector Plane3)
 {
-    //BindKey (1,::MouseMoveHandle);
-    //UnbindMouse (getMouseDrawFunc());
+    // BindKey (1,::MouseMoveHandle);
+    // UnbindMouse (getMouseDrawFunc());
     LocalPosition = QVector(0, 0, 0);
     r = Plane3;
     p = Plane1;
@@ -119,7 +121,8 @@ void LocationSelect::Draw()
      *  GFXDisable(LIGHTING);
      *  GFXPushBlendMode();
      *  //  GFXBlendMode(SRCALPHA,INVSRCALPHA);
-     *  //GFXColor4f (parentScene->HUDColor.r, parentScene->HUDColor.g, parentScene->HUDColor.b, parentScene->HUDColor.a);
+     *  //GFXColor4f (parentScene->HUDColor.r, parentScene->HUDColor.g, parentScene->HUDColor.b,
+     * parentScene->HUDColor.a);
      *
      *  GFXColor4f (0,.5,0,.3);
      */
@@ -143,45 +146,56 @@ void LocationSelect::Draw()
         GFXGetMatrixModel(m);
         MultMatrix(t, v, m);
 
-        //following translates 'z'...not sure it's necessary
-        //Translate (v,0,0,LocalPosition.k);
-        //MultMatrix (m,t,v);
+        // following translates 'z'...not sure it's necessary
+        // Translate (v,0,0,LocalPosition.k);
+        // MultMatrix (m,t,v);
 
-        //the location in camera coordinates of the beginning of the location select
+        // the location in camera coordinates of the beginning of the location select
         Vector tLocation(t.p.Cast());
-        Vector tP(t.getP()); //the p vector of the plane being selected on
-        Vector tQ(t.getQ()); //the q vector of the plane being selected on
-                             ///unused    Vector tR (t[8],t[9],t[10]);//the q vector of the plane being selected on
-                             //VSFileSystem::Fprintf (stderr,"<%f,%f,%f>",t[0],t[1],t[2]);
-                             //VSFileSystem::Fprintf (stderr,"<%f,%f,%f>",t[4],t[5],t[6]);
-                             //VSFileSystem::Fprintf (stderr,"<%f,%f,%f>",t[8],t[9],t[10]);
+        Vector tP(t.getP()); // the p vector of the plane being selected on
+        Vector tQ(t.getQ()); // the q vector of the plane being selected on
+                             /// unused    Vector tR (t[8],t[9],t[10]);//the q vector of the plane being selected on
+                             // VSFileSystem::Fprintf (stderr,"<%f,%f,%f>",t[0],t[1],t[2]);
+                             // VSFileSystem::Fprintf (stderr,"<%f,%f,%f>",t[4],t[5],t[6]);
+                             // VSFileSystem::Fprintf (stderr,"<%f,%f,%f>",t[8],t[9],t[10]);
 #ifdef DELTA_MOVEMENT
-        float zvalueXY = tLocation.k + LocalPosition.i * tP.k + LocalPosition.j * tQ.k; //z val of the parallelogram
+        float zvalueXY = tLocation.k + LocalPosition.i * tP.k + LocalPosition.j * tQ.k; // z val of the parallelogram
 #else
-        float zvalueXY = tLocation.k + LocalPosition.i * tP.k + LocalPosition.j * tQ.k + LocalPosition.k * tR.k; //zvalue of the cursor
+        float zvalueXY = tLocation.k + LocalPosition.i * tP.k + LocalPosition.j * tQ.k +
+                         LocalPosition.k * tR.k; // zvalue of the cursor
 #endif
         if (changed && !vert)
         {
-            //planar movement
+            // planar movement
             if (zvalueXY > 1000) /// zfar
                 zvalueXY = 1000;
             if (zvalueXY < -1000)
                 zvalueXY = -1000;
-            LocalPosition.i = fabs(zvalueXY) * (((2 * DeltaPosition.i / g_game.x_resolution - 1) * g_game.MouseSensitivityX * GFXGetXInvPerspective() * tP.i) - (1 - (2 * DeltaPosition.j / g_game.y_resolution) * g_game.MouseSensitivityY * GFXGetYInvPerspective() * tP.j));
-            LocalPosition.j = fabs(zvalueXY) * (((2 * DeltaPosition.i / g_game.x_resolution - 1) * g_game.MouseSensitivityX * GFXGetXInvPerspective() * tQ.i) - (1 - (2 * DeltaPosition.j / g_game.y_resolution) * tQ.j * g_game.MouseSensitivityY * GFXGetYInvPerspective()));
+            LocalPosition.i = fabs(zvalueXY) * (((2 * DeltaPosition.i / g_game.x_resolution - 1) *
+                                                 g_game.MouseSensitivityX * GFXGetXInvPerspective() * tP.i) -
+                                                (1 - (2 * DeltaPosition.j / g_game.y_resolution) *
+                                                         g_game.MouseSensitivityY * GFXGetYInvPerspective() * tP.j));
+            LocalPosition.j = fabs(zvalueXY) * (((2 * DeltaPosition.i / g_game.x_resolution - 1) *
+                                                 g_game.MouseSensitivityX * GFXGetXInvPerspective() * tQ.i) -
+                                                (1 - (2 * DeltaPosition.j / g_game.y_resolution) * tQ.j *
+                                                         g_game.MouseSensitivityY * GFXGetYInvPerspective()));
             DeltaPosition = Vector(0, 0, 0);
-            //Vector TransPQR (t[0]*i+t[4]*LocalPosition.j+t[8]*LocalPosition.k+t[12],t[1]*LocalPosition.i+t[5]*LocalPosition.j+t[9]*LocalPosition.k+t[13],t[2]*LocalPosition.i+t[6]*LocalPosition.j+t[10]*LocalPosition.k+t[14]);
+            // Vector TransPQR
+            // (t[0]*i+t[4]*LocalPosition.j+t[8]*LocalPosition.k+t[12],t[1]*LocalPosition.i+t[5]*LocalPosition.j+t[9]*LocalPosition.k+t[13],t[2]*LocalPosition.i+t[6]*LocalPosition.j+t[10]*LocalPosition.k+t[14]);
             changed = false;
         }
 #ifndef DELTA_MOVEMENT
         else
         {
-            //vertical movement
+            // vertical movement
             if (zvalueXY > 1000) /// zfar
                 zvalueXY = 1000;
             if (zvalueXY < -1000)
                 zvalueXY = -1000;
-            LocalPosition.k = fabs(zvalueXY) * (((2 * DeltaPosition.i / g_game.x_resolution - 1) * g_game.MouseSensitivityX * GFXGetXInvPerspective() * tR.i) - ((2 * DeltaPosition.j / g_game.y_resolution - 1) * g_game.MouseSensitivityY * GFXGetYInvPerspective() * tR.j));
+            LocalPosition.k = fabs(zvalueXY) * (((2 * DeltaPosition.i / g_game.x_resolution - 1) *
+                                                 g_game.MouseSensitivityX * GFXGetXInvPerspective() * tR.i) -
+                                                ((2 * DeltaPosition.j / g_game.y_resolution - 1) *
+                                                 g_game.MouseSensitivityY * GFXGetYInvPerspective() * tR.j));
             if (DeltaPosition.k)
             {
                 LocalPosition.k = 0;
@@ -192,7 +206,7 @@ void LocationSelect::Draw()
         }
 #endif
     }
-    //draw the animation
+    // draw the animation
     LocSelUpAni.SetPosition(QVector(LocalPosition.i, LocalPosition.j, 0));
     LocSelUpAni.Draw();
     LocSelAni.SetPosition(LocalPosition);

@@ -7,21 +7,21 @@
 
 /**
  * A reference to a soundfile that can be lazily loaded.
- * 
+ *
  * This base class implement no actions on it, see concrete subclasses for that,
  * but it does contain all common data points.
  */
 class SoundContainer
 {
-private:
+  private:
     StringPool::Reference soundFile;
     float gain;
     bool looping;
 
-protected:
+  protected:
     void init(const StringPool::Reference &soundfile, bool looping, float gain);
 
-public:
+  public:
     /**
      * Create a refernece to an optionally-looping sound file.
      */

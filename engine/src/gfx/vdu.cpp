@@ -3,33 +3,31 @@
 /// target info, and objectives
 
 #include "vdu.h"
-#include "cmd/unit_util.h"
-#include "hud.h"
-#include "vs_globals.h"
-#include "cockpit.h"
-#include "cmd/script/mission.h"
-#include "cmd/script/flightgroup.h"
-#include "cmd/script/msgcenter.h"
+#include "cmd/ai/communication.h"
+#include "cmd/beam.h"
 #include "cmd/images.h"
 #include "cmd/planet.h"
-#include "cmd/beam.h"
+#include "cmd/script/flightgroup.h"
+#include "cmd/script/mission.h"
+#include "cmd/script/msgcenter.h"
+#include "cmd/unit_util.h"
+#include "cockpit.h"
 #include "config_xml.h"
-#include "xml_support.h"
+#include "galaxy_gen.h"
 #include "gfx/animation.h"
 #include "gfx/vsimage.h"
-#include "galaxy_gen.h"
+#include "hud.h"
 #include "universe_util.h"
+#include "vs_globals.h"
 #include "vsfilesystem.h"
-#include "cmd/ai/communication.h"
+#include "xml_support.h"
 
-template <typename T>
-inline T mymin(T a, T b)
+template <typename T> inline T mymin(T a, T b)
 {
     return (a < b) ? a : b;
 }
 
-template <typename T>
-inline T mymax(T a, T b)
+template <typename T> inline T mymax(T a, T b)
 {
     return (a > b) ? a : b;
 }
@@ -39,14 +37,15 @@ bool VDU::staticable() const
     unsigned int thismode = getMode();
     static bool only_scanner_modes_static =
         XMLSupport::parse_bool(vs_config->getVariable("graphics", "only_scanner_modes_static", "true"));
-    if (thismode != COMM && thismode != TARGETMANIFEST && thismode != TARGET && thismode != NAV && thismode != VIEW && thismode != WEBCAM && only_scanner_modes_static)
+    if (thismode != COMM && thismode != TARGETMANIFEST && thismode != TARGET && thismode != NAV && thismode != VIEW &&
+        thismode != WEBCAM && only_scanner_modes_static)
         return false;
-    return (posmodes & (posmodes - 1)) != 0; //check not power of two
+    return (posmodes & (posmodes - 1)) != 0; // check not power of two
 }
 
-///ALERT to change must change enum in class
-const std::string vdu_modes[] =
-    {"Target", "Nav", "Objectives", "Comm", "Weapon", "Damage", "Shield", "Manifest", "TargetManifest", "View", "Message"};
+/// ALERT to change must change enum in class
+const std::string vdu_modes[] = {"Target", "Nav",      "Objectives",     "Comm", "Weapon", "Damage",
+                                 "Shield", "Manifest", "TargetManifest", "View", "Message"};
 
 string reformatName(string nam)
 {
@@ -103,9 +102,8 @@ string getUnitNameAndFgNoBase(Unit *target)
                 {
                     if (reformatName(target->name) == (reformatName(target->getFullname())))
                     {
-                        std::string retval(reformatName(
-                                               target->name) +
-                                           " " + ((confignums && ("" != fgnstring)) ? (": " + fgnstring) : ""));
+                        std::string retval(reformatName(target->name) + " " +
+                                           ((confignums && ("" != fgnstring)) ? (": " + fgnstring) : ""));
                         return retval;
                     }
                     else
@@ -155,8 +153,8 @@ int parse_vdu_type(const char *x)
     return retval;
 }
 
-VDU::VDU(const char *file, TextPlane *textp, unsigned short modes, short rwws, short clls, float *ma,
-         float *mh) : VSSprite(file), tp(textp), posmodes(modes), rows(rwws), cols(clls), scrolloffset(0)
+VDU::VDU(const char *file, TextPlane *textp, unsigned short modes, short rwws, short clls, float *ma, float *mh)
+    : VSSprite(file), tp(textp), posmodes(modes), rows(rwws), cols(clls), scrolloffset(0)
 {
     thismode.push_back(MSG);
     if (_Universe->numPlayers() > 1)
@@ -168,18 +166,15 @@ VDU::VDU(const char *file, TextPlane *textp, unsigned short modes, short rwws, s
     got_target_info = true;
     SwitchMode(nullptr);
 
-    //printf("\nVDU rows=%d,col=%d\n",rows,cols);
-    //cout << "vdu" << endl;
+    // printf("\nVDU rows=%d,col=%d\n",rows,cols);
+    // cout << "vdu" << endl;
 }
 
 GFXColor getDamageColor(float armor, bool gradient = false)
 {
-    static GFXColor damaged = vs_config->getColor("default", "hud_target_damaged",
-                                                  GFXColor(1, 0, 0, 1));
-    static GFXColor half_damaged = vs_config->getColor("default", "hud_target_half_damaged",
-                                                       GFXColor(1, 1, 0, 1));
-    static GFXColor full = vs_config->getColor("default", "hud_target_full",
-                                               GFXColor(1, 1, 1, 1));
+    static GFXColor damaged = vs_config->getColor("default", "hud_target_damaged", GFXColor(1, 0, 0, 1));
+    static GFXColor half_damaged = vs_config->getColor("default", "hud_target_half_damaged", GFXColor(1, 1, 0, 1));
+    static GFXColor full = vs_config->getColor("default", "hud_target_full", GFXColor(1, 1, 1, 1));
     if (armor >= .9)
         return full;
     float avghalf = armor >= .3 ? 1 : 0;
@@ -188,20 +183,8 @@ GFXColor getDamageColor(float armor, bool gradient = false)
     return colLerp(damaged, half_damaged, avghalf);
 }
 
-static void DrawHUDSprite(VDU *thus,
-                          VSSprite *s,
-                          float per,
-                          float &sx,
-                          float &sy,
-                          float &w,
-                          float &h,
-                          float aup,
-                          float aright,
-                          float aleft,
-                          float adown,
-                          float hull,
-                          bool drawsprite,
-                          bool invertsprite)
+static void DrawHUDSprite(VDU *thus, VSSprite *s, float per, float &sx, float &sy, float &w, float &h, float aup,
+                          float aright, float aleft, float adown, float hull, bool drawsprite, bool invertsprite)
 {
     static bool HighQTargetVSSprites =
         XMLSupport::parse_bool(vs_config->getVariable("graphics", "high_quality_sprites", "false"));
@@ -209,9 +192,10 @@ static void DrawHUDSprite(VDU *thus,
     thus->GetPosition(sx, sy);
     thus->GetSize(w, h);
 
-    //Use margins specified from config file
+    // Use margins specified from config file
     static float width_factor = XMLSupport::parse_float(vs_config->getVariable("graphics", "reduced_vdus_width", "0"));
-    static float height_factor = XMLSupport::parse_float(vs_config->getVariable("graphics", "reduced_vdus_height", "0"));
+    static float height_factor =
+        XMLSupport::parse_float(vs_config->getVariable("graphics", "reduced_vdus_height", "0"));
     w = w - width_factor;
     h = h + height_factor;
 
@@ -241,7 +225,8 @@ static void DrawHUDSprite(VDU *thus,
         {
             static const float middle_point =
                 XMLSupport::parse_float(vs_config->getVariable("graphics", "hud", "armor_hull_size", ".55"));
-            static bool top_view = XMLSupport::parse_bool(vs_config->getVariable("graphics", "hud", "top_view", "false"));
+            static bool top_view =
+                XMLSupport::parse_bool(vs_config->getVariable("graphics", "hud", "top_view", "false"));
             float middle_point_small = 1 - middle_point;
             Vector ll, lr, ur, ul, mll, mlr, mur, mul;
             spritetex->MakeActive();
@@ -495,20 +480,10 @@ static std::string MangleStrung( std::string in, float probability )
 }
 */
 
-static void DrawShield(float fs,
-                       float rs,
-                       float ls,
-                       float bs,
-                       float x,
-                       float y,
-                       float w,
-                       float h,
-                       bool invert,
-                       GFXColor outershield,
-                       GFXColor middleshield,
-                       GFXColor innershield)
+static void DrawShield(float fs, float rs, float ls, float bs, float x, float y, float w, float h, bool invert,
+                       GFXColor outershield, GFXColor middleshield, GFXColor innershield)
 {
-    //FIXME why is this static?
+    // FIXME why is this static?
 
     if (invert)
     {
@@ -516,23 +491,20 @@ static void DrawShield(float fs,
         fs = bs;
         bs = tmp;
     }
-    GFXColor shcolor[4][3] = {
-        {innershield, middleshield, outershield},
-        {innershield, middleshield, outershield},
-        {innershield, middleshield, outershield},
-        {innershield, middleshield, outershield}};
-    static bool do_shield_fade = XMLSupport::parse_bool(vs_config->getVariable("graphics", "hud", "shield_vdu_fade", "true"));
+    GFXColor shcolor[4][3] = {{innershield, middleshield, outershield},
+                              {innershield, middleshield, outershield},
+                              {innershield, middleshield, outershield},
+                              {innershield, middleshield, outershield}};
+    static bool do_shield_fade =
+        XMLSupport::parse_bool(vs_config->getVariable("graphics", "hud", "shield_vdu_fade", "true"));
 
-    static float shthresh[3] = {
-        XMLSupport::parse_floatf(vs_config->getVariable("graphics", "hud",
-                                                        "shield_vdu_thresh0",
-                                                        do_shield_fade ? "0" : ".25")),
-        XMLSupport::parse_floatf(vs_config->getVariable("graphics", "hud",
-                                                        "shield_vdu_thresh1",
-                                                        do_shield_fade ? ".33" : ".50")),
-        XMLSupport::parse_floatf(vs_config->getVariable("graphics", "hud",
-                                                        "shield_vdu_thresh2",
-                                                        do_shield_fade ? ".66" : ".75"))}; //PM me if you don't know why I did this.
+    static float shthresh[3] = {XMLSupport::parse_floatf(vs_config->getVariable("graphics", "hud", "shield_vdu_thresh0",
+                                                                                do_shield_fade ? "0" : ".25")),
+                                XMLSupport::parse_floatf(vs_config->getVariable("graphics", "hud", "shield_vdu_thresh1",
+                                                                                do_shield_fade ? ".33" : ".50")),
+                                XMLSupport::parse_floatf(vs_config->getVariable(
+                                    "graphics", "hud", "shield_vdu_thresh2",
+                                    do_shield_fade ? ".66" : ".75"))}; // PM me if you don't know why I did this.
     float shtrans[3] = {1.0f, 1.0f, 1.0f};
     if (do_shield_fade)
     {
@@ -672,7 +644,8 @@ static void DrawShield(float fs,
 }
 
 /*
-static void DrawShieldArmor( Unit *parent, const float StartArmor[8], float x, float y, float w, float h, bool invertfrontback )
+static void DrawShieldArmor( Unit *parent, const float StartArmor[8], float x, float y, float w, float h, bool
+invertfrontback )
 {
     static bool drawVSarmor = XMLSupport::parse_bool( vs_config->getVariable( "graphics", "drawVSarmor", "true" ) );
     float fs = parent->FShieldData();
@@ -740,17 +713,13 @@ static void DrawShieldArmor( Unit *parent, const float StartArmor[8], float x, f
                    GFXColor( mBarmorcolor[0], mBarmorcolor[1], mBarmorcolor[2], mBarmorcolor[3] ),
                    GFXColor( oBarmorcolor[0], oBarmorcolor[1], oBarmorcolor[2], oBarmorcolor[3] ) );
     } else {
-        DrawShield( (armor[0]+armor[2]+armor[4]+armor[6])/(float) (StartArmor[0]+StartArmor[2]+StartArmor[4]+StartArmor[6]),
-                   (armor[0]+armor[1]+armor[4]+armor[5])/(float) (StartArmor[0]+StartArmor[1]+StartArmor[4]+StartArmor[5]),
-                   (armor[2]+armor[3]+armor[6]+armor[7])/(float) (StartArmor[2]+StartArmor[3]+StartArmor[6]+StartArmor[7]),
-                   (armor[1]+armor[3]+armor[5]+armor[7])/(float) (StartArmor[1]+StartArmor[3]+StartArmor[5]+StartArmor[7]),
-                   x,
-                   y, w/2, h/2,
-                   invertfrontback,
-                   GFXColor( iarmorcolor[0], iarmorcolor[1], iarmorcolor[2],
-                             iarmorcolor[3] ),
-                   GFXColor( marmorcolor[0], marmorcolor[1], marmorcolor[2], marmorcolor[3] ),
-                   GFXColor( oarmorcolor[0], oarmorcolor[1], oarmorcolor[2], oarmorcolor[3] ) );
+        DrawShield( (armor[0]+armor[2]+armor[4]+armor[6])/(float)
+(StartArmor[0]+StartArmor[2]+StartArmor[4]+StartArmor[6]), (armor[0]+armor[1]+armor[4]+armor[5])/(float)
+(StartArmor[0]+StartArmor[1]+StartArmor[4]+StartArmor[5]), (armor[2]+armor[3]+armor[6]+armor[7])/(float)
+(StartArmor[2]+StartArmor[3]+StartArmor[6]+StartArmor[7]), (armor[1]+armor[3]+armor[5]+armor[7])/(float)
+(StartArmor[1]+StartArmor[3]+StartArmor[5]+StartArmor[7]), x, y, w/2, h/2, invertfrontback, GFXColor( iarmorcolor[0],
+iarmorcolor[1], iarmorcolor[2], iarmorcolor[3] ), GFXColor( marmorcolor[0], marmorcolor[1], marmorcolor[2],
+marmorcolor[3] ), GFXColor( oarmorcolor[0], oarmorcolor[1], oarmorcolor[2], oarmorcolor[3] ) );
     }
 }
 */
@@ -760,37 +729,38 @@ void VDU::DrawVDUShield(Unit *parent)
     float x, y, w, h;
     GetPosition(x, y);
     GetSize(w, h);
-    //Use margins specified from config file
+    // Use margins specified from config file
     static float width_factor = XMLSupport::parse_float(vs_config->getVariable("graphics", "reduced_vdus_width", "0"));
-    static float height_factor = XMLSupport::parse_float(vs_config->getVariable("graphics", "reduced_vdus_height", "0"));
+    static float height_factor =
+        XMLSupport::parse_float(vs_config->getVariable("graphics", "reduced_vdus_height", "0"));
     w = w - width_factor;
     h = h + height_factor;
 
     h = fabs(h * .6);
     w = fabs(w * .6);
-    //static bool invert_friendly_shields =
+    // static bool invert_friendly_shields =
     //    XMLSupport::parse_bool( vs_config->getVariable( "graphics", "hud", "invert_friendly_shields", "false" ) );
-    //DrawShieldArmor(parent,StartArmor,x,y,w,h,invert_friendly_shields);
+    // DrawShieldArmor(parent,StartArmor,x,y,w,h,invert_friendly_shields);
     GFXColor4f(1, parent->GetHullPercent(), parent->GetHullPercent(), 1);
     GFXEnable(TEXTURE0);
     GFXColor4f(1, parent->GetHullPercent(), parent->GetHullPercent(), 1);
     static bool invert_friendly_sprite =
         XMLSupport::parse_bool(vs_config->getVariable("graphics", "hud", "invert_friendly_sprite", "false"));
-    DrawHUDSprite(this, parent->getHudImage(), .25, x, y, w, h, parent->GetHullPercent(),
-                  parent->GetHullPercent(), parent->GetHullPercent(), parent->GetHullPercent(),
-                  parent->GetHullPercent(), true, invert_friendly_sprite);
+    DrawHUDSprite(this, parent->getHudImage(), .25, x, y, w, h, parent->GetHullPercent(), parent->GetHullPercent(),
+                  parent->GetHullPercent(), parent->GetHullPercent(), parent->GetHullPercent(), true,
+                  invert_friendly_sprite);
 }
 
 // TODO: make into function
-#define RETURN_STATIC_SPRITE(name)            \
-    do                                        \
-    {                                         \
-        static VSSprite s(name ".sprite");    \
-        static VSSprite sCompat(name ".spr"); \
-        if (s.LoadSuccess())                  \
-            return &s;                        \
-        else                                  \
-            return &sCompat;                  \
+#define RETURN_STATIC_SPRITE(name)                                                                                     \
+    do                                                                                                                 \
+    {                                                                                                                  \
+        static VSSprite s(name ".sprite");                                                                             \
+        static VSSprite sCompat(name ".spr");                                                                          \
+        if (s.LoadSuccess())                                                                                           \
+            return &s;                                                                                                 \
+        else                                                                                                           \
+            return &sCompat;                                                                                           \
     } while (0)
 
 VSSprite *getTargetQuadShield()
@@ -825,8 +795,8 @@ VSSprite *getNavImage()
 
 double DistanceTwoTargets(Unit *parent, Unit *target)
 {
-    double tmp =
-        ((parent->Position() - target->Position()).Magnitude() - ((target->isUnit() == PLANETPTR) ? target->rSize() : 0));
+    double tmp = ((parent->Position() - target->Position()).Magnitude() -
+                  ((target->isUnit() == PLANETPTR) ? target->rSize() : 0));
     if (tmp < 0)
         return 0;
     return tmp;
@@ -839,7 +809,7 @@ struct retString128
 
 retString128 PrettyDistanceString(double distance)
 {
-    //OVERRUN
+    // OVERRUN
     struct retString128 qr;
     static float game_speed = XMLSupport::parse_float(vs_config->getVariable("physics", "game_speed", "1"));
     static bool lie = XMLSupport::parse_bool(vs_config->getVariable("physics", "game_speed_lying", "true"));
@@ -849,21 +819,21 @@ retString128 PrettyDistanceString(double distance)
     }
     else
     {
-        if (distance < 20000) //use meters up to 20,000 m
+        if (distance < 20000) // use meters up to 20,000 m
             sprintf(qr.str, "%.0lf meters", distance);
-        else if (distance < 100000) //use kilometers with two decimals up to 100 km
+        else if (distance < 100000) // use kilometers with two decimals up to 100 km
             sprintf(qr.str, "%.2lf kilometers", distance / 1000);
-        else if (distance < 299792458) //use kilometers without decimals up to 299792.458 km
+        else if (distance < 299792458) // use kilometers without decimals up to 299792.458 km
             sprintf(qr.str, "%.0lf kilometers", distance / 1000);
-        else if (distance < (120 * 299792458.)) //use light seconds up to 120
+        else if (distance < (120 * 299792458.)) // use light seconds up to 120
             sprintf(qr.str, "%.2lf light seconds", distance / 299792458);
-        else if (distance < (120 * 60 * 299792458.)) //use light minutes up to 120
+        else if (distance < (120 * 60 * 299792458.)) // use light minutes up to 120
             sprintf(qr.str, "%.2lf light minutes", distance / (60 * 299792458.));
-        else if (distance < (48 * 3600 * 299792458.)) //use light hours up to 48
+        else if (distance < (48 * 3600 * 299792458.)) // use light hours up to 48
             sprintf(qr.str, "%.2lf light hours", distance / (3600 * 299792458.));
-        else if (distance < (365 * 24 * 3600 * 299792458.)) //use light days up to 365
+        else if (distance < (365 * 24 * 3600 * 299792458.)) // use light days up to 365
             sprintf(qr.str, "%.2lf light days", distance / (24 * 3600 * 299792458.));
-        else //use light years
+        else // use light years
             sprintf(qr.str, "%.2lf lightyears", distance / (365 * 24 * 3600 * 299792458.));
     }
     return qr;
@@ -928,25 +898,33 @@ void VDU::DrawTarget(GameCockpit *cp, Unit *parent, Unit *target)
     }
     if (target->isUnit() == PLANETPTR)
         au = ar = al = ad = target->GetHullPercent();
-    DrawHUDSprite(this, ((target->isUnit() != PLANETPTR || target->getHudImage() != nullptr) ? target->getHudImage() : (target->GetDestinations().size() != 0 ? getJumpImage() : (((Planet *)target)->hasLights() ? getSunImage() : (target->getFullname().find("invisible") != string::npos ? getNavImage() : getPlanetImage())))), .6, x, y, w, h,
-                  au, ar, al, ad,
-                  target->GetHullPercent(),
-                  true, invert_target_sprite);
+    DrawHUDSprite(this,
+                  ((target->isUnit() != PLANETPTR || target->getHudImage() != nullptr)
+                       ? target->getHudImage()
+                       : (target->GetDestinations().size() != 0
+                              ? getJumpImage()
+                              : (((Planet *)target)->hasLights()
+                                     ? getSunImage()
+                                     : (target->getFullname().find("invisible") != string::npos ? getNavImage()
+                                                                                                : getPlanetImage())))),
+                  .6, x, y, w, h, au, ar, al, ad, target->GetHullPercent(), true, invert_target_sprite);
 
     GFXDisable(TEXTURE0);
-    //sprintf (t,"\n%4.1f %4.1f",target->FShieldData()*100,target->RShieldData()*100);
+    // sprintf (t,"\n%4.1f %4.1f",target->FShieldData()*100,target->RShieldData()*100);
     double mm = 0;
     string unitandfg = getUnitNameAndFgNoBase(target).c_str();
     static bool out_of_cone_information =
         XMLSupport::parse_bool(vs_config->getVariable("graphics", "hud", "out_of_cone_distance", "false"));
-    bool inrange = parent->InRange(target, mm, out_of_cone_information == false && !UnitUtil::isSignificant(target), false, false);
+    bool inrange =
+        parent->InRange(target, mm, out_of_cone_information == false && !UnitUtil::isSignificant(target), false, false);
     if (inrange)
     {
         static int neut = FactionUtil::GetFactionIndex("neutral");
         static int upgr = FactionUtil::GetFactionIndex("upgrades");
         if (target->faction != neut && target->faction != upgr)
         {
-            static bool printFac = XMLSupport::parse_bool(vs_config->getVariable("graphics", "hud", "print_faction", "true"));
+            static bool printFac =
+                XMLSupport::parse_bool(vs_config->getVariable("graphics", "hud", "print_faction", "true"));
             if (printFac)
                 unitandfg += std::string("\n") + FactionUtil::GetFaction(target->faction);
         }
@@ -959,9 +937,11 @@ void VDU::DrawTarget(GameCockpit *cp, Unit *parent, Unit *target)
     bool automatte = (0 == tpbg.a);
     if (automatte)
         tp->bgcol = GFXColor(0, 0, 0, background_alpha);
-    tp->Draw(MangleString(unitandfg, _Universe->AccessCamera()->GetNebula() != nullptr ? .4 : 0), 0, true, false, automatte);
+    tp->Draw(MangleString(unitandfg, _Universe->AccessCamera()->GetNebula() != nullptr ? .4 : 0), 0, true, false,
+             automatte);
     tp->bgcol = tpbg;
-    static float auto_message_lim = XMLSupport::parse_float(vs_config->getVariable("graphics", "auto_message_time_lim", "5"));
+    static float auto_message_lim =
+        XMLSupport::parse_float(vs_config->getVariable("graphics", "auto_message_time_lim", "5"));
     float delautotime = UniverseUtil::GetGameTime() - cp->autoMessageTime;
     bool draw_auto_message = (delautotime < auto_message_lim && cp->autoMessage.length() != 0);
     if (inrange)
@@ -993,12 +973,13 @@ void VDU::DrawTarget(GameCockpit *cp, Unit *parent, Unit *target)
         bool automatte = (0 == tpbg.a);
         if (automatte)
             tp->bgcol = GFXColor(0, 0, 0, background_alpha);
-        tp->Draw(MangleString(newst, _Universe->AccessCamera()->GetNebula() != nullptr ? .4 : 0), 0, true, false, automatte);
+        tp->Draw(MangleString(newst, _Universe->AccessCamera()->GetNebula() != nullptr ? .4 : 0), 0, true, false,
+                 automatte);
         tp->bgcol = tpbg;
         static float ishieldcolor[4] = {.4, .4, 1, 1};
         static float mshieldcolor[4] = {.4, .4, 1, 1};
         static float oshieldcolor[4] = {.4, .4, 1, 1};
-        //code replaced by target shields defined in cockpit.cpt files, preserve for mods
+        // code replaced by target shields defined in cockpit.cpt files, preserve for mods
         static bool builtin_shields =
             XMLSupport::parse_bool(vs_config->getVariable("graphics", "vdu_builtin_shields", "false"));
         if (builtin_shields)
@@ -1008,14 +989,14 @@ void VDU::DrawTarget(GameCockpit *cp, Unit *parent, Unit *target)
                        GFXColor(mshieldcolor[0], mshieldcolor[1], mshieldcolor[2], mshieldcolor[3]),
                        GFXColor(oshieldcolor[0], oshieldcolor[1], oshieldcolor[2], oshieldcolor[3]));
         }
-        //this is a possibility to draw target shields but without gauging
-        //the gauging method is implemented in cockpit.cpp
+        // this is a possibility to draw target shields but without gauging
+        // the gauging method is implemented in cockpit.cpp
         /*  if (target->isUnit()!=PLANETPTR) {
- *   GFXEnable (TEXTURE0);
- *   //Dev:GFXColor4f (1,target->GetHullPercent(),target->GetHullPercent(),1);
- *   DrawHUDSprite(this,getTargetQuadShield(),0.9,x,y,w,h,fs,rs,ls,bs,target->GetHullPercent(),true,invert_target_sprite);
- *   GFXDisable (TEXTURE0);
- *  }*/
+         *   GFXEnable (TEXTURE0);
+         *   //Dev:GFXColor4f (1,target->GetHullPercent(),target->GetHullPercent(),1);
+         *   DrawHUDSprite(this,getTargetQuadShield(),0.9,x,y,w,h,fs,rs,ls,bs,target->GetHullPercent(),true,invert_target_sprite);
+         *   GFXDisable (TEXTURE0);
+         *  }*/
         GFXColor4f(1, 1, 1, 1);
     }
     else
@@ -1027,29 +1008,31 @@ void VDU::DrawTarget(GameCockpit *cp, Unit *parent, Unit *target)
         if (automatte)
             tp->bgcol = GFXColor(0, 0, 0, background_alpha);
         if (draw_auto_message)
-            tp->Draw(MangleString(std::string("\n") + cp->autoMessage, _Universe->AccessCamera()->GetNebula() != nullptr ? .4 : 0), 0, true, false, automatte);
-        else
-            tp->Draw(MangleString("\n[OutOfRange]",
+            tp->Draw(MangleString(std::string("\n") + cp->autoMessage,
                                   _Universe->AccessCamera()->GetNebula() != nullptr ? .4 : 0),
                      0, true, false, automatte);
+        else
+            tp->Draw(MangleString("\n[OutOfRange]", _Universe->AccessCamera()->GetNebula() != nullptr ? .4 : 0), 0,
+                     true, false, automatte);
         tp->bgcol = tpbg;
     }
 }
 
 void VDU::DrawMessages(GameCockpit *parentcp, Unit *target)
 {
-    static bool network_draw_messages = XMLSupport::parse_bool(vs_config->getVariable("graphics", "network_chat_text", "true"));
+    static bool network_draw_messages =
+        XMLSupport::parse_bool(vs_config->getVariable("graphics", "network_chat_text", "true"));
     static bool draw_messages = XMLSupport::parse_bool(vs_config->getVariable("graphics", "chat_text", "true"));
 
     if (draw_messages == false)
         return;
 
     string fullstr;
-    double nowtime = mission->getGametime(); //for message display duration
+    double nowtime = mission->getGametime(); // for message display duration
 
     string targetstr;
-    //int    msglen      = targetstr.size();
-    int rows_needed = 0; //msglen/(cols>0?cols:1);
+    // int    msglen      = targetstr.size();
+    int rows_needed = 0; // msglen/(cols>0?cols:1);
     MessageCenter *mc = mission->msgcenter;
     int rows_used = rows_needed;
     vector<std::string> whoNOT;
@@ -1061,13 +1044,12 @@ void VDU::DrawMessages(GameCockpit *parentcp, Unit *target)
     static int num_messages = XMLSupport::parse_int(vs_config->getVariable("graphics", "num_messages", "2"));
     static bool showStardate = XMLSupport::parse_bool(vs_config->getVariable("graphics", "show_stardate", "true"));
 
-    vector<std::string> message_people; //should be "all", parent's name
+    vector<std::string> message_people; // should be "all", parent's name
     gameMessage lastmsg;
     int row_lim = ((scrolloffset < 0 || num_messages > rows) ? rows : num_messages);
 
     for (int i = scrolloffset < 0 ? -scrolloffset - 1 : 0;
-         rows_used < row_lim && mc->last(i, lastmsg, message_people, whoNOT);
-         i++)
+         rows_used < row_lim && mc->last(i, lastmsg, message_people, whoNOT); i++)
     {
         char timebuf[100];
         double sendtime = lastmsg.time;
@@ -1077,7 +1059,8 @@ void VDU::DrawMessages(GameCockpit *parentcp, Unit *target)
         {
             if (showStardate)
             {
-                string stardate = _Universe->current_stardate.ConvertFullTrekDate(sendtime + _Universe->current_stardate.GetElapsedStarTime());
+                string stardate = _Universe->current_stardate.ConvertFullTrekDate(
+                    sendtime + _Universe->current_stardate.GetElapsedStarTime());
                 sprintf(timebuf, "%s", stardate.c_str());
             }
             else
@@ -1095,10 +1078,10 @@ void VDU::DrawMessages(GameCockpit *parentcp, Unit *target)
             int msglen = mymsg.size();
             int rows_needed = (int)(msglen / (1.6 * cols));
             fullstr = mymsg + "\n" + fullstr;
-            //fullstr=fullstr+mymsg+"\n";
+            // fullstr=fullstr+mymsg+"\n";
 
             rows_used += rows_needed + 1;
-            //cout << "nav  " << mymsg << " rows " << rows_needed << endl;
+            // cout << "nav  " << mymsg << " rows " << rows_needed << endl;
         }
     }
     static std::string newline("\n");
@@ -1134,15 +1117,14 @@ void VDU::DrawMessages(GameCockpit *parentcp, Unit *target)
     bool automatte = (0 == tpbg.a);
     if (automatte)
         tp->bgcol = GFXColor(0, 0, 0, background_alpha);
-    tp->Draw(message_prefix + MangleString(fullstr,
-                                           _Universe->AccessCamera()->GetNebula() != nullptr ? .4 : 0),
-             0, true, false, automatte);
+    tp->Draw(message_prefix + MangleString(fullstr, _Universe->AccessCamera()->GetNebula() != nullptr ? .4 : 0), 0,
+             true, false, automatte);
     tp->bgcol = tpbg;
 }
 
 void VDU::DrawScanningMessage()
 {
-    //tp->Draw(MangleString ("Scanning target...",_Universe->AccessCamera()->GetNebula()!=nullptr?.4:0),0,true);
+    // tp->Draw(MangleString ("Scanning target...",_Universe->AccessCamera()->GetNebula()!=nullptr?.4:0),0,true);
 }
 
 bool VDU::SetCommAnimation(Animation *ani, Unit *un, bool force)
@@ -1177,20 +1159,27 @@ Unit *VDU::GetCommunicating()
 
 void VDU::DrawNav(GameCockpit *cp, Unit *you, Unit *targ, const Vector &nav)
 {
-    //Unit * you = _Universe->AccessCockpit()->GetParent();
-    //Unit * targ = you!=nullptr?you->Target():nullptr;
-    //static float game_speed = XMLSupport::parse_float( vs_config->getVariable( "physics", "game_speed", "1" ) );
-    //static bool  lie = XMLSupport::parse_bool( vs_config->getVariable( "physics", "game_speed_lying", "true" ) );
+    // Unit * you = _Universe->AccessCockpit()->GetParent();
+    // Unit * targ = you!=nullptr?you->Target():nullptr;
+    // static float game_speed = XMLSupport::parse_float( vs_config->getVariable( "physics", "game_speed", "1" ) );
+    // static bool  lie = XMLSupport::parse_bool( vs_config->getVariable( "physics", "game_speed_lying", "true" ) );
     string nam = "none";
     if (targ)
         nam = reformatName(targ->name);
-    int faction = FactionUtil::GetFactionIndex(UniverseUtil::GetGalaxyFaction(_Universe->activeStarSystem()->getFileName()));
-    //std::string systemname = _Universe->activeStarSystem()->getFileName(); // as Sector/System
-    //string sectorname = getStarSystemSector(systemname);
-    //printf ("(debug) Sector: %s\n", sectorname.c_str());
+    int faction =
+        FactionUtil::GetFactionIndex(UniverseUtil::GetGalaxyFaction(_Universe->activeStarSystem()->getFileName()));
+    // std::string systemname = _Universe->activeStarSystem()->getFileName(); // as Sector/System
+    // string sectorname = getStarSystemSector(systemname);
+    // printf ("(debug) Sector: %s\n", sectorname.c_str());
     std::string navdata =
-        std::string("#ff0000Sector:\n     #ffff00" + getStarSystemSector(_Universe->activeStarSystem()->getFileName()) + "\n\n#ff0000System:\n     #ffff00") + _Universe->activeStarSystem()->getName() + " (" + FactionUtil::GetFactionName(faction) + ")\n\n#ff0000Target:\n  #ffff00" + (targ ? getUnitNameAndFgNoBase(targ) : std::string("Nothing")) + "\n\n#ff0000Range: #ffff00" + std::string(PrettyDistanceString(((you && targ) ? DistanceTwoTargets(you, targ) : 0.0)).str);
-    static float auto_message_lim = XMLSupport::parse_float(vs_config->getVariable("graphics", "auto_message_time_lim", "5"));
+        std::string("#ff0000Sector:\n     #ffff00" + getStarSystemSector(_Universe->activeStarSystem()->getFileName()) +
+                    "\n\n#ff0000System:\n     #ffff00") +
+        _Universe->activeStarSystem()->getName() + " (" + FactionUtil::GetFactionName(faction) +
+        ")\n\n#ff0000Target:\n  #ffff00" + (targ ? getUnitNameAndFgNoBase(targ) : std::string("Nothing")) +
+        "\n\n#ff0000Range: #ffff00" +
+        std::string(PrettyDistanceString(((you && targ) ? DistanceTwoTargets(you, targ) : 0.0)).str);
+    static float auto_message_lim =
+        XMLSupport::parse_float(vs_config->getVariable("graphics", "auto_message_time_lim", "5"));
     float delautotime = UniverseUtil::GetGameTime() - cp->autoMessageTime;
     bool draw_auto_message = (delautotime < auto_message_lim && cp->autoMessage.length() != 0);
     std::string msg = cp->autoMessage;
@@ -1207,7 +1196,9 @@ void VDU::DrawNav(GameCockpit *cp, Unit *you, Unit *targ, const Vector &nav)
     bool automatte = (0 == tpbg.a);
     if (automatte)
         tp->bgcol = GFXColor(0, 0, 0, background_alpha);
-    tp->Draw(MangleString(navdata + (draw_auto_message ? msg : std::string()), _Universe->AccessCamera()->GetNebula() != nullptr ? .4 : 0), scrolloffset, true, true, automatte);
+    tp->Draw(MangleString(navdata + (draw_auto_message ? msg : std::string()),
+                          _Universe->AccessCamera()->GetNebula() != nullptr ? .4 : 0),
+             scrolloffset, true, true, automatte);
     tp->bgcol = tpbg;
 }
 
@@ -1262,7 +1253,7 @@ void VDU::DrawComm()
 
 void VDU::DrawManifest(Unit *parent, Unit *target)
 {
-    //zadeVDUmanifest
+    // zadeVDUmanifest
     static string manifest_heading =
         XMLSupport::escaped_string(vs_config->getVariable("graphics", "hud", "manifest_heading", "Manifest\n"));
     static bool simple_manifest =
@@ -1296,7 +1287,7 @@ void VDU::DrawManifest(Unit *parent, Unit *target)
                 lastCat = cc;
                 if (target == parent && !simple_manifest)
                 {
-                    //retval += string("(") + tostring(cq)+string(") "); // show quantity
+                    // retval += string("(") + tostring(cq)+string(") "); // show quantity
                     if (cm >= cv)
                         retval += tostring((int)((float)cq * cm)) + string("t ");
                     else
@@ -1313,16 +1304,16 @@ void VDU::DrawManifest(Unit *parent, Unit *target)
             }
         }
     if (target == parent && !simple_manifest)
-        retval += string("--------\nLoad: ") + tostring(load) + string("t ") + tostring(vol) + string("m3 ") + tostring(cred) + string("Cr.\n");
+        retval += string("--------\nLoad: ") + tostring(load) + string("t ") + tostring(vol) + string("m3 ") +
+                  tostring(cred) + string("Cr.\n");
     static float background_alpha =
         XMLSupport::parse_float(vs_config->getVariable("graphics", "hud", "text_background_alpha", "0.0625"));
     GFXColor tpbg = tp->bgcol;
     bool automatte = (0 == tpbg.a);
     if (automatte)
         tp->bgcol = GFXColor(0, 0, 0, background_alpha);
-    tp->Draw(MangleString(retval,
-                          _Universe->AccessCamera()->GetNebula() != nullptr ? .4 : 0),
-             scrolloffset, true, false, automatte);
+    tp->Draw(MangleString(retval, _Universe->AccessCamera()->GetNebula() != nullptr ? .4 : 0), scrolloffset, true,
+             false, automatte);
     tp->bgcol = tpbg;
 }
 
@@ -1336,8 +1327,7 @@ static void DrawGun(Vector pos, float w, float h, weapon_info::MOUNT_SIZE sz)
     if (sz == weapon_info::NOWEAP)
     {
         GFXPointSize(4);
-        const float verts[3] = {
-            pos.x, pos.y, pos.z};
+        const float verts[3] = {pos.x, pos.y, pos.z};
         GFXDraw(GFXPOINT, verts, 1);
         GFXPointSize(1);
     }
@@ -1470,7 +1460,7 @@ static void DrawGun(Vector pos, float w, float h, weapon_info::MOUNT_SIZE sz)
             GFXDraw(GFXLINE, verts, 14);
         }
         else
-        { //capship gun
+        { // capship gun
             const float verts[14 * 3] = {
                 pos.i + oox,
                 pos.j,
@@ -1521,56 +1511,25 @@ static void DrawGun(Vector pos, float w, float h, weapon_info::MOUNT_SIZE sz)
     else if (sz == weapon_info::SPECIAL || sz == weapon_info::SPECIALMISSILE)
     {
         GFXPointSize(4);
-        const float verts[3] = {
-            pos.x, pos.y, pos.z};
+        const float verts[3] = {pos.x, pos.y, pos.z};
         GFXDraw(GFXPOINT, verts, 1);
-        GFXPointSize(1); //classified...  FIXME
+        GFXPointSize(1); // classified...  FIXME
     }
     else if (sz < weapon_info::HEAVYMISSILE)
     {
         const float verts[4 * 3] = {
-            pos.i,
-            pos.j - h / 8,
-            0,
-            pos.i,
-            pos.j + h / 8,
-            0,
-            pos.i + 2 * oox,
-            pos.j - h / 8 + 2 * ooy,
-            0,
-            pos.i - 2 * oox,
-            pos.j - h / 8 + 2 * ooy,
-            0,
+            pos.i,           pos.j - h / 8,           0, pos.i,           pos.j + h / 8,           0,
+            pos.i + 2 * oox, pos.j - h / 8 + 2 * ooy, 0, pos.i - 2 * oox, pos.j - h / 8 + 2 * ooy, 0,
         };
         GFXDraw(GFXLINE, verts, 4);
     }
     else if (sz <= weapon_info::CAPSHIPHEAVYMISSILE)
     {
         const float verts[8 * 3] = {
-            pos.i,
-            pos.j - h / 6,
-            0,
-            pos.i,
-            pos.j + h / 6,
-            0,
-            pos.i + 3 * oox,
-            pos.j - h / 6 + 2 * ooy,
-            0,
-            pos.i - 3 * oox,
-            pos.j - h / 6 + 2 * ooy,
-            0,
-            pos.i + oox,
-            pos.j - h / 6,
-            0,
-            pos.i + oox,
-            pos.j + h / 9,
-            0,
-            pos.i - oox,
-            pos.j - h / 6,
-            0,
-            pos.i - oox,
-            pos.j + h / 9,
-            0,
+            pos.i,           pos.j - h / 6,           0, pos.i,           pos.j + h / 6,           0,
+            pos.i + 3 * oox, pos.j - h / 6 + 2 * ooy, 0, pos.i - 3 * oox, pos.j - h / 6 + 2 * ooy, 0,
+            pos.i + oox,     pos.j - h / 6,           0, pos.i + oox,     pos.j + h / 9,           0,
+            pos.i - oox,     pos.j - h / 6,           0, pos.i - oox,     pos.j + h / 9,           0,
         };
         GFXDraw(GFXLINE, verts, 8);
     }
@@ -1580,10 +1539,10 @@ extern const char *DamagedCategory;
 
 void VDU::DrawDamage(Unit *parent)
 {
-    //VDUdamage
+    // VDUdamage
     float x, y, w, h;
-    //float th;
-    //char st[1024];
+    // float th;
+    // char st[1024];
     GFXColor4f(1, parent->GetHull() / (*maxhull), parent->GetHull() / (*maxhull), 1);
     GFXEnable(TEXTURE0);
     float armor[8];
@@ -1591,17 +1550,21 @@ void VDU::DrawDamage(Unit *parent)
     static bool draw_damage_sprite =
         XMLSupport::parse_bool(vs_config->getVariable("graphics", "hud", "draw_damage_sprite", "true"));
     DrawHUDSprite(this, draw_damage_sprite ? parent->getHudImage() : nullptr, .6, x, y, w, h,
-                  (armor[0] + armor[2] + armor[4] + armor[6]) / (float)(StartArmor[0] + StartArmor[2] + StartArmor[4] + StartArmor[6]),
-                  (armor[0] + armor[1] + armor[4] + armor[5]) / (float)(StartArmor[0] + StartArmor[1] + StartArmor[4] + StartArmor[5]),
-                  (armor[2] + armor[3] + armor[6] + armor[7]) / (float)(StartArmor[2] + StartArmor[3] + StartArmor[6] + StartArmor[7]),
-                  (armor[1] + armor[3] + armor[5] + armor[7]) / (float)(StartArmor[1] + StartArmor[3] + StartArmor[5] + StartArmor[7]),
+                  (armor[0] + armor[2] + armor[4] + armor[6]) /
+                      (float)(StartArmor[0] + StartArmor[2] + StartArmor[4] + StartArmor[6]),
+                  (armor[0] + armor[1] + armor[4] + armor[5]) /
+                      (float)(StartArmor[0] + StartArmor[1] + StartArmor[4] + StartArmor[5]),
+                  (armor[2] + armor[3] + armor[6] + armor[7]) /
+                      (float)(StartArmor[2] + StartArmor[3] + StartArmor[6] + StartArmor[7]),
+                  (armor[1] + armor[3] + armor[5] + armor[7]) /
+                      (float)(StartArmor[1] + StartArmor[3] + StartArmor[5] + StartArmor[7]),
                   parent->GetHull() / (*maxhull), true, false);
     GFXDisable(TEXTURE0);
-    //Unit *thr = parent->Threat();
+    // Unit *thr = parent->Threat();
     parent->Threat();
     std::string fullname(getUnitNameAndFgNoBase(parent));
-    //sprintf (st,"%s\nHull: %.3f",blah.c_str(),parent->GetHull());
-    //tp->Draw (MangleString (st,_Universe->AccessCamera()->GetNebula()!=nullptr?.5:0),0,true);
+    // sprintf (st,"%s\nHull: %.3f",blah.c_str(),parent->GetHull());
+    // tp->Draw (MangleString (st,_Universe->AccessCamera()->GetNebula()!=nullptr?.5:0),0,true);
     char ecmstatus[256];
     ecmstatus[0] = '\0';
     static bool print_ecm = XMLSupport::parse_bool(vs_config->getVariable("graphics", "print_ecm_status", "true"));
@@ -1621,98 +1584,92 @@ void VDU::DrawDamage(Unit *parent)
     GFXColor4f(1, 1, 1, 1);
 
     /*
- *
- *  Cargo & GetCargo (unsigned int i);
- *  void GetCargoCat (const std::string &category, vector <Cargo> &cat);
- *  ///below function returns nullptr if not found
- *  Cargo * GetCargo (const std::string &s, unsigned int &i);
- *
- */
+     *
+     *  Cargo & GetCargo (unsigned int i);
+     *  void GetCargoCat (const std::string &category, vector <Cargo> &cat);
+     *  ///below function returns nullptr if not found
+     *  Cargo * GetCargo (const std::string &s, unsigned int &i);
+     *
+     */
 
     //*******************************************************zade
 
-    //char hullval[128];
-    //sprintf (hullval,"%.3f",parent->GetHull());
-    //string retval (fullname+"\nHull: "+hullval+"\n");
-    static GFXColor cfullpower = vs_config->getColor("default", "hud_repair_repaired",
-                                                     GFXColor(1, 1, 1, 1));
-    static GFXColor chdamaged = vs_config->getColor("default", "hud_repair_half_damaged",
-                                                    GFXColor(1, 1, 0, 1));
-    static GFXColor cdamaged = vs_config->getColor("default", "hud_repair_damaged",
-                                                   GFXColor(1, 0, 0, 1));
-    static GFXColor cdestroyed = vs_config->getColor("default", "hud_repair_destroyed",
-                                                     GFXColor(.2, .2, .2, 1));
+    // char hullval[128];
+    // sprintf (hullval,"%.3f",parent->GetHull());
+    // string retval (fullname+"\nHull: "+hullval+"\n");
+    static GFXColor cfullpower = vs_config->getColor("default", "hud_repair_repaired", GFXColor(1, 1, 1, 1));
+    static GFXColor chdamaged = vs_config->getColor("default", "hud_repair_half_damaged", GFXColor(1, 1, 0, 1));
+    static GFXColor cdamaged = vs_config->getColor("default", "hud_repair_damaged", GFXColor(1, 0, 0, 1));
+    static GFXColor cdestroyed = vs_config->getColor("default", "hud_repair_destroyed", GFXColor(.2, .2, .2, 1));
 
     RGBstring fpstring = colorToString(cfullpower);
-    static string damage_report_heading =
-        XMLSupport::escaped_string(vs_config->getVariable("graphics", "hud", "damage_report_heading",
-                                                          "#00ff00DAMAGE REPORT\n\n"));
+    static string damage_report_heading = XMLSupport::escaped_string(
+        vs_config->getVariable("graphics", "hud", "damage_report_heading", "#00ff00DAMAGE REPORT\n\n"));
     string retval(damage_report_heading);
     retval += fpstring.str;
     unsigned int numCargo = parent->numCargo();
     double percent_working = 0.88;
-    static std::string non_repair_screen_cargo = vs_config->getVariable("graphics",
-                                                                        "hud",
-                                                                        "not_included_in_damage_report",
-                                                                        "plasteel_hull tungsten_hull isometal_hull");
+    static std::string non_repair_screen_cargo = vs_config->getVariable(
+        "graphics", "hud", "not_included_in_damage_report", "plasteel_hull tungsten_hull isometal_hull");
     static bool print_percent_working =
         XMLSupport::parse_bool(vs_config->getVariable("graphics", "hud", "print_damage_percent", "true"));
 
 // TODO: make into function
-#define REPORTITEM(percent_working, max_functionality, print_percent_working, component_string) \
-    do                                                                                          \
-    {                                                                                           \
-        GFXColor final_color = colLerp(cdamaged, chdamaged, percent_working);                   \
-        if (percent_working == 0.0)                                                             \
-            final_color = cdestroyed; /*dead = grey*/                                           \
-        std::string trailer;                                                                    \
-        if (percent_working < max_functionality)                                                \
-            retval += colorToString(final_color).str;                                           \
-        else                                                                                    \
-            retval += fpstring.str;                                                             \
-        trailer = fpstring.str;                                                                 \
-        retval += component_string;                                                             \
-        if (print_percent_working)                                                              \
-            retval += string(" (") + tostring(int(percent_working * 100)) + string("%)");       \
-        retval += trailer + std::string("\n");                                                  \
+#define REPORTITEM(percent_working, max_functionality, print_percent_working, component_string)                        \
+    do                                                                                                                 \
+    {                                                                                                                  \
+        GFXColor final_color = colLerp(cdamaged, chdamaged, percent_working);                                          \
+        if (percent_working == 0.0)                                                                                    \
+            final_color = cdestroyed; /*dead = grey*/                                                                  \
+        std::string trailer;                                                                                           \
+        if (percent_working < max_functionality)                                                                       \
+            retval += colorToString(final_color).str;                                                                  \
+        else                                                                                                           \
+            retval += fpstring.str;                                                                                    \
+        trailer = fpstring.str;                                                                                        \
+        retval += component_string;                                                                                    \
+        if (print_percent_working)                                                                                     \
+            retval += string(" (") + tostring(int(percent_working * 100)) + string("%)");                              \
+        retval += trailer + std::string("\n");                                                                         \
     } while (0)
 
 // TODO: make into function
-#define REPORTINTEGRATED(which, which_key, which_name_default)                                         \
-    do                                                                                                 \
-    {                                                                                                  \
-        static string name = vs_config->getVariable("graphics", "hud", which_key, which_name_default); \
-        if (!name.empty())                                                                             \
-        {                                                                                              \
-            REPORTITEM(parent->pImage->which##Functionality, parent->pImage->which##FunctionalityMax,  \
-                       print_percent_working,                                                          \
-                       name);                                                                          \
-        }                                                                                              \
+#define REPORTINTEGRATED(which, which_key, which_name_default)                                                         \
+    do                                                                                                                 \
+    {                                                                                                                  \
+        static string name = vs_config->getVariable("graphics", "hud", which_key, which_name_default);                 \
+        if (!name.empty())                                                                                             \
+        {                                                                                                              \
+            REPORTITEM(parent->pImage->which##Functionality, parent->pImage->which##FunctionalityMax,                  \
+                       print_percent_working, name);                                                                   \
+        }                                                                                                              \
     } while (0)
 
 // TODO: make into function
-#define REPORTINTEGRATEDFLAG(which, which_key, which_name_default)                                     \
-    do                                                                                                 \
-    {                                                                                                  \
-        static string name = vs_config->getVariable("graphics", "hud", which_key, which_name_default); \
-        if (!name.empty())                                                                             \
-        {                                                                                              \
-            REPORTITEM(((parent->damages & which) ? 0.1 : 1.0), 1.0,                                   \
-                       false,                                                                          \
-                       name);                                                                          \
-        }                                                                                              \
+#define REPORTINTEGRATEDFLAG(which, which_key, which_name_default)                                                     \
+    do                                                                                                                 \
+    {                                                                                                                  \
+        static string name = vs_config->getVariable("graphics", "hud", which_key, which_name_default);                 \
+        if (!name.empty())                                                                                             \
+        {                                                                                                              \
+            REPORTITEM(((parent->damages & which) ? 0.1 : 1.0), 1.0, false, name);                                     \
+        }                                                                                                              \
     } while (0)
 
     for (unsigned int i = 0; i < numCargo; i++)
     {
-        percent_working = 0.88; //cargo.damage
+        percent_working = 0.88; // cargo.damage
         Cargo &the_cargo = parent->GetCargo(i);
         bool damaged = the_cargo.GetCategory().find(DamagedCategory) == 0;
-        if (damaged || (the_cargo.GetCategory().find("upgrades/") == 0 && the_cargo.installed && the_cargo.GetContent().find("mult_") != 0 && the_cargo.GetContent().find("add_") != 0 && non_repair_screen_cargo.find(the_cargo.GetContent()) == std::string::npos))
+        if (damaged || (the_cargo.GetCategory().find("upgrades/") == 0 && the_cargo.installed &&
+                        the_cargo.GetContent().find("mult_") != 0 && the_cargo.GetContent().find("add_") != 0 &&
+                        non_repair_screen_cargo.find(the_cargo.GetContent()) == std::string::npos))
         {
             percent_working = UnitUtil::PercentOperational(parent, the_cargo.content, the_cargo.category, false);
-            //retval+=parent->GetManifest (i,parent,parent->GetVelocity())+string (" (")+tostring (int(percent_working*100))+string ("%)" +the_cargo.GetCategory()+"\n");
-            REPORTITEM(percent_working, 1.0, print_percent_working, parent->GetManifest(i, parent, parent->GetVelocity()));
+            // retval+=parent->GetManifest (i,parent,parent->GetVelocity())+string (" (")+tostring
+            // (int(percent_working*100))+string ("%)" +the_cargo.GetCategory()+"\n");
+            REPORTITEM(percent_working, 1.0, print_percent_working,
+                       parent->GetManifest(i, parent, parent->GetVelocity()));
         }
     }
     if (parent->pImage != nullptr)
@@ -1738,9 +1695,8 @@ void VDU::DrawDamage(Unit *parent)
     bool automatte = (0 == tpbg.a);
     if (automatte)
         tp->bgcol = GFXColor(0, 0, 0, background_alpha);
-    tp->Draw(MangleString(retval,
-                          _Universe->AccessCamera()->GetNebula() != nullptr ? .4 : 0),
-             scrolloffset, true, false, automatte);
+    tp->Draw(MangleString(retval, _Universe->AccessCamera()->GetNebula() != nullptr ? .4 : 0), scrolloffset, true,
+             false, automatte);
     tp->bgcol = tpbg;
     //*******************************************************
 }
@@ -1762,7 +1718,7 @@ void VDU::DrawStarSystemAgain(float x, float y, float w, float h, VIEWSTYLE view
     VIEWSTYLE tmp = _Universe->AccessCockpit()->GetView();
     _Universe->AccessCockpit()->SetView(viewStyle);
     _Universe->AccessCockpit()->SelectProperCamera();
-    _Universe->AccessCockpit()->SetupViewPort(true); ///this is the final, smoothly calculated cam
+    _Universe->AccessCockpit()->SetupViewPort(true); /// this is the final, smoothly calculated cam
     GFXClear(GFXFALSE);
     GFXColor4f(1, 1, 1, 1);
     _Universe->activeStarSystem()->Draw(false);
@@ -1770,7 +1726,7 @@ void VDU::DrawStarSystemAgain(float x, float y, float w, float h, VIEWSTYLE view
     _Universe->AccessCamera(which)->SetSubwindow(0, 0, 1, 1);
     _Universe->AccessCockpit()->SetView(tmp);
     _Universe->AccessCockpit()->SelectProperCamera();
-    _Universe->AccessCockpit()->SetupViewPort(true); ///this is the final, smoothly calculated cam
+    _Universe->AccessCockpit()->SetupViewPort(true); /// this is the final, smoothly calculated cam
     GFXRestoreHudMode();
     GFXBlendMode(ONE, ZERO);
     GFXDisable(TEXTURE1);
@@ -1786,7 +1742,8 @@ void VDU::DrawStarSystemAgain(float x, float y, float w, float h, VIEWSTYLE view
         sprintf(buf, "%s\n", blah.c_str());
         static bool out_of_cone_information =
             XMLSupport::parse_bool(vs_config->getVariable("graphics", "hud", "out_of_cone_distance", "false"));
-        inrange = parent->InRange(target, mm, out_of_cone_information || !UnitUtil::isSignificant(target), false, false);
+        inrange =
+            parent->InRange(target, mm, out_of_cone_information || !UnitUtil::isSignificant(target), false, false);
     }
     static float background_alpha =
         XMLSupport::parse_float(vs_config->getVariable("graphics", "hud", "text_background_alpha", "0.0625"));
@@ -1810,7 +1767,8 @@ void VDU::DrawStarSystemAgain(float x, float y, float w, float h, VIEWSTYLE view
         bool automatte = (0 == tpbg.a);
         if (automatte)
             tp->bgcol = GFXColor(0, 0, 0, background_alpha);
-        tp->Draw(MangleString(st, _Universe->AccessCamera()->GetNebula() != nullptr ? .4 : 0), 0, true, false, automatte);
+        tp->Draw(MangleString(st, _Universe->AccessCamera()->GetNebula() != nullptr ? .4 : 0), 0, true, false,
+                 automatte);
         tp->bgcol = tpbg;
         GFXColor4f(.4, .4, 1, 1);
         GetPosition(x, y);
@@ -1824,23 +1782,27 @@ void VDU::DrawStarSystemAgain(float x, float y, float w, float h, VIEWSTYLE view
                 h = fabs(h * .6);
                 w = fabs(w * .6);
 
-                //static float ishieldcolor[4]    = {.4, .4, 1, 1};
-                //static float mshieldcolor[4]    = {.4, .4, 1, 1};
-                //static float oshieldcolor[4]    = {.4, .4, 1, 1};
+                // static float ishieldcolor[4]    = {.4, .4, 1, 1};
+                // static float mshieldcolor[4]    = {.4, .4, 1, 1};
+                // static float oshieldcolor[4]    = {.4, .4, 1, 1};
                 /*
- *       static float iarmorcolor[4]={1,.6,0,1};
- *       static float marmorcolor[4]={1,.6,0,1};
- *       static float oarmorcolor[4]={1,.6,0,1};
- *       static bool iarmorcolorloaded=(vs_config->getColor("default","inner_shield_color",ishieldcolor,true),true);
- *       static bool marmorcolorloaded=(vs_config->getColor("default","middle_shield_color",mshieldcolor,true),true);
- *       static bool oarmorcolorloaded=(vs_config->getColor("default","outer_shield_color",oshieldcolor,true),true);
-*/
-                //uncomment if these are ever actually used
-                /*        static bool invert_view_shields = XMLSupport::parse_bool(vs_config->getVariable("graphics","hud","invert_view_shields","false"));
- *       DrawShield(target->FShieldData(),target->RShieldData(),target->LShieldData(),target->BShieldData(),x,y,w,h,invert_view_shields,
- *           GFXColor(ishieldcolor[0],ishieldcolor[1],ishieldcolor[2],ishieldcolor[3]),
- *           GFXColor(mshieldcolor[0],mshieldcolor[1],mshieldcolor[2],mshieldcolor[3]),
- *           GFXColor(oshieldcolor[0],oshieldcolor[1],oshieldcolor[2],oshieldcolor[3])); */
+                 *       static float iarmorcolor[4]={1,.6,0,1};
+                 *       static float marmorcolor[4]={1,.6,0,1};
+                 *       static float oarmorcolor[4]={1,.6,0,1};
+                 *       static bool
+                 * iarmorcolorloaded=(vs_config->getColor("default","inner_shield_color",ishieldcolor,true),true);
+                 *       static bool
+                 * marmorcolorloaded=(vs_config->getColor("default","middle_shield_color",mshieldcolor,true),true);
+                 *       static bool
+                 * oarmorcolorloaded=(vs_config->getColor("default","outer_shield_color",oshieldcolor,true),true);
+                 */
+                // uncomment if these are ever actually used
+                /*        static bool invert_view_shields =
+                 * XMLSupport::parse_bool(vs_config->getVariable("graphics","hud","invert_view_shields","false"));
+                 *       DrawShield(target->FShieldData(),target->RShieldData(),target->LShieldData(),target->BShieldData(),x,y,w,h,invert_view_shields,
+                 *           GFXColor(ishieldcolor[0],ishieldcolor[1],ishieldcolor[2],ishieldcolor[3]),
+                 *           GFXColor(mshieldcolor[0],mshieldcolor[1],mshieldcolor[2],mshieldcolor[3]),
+                 *           GFXColor(oshieldcolor[0],oshieldcolor[1],oshieldcolor[2],oshieldcolor[3])); */
             }
         GFXColor4f(1, 1, 1, 1);
     }
@@ -1852,9 +1814,8 @@ void VDU::DrawStarSystemAgain(float x, float y, float w, float h, VIEWSTYLE view
         bool automatte = (0 == tpbg.a);
         if (automatte)
             tp->bgcol = GFXColor(0, 0, 0, background_alpha);
-        tp->Draw(MangleString("\n[OutOfRange]",
-                              _Universe->AccessCamera()->GetNebula() != nullptr ? .4 : 0),
-                 0, true, false, automatte);
+        tp->Draw(MangleString("\n[OutOfRange]", _Universe->AccessCamera()->GetNebula() != nullptr ? .4 : 0), 0, true,
+                 false, automatte);
         tp->bgcol = tpbg;
     }
     //_Universe->AccessCockpit()->RestoreViewPort();
@@ -1872,8 +1833,7 @@ GFXColor MountColor(Mount *mnt)
     GFXColor mountcolor = col_mount_default;
     switch (mnt->ammo != 0 ? mnt->status : 127)
     {
-    case Mount::ACTIVE:
-    {
+    case Mount::ACTIVE: {
         if (mnt->functionality == 1)
         {
             float tref = mnt->type->Refire();
@@ -1904,7 +1864,8 @@ GFXColor MountColor(Mount *mnt)
         mountcolor = col_mount_out_of_ammo;
         break;
     default:
-        // already set default color before switch; other than that, "default" should not happen with the current code, ever, so maybe we have to do something when it does
+        // already set default color before switch; other than that, "default" should not happen with the current code,
+        // ever, so maybe we have to do something when it does
         break;
     }
     return mountcolor;
@@ -1915,7 +1876,8 @@ void VDU::DrawWeapon(Unit *parent)
     static bool drawweapsprite =
         XMLSupport::parse_bool(vs_config->getVariable("graphics", "hud", "draw_weapon_sprite", "false"));
     static string list_empty_mounts_as =
-        vs_config->getVariable("graphics", "hud", "mounts_list_empty", ""); // empty string skips; " ", "n/a", "(empty)" or "-" will show an empty mount
+        vs_config->getVariable("graphics", "hud", "mounts_list_empty",
+                               ""); // empty string skips; " ", "n/a", "(empty)" or "-" will show an empty mount
     static bool do_list_empty_mounts = (list_empty_mounts_as.length() != 0);
 
     //  without fixed font we would need some sneaky tweaking to make it a table, probably with multiple TPs
@@ -1954,7 +1916,7 @@ void VDU::DrawWeapon(Unit *parent)
         if (i + 1 < nummounts && parent->mounts[i].bank)
         {
             // add up numave and average, waiting for the next non-bank mount
-            if (parent->mounts[i].status != Mount::UNCHOSEN) //skip empty mounts for banks that aren't full
+            if (parent->mounts[i].status != Mount::UNCHOSEN) // skip empty mounts for banks that aren't full
                 numave++;
         }
         else
@@ -2120,8 +2082,7 @@ void VDU::DrawWebcam(Unit *parent)
     int length;
     char *netcam;
 
-    tp->Draw(MangleString("No webcam to view",
-                          _Universe->AccessCamera()->GetNebula() != nullptr ? .4 : 0),
+    tp->Draw(MangleString("No webcam to view", _Universe->AccessCamera()->GetNebula() != nullptr ? .4 : 0),
              scrolloffset, true);
 }
 
@@ -2133,29 +2094,30 @@ void VDU::Draw(GameCockpit *parentcp, Unit *parent, const GFXColor &color)
     GFXEnable(TEXTURE0);
     GFXDisable(TEXTURE1);
     VSSprite::Draw();
-    //glDisable( GL_ALPHA_TEST);
+    // glDisable( GL_ALPHA_TEST);
     if (!parent)
         return;
-    //configure text plane;
+    // configure text plane;
     float x, y;
     float h, w;
     GetSize(w, h);
 
     static float width_factor = XMLSupport::parse_float(vs_config->getVariable("graphics", "reduced_vdus_width", "0"));
-    static float height_factor = XMLSupport::parse_float(vs_config->getVariable("graphics", "reduced_vdus_height", "0"));
+    static float height_factor =
+        XMLSupport::parse_float(vs_config->getVariable("graphics", "reduced_vdus_height", "0"));
     w = w - width_factor;
     h = h + height_factor;
 
     GetPosition(x, y);
-    //tp->SetCharSize (fabs(w/cols),fabs(h/rows));
+    // tp->SetCharSize (fabs(w/cols),fabs(h/rows));
     float csx, csy;
     tp->GetCharSize(csx, csy);
-    //This was as below:
-    //cols = abs( (int) ceil( w/csx ) );
-    //rows = abs( (int) ceil( h/csy ) );
-    //I'm changing it to as below, which avoids abs blues with visual studio, and is
-    //also faster, as computing the abs of a float amounts to setting the sign bit;
-    //though I'm less than 100% entirely sure of the correctness of the change... --chuck_starchaser
+    // This was as below:
+    // cols = abs( (int) ceil( w/csx ) );
+    // rows = abs( (int) ceil( h/csy ) );
+    // I'm changing it to as below, which avoids abs blues with visual studio, and is
+    // also faster, as computing the abs of a float amounts to setting the sign bit;
+    // though I'm less than 100% entirely sure of the correctness of the change... --chuck_starchaser
     cols = int(fabs(ceil(w / csx)));
     rows = int(fabs(ceil(h / csy)));
 
@@ -2212,10 +2174,12 @@ void VDU::Draw(GameCockpit *parentcp, Unit *parent, const GFXColor &color)
     case VIEW:
         GetPosition(x, y);
         GetSize(w, h);
-        DrawStarSystemAgain(.5 * (x - fabs(w / 2) + 1), .5 * ((y - fabs(h / 2)) + 1), fabs(w / 2), fabs(h / 2), viewStyle, parent, targ);
+        DrawStarSystemAgain(.5 * (x - fabs(w / 2) + 1), .5 * ((y - fabs(h / 2)) + 1), fabs(w / 2), fabs(h / 2),
+                            viewStyle, parent, targ);
         break;
     case NAV:
-        DrawNav(parentcp, parent, targ, parent->ToLocalCoordinates(parent->GetComputerData().NavPoint - parent->Position().Cast()));
+        DrawNav(parentcp, parent, targ,
+                parent->ToLocalCoordinates(parent->GetComputerData().NavPoint - parent->Position().Cast()));
         break;
     case MSG:
         DrawMessages(parentcp, targ);
@@ -2236,7 +2200,7 @@ void VDU::Draw(GameCockpit *parentcp, Unit *parent, const GFXColor &color)
         DrawVDUObjectives(parent);
         break;
     default:
-        break; //FIXME --chuck_starchaser; please verify correctness and/or add a errlog or throw
+        break; // FIXME --chuck_starchaser; please verify correctness and/or add a errlog or throw
     }
 }
 
@@ -2268,7 +2232,8 @@ void UpdateViewstyle(VIEWSTYLE &vs)
     case CP_TARGET:
         vs = CP_PANTARGET;
         break;
-    case CP_VIEWTARGET: //FIXME cases not previously handled in switch --added by chuck_starchaser; please verify correctness
+    case CP_VIEWTARGET: // FIXME cases not previously handled in switch --added by chuck_starchaser; please verify
+                        // correctness
     case CP_PANINSIDE:
     case CP_FIXED:
     case CP_FIXEDPOS:

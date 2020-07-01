@@ -17,7 +17,7 @@
  *	\author		Pierre Terdiman
  *	\version	1.0
  *	\date		08.15.98
-*/
+ */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -38,8 +38,8 @@ uint32_t Container::mUsedRam = 0;
 Container::Container() : mMaxNbEntries(0), mCurNbEntries(0), mEntries(nullptr), mGrowthFactor(2.0f)
 {
 #ifdef CONTAINER_STATS
-	mNbContainers++;
-	mUsedRam += sizeof(Container);
+    mNbContainers++;
+    mUsedRam += sizeof(Container);
 #endif
 }
 
@@ -48,13 +48,14 @@ Container::Container() : mMaxNbEntries(0), mCurNbEntries(0), mEntries(nullptr), 
  *	Copy constructor.
  */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-Container::Container(const Container &object) : mMaxNbEntries(0), mCurNbEntries(0), mEntries(nullptr), mGrowthFactor(2.0f)
+Container::Container(const Container &object)
+    : mMaxNbEntries(0), mCurNbEntries(0), mEntries(nullptr), mGrowthFactor(2.0f)
 {
 #ifdef CONTAINER_STATS
-	mNbContainers++;
-	mUsedRam += sizeof(Container);
+    mNbContainers++;
+    mUsedRam += sizeof(Container);
 #endif
-	*this = object;
+    *this = object;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -64,10 +65,10 @@ Container::Container(const Container &object) : mMaxNbEntries(0), mCurNbEntries(
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Container::~Container()
 {
-	Empty();
+    Empty();
 #ifdef CONTAINER_STATS
-	mNbContainers--;
-	mUsedRam -= GetUsedRam();
+    mNbContainers--;
+    mUsedRam -= GetUsedRam();
 #endif
 }
 
@@ -81,11 +82,11 @@ Container::~Container()
 Container &Container::Empty()
 {
 #ifdef CONTAINER_STATS
-	mUsedRam -= mMaxNbEntries * sizeof(uint32_t);
+    mUsedRam -= mMaxNbEntries * sizeof(uint32_t);
 #endif
-	DELETEARRAY(mEntries);
-	mCurNbEntries = mMaxNbEntries = 0;
-	return *this;
+    DELETEARRAY(mEntries);
+    mCurNbEntries = mMaxNbEntries = 0;
+    return *this;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -98,39 +99,39 @@ Container &Container::Empty()
 bool Container::Resize(uint32_t needed)
 {
 #ifdef CONTAINER_STATS
-	// Subtract previous amount of bytes
-	mUsedRam -= mMaxNbEntries * sizeof(uint32_t);
+    // Subtract previous amount of bytes
+    mUsedRam -= mMaxNbEntries * sizeof(uint32_t);
 #endif
 
-	// Get more entries
-	mMaxNbEntries = mMaxNbEntries ? uint32_t(float(mMaxNbEntries) * mGrowthFactor) : 2; // Default nb Entries = 2
-	if (mMaxNbEntries < mCurNbEntries + needed)
-	{
-		mMaxNbEntries = mCurNbEntries + needed;
-	}
+    // Get more entries
+    mMaxNbEntries = mMaxNbEntries ? uint32_t(float(mMaxNbEntries) * mGrowthFactor) : 2; // Default nb Entries = 2
+    if (mMaxNbEntries < mCurNbEntries + needed)
+    {
+        mMaxNbEntries = mCurNbEntries + needed;
+    }
 
-	// Get some bytes for new entries
-	uint32_t *NewEntries = new uint32_t[mMaxNbEntries];
-	CHECKALLOC(NewEntries);
+    // Get some bytes for new entries
+    uint32_t *NewEntries = new uint32_t[mMaxNbEntries];
+    CHECKALLOC(NewEntries);
 
 #ifdef CONTAINER_STATS
-	// Add current amount of bytes
-	mUsedRam += mMaxNbEntries * sizeof(uint32_t);
+    // Add current amount of bytes
+    mUsedRam += mMaxNbEntries * sizeof(uint32_t);
 #endif
 
-	// Copy old data if needed
-	if (mCurNbEntries)
-	{
-		CopyMemory(NewEntries, mEntries, mCurNbEntries * sizeof(uint32_t));
-	}
+    // Copy old data if needed
+    if (mCurNbEntries)
+    {
+        CopyMemory(NewEntries, mEntries, mCurNbEntries * sizeof(uint32_t));
+    }
 
-	// Delete old data
-	DELETEARRAY(mEntries);
+    // Delete old data
+    DELETEARRAY(mEntries);
 
-	// Assign new pointer
-	mEntries = NewEntries;
+    // Assign new pointer
+    mEntries = NewEntries;
 
-	return true;
+    return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -141,5 +142,5 @@ bool Container::Resize(uint32_t needed)
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 uint32_t Container::GetUsedRam() const
 {
-	return sizeof(Container) + mMaxNbEntries * sizeof(uint32_t);
+    return sizeof(Container) + mMaxNbEntries * sizeof(uint32_t);
 }

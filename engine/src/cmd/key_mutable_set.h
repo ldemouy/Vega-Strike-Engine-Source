@@ -1,17 +1,20 @@
 #ifndef _KEY_MUTABLE_SET_H_
 #define _KEY_MUTABLE_SET_H_
-#include <set>
 #include <assert.h>
 #include <list>
-template <class T>
-class MutableShell
+#include <set>
+template <class T> class MutableShell
 {
     mutable T t;
 
-public:
-    //flatten restores sortedness--in this case it does nothing
-    void flatten() {}
-    MutableShell(const T &t) : t(t) {}
+  public:
+    // flatten restores sortedness--in this case it does nothing
+    void flatten()
+    {
+    }
+    MutableShell(const T &t) : t(t)
+    {
+    }
     T &get() const
     {
         return t;
@@ -34,31 +37,31 @@ public:
     }
 };
 
-///This set inherits from the STL multiset, with a slight variation: The value is nonconst--that means you are allowed to change things but must not alter the key.
-///This set inherits from the STL multiset, with a slight variation: You are allowed to update the key of a particular iterator that you have obtained.
+/// This set inherits from the STL multiset, with a slight variation: The value is nonconst--that means you are allowed
+/// to change things but must not alter the key. This set inherits from the STL multiset, with a slight variation: You
+/// are allowed to update the key of a particular iterator that you have obtained.
 /** Note: T is the type that each element is pointing to. */
 template <class T, class _Compare = std::less<MutableShell<T>>>
 class KeyMutableSet : public std::multiset<MutableShell<T>, _Compare>
 {
     typedef std::multiset<MutableShell<T>, _Compare> SUPER;
 
-public:
+  public:
     /// This just checks the order of the set for testing purposes..
     void checkSet()
     {
         _Compare comparator;
         if (this->begin() != this->end())
-            for (typename SUPER::iterator newiter = this->begin(), iter = newiter++; newiter != this->end(); iter = newiter++)
+            for (typename SUPER::iterator newiter = this->begin(), iter = newiter++; newiter != this->end();
+                 iter = newiter++)
                 assert(!comparator(*newiter, *iter));
     }
-    ///Given an iterator you can alter that iterator's key to be the one passed in.
+    /// Given an iterator you can alter that iterator's key to be the one passed in.
     /** The type must have a function called changeKey(const Key &newKey) that
- *       changes its key to the specified new key.
- */
+     *       changes its key to the specified new key.
+     */
 
-    void changeKey(typename SUPER::iterator &iter,
-                   const T &newKey,
-                   typename SUPER::iterator &templess,
+    void changeKey(typename SUPER::iterator &iter, const T &newKey, typename SUPER::iterator &templess,
                    typename SUPER::iterator &rettempmore)
     {
         MutableShell<T> newKeyShell(newKey);
@@ -71,7 +74,7 @@ public:
             --templess;
         _Compare comparator;
 
-        //O(1) amortized time on the insertion - Yippie!
+        // O(1) amortized time on the insertion - Yippie!
         bool byebye = false;
         if (comparator(newKeyShell, *templess))
         {
@@ -112,29 +115,29 @@ public:
     }
 };
 
-template <class T, class _Compare = std::less<T>>
-class ListMutableSet : public std::list<T>
+template <class T, class _Compare = std::less<T>> class ListMutableSet : public std::list<T>
 {
     typedef std::list<T> SUPER;
 
-public:
-    //flatten restores sortedness--in this case it does nothing
-    void flatten() {}
+  public:
+    // flatten restores sortedness--in this case it does nothing
+    void flatten()
+    {
+    }
     /// This just checks the order of the set for testing purposes..
     void checkSet()
     {
         _Compare comparator;
         if (this->begin() != this->end())
-            for (typename SUPER::iterator newiter = this->begin(), iter = newiter++; newiter != this->end(); iter = newiter++)
+            for (typename SUPER::iterator newiter = this->begin(), iter = newiter++; newiter != this->end();
+                 iter = newiter++)
                 assert(!comparator(*newiter, *iter));
     }
-    ///Given an iterator you can alter that iterator's key to be the one passed in.
+    /// Given an iterator you can alter that iterator's key to be the one passed in.
     /** The type must have a function called changeKey(const Key &newKey) that
- *       changes its key to the specified new key.
- */
-    void changeKey(typename SUPER::iterator &iter,
-                   const T &newKey,
-                   typename SUPER::iterator &templess,
+     *       changes its key to the specified new key.
+     */
+    void changeKey(typename SUPER::iterator &iter, const T &newKey, typename SUPER::iterator &templess,
                    typename SUPER::iterator &rettempmore)
     {
         MutableShell<T> newKeyShell(newKey);
@@ -156,7 +159,7 @@ public:
         else
         {
             **iter = newKey;
-            //return iter;
+            // return iter;
         }
     }
 

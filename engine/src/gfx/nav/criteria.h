@@ -24,9 +24,9 @@
 
 class CriteriaParent;
 
+#include <set>
 #include <string>
 #include <vector>
-#include <set>
 
 #include "xml_support.h"
 
@@ -41,7 +41,7 @@ enum CriteriaType
 
 class CriteriaNode
 {
-public:
+  public:
     virtual bool isDestination(unsigned system) const = 0;
     virtual std::string getDescription() const = 0;
     virtual std::string getText() const = 0;
@@ -50,8 +50,12 @@ public:
     virtual std::vector<CriteriaNode *> getChildren() const = 0;
 
     virtual CriteriaNode *clone() const = 0;
-    CriteriaNode(CriteriaParent *parent = nullptr) : m_parent(parent) {}
-    virtual ~CriteriaNode() {}
+    CriteriaNode(CriteriaParent *parent = nullptr) : m_parent(parent)
+    {
+    }
+    virtual ~CriteriaNode()
+    {
+    }
 
     void setParent(CriteriaParent *parent)
     {
@@ -62,7 +66,7 @@ public:
         return m_parent;
     }
 
-private:
+  private:
     CriteriaParent *m_parent;
 };
 
@@ -70,12 +74,16 @@ private:
 
 class CriteriaParent : public CriteriaNode
 {
-public:
+  public:
     virtual CriteriaNode *unhook(CriteriaNode *child) = 0;
 
     virtual CriteriaNode *clone() const = 0;
-    CriteriaParent(CriteriaParent *parent = nullptr) : CriteriaNode(parent) {}
-    virtual ~CriteriaParent() {}
+    CriteriaParent(CriteriaParent *parent = nullptr) : CriteriaNode(parent)
+    {
+    }
+    virtual ~CriteriaParent()
+    {
+    }
 
     virtual void replaceChild(CriteriaNode *child, CriteriaNode *replacement) = 0;
 };
@@ -84,7 +92,7 @@ public:
 
 class CriteriaRoot : public CriteriaParent
 {
-public:
+  public:
     virtual bool isDestination(unsigned system) const;
     virtual std::string getDescription() const;
     virtual std::string getText() const;
@@ -105,7 +113,7 @@ public:
 
     virtual void replaceChild(CriteriaNode *child, CriteriaNode *replacement);
 
-protected:
+  protected:
     CriteriaNode *m_child;
 };
 
@@ -113,7 +121,7 @@ protected:
 
 class CriteriaNot : public CriteriaParent
 {
-public:
+  public:
     virtual bool isDestination(unsigned system) const;
     virtual std::string getDescription() const;
     virtual std::string getText() const;
@@ -128,7 +136,7 @@ public:
 
     virtual void replaceChild(CriteriaNode *child, CriteriaNode *replacement);
 
-protected:
+  protected:
     CriteriaNode *m_child;
 };
 
@@ -136,7 +144,7 @@ protected:
 
 class CriteriaBinaryOperator : public CriteriaParent
 {
-public:
+  public:
     virtual CriteriaNode *unhook();
     virtual CriteriaNode *unhook(CriteriaNode *child);
     virtual std::vector<CriteriaNode *> getChildren() const;
@@ -147,7 +155,7 @@ public:
 
     virtual void replaceChild(CriteriaNode *child, CriteriaNode *replacement);
 
-protected:
+  protected:
     CriteriaNode *m_left;
     CriteriaNode *m_right;
 };
@@ -156,44 +164,56 @@ protected:
 
 class CriteriaAnd : public CriteriaBinaryOperator
 {
-public:
+  public:
     virtual bool isDestination(unsigned system) const;
     virtual std::string getDescription() const;
     virtual std::string getText() const;
 
     virtual CriteriaNode *clone() const;
-    CriteriaAnd(CriteriaNode *child, CriteriaNode *newNode) : CriteriaBinaryOperator(child, newNode) {}
-    virtual ~CriteriaAnd() {}
+    CriteriaAnd(CriteriaNode *child, CriteriaNode *newNode) : CriteriaBinaryOperator(child, newNode)
+    {
+    }
+    virtual ~CriteriaAnd()
+    {
+    }
 };
 
 /////////////////////////////////////////////////////////////////
 
 class CriteriaOr : public CriteriaBinaryOperator
 {
-public:
+  public:
     virtual bool isDestination(unsigned system) const;
     virtual std::string getDescription() const;
     virtual std::string getText() const;
 
     virtual CriteriaNode *clone() const;
-    CriteriaOr(CriteriaNode *child, CriteriaNode *newNode) : CriteriaBinaryOperator(child, newNode) {}
-    virtual ~CriteriaOr() {}
+    CriteriaOr(CriteriaNode *child, CriteriaNode *newNode) : CriteriaBinaryOperator(child, newNode)
+    {
+    }
+    virtual ~CriteriaOr()
+    {
+    }
 };
 
 /////////////////////////////////////////////////////////////////
 
 class CriteriaLeaf : public CriteriaNode
 {
-public:
+  public:
     virtual CriteriaNode *unhook();
     virtual std::vector<CriteriaNode *> getChildren() const;
 
     virtual CriteriaNode *clone() const = 0;
-    CriteriaLeaf(CriteriaParent *parent, std::string value) : CriteriaNode(parent), m_value(value) {}
+    CriteriaLeaf(CriteriaParent *parent, std::string value) : CriteriaNode(parent), m_value(value)
+    {
+    }
 
-    virtual ~CriteriaLeaf() {}
+    virtual ~CriteriaLeaf()
+    {
+    }
 
-protected:
+  protected:
     std::string m_value;
 };
 
@@ -201,16 +221,20 @@ protected:
 
 class CriteriaContains : public CriteriaLeaf
 {
-public:
+  public:
     virtual bool isDestination(unsigned system) const;
     virtual std::string getDescription() const;
     virtual std::string getText() const;
 
     virtual CriteriaNode *clone() const;
-    CriteriaContains(std::string value, CriteriaParent *parent = nullptr) : CriteriaLeaf(parent, value) {}
-    virtual ~CriteriaContains() {}
+    CriteriaContains(std::string value, CriteriaParent *parent = nullptr) : CriteriaLeaf(parent, value)
+    {
+    }
+    virtual ~CriteriaContains()
+    {
+    }
 
-private:
+  private:
     static void beginElement(void *userData, const XML_Char *name, const XML_Char **atts);
     static void endElement(void *userData, const XML_Char *name);
     std::set<std::string> getPlanetTypesFromXML(const char *filename) const;
@@ -220,28 +244,36 @@ private:
 
 class CriteriaOwnedBy : public CriteriaLeaf
 {
-public:
+  public:
     virtual bool isDestination(unsigned system) const;
     virtual std::string getDescription() const;
     virtual std::string getText() const;
 
     virtual CriteriaNode *clone() const;
-    CriteriaOwnedBy(std::string value, CriteriaParent *parent = nullptr) : CriteriaLeaf(parent, value) {}
-    virtual ~CriteriaOwnedBy() {}
+    CriteriaOwnedBy(std::string value, CriteriaParent *parent = nullptr) : CriteriaLeaf(parent, value)
+    {
+    }
+    virtual ~CriteriaOwnedBy()
+    {
+    }
 };
 
 /////////////////////////////////////////////////////////////////
 
 class CriteriaSector : public CriteriaLeaf
 {
-public:
+  public:
     virtual bool isDestination(unsigned system) const;
     virtual std::string getDescription() const;
     virtual std::string getText() const;
 
     virtual CriteriaNode *clone() const;
-    CriteriaSector(std::string value, CriteriaParent *parent = nullptr) : CriteriaLeaf(parent, value) {}
-    virtual ~CriteriaSector() {}
+    CriteriaSector(std::string value, CriteriaParent *parent = nullptr) : CriteriaLeaf(parent, value)
+    {
+    }
+    virtual ~CriteriaSector()
+    {
+    }
 };
 
 #endif

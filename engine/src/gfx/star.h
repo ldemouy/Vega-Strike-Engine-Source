@@ -8,7 +8,7 @@ const int STARnumvlist = 27;
 
 class StarVlist
 {
-protected:
+  protected:
     float spread;
     Vector newcamr;
     Vector newcamq;
@@ -16,21 +16,23 @@ protected:
     Vector camq;
     double lasttime;
 
-public:
-    virtual void Draw(bool, int whichtex) {}
+  public:
+    virtual void Draw(bool, int whichtex)
+    {
+    }
     StarVlist(float spread);
     void UpdateGraphics();
-    virtual ~StarVlist() {}
-    virtual bool BeginDrawState(const QVector &center,
-                                const Vector &vel,
-                                const Vector &angular_vel,
-                                bool rotate,
-                                bool yawpitch,
-                                int whichTexture)
+    virtual ~StarVlist()
+    {
+    }
+    virtual bool BeginDrawState(const QVector &center, const Vector &vel, const Vector &angular_vel, bool rotate,
+                                bool yawpitch, int whichTexture)
     {
         return false;
     }
-    virtual void EndDrawState(bool, int whichtex) {}
+    virtual void EndDrawState(bool, int whichtex)
+    {
+    }
     virtual int NumTextures()
     {
         return 1;
@@ -53,14 +55,10 @@ class PointStarVlist : public StarVlist
     GFXVertexList *vlist;
     GFXVertexList *nonstretchvlist;
 
-public:
+  public:
     PointStarVlist(int num, float spread, const std::string &our_system_name);
     ~PointStarVlist();
-    bool BeginDrawState(const QVector &center,
-                        const Vector &vel,
-                        const Vector &angular_vel,
-                        bool rotate,
-                        bool yawpitch,
+    bool BeginDrawState(const QVector &center, const Vector &vel, const Vector &angular_vel, bool rotate, bool yawpitch,
                         int whichTexture);
     void Draw(bool, int whichTexture);
     void EndDrawState(bool, int whichTexture);
@@ -73,15 +71,11 @@ class SpriteStarVlist : public StarVlist
     GFXVertexList *vlist[NUM_ACTIVE_ANIMATIONS];
     class Texture *decal[NUM_ACTIVE_ANIMATIONS];
 
-public:
+  public:
     SpriteStarVlist(int num, float spread, std::string our_system_name, std::string texturename, float size);
     ~SpriteStarVlist();
     int NumTextures();
-    bool BeginDrawState(const QVector &center,
-                        const Vector &vel,
-                        const Vector &angular_vel,
-                        bool rotate,
-                        bool yawpitch,
+    bool BeginDrawState(const QVector &center, const Vector &vel, const Vector &angular_vel, bool rotate, bool yawpitch,
                         int whichTexture);
     void Draw(bool, int whichTexture);
     void EndDrawState(bool, int whichTexture);
@@ -89,7 +83,7 @@ public:
 
 class Stars
 {
-private:
+  private:
     StarVlist *vlist;
     QVector pos[STARnumvlist];
     float spread;
@@ -98,7 +92,7 @@ private:
     void ResetPosition(const QVector &cent);
     void UpdatePosition(const QVector &cp);
 
-public:
+  public:
     Stars(int num, float spread);
     void SetBlend(bool blendit, bool fadeit);
     void Draw();

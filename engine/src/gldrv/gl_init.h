@@ -30,27 +30,27 @@ extern "C"
     //#include "vegastrike.h"
 
     /* Hack to fix compiling problem with old gl.h's, reported by Steve
- *  Baker <sjbaker1@airmail.net>.  Some old gl.h's don't include glext.h, but
- *  do this:
- *
- * #define GL_EXT_compiled_vertex_array    1
- *
- *  since they do define the glLockArraysEXT/glUnlockArraysEXT
- *  functions.  However, this prevents PFNGLLOCKARRAYSEXTPROC /
- *  PFNGLUNLOCKARRAYSEXTPROC from being defined in glext.h.  So, we do
- *  the following, which at worst results in a warning (and is awfully
- *  ugly):
- *
- * #undef GL_EXT_compiled_vertex_array
- *
- *  The *correct* thing to do would be for gl.h to #include glext.h, as
- *  recent gl.h's do.  However, versions of Mesa as recent as 3.2.1
- *  don't do this, so we have to work around it.
- */
+     *  Baker <sjbaker1@airmail.net>.  Some old gl.h's don't include glext.h, but
+     *  do this:
+     *
+     * #define GL_EXT_compiled_vertex_array    1
+     *
+     *  since they do define the glLockArraysEXT/glUnlockArraysEXT
+     *  functions.  However, this prevents PFNGLLOCKARRAYSEXTPROC /
+     *  PFNGLUNLOCKARRAYSEXTPROC from being defined in glext.h.  So, we do
+     *  the following, which at worst results in a warning (and is awfully
+     *  ugly):
+     *
+     * #undef GL_EXT_compiled_vertex_array
+     *
+     *  The *correct* thing to do would be for gl.h to #include glext.h, as
+     *  recent gl.h's do.  However, versions of Mesa as recent as 3.2.1
+     *  don't do this, so we have to work around it.
+     */
     //#undef GL_EXT_compiled_vertex_array
 
     /* Shouldn't need to include glext.h if gl.h is recent, but alas we can't
- * count on that...  */
+     * count on that...  */
 
 #if defined(IRIX)
 #include <GL/gl.h>
@@ -63,12 +63,13 @@ extern "C"
 #include <GLUT/glut.h>
 #include <OpenGL/glext.h>
 #else
-#include <GL/glut.h>
 #include <GL/glext.h>
+#include <GL/glut.h>
 #endif
 
 #if !defined(GL_GLEXT_VERSION) || GL_GLEXT_VERSION < 6
-#error "*** You need a more recent copy of glext.h.  You can get one at http: //oss.sgi.com/projects/ogl-sample/ABI/glext.h ; it goes in /usr/include/GL. ***"
+#error                                                                                                                 \
+    "*** You need a more recent copy of glext.h.  You can get one at http: //oss.sgi.com/projects/ogl-sample/ABI/glext.h ; it goes in /usr/include/GL. ***"
 #endif
 #endif
 #if defined(PFNGLLOCKARRAYSEXTPROC) && defined(PFNGLUNLOCKARRAYSEXTPROC)

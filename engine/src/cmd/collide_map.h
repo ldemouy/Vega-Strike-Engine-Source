@@ -1,8 +1,8 @@
 #ifndef _COLLIDE_MAP_H_
 #define _COLLIDE_MAP_H_
+#include "gfx/vec.h"
 #include "key_mutable_set.h"
 #include "vegastrike.h"
-#include "gfx/vec.h"
 #if defined(_WIN32) || __GNUC__ != 2
 #include <limits>
 #endif
@@ -12,9 +12,9 @@ class Unit;
 class Bolt;
 class Collidable
 {
-public:
+  public:
     QVector position;
-    float radius; //radius == 0: to-be-deleted, radius <0 bolt (radius == speed in phys frame), radius >0 unit
+    float radius; // radius == 0: to-be-deleted, radius <0 bolt (radius == speed in phys frame), radius >0 unit
 
     union CollideRef {
         Unit *unit;
@@ -26,15 +26,15 @@ public:
     }
     void SetPosition(const QVector &bpos)
     {
-        //in case we want to drop in an xtra radius parameter when we get performance testing
+        // in case we want to drop in an xtra radius parameter when we get performance testing
         this->position = bpos;
 #ifdef __APPLE__
         if (!FINITE(getKey()))
-            position = QVector(0, 0, 0); //hack for now
+            position = QVector(0, 0, 0); // hack for now
 
 #else
         if (ISNAN(getKey()))
-            position = QVector(0, 0, 0); //hack for now
+            position = QVector(0, 0, 0); // hack for now
 #endif
     }
     Collidable &operator*()
@@ -58,13 +58,14 @@ public:
     {
         return *this;
     }
-    Collidable() : radius(
+    Collidable()
+        : radius(
 #if defined(_WIN32) || __GNUC__ != 2
-                       std::numeric_limits<float>::quiet_NaN()
+              std::numeric_limits<float>::quiet_NaN()
 #else
-                       1.0f / 1024.0f / 1024.0f / 1024.0f
+              1.0f / 1024.0f / 1024.0f / 1024.0f
 #endif
-                   )
+          )
     {
     }
     Collidable(Unit *un);
@@ -86,18 +87,24 @@ public:
 
 class CollideArray
 {
-public:
+  public:
     static float max_bolt_radius;
 
     std::vector<float> max_radius;
-    unsigned int location_index; //either UNIT_ONLY or UNIT_BOLT
+    unsigned int location_index; // either UNIT_ONLY or UNIT_BOLT
     class CollidableBackref : public Collidable
     {
-    public:
+      public:
         size_t toflattenhints_offset;
-        CollidableBackref() : Collidable() {}
-        CollidableBackref(Unit *un) : Collidable(un) {}
-        CollidableBackref(unsigned int bolt_index, float speed, const QVector &p) : Collidable(bolt_index, speed, p) {}
+        CollidableBackref() : Collidable()
+        {
+        }
+        CollidableBackref(Unit *un) : Collidable(un)
+        {
+        }
+        CollidableBackref(unsigned int bolt_index, float speed, const QVector &p) : Collidable(bolt_index, speed, p)
+        {
+        }
         CollidableBackref(const Collidable &b, size_t offset) : Collidable(b)
         {
             toflattenhints_offset = offset;
@@ -116,7 +123,7 @@ public:
     unsigned int count;
     void UpdateBoltInfo(iterator iter, Collidable::CollideRef ref);
     void flatten();
-    void flatten(CollideArray &example); //maybe it has some xtra bolts
+    void flatten(CollideArray &example); // maybe it has some xtra bolts
     iterator insert(const Collidable &newKey, iterator hint);
     iterator insert(const Collidable &newKey);
     iterator changeKey(iterator iter, const Collidable &newKey);
@@ -150,14 +157,20 @@ class CollideMap : public CollideArray
 {
 #endif
 #endif
-public:
-    CollideMap(unsigned int location_offset) : CollideArray(location_offset) {}
+  public:
+    CollideMap(unsigned int location_offset) : CollideArray(location_offset)
+    {
+    }
 
-    //Check collisions takes an item to check collisions with, and returns whether that item collided with a Unit only
+    // Check collisions takes an item to check collisions with, and returns whether that item collided with a Unit only
     bool CheckCollisions(Bolt *bol, const Collidable &updated);
-    bool CheckUnitCollisions(Bolt *bol, const Collidable &updated); //DANGER must be used on lists that are only populated with Units, not bolts
-    bool CheckCollisions(Unit *un, const Collidable &updated);      //will be handed off to a templated function
-    bool CheckUnitCollisions(Unit *un, const Collidable &updated);  //DANGER must be used on lists that are only populated with Units, not bolts
+    bool CheckUnitCollisions(
+        Bolt *bol,
+        const Collidable &updated); // DANGER must be used on lists that are only populated with Units, not bolts
+    bool CheckCollisions(Unit *un, const Collidable &updated); // will be handed off to a templated function
+    bool CheckUnitCollisions(
+        Unit *un,
+        const Collidable &updated); // DANGER must be used on lists that are only populated with Units, not bolts
 };
 
 #if defined(VS_ENABLE_COLLIDE_LIST) || defined(VS_ENABLE_COLLIDE_KEY)

@@ -1,13 +1,13 @@
 #include "cmd/atmosphere.h"
-#include "gfx/mesh.h"
+#include "cmd/collection.h"
+#include "cmd/planet.h"
+#include "cmd/unit_generic.h"
 #include "gfx/matrix.h"
+#include "gfx/mesh.h"
+#include "gfx/sphere.h"
 #include "gfx/vec.h"
 #include "gldrv/gfxlib_struct.h"
-#include "gfx/sphere.h"
-#include "cmd/planet.h"
 #include "star_system.h"
-#include "cmd/collection.h"
-#include "cmd/unit_generic.h"
 
 Atmosphere::SunBox::~SunBox()
 {
@@ -34,7 +34,8 @@ void Atmosphere::setArray1(float c0[3], const GFXColor &c1)
 
 Atmosphere::Atmosphere(const Parameters &params) : user_params(params), divisions(64)
 {
-    dome = new SphereMesh(params.radius, divisions, divisions, "white.bmp", "", nullptr, true, ONE, ZERO, false, 0, M_PI / 2);
+    dome = new SphereMesh(params.radius, divisions, divisions, "white.bmp", "", nullptr, true, ONE, ZERO, false, 0,
+                          M_PI / 2);
 }
 
 Atmosphere::~Atmosphere()
@@ -90,8 +91,8 @@ void Atmosphere::Update(const QVector &position, const Matrix &tmatrix)
                 QVector lprime = localDirection;
                 lprime.k = 0;
                 lprime.Normalize();
-                //float theta = atan2(lprime.i,lprime.j);
-                //float size = .125;
+                // float theta = atan2(lprime.i,lprime.j);
+                // float size = .125;
                 sunboxes.push_back(new SunBox(nullptr));
                 break;
             }
@@ -103,7 +104,8 @@ void Atmosphere::Update(const QVector &position, const Matrix &tmatrix)
         float radius = user_params.radius;
         /* index 0 is the top color, index 1 is the bottom color */
         GFXLight light0 = GFXLight();
-        light0.SetProperties(AMBIENT, rho * user_params.high_ambient_color[0] + (1 - rho) * user_params.low_ambient_color[0]);
+        light0.SetProperties(AMBIENT,
+                             rho * user_params.high_ambient_color[0] + (1 - rho) * user_params.low_ambient_color[0]);
         light0.SetProperties(DIFFUSE, rho * user_params.high_color[0] + (1 - rho) * user_params.low_color[0]);
         light0.SetProperties(ATTENUATE, 0.5 * GFXColor(1, 0.25 / radius, 0));
         light0.SetProperties(POSITION, GFXColor(0, 1.1 * radius, 0, 1));
@@ -111,7 +113,8 @@ void Atmosphere::Update(const QVector &position, const Matrix &tmatrix)
         /* do a linear interpolation between this and the next one */
 
         GFXLight light1 = GFXLight();
-        light1.SetProperties(AMBIENT, (1 - rho) * user_params.high_ambient_color[1] + rho * user_params.low_ambient_color[1]);
+        light1.SetProperties(AMBIENT,
+                             (1 - rho) * user_params.high_ambient_color[1] + rho * user_params.low_ambient_color[1]);
         light1.SetProperties(DIFFUSE, (1 - rho) * user_params.high_color[1] + rho * user_params.low_color[1]);
         light1.SetProperties(ATTENUATE, 0.5 * GFXColor(1, 0.75 / radius, 0));
         light1.SetProperties(POSITION, GFXColor(0, -1.1 * radius, 0, 1));
@@ -157,10 +160,7 @@ void Atmosphere::ProcessDrawQueue()
 void Atmosphere::Draw()
 {
     GFXDisable(TEXTURE1);
-    Matrix rot(1, 0, 0,
-               0, 0, -1,
-               0, 1, 0,
-               QVector(0, 0, 0));
+    Matrix rot(1, 0, 0, 0, 0, -1, 0, 1, 0, QVector(0, 0, 0));
     Matrix rot1;
     MultMatrix(rot1, tmatrix, rot);
     CopyMatrix(rot1, tmatrix);
@@ -176,12 +176,7 @@ void Atmosphere::Draw()
     rot1.r[4] = -tmp2.j;
     rot1.r[5] = -tmp2.k;
 
-    GFXMaterial a = {
-        0, 0, 0, 0,
-        1, 1, 1, 1,
-        0, 0, 0, 0,
-        0, 0, 0, 0,
-        0};
+    GFXMaterial a = {0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     dome->SetMaterial(a);
     GFXLoadMatrixModel(rot1);
     Update(position, rot1);

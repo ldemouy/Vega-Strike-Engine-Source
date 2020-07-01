@@ -25,14 +25,14 @@
 
 #ifndef _EASYDOM_H_
 #define _EASYDOM_H_
+#include "vsfilesystem.h"
 #include <expat.h>
+#include <gnuhash.h>
+#include <stack>
+#include <stdlib.h>
 #include <string>
 #include <vector>
-#include <stack>
-#include <gnuhash.h>
-#include <stdlib.h>
-#include "vsfilesystem.h"
-//using namespace VSFileSystem;
+// using namespace VSFileSystem;
 using VSFileSystem::AiFile;
 using VSFileSystem::FileNotFound;
 using VSFileSystem::MissionFile;
@@ -52,7 +52,7 @@ using XMLSupport::AttributeList;
 
 class easyDomNode
 {
-public:
+  public:
     easyDomNode();
 
     void set(easyDomNode *parent, string name, const XML_Char **atts);
@@ -73,7 +73,7 @@ public:
     string attr_value(string attr_name);
     vector<easyDomNode *> subnodes;
 
-private:
+  private:
     easyDomNode *parent;
     AttributeList *attributes;
     vsUMap<string, string> attribute_map;
@@ -85,7 +85,7 @@ typedef vsUMap<string, int> tagMap;
 
 class tagDomNode : public easyDomNode
 {
-public:
+  public:
     int32_t tag;
 
     void Tag(tagMap *tagmap)
@@ -93,7 +93,7 @@ public:
         tag = (*tagmap)[Name()];
         if (tag == 0)
         {
-            //cout << "cannot translate tag " << Name() << endl;
+            // cout << "cannot translate tag " << Name() << endl;
         }
         vector<easyDomNode *>::const_iterator siter;
         for (siter = subnodes.begin(); siter != subnodes.end(); siter++)
@@ -104,13 +104,14 @@ public:
     }
 };
 
-extern const char *textAttr; //should be a static const inside easyDomFactory...
+extern const char *textAttr; // should be a static const inside easyDomFactory...
 
-template <class domNodeType>
-class easyDomFactory
+template <class domNodeType> class easyDomFactory
 {
-public:
-    easyDomFactory() {}
+  public:
+    easyDomFactory()
+    {
+    }
 
     void getColor(char *name, float color[4]);
     char *getVariable(char *section, char *name);
@@ -129,7 +130,7 @@ public:
     domNodeType *LoadXML(const char *filename)
     {
         topnode = nullptr;
-        //Not really nice but should do its job
+        // Not really nice but should do its job
         uint32_t length = strlen(filename);
         VSFile f;
         VSError err = FileNotFound;
@@ -164,8 +165,8 @@ public:
         }
         if (err > Ok)
         {
-            //cout << "warning: could not open file: " << filename << endl;
-            //assert(0);
+            // cout << "warning: could not open file: " << filename << endl;
+            // assert(0);
             return nullptr;
         }
         xml = new easyDomFactoryXML;
@@ -224,7 +225,7 @@ public:
         ((easyDomFactory *)userData)->endElement(name);
     }
 
-    //void beginElement(const string &name, const AttributeList &attributes){
+    // void beginElement(const string &name, const AttributeList &attributes){
     void doTextBuffer()
     {
         if (!nodestack.size())
@@ -244,7 +245,7 @@ public:
 
     void beginElement(const string &name, const XML_Char **atts)
     {
-        //AttributeList::const_iterator iter;
+        // AttributeList::const_iterator iter;
 
         doTextBuffer();
         domNodeType *parent;

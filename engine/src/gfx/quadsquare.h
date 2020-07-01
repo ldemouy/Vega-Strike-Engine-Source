@@ -12,11 +12,11 @@
  * Rewritten and adapted to Vegastrike by Daniel Horn
  */
 
-#include "vec.h"
 #include "gldrv/gfxlib.h"
-#include <vector>
-#include "resizable.h"
 #include "nonlinear_transform.h"
+#include "resizable.h"
+#include "vec.h"
+#include <vector>
 
 class Texture;
 
@@ -100,7 +100,7 @@ struct quadcornerdata
     int ChildIndex;
     int Level;
     int xorg, zorg;
-    VertInfo Verts[4]; //ne, nw, sw, se
+    VertInfo Verts[4]; // ne, nw, sw, se
 };
 
 /**
@@ -110,50 +110,38 @@ struct quadcornerdata
  */
 class quadsquare
 {
-public:
+  public:
     quadsquare *Child[4];
-    VertInfo Vertex[5];               //center, e, n, w, s
-    unsigned short Error[6];          //e, s, children: ne, nw, sw, se
-    unsigned short MinY, MaxY;        //Bounds for frustum culling and error testing.
-    unsigned char EnabledFlags;       //bits 0-7: e, n, w, s, ne, nw, sw, se
-    unsigned char SubEnabledCount[2]; //e, s enabled reference counts.
+    VertInfo Vertex[5];               // center, e, n, w, s
+    unsigned short Error[6];          // e, s, children: ne, nw, sw, se
+    unsigned short MinY, MaxY;        // Bounds for frustum culling and error testing.
+    unsigned char EnabledFlags;       // bits 0-7: e, n, w, s, ne, nw, sw, se
+    unsigned char SubEnabledCount[2]; // e, s enabled reference counts.
     bool Static;
-    bool Dirty; //Set when vertex data has changed, but error/enabled data has not been recalculated.
+    bool Dirty; // Set when vertex data has changed, but error/enabled data has not been recalculated.
     quadsquare(quadcornerdata *pcd);
     ~quadsquare();
-    ///Createsa  lookup table for the terrain texture
+    /// Createsa  lookup table for the terrain texture
     void AddHeightMap(const quadcornerdata &cd, const HeightMapInfo &hm);
     void AddHeightMapAux(const quadcornerdata &cd, const HeightMapInfo &hm);
     void StaticCullData(const quadcornerdata &cd, float ThresholdDetail);
     float RecomputeErrorAndLighting(const quadcornerdata &cd);
     int CountNodes() const;
-    ///Make sure to translate into Quadtree Space
-    void Update(const quadcornerdata &cd,
-                const Vector &ViewerLocation,
-                float Detail,
-                unsigned short numstages,
-                unsigned short whichstage,
-                updateparity *whichordertoupdate);
+    /// Make sure to translate into Quadtree Space
+    void Update(const quadcornerdata &cd, const Vector &ViewerLocation, float Detail, unsigned short numstages,
+                unsigned short whichstage, updateparity *whichordertoupdate);
     int Render(const quadcornerdata &cd, const Vector &camera);
     float GetHeight(const quadcornerdata &cd, float x, float z, Vector &normal); // const;
     static Vector MakeLightness(float xslope, float zslope, const Vector &loc);
-    static void SetCurrentTerrain(unsigned int *VertexAllocated,
-                                  unsigned int *VertexCount,
-                                  GFXVertexList *vertices,
-                                  std::vector<unsigned int> *unusedvertices,
-                                  IdentityTransform *transform,
-                                  std::vector<TerrainTexture> *texturelist,
-                                  const Vector &NormalScale,
+    static void SetCurrentTerrain(unsigned int *VertexAllocated, unsigned int *VertexCount, GFXVertexList *vertices,
+                                  std::vector<unsigned int> *unusedvertices, IdentityTransform *transform,
+                                  std::vector<TerrainTexture> *texturelist, const Vector &NormalScale,
                                   quadsquare *neighbor[4]);
 
-private:
-    static void tri(unsigned int Aind,
-                    unsigned short Atex,
-                    unsigned int Bind,
-                    unsigned short Btex,
-                    unsigned int Cind,
+  private:
+    static void tri(unsigned int Aind, unsigned short Atex, unsigned int Bind, unsigned short Btex, unsigned int Cind,
                     unsigned short Ctex);
-    ///Sets the 5 vertices in vertexs array in 3space from a quadcornerdata and return half of the size
+    /// Sets the 5 vertices in vertexs array in 3space from a quadcornerdata and return half of the size
     unsigned int SetVertices(GFXVertex *vertexs, const quadcornerdata &pcd);
     void EnableEdgeVertex(int index, bool IncrementCount, const quadcornerdata &cd);
     quadsquare *EnableDescendant(int count, int stack[], const quadcornerdata &cd);
@@ -165,7 +153,8 @@ private:
     quadsquare *GetFarNeighbor(int dir, const quadcornerdata &cd) const;
     void CreateChild(int index, const quadcornerdata &cd);
     void SetupCornerData(quadcornerdata *q, const quadcornerdata &pd, int ChildIndex);
-    void UpdateAux(const quadcornerdata &cd, const Vector &ViewerLocation, float CenterError, unsigned int pipelinemask);
+    void UpdateAux(const quadcornerdata &cd, const Vector &ViewerLocation, float CenterError,
+                   unsigned int pipelinemask);
     void RenderAux(const quadcornerdata &cd, CLIPSTATE vis);
     void SetStatic(const quadcornerdata &cd);
     static IdentityTransform *nonlinear_trans;
@@ -181,4 +170,4 @@ private:
     static quadsquare *neighbor[4];
 };
 
-#endif //QUADSQUARE_H
+#endif // QUADSQUARE_H

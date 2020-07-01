@@ -2,7 +2,7 @@
 class Cockpit;
 class Gauge : public VSSprite
 {
-public:
+  public:
     enum DIRECTION
     {
         GAUGE_UP,
@@ -12,10 +12,10 @@ public:
         GAUGE_TIME
     };
 
-private:
+  private:
     enum DIRECTION dir;
 
-public:
+  public:
     Gauge(const char *file, DIRECTION up);
     void Draw(float percentage);
     void SetSize(float x, float y);

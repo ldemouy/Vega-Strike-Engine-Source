@@ -1,14 +1,14 @@
-#include "aldrv/audiolib.h"
-#include "hashtable.h"
-#include "vsfilesystem.h"
-#include <string>
 #include "al_globals.h"
-#include <stdio.h>
-#include <stdlib.h>
+#include "aldrv/audiolib.h"
 #include "cmd/unit_generic.h"
 #include "gfx/cockpit_generic.h"
+#include "hashtable.h"
 #include "options.h"
 #include "posh.h"
+#include "vsfilesystem.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string>
 
 #ifdef HAVE_AL
 
@@ -102,7 +102,8 @@ void blutLoadWAVMemory(ALbyte *memory, ALenum *format, ALvoid **data, ALsizei *s
             {
                 Stream += sizeof(WAVChunkHdr_Struct);
                 SwapWords(&ChunkHdr.Size);
-                if ((ChunkHdr.Id[0] == 'f') && (ChunkHdr.Id[1] == 'm') && (ChunkHdr.Id[2] == 't') && (ChunkHdr.Id[3] == ' '))
+                if ((ChunkHdr.Id[0] == 'f') && (ChunkHdr.Id[1] == 'm') && (ChunkHdr.Id[2] == 't') &&
+                    (ChunkHdr.Id[3] == ' '))
                 {
                     memcpy(&FmtHdr, Stream, sizeof(WAVFmtHdr_Struct));
                     SwapBytes(&FmtHdr.Format);
@@ -125,7 +126,8 @@ void blutLoadWAVMemory(ALbyte *memory, ALenum *format, ALvoid **data, ALsizei *s
                         Stream += ChunkHdr.Size;
                     }
                 }
-                else if ((ChunkHdr.Id[0] == 'd') && (ChunkHdr.Id[1] == 'a') && (ChunkHdr.Id[2] == 't') && (ChunkHdr.Id[3] == 'a'))
+                else if ((ChunkHdr.Id[0] == 'd') && (ChunkHdr.Id[1] == 'a') && (ChunkHdr.Id[2] == 't') &&
+                         (ChunkHdr.Id[3] == 'a'))
                 {
                     if (FmtHdr.Format == 0x0001)
                     {
@@ -154,14 +156,15 @@ void blutLoadWAVMemory(ALbyte *memory, ALenum *format, ALvoid **data, ALsizei *s
                     }
                     else if (FmtHdr.Format == 0x0011)
                     {
-                        //IMA ADPCM
+                        // IMA ADPCM
                     }
                     else if (FmtHdr.Format == 0x0055)
                     {
-                        //MP3 WAVE
+                        // MP3 WAVE
                     }
                 }
-                else if ((ChunkHdr.Id[0] == 's') && (ChunkHdr.Id[1] == 'm') && (ChunkHdr.Id[2] == 'p') && (ChunkHdr.Id[3] == 'l'))
+                else if ((ChunkHdr.Id[0] == 's') && (ChunkHdr.Id[1] == 'm') && (ChunkHdr.Id[2] == 'p') &&
+                         (ChunkHdr.Id[3] == 'l'))
                 {
                     memcpy(&SmplHdr, Stream, sizeof(WAVSmplHdr_Struct));
                     Stream += ChunkHdr.Size;
@@ -182,9 +185,9 @@ void blutLoadWAVMemory(ALbyte *memory, ALenum *format, ALvoid **data, ALsizei *s
 #include <alc.h>
 //#include <alut.h>
 #include <fcntl.h>
-#include <sys/types.h>
 #include <sys/stat.h>
-//their LoadWav is b0rken seriously!!!!!!
+#include <sys/types.h>
+// their LoadWav is b0rken seriously!!!!!!
 
 #else
 #include <AL/al.h>
@@ -193,10 +196,10 @@ void blutLoadWAVMemory(ALbyte *memory, ALenum *format, ALvoid **data, ALsizei *s
 #endif
 //#include <AL/alext.h>
 #endif
-#include <vector>
 #include "vs_globals.h"
 #include <algorithm>
 #include <stdio.h>
+#include <vector>
 #ifdef HAVE_AL
 #ifdef HAVE_OGG
 
@@ -362,7 +365,7 @@ static void ConvertFormat(vector<char> &ogg)
                 converted.push_back(0);
                 converted.push_back(0);
                 converted.push_back(0);
-                converted.push_back(0); //fill in with weight;
+                converted.push_back(0); // fill in with weight;
                 converted.push_back('W');
                 converted.push_back('A');
                 converted.push_back('V');
@@ -372,39 +375,39 @@ static void ConvertFormat(vector<char> &ogg)
                 converted.push_back('t');
                 converted.push_back(' ');
 
-                converted.push_back(18); //size of header (16 bytes)
+                converted.push_back(18); // size of header (16 bytes)
                 converted.push_back(0);
                 converted.push_back(0);
                 converted.push_back(0);
 
-                converted.push_back(1); //compression code
+                converted.push_back(1); // compression code
                 converted.push_back(0);
 
-                converted.push_back((char)(info->channels % 256)); //num channels;
+                converted.push_back((char)(info->channels % 256)); // num channels;
                 converted.push_back((char)(info->channels / 256));
 
-                converted.push_back(0); //sample rate
-                converted.push_back(0); //sample rate
-                converted.push_back(0); //sample rate
-                converted.push_back(0); //sample rate
+                converted.push_back(0); // sample rate
+                converted.push_back(0); // sample rate
+                converted.push_back(0); // sample rate
+                converted.push_back(0); // sample rate
                 convertToLittle(info->rate, &converted[converted.size() - 4]);
 
                 long byterate = info->rate * info->channels * samples / 8;
-                converted.push_back(0); //bytes per second rate
+                converted.push_back(0); // bytes per second rate
                 converted.push_back(0);
                 converted.push_back(0);
                 converted.push_back(0);
                 convertToLittle(byterate, &converted[converted.size() - 4]);
 
-                converted.push_back((char)((info->channels * samples / 8) % 256)); //num_channels*16 bits/8
+                converted.push_back((char)((info->channels * samples / 8) % 256)); // num_channels*16 bits/8
                 converted.push_back((char)((info->channels * samples / 8) / 256));
 
-                converted.push_back(samples); //16 bit samples
+                converted.push_back(samples); // 16 bit samples
                 converted.push_back(0);
                 converted.push_back(0);
                 converted.push_back(0);
 
-                //PCM header
+                // PCM header
                 converted.push_back('d');
                 converted.push_back('a');
                 converted.push_back('t');
@@ -418,9 +421,8 @@ static void ConvertFormat(vector<char> &ogg)
                 converted.resize(converted.size() + segmentsize);
                 int32_t signedvalue = 1;
                 int32_t bitstream = 0;
-                while ((bytesread =
-                            ov_read(&vf, &converted[converted.size() - segmentsize], segmentsize, 0, samples / 8, signedvalue,
-                                    &bitstream)) > 0)
+                while ((bytesread = ov_read(&vf, &converted[converted.size() - segmentsize], segmentsize, 0,
+                                            samples / 8, signedvalue, &bitstream)) > 0)
                 {
                     int32_t numtoerase = 0;
                     if (bytesread < segmentsize)
@@ -451,8 +453,8 @@ static int32_t LoadSound(ALuint buffer, bool looping, bool music)
     {
         i = dirtysounds.back();
         dirtysounds.pop_back();
-        //assert (sounds[i].buffer==(ALuint)0);
-        //if (sounds[i].buffer != (ALuint)0) {
+        // assert (sounds[i].buffer==(ALuint)0);
+        // if (sounds[i].buffer != (ALuint)0) {
         //    BOOST_LOG_TRIVIAL(trace) << boost::format("using claimed buffer %1%") % sounds[i].buffer;
         //}
         sounds[i].buffer = buffer;
@@ -468,10 +470,10 @@ static int32_t LoadSound(ALuint buffer, bool looping, bool music)
 #ifdef SOUND_DEBUG
     printf(" with buffer %d and looping property %d\n", i, (int)looping);
 #endif
-    //limited number of sources
-    //alGenSources( 1, &sounds[i].source);
-    //alSourcei(sounds[i].source, AL_BUFFER, buffer );
-    //alSourcei(sounds[i].source, AL_LOOPING, looping ?AL_TRUE:AL_FALSE);
+    // limited number of sources
+    // alGenSources( 1, &sounds[i].source);
+    // alSourcei(sounds[i].source, AL_BUFFER, buffer );
+    // alSourcei(sounds[i].source, AL_LOOPING, looping ?AL_TRUE:AL_FALSE);
     return i;
 }
 
@@ -548,17 +550,17 @@ bool AUDLoadSoundFile(const char *s, struct AUDSoundProperties *info, bool use_f
         f.Close();
     }
     ConvertFormat(dat);
-    if (dat.size() == 0) //conversion messed up
+    if (dat.size() == 0) // conversion messed up
     {
         return false;
-        //blutLoadWAVMemory((ALbyte *)&dat[0], &format, &wave, &size, &freq, &looping);
+        // blutLoadWAVMemory((ALbyte *)&dat[0], &format, &wave, &size, &freq, &looping);
     }
 
     blutLoadWAVMemory((ALbyte *)&dat[0], &info->format, &info->wave, &info->size, &info->freq, &info->looping);
 
     if (!info->wave)
     {
-        return false; //failure.
+        return false; // failure.
     }
 
     info->success = true;
@@ -612,7 +614,7 @@ int32_t AUDCreateSoundWAV(const std::string &s, const bool music, const bool LOO
             }
             if (wavbuf == &nil_wavebuf)
             {
-                return -1; //404
+                return -1; // 404
             }
         }
         if (wavbuf)
@@ -632,7 +634,7 @@ int32_t AUDCreateSoundWAV(const std::string &s, const bool music, const bool LOO
             wavbuf = (ALuint *)malloc(sizeof(ALuint));
             alGenBuffers(1, wavbuf);
             alBufferData(*wavbuf, info.format, info.wave, info.size, info.freq);
-            free(info.wave); //alutUnloadWAV(format,wave,size,freq);
+            free(info.wave); // alutUnloadWAV(format,wave,size,freq);
             if (!music)
             {
                 soundHash.Put(info.hashname, wavbuf);
@@ -657,7 +659,7 @@ int32_t AUDCreateMusicWAV(const std::string &s, const bool LOOP)
 
 int32_t AUDCreateSoundMP3(const std::string &s, const bool music, const bool LOOP)
 {
-    //TODO: investigate if this function is actually meant to do anything
+    // TODO: investigate if this function is actually meant to do anything
 #ifdef HAVE_AL
     assert(0);
     if ((game_options.Music && !music) || (game_options.Music && music))
@@ -750,7 +752,7 @@ int32_t AUDCreateMusic(const std::string &s, const bool LOOP)
     return -1;
 }
 
-///copies other sound loaded through AUDCreateSound
+/// copies other sound loaded through AUDCreateSound
 int32_t AUDCreateSound(int32_t sound, const bool LOOP /*=false*/)
 {
 #ifdef HAVE_AL
@@ -777,8 +779,7 @@ void AUDDeleteSound(int32_t sound, bool music)
             if (!music)
             {
 #ifdef SOUND_DEBUG
-                printf("AUDDeleteSound: Sound Playing enqueue soundstodelete %d %d\n",
-                       sounds[sound].source,
+                printf("AUDDeleteSound: Sound Playing enqueue soundstodelete %d %d\n", sounds[sound].source,
                        sounds[sound].buffer);
 #endif
                 soundstodelete.push_back(sound);
@@ -790,12 +791,13 @@ void AUDDeleteSound(int32_t sound, bool music)
             }
         }
 #ifdef SOUND_DEBUG
-        printf("AUDDeleteSound: Sound Not Playing push back to unused src %d %d\n", sounds[sound].source, sounds[sound].buffer);
+        printf("AUDDeleteSound: Sound Not Playing push back to unused src %d %d\n", sounds[sound].source,
+               sounds[sound].buffer);
 #endif
         if (sounds[sound].source)
         {
             unusedsrcs.push_back(sounds[sound].source);
-            alSourcei(sounds[sound].source, AL_BUFFER, 0); //decrement the source refcount
+            alSourcei(sounds[sound].source, AL_BUFFER, 0); // decrement the source refcount
             sounds[sound].source = (ALuint)0;
         }
 #ifdef SOUND_DEBUG
@@ -811,8 +813,8 @@ void AUDDeleteSound(int32_t sound, bool music)
             return;
         }
 #endif
-        //FIXME??
-        //alDeleteSources(1,&sounds[sound].source);
+        // FIXME??
+        // alDeleteSources(1,&sounds[sound].source);
         if (music)
         {
             alDeleteBuffers(1, &sounds[sound].buffer);
@@ -828,10 +830,8 @@ void AUDAdjustSound(const int32_t &sound, const QVector &pos, const Vector &vel)
 #ifdef HAVE_AL
     if (sound >= 0 && sound < (int)sounds.size())
     {
-        float p[] = {
-            static_cast<float>(scalepos * pos.i),
-            static_cast<float>(scalepos * pos.j),
-            static_cast<float>(scalepos * pos.k)};
+        float p[] = {static_cast<float>(scalepos * pos.i), static_cast<float>(scalepos * pos.j),
+                     static_cast<float>(scalepos * pos.k)};
         float v[] = {scalevel * vel.i, scalevel * vel.j, scalevel * vel.k};
         sounds[sound].pos = pos.Cast();
         sounds[sound].vel = vel;
@@ -872,7 +872,7 @@ bool starSystemOK()
 {
     if (!_Universe || !_Universe->AccessCockpit(0))
     {
-        return true; //No Universe yet, so game is loading.
+        return true; // No Universe yet, so game is loading.
     }
 
     Unit *player = _Universe->AccessCockpit(0)->GetParent();
@@ -924,7 +924,7 @@ bool AUDIsPlaying(const int32_t &sound)
         }
         ALint state;
 #if defined(_WIN32) || defined(__APPLE__)
-        alGetSourcei(sounds[sound].source, AL_SOURCE_STATE, &state); //Obtiene el estado de la fuente para windows
+        alGetSourcei(sounds[sound].source, AL_SOURCE_STATE, &state); // Obtiene el estado de la fuente para windows
 #else
         alGetSourceiv(sounds[sound].source, AL_SOURCE_STATE, &state);
 #endif
@@ -941,13 +941,14 @@ void AUDStopPlaying(const int32_t &sound)
     if (sound >= 0 && sound < (int32_t)sounds.size())
     {
 #ifdef SOUND_DEBUG
-        printf("AUDStopPlaying sound %d source(releasing): %d buffer:%d\n", sound, sounds[sound].source, sounds[sound].buffer);
+        printf("AUDStopPlaying sound %d source(releasing): %d buffer:%d\n", sound, sounds[sound].source,
+               sounds[sound].buffer);
 #endif
         if (sounds[sound].source != 0)
         {
             alSourceStop(sounds[sound].source);
             unusedsrcs.push_back(sounds[sound].source);
-            alSourcei(sounds[sound].source, AL_BUFFER, 0); //decrement refcount
+            alSourcei(sounds[sound].source, AL_BUFFER, 0); // decrement refcount
         }
         sounds[sound].source = (ALuint)0;
     }
@@ -998,7 +999,7 @@ static bool AUDReclaimSource(const int32_t &sound, bool high_priority = false)
                 {
                     alSourceStop(sounds[candidate].source);
                     sounds[sound].source = sounds[candidate].source;
-                    alSourcei(sounds[candidate].source, AL_BUFFER, 0); //reclaim the source
+                    alSourcei(sounds[candidate].source, AL_BUFFER, 0); // reclaim the source
                     sounds[candidate].source = 0;
                 }
             }
@@ -1017,7 +1018,7 @@ static bool AUDReclaimSource(const int32_t &sound, bool high_priority = false)
     }
     return true;
 #endif
-    return false; //silly
+    return false; // silly
 }
 
 void AUDStartPlaying(const int32_t &sound)
@@ -1034,7 +1035,8 @@ void AUDStartPlaying(const int32_t &sound)
             if (AUDReclaimSource(sound, sounds[sound].pos == QVector(0, 0, 0)))
             {
 #ifdef SOUND_DEBUG
-                printf("AUDStartPlaying sound %d source:%d buffer:%d\n", sound, sounds[sound].source, sounds[sound].buffer);
+                printf("AUDStartPlaying sound %d source:%d buffer:%d\n", sound, sounds[sound].source,
+                       sounds[sound].buffer);
 #endif
                 AUDAdjustSound(sound, sounds[sound].pos, sounds[sound].vel);
                 AUDSoundGain(sound, sounds[sound].gain, sounds[sound].music);
@@ -1071,12 +1073,14 @@ void AUDPlay(const int32_t &sound, const QVector &pos, const Vector &vel, const 
             AUDSoundGain(sound, gain, sounds[sound].music);
             if (tmp != 2)
             {
-                BOOST_LOG_TRIVIAL(trace) << boost::format("AUDPlay sound %1% %2%") % sounds[sound].source % sounds[sound].buffer;
+                BOOST_LOG_TRIVIAL(trace) << boost::format("AUDPlay sound %1% %2%") % sounds[sound].source %
+                                                sounds[sound].buffer;
                 AUDAddWatchedPlayed(sound, pos.Cast());
             }
             else
             {
-                BOOST_LOG_TRIVIAL(trace) << boost::format("AUDPlay stole sound %1% %2%") % sounds[sound].source % sounds[sound].buffer;
+                BOOST_LOG_TRIVIAL(trace) << boost::format("AUDPlay stole sound %1% %2%") % sounds[sound].source %
+                                                sounds[sound].buffer;
                 alSourceStop(sounds[sound].source);
             }
             alSourcePlay(sounds[sound].source);
@@ -1106,7 +1110,7 @@ void AUDPausePlaying(const int32_t &sound)
 #ifdef HAVE_AL
     if (sound >= 0 && sound < (int)sounds.size())
     {
-        //alSourcePlay( sounds[sound].source() );
+        // alSourcePlay( sounds[sound].source() );
     }
 #endif
 }

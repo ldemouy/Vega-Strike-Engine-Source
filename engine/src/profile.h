@@ -2,8 +2,8 @@
 #include <time.h>
 #else
 
-#include <unistd.h>
 #include <sys/time.h>
+#include <unistd.h>
 
 #define RESETTIME() startTime()
 #define REPORTTIME(comment) endTime(comment, __FILE__, __LINE__)

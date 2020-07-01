@@ -37,85 +37,50 @@ std::string getMasterPartListUnitName();
 
 class UnitFactory
 {
-protected:
+  protected:
     static Unit *_masterPartList;
 
-public:
+  public:
     static Unit *getMasterPartList();
 
     static Unit *createUnit();
 
-    static Unit *createUnit(const char *filename, bool SubUnit, int faction, std::string customizedUnit = string(""), Flightgroup *flightgroup = nullptr, int fg_subnumber = 0, string *netxml = nullptr);
+    static Unit *createUnit(const char *filename, bool SubUnit, int faction, std::string customizedUnit = string(""),
+                            Flightgroup *flightgroup = nullptr, int fg_subnumber = 0, string *netxml = nullptr);
 
-    static Unit *createServerSideUnit(const char *filename, bool SubUnit, int faction, std::string customizedUnit = string(""), Flightgroup *flightgroup = nullptr, int fg_subnumber = 0);
+    static Unit *createServerSideUnit(const char *filename, bool SubUnit, int faction,
+                                      std::string customizedUnit = string(""), Flightgroup *flightgroup = nullptr,
+                                      int fg_subnumber = 0);
 
     static Unit *createUnit(std::vector<Mesh *> &meshes, bool Subunit, int faction);
 
-    static Nebula *createNebula(const char *unitfile,
-                                bool SubU,
-                                int faction,
-                                Flightgroup *fg = nullptr,
+    static Nebula *createNebula(const char *unitfile, bool SubU, int faction, Flightgroup *fg = nullptr,
                                 int fg_snumber = 0);
 
-    static Missile *createMissile(const char *filename,
-                                  int faction,
-                                  const string &modifications,
-                                  const float damage,
-                                  float phasedamage,
-                                  float time,
-                                  float radialeffect,
-                                  float radmult,
+    static Missile *createMissile(const char *filename, int faction, const string &modifications, const float damage,
+                                  float phasedamage, float time, float radialeffect, float radmult,
                                   float detonation_radius);
 
     static Planet *createPlanet();
 
-    static Planet *createPlanet(QVector x,
-                                QVector y,
-                                float vely,
-                                const Vector &rotvel,
-                                float pos,
-                                float gravity,
-                                float radius,
-                                const std::string &filename,
-                                const std::string &technique,
-                                const std::string &unitname,
-                                BLENDFUNC blendsrc,
-                                BLENDFUNC blenddst,
-                                const vector<string> &dest,
-                                const QVector &orbitcent,
-                                Unit *parent,
-                                const GFXMaterial &ourmat,
-                                const std::vector<GFXLightLocal> &ligh,
-                                int faction,
-                                string fullname,
-                                bool inside_out = false);
+    static Planet *createPlanet(QVector x, QVector y, float vely, const Vector &rotvel, float pos, float gravity,
+                                float radius, const std::string &filename, const std::string &technique,
+                                const std::string &unitname, BLENDFUNC blendsrc, BLENDFUNC blenddst,
+                                const vector<string> &dest, const QVector &orbitcent, Unit *parent,
+                                const GFXMaterial &ourmat, const std::vector<GFXLightLocal> &ligh, int faction,
+                                string fullname, bool inside_out = false);
 
-    static Enhancement *createEnhancement(const char *filename,
-                                          int faction,
-                                          const string &modifications,
-                                          Flightgroup *flightgrp = nullptr,
-                                          int fg_subnumber = 0);
+    static Enhancement *createEnhancement(const char *filename, int faction, const string &modifications,
+                                          Flightgroup *flightgrp = nullptr, int fg_subnumber = 0);
 
-    static Building *createBuilding(ContinuousTerrain *parent,
-                                    bool vehicle,
-                                    const char *filename,
-                                    bool SubUnit,
-                                    int faction,
-                                    const std::string &unitModifications = std::string(""),
+    static Building *createBuilding(ContinuousTerrain *parent, bool vehicle, const char *filename, bool SubUnit,
+                                    int faction, const std::string &unitModifications = std::string(""),
                                     Flightgroup *fg = nullptr);
 
-    static Building *createBuilding(Terrain *parent,
-                                    bool vehicle,
-                                    const char *filename,
-                                    bool SubUnit,
-                                    int faction,
-                                    const std::string &unitModifications = std::string(""),
-                                    Flightgroup *fg = nullptr);
+    static Building *createBuilding(Terrain *parent, bool vehicle, const char *filename, bool SubUnit, int faction,
+                                    const std::string &unitModifications = std::string(""), Flightgroup *fg = nullptr);
 
-    static Asteroid *createAsteroid(const char *filename,
-                                    int faction,
-                                    Flightgroup *fg = nullptr,
-                                    int fg_snumber = 0,
+    static Asteroid *createAsteroid(const char *filename, int faction, Flightgroup *fg = nullptr, int fg_snumber = 0,
                                     float difficulty = .01);
 
     static Terrain *createTerrain(const char *file, Vector scale, float position, float radius, Matrix &t);

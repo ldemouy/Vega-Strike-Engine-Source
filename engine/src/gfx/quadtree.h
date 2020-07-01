@@ -1,8 +1,8 @@
 #ifndef QUADTREE_H_
 #define QUADTREE_H_
+#include "matrix.h"
 #include "quadsquare.h"
 #include "xml_support.h"
-#include "matrix.h"
 
 class Texture;
 struct TerraXML;
@@ -36,20 +36,17 @@ class QuadTree
     TerraXML *xml;
     void SetNeighbors(quadsquare *east, quadsquare *north, quadsquare *west, quadsquare *south);
 
-protected:
+  protected:
     Matrix transformation;
 
-public:
+  public:
     QuadTree(const char *filename, const Vector &scales, const float Radius);
     ~QuadTree();
     void Render();
     void SetNeighbors(QuadTree *east, QuadTree *north, QuadTree *west, QuadTree *south);
     void Update(unsigned short numstages, unsigned short whichstage, updateparity *updateorder = identityparity);
     void SetTransformation(const Matrix &transformation);
-    float GetHeight(Vector Location,
-                    Vector &normal,
-                    const Matrix &transform,
-                    float TotalTerrainSizeX = 0,
+    float GetHeight(Vector Location, Vector &normal, const Matrix &transform, float TotalTerrainSizeX = 0,
                     float TotalTerrainSizeZ = 0) const;
     static void beginElement(void *userData, const XML_Char *name, const XML_Char **atts);
     static void endElement(void *userData, const XML_Char *name);
@@ -84,10 +81,7 @@ public:
     {
         return GetGroundPos(Location, norm, transformation, TTSX, TTSZ);
     }
-    bool GetGroundPos(QVector &Location,
-                      Vector &norm,
-                      const Matrix &trans,
-                      float TotalTerrainSizeX = 0,
+    bool GetGroundPos(QVector &Location, Vector &norm, const Matrix &trans, float TotalTerrainSizeX = 0,
                       float TotalTerrainSizeZ = 0) const;
     Vector GetNormal(const Vector &position, const Vector &requestednorm) const;
 };

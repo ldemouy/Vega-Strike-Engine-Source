@@ -4,16 +4,16 @@
 #include "in_mouse.h"
 class LocationSelect
 {
-protected:
+  protected:
     Transformation local_transformation;
     float CrosshairSize;
-    //System *parentSystem;
+    // System *parentSystem;
     Animation LocSelAni;
     Animation LocSelUpAni;
     Vector p, q, r;
     QVector LocalPosition;
 
-public:
+  public:
     static void MouseMoveHandle(KBSTATE, int, int, int, int, int);
     LocationSelect(Vector, Vector, Vector /*, Scene*   */);
     LocationSelect(Vector, Vector, Vector, Vector /*, Scene*   */);
@@ -23,7 +23,7 @@ public:
         return /*Transform (cumulative_transformation_matrix,*/ LocalPosition /*)*/;
     }
     void MoveLocation(Vector pos, Vector p, Vector q);
-    void MoveLocation(Vector pos, Vector p, Vector q, Vector r); //requires normalized Vector triplet pqr
+    void MoveLocation(Vector pos, Vector p, Vector q, Vector r); // requires normalized Vector triplet pqr
     void Draw();
 
     QVector &Position();

@@ -18,33 +18,32 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-#include <memory.h>
+#include "mesh.h"
 #include "animation.h"
 #include "aux_logo.h"
-#include "mesh.h"
-#include "matrix.h"
 #include "camera.h"
+#include "matrix.h"
+#include <memory.h>
 //#include "bounding_box.h"
 //#include "bsp.h"
-#include <assert.h>
-#include <math.h>
 #include "cmd/nebula_generic.h"
-#include <list>
-#include <string>
-#include <fstream>
-#include "vsfilesystem.h"
-#include "lin_time.h"
-#include "gldrv/gfxlib.h"
-#include "vs_globals.h"
 #include "configxml.h"
+#include "gfx/technique.h"
+#include "gldrv/gfxlib.h"
 #include "hashtable.h"
-#include "vegastrike.h"
-#include "sphere.h"
 #include "lin_time.h"
 #include "mesh_xml.h"
-#include "gfx/technique.h"
-#include <float.h>
+#include "sphere.h"
+#include "vegastrike.h"
+#include "vs_globals.h"
+#include "vsfilesystem.h"
 #include <algorithm>
+#include <assert.h>
+#include <float.h>
+#include <fstream>
+#include <list>
+#include <math.h>
+#include <string>
 
 #define LOD_HYSTHERESIS_DIVIDER (20)
 #define LOD_HYSTHERESIS_MAXENLARGEMENT_FACTOR (1.1)
@@ -91,11 +90,11 @@ void Mesh::InitUnit()
     if (Decal.empty())
         Decal.push_back(nullptr);
 
-    //texturename[0] = -1;
+    // texturename[0] = -1;
     numforcelogo = numsquadlogo = 0;
-    myMatNum = 0; //default material!
-    //scale = Vector(1.0,1.0,1.0);
-    refcount = 1; //FIXME VEGASTRIKE  THIS _WAS_ zero...NOW ONE
+    myMatNum = 0; // default material!
+    // scale = Vector(1.0,1.0,1.0);
+    refcount = 1; // FIXME VEGASTRIKE  THIS _WAS_ zero...NOW ONE
     orig = nullptr;
 
     envMapAndLit = 0x3;
@@ -135,7 +134,7 @@ bool Mesh::LoadExistant(const string filehash, const Vector &scale, int faction)
     }
     if (0 != oldmesh)
         return LoadExistant(oldmesh);
-    //VSFileSystem::Fprintf (stderr,"cannot cache %s",GetSharedMeshHashName(filehash,scale,faction).c_str());
+    // VSFileSystem::Fprintf (stderr,"cannot cache %s",GetSharedMeshHashName(filehash,scale,faction).c_str());
     return false;
 }
 
@@ -185,7 +184,7 @@ Mesh::Mesh(std::string filename, const Vector &scale, int faction, Flightgroup *
     if (cpy->orig)
     {
         LoadExistant(cpy->orig);
-        delete cpy; //wasteful, but hey
+        delete cpy; // wasteful, but hey
         if (orig != false)
         {
             orig = false;
@@ -224,12 +223,9 @@ Mesh::Mesh(std::string filename, const Vector &scale, int faction, Flightgroup *
     }
 }
 
-Mesh::Mesh(const char *filename,
-           const Vector &scale,
-           int faction,
-           Flightgroup *fg,
-           bool orig,
-           const vector<string> &textureOverride) : hash_name(filename)
+Mesh::Mesh(const char *filename, const Vector &scale, int faction, Flightgroup *fg, bool orig,
+           const vector<string> &textureOverride)
+    : hash_name(filename)
 {
     this->convex = false;
     this->orig = nullptr;
@@ -244,8 +240,8 @@ Mesh::Mesh(const char *filename,
     if (err > Ok)
     {
         VSFileSystem::vs_fprintf(stderr, "Cannot Open Mesh File %s\n", filename);
-        //cleanexit=1;
-        //winsys_exit(1);
+        // cleanexit=1;
+        // winsys_exit(1);
         return;
     }
     shared = (err == Shared);
@@ -253,13 +249,13 @@ Mesh::Mesh(const char *filename,
     bool xml = true;
     if (xml)
     {
-        //LoadXML(filename,scale,faction,fg,orig);
+        // LoadXML(filename,scale,faction,fg,orig);
         LoadXML(f, scale, faction, fg, orig, textureOverride);
         oldmesh = this->orig;
     }
     else
     {
-        //This must be changed someday
+        // This must be changed someday
         LoadBinary(shared ? (VSFileSystem::sharedmeshes + "/" + (filename)).c_str() : filename, faction);
         oldmesh = new Mesh[1];
     }
@@ -268,9 +264,10 @@ Mesh::Mesh(const char *filename,
     draw_queue = new vector<MeshDrawContext>[NUM_ZBUF_SEQ + 1];
     if (!orig)
     {
-        hash_name = shared ? VSFileSystem::GetSharedMeshHashName(filename, scale, faction) : VSFileSystem::GetHashName(filename, scale, faction);
+        hash_name = shared ? VSFileSystem::GetSharedMeshHashName(filename, scale, faction)
+                           : VSFileSystem::GetHashName(filename, scale, faction);
         meshHashTable.Put(hash_name, oldmesh);
-        //oldmesh[0]=*this;
+        // oldmesh[0]=*this;
         *oldmesh = *this;
         oldmesh->orig = nullptr;
         oldmesh->refcount++;
@@ -329,9 +326,8 @@ Mesh *Mesh::getLOD(float lod, bool bBypassDamping)
     vector<int> *animFrames = 0;
     if (getFramesPerSecond() > .0000001 && (animFrames = animationSequences.Get(hash_name)))
     {
-        //return &orig[(int)floor(fmod (getNewTime()*getFramesPerSecond(),numlods))];
-        unsigned int which = (int)float_to_int(floor(fmod(getCurrentFrame(),
-                                                          animFrames->size())));
+        // return &orig[(int)floor(fmod (getNewTime()*getFramesPerSecond(),numlods))];
+        unsigned int which = (int)float_to_int(floor(fmod(getCurrentFrame(), animFrames->size())));
         float adv = GetElapsedTime() * getFramesPerSecond();
         static float max_frames_skipped =
             XMLSupport::parse_float(vs_config->getVariable("graphics", "mesh_animation_max_frames_skipped", "3"));
@@ -349,12 +345,14 @@ Mesh *Mesh::getLOD(float lod, bool bBypassDamping)
             if (!bBypassDamping)
             {
                 if (lod < orig[i].lodsize)
-                    lodoffs = ((i < numlods - 1) ? (orig[i + 1].lodsize - orig[i].lodsize) / LOD_HYSTHERESIS_DIVIDER : 0.0f);
+                    lodoffs =
+                        ((i < numlods - 1) ? (orig[i + 1].lodsize - orig[i].lodsize) / LOD_HYSTHERESIS_DIVIDER : 0.0f);
                 else
                     lodoffs = ((i > 0) ? (orig[i - 1].lodsize - orig[i].lodsize) / LOD_HYSTHERESIS_DIVIDER : 0.0f);
                 float maxenlargement = ((orig[i].lodsize * LOD_HYSTHERESIS_MAXENLARGEMENT_FACTOR) - orig[i].lodsize);
                 if ((lodoffs > 0) && (lodoffs > maxenlargement))
-                    lodoffs = maxenlargement; //Avoid excessive enlargement of low-detail LOD levels, when LOD levels are far apart.
+                    lodoffs = maxenlargement; // Avoid excessive enlargement of low-detail LOD levels, when LOD levels
+                                              // are far apart.
             }
             if ((lod < (orig[i].lodsize + lodoffs)) && (lod < maxlodsize))
             {
@@ -400,10 +398,7 @@ enum EX_EXCLUSION
     EX_Y,
     EX_Z
 };
-inline bool OpenWithin(const QVector &query,
-                       const Vector &mn,
-                       const Vector &mx,
-                       const float err,
+inline bool OpenWithin(const QVector &query, const Vector &mn, const Vector &mx, const float err,
                        enum EX_EXCLUSION excludeWhich)
 {
     switch (excludeWhich)

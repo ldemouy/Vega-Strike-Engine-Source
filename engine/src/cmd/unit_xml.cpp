@@ -1,25 +1,25 @@
 #include "unit_xml.h"
-#include "unit_factory.h"
 #include "aldrv/audiolib.h"
+#include "cmd/collide2/CSopcodecollider.h"
+#include "configxml.h"
+#include "gfx/cockpit_generic.h"
+#include "gfx/sphere.h"
+#include "images.h"
+#include "role_bitmask.h"
+#include "unit_collide.h"
+#include "unit_factory.h"
+#include "unit_generic.h"
+#include "vegastrike.h"
+#include "vs_globals.h"
+#include "vs_math.h"
+#include "vsfilesystem.h"
+#include "xml_serializer.h"
 #include "xml_support.h"
-#include <fstream>
+#include <assert.h>
 #include <expat.h>
 #include <float.h>
+#include <fstream>
 #include <limits.h>
-#include "configxml.h"
-#include "vs_globals.h"
-#include "vegastrike.h"
-#include <assert.h>
-#include "images.h"
-#include "xml_serializer.h"
-#include "vsfilesystem.h"
-#include "gfx/cockpit_generic.h"
-#include "unit_collide.h"
-#include "unit_generic.h"
-#include "gfx/sphere.h"
-#include "role_bitmask.h"
-#include "cmd/collide2/CSopcodecollider.h"
-#include "vs_math.h"
 
 using namespace XMLSupport;
 
@@ -52,18 +52,18 @@ string MakeUnitXMLPretty(string str, Unit *un)
     {
         lookfor.insert("Shie");
         lookfor.insert("Armo");
-        //lookfor.insert ("Hull");
+        // lookfor.insert ("Hull");
         lookfor.insert("Reac");
         lookfor.insert("Moun");
         lookfor.insert("Comp");
-        //lookfor.insert ("Desc");
+        // lookfor.insert ("Desc");
         lookfor.insert("Engi");
         lookfor.insert("Mane");
         lookfor.insert("Jump");
-        //lookfor.insert ("Defe");
+        // lookfor.insert ("Defe");
         lookfor.insert("Stat");
         lookfor.insert("Engi");
-        //lookfor.insert ("Hold");
+        // lookfor.insert ("Hold");
         lookfor.insert("Rada");
     }
     std::string::size_type foundpos;
@@ -114,322 +114,321 @@ void Unit::endElement(void *userData, const XML_Char *name)
 
 namespace UnitXML
 {
-    enum Names
-    {
-        UNKNOWN,
-        UNIT,
-        SUBUNIT,
-        MESHFILE,
-        SHIELDMESH,
-        RAPIDMESH,
-        MOUNT,
-        MESHLIGHT,
-        DOCK,
-        XFILE,
-        X,
-        Y,
-        Z,
-        RI,
-        RJ,
-        RK,
-        QI,
-        QJ,
-        QK,
-        RED,
-        GREEN,
-        BLUE,
-        ALPHA,
-        ACTIVATIONSPEED,
-        MOUNTSIZE,
-        WEAPON,
-        DEFENSE,
-        ARMOR,
-        WARPDRIVERATING,
-        FORWARD,
-        RETRO,
-        FRONT,
-        BACK,
-        LEFT,
-        RIGHT,
-        FRONTRIGHTTOP,
-        BACKRIGHTTOP,
-        FRONTLEFTTOP,
-        BACKLEFTTOP,
-        FRONTRIGHTBOTTOM,
-        BACKRIGHTBOTTOM,
-        FRONTLEFTBOTTOM,
-        BACKLEFTBOTTOM,
-        TOP,
-        BOTTOM,
-        SHIELDS,
-        RECHARGE,
-        LEAK,
-        HULL,
-        STRENGTH,
-        STATS,
-        MASS,
-        MOMENTOFINERTIA,
-        FUEL,
-        THRUST,
-        MANEUVER,
-        YAW,
-        ROLL,
-        PITCH,
-        ENGINE,
-        COMPUTER,
-        AACCEL,
-        ENERGY,
-        REACTOR,
-        LIMIT,
-        RESTRICTED,
-        MAX,
-        MIN,
-        MAXSPEED,
-        AFTERBURNER,
-        SHIELDTIGHT,
-        ITTS,
-        AMMO,
-        HUDIMAGE,
-        SOUND,
-        MINTARGETSIZE,
-        MAXCONE,
-        LOCKCONE,
-        RANGE,
-        ISCOLOR,
-        RADAR,
-        CLOAK,
-        CLOAKRATE,
-        CLOAKMIN,
-        CLOAKENERGY,
-        CLOAKGLASS,
-        CLOAKWAV,
-        CLOAKMP3,
-        ENGINEWAV,
-        ENGINEMP3,
-        HULLWAV,
-        HULLMP3,
-        ARMORWAV,
-        ARMORMP3,
-        SHIELDWAV,
-        SHIELDMP3,
-        EXPLODEWAV,
-        EXPLODEMP3,
-        EXPLOSIONANI,
-        COCKPIT,
-        JUMP,
-        DELAY,
-        JUMPENERGY,
-        JUMPWAV,
-        NETCOM,
-        NETCOMM_MINFREQ,
-        NETCOMM_MAXFREQ,
-        NETCOMM_SECURED,
-        NETCOMM_VIDEO,
-        NETCOMM_CRYPTO,
-        DOCKINTERNAL,
-        WORMHOLE,
-        RAPID,
-        AFTERBURNENERGY,
-        MISSING,
-        UNITSCALE,
-        PRICE,
-        VOLUME,
-        QUANTITY,
-        CARGO,
-        HOLD,
-        CATEGORY,
-        IMPORT,
-        PRICESTDDEV,
-        QUANTITYSTDDEV,
-        DAMAGE,
-        COCKPITDAMAGE,
-        REPAIRDROID,
-        ECM,
-        DESCRIPTION,
-        UPGRADE,
-        MOUNTOFFSET,
-        SUBUNITOFFSET,
-        SLIDE_START,
-        SLIDE_END,
-        TRACKINGCONE,
-        MISSIONCARGO,
-        MAXIMUM,
-        LIGHTTYPE,
-        COMBATROLE,
-        RECURSESUBUNITCOLLISION,
-        WARPENERGY,
-        FACECAMERA,
-        XYSCALE,
-        INSYSENERGY,
-        ZSCALE,
-        NUMANIMATIONSTAGES,
-        STARTFRAME,
-        TEXTURESTARTTIME
-    };
+enum Names
+{
+    UNKNOWN,
+    UNIT,
+    SUBUNIT,
+    MESHFILE,
+    SHIELDMESH,
+    RAPIDMESH,
+    MOUNT,
+    MESHLIGHT,
+    DOCK,
+    XFILE,
+    X,
+    Y,
+    Z,
+    RI,
+    RJ,
+    RK,
+    QI,
+    QJ,
+    QK,
+    RED,
+    GREEN,
+    BLUE,
+    ALPHA,
+    ACTIVATIONSPEED,
+    MOUNTSIZE,
+    WEAPON,
+    DEFENSE,
+    ARMOR,
+    WARPDRIVERATING,
+    FORWARD,
+    RETRO,
+    FRONT,
+    BACK,
+    LEFT,
+    RIGHT,
+    FRONTRIGHTTOP,
+    BACKRIGHTTOP,
+    FRONTLEFTTOP,
+    BACKLEFTTOP,
+    FRONTRIGHTBOTTOM,
+    BACKRIGHTBOTTOM,
+    FRONTLEFTBOTTOM,
+    BACKLEFTBOTTOM,
+    TOP,
+    BOTTOM,
+    SHIELDS,
+    RECHARGE,
+    LEAK,
+    HULL,
+    STRENGTH,
+    STATS,
+    MASS,
+    MOMENTOFINERTIA,
+    FUEL,
+    THRUST,
+    MANEUVER,
+    YAW,
+    ROLL,
+    PITCH,
+    ENGINE,
+    COMPUTER,
+    AACCEL,
+    ENERGY,
+    REACTOR,
+    LIMIT,
+    RESTRICTED,
+    MAX,
+    MIN,
+    MAXSPEED,
+    AFTERBURNER,
+    SHIELDTIGHT,
+    ITTS,
+    AMMO,
+    HUDIMAGE,
+    SOUND,
+    MINTARGETSIZE,
+    MAXCONE,
+    LOCKCONE,
+    RANGE,
+    ISCOLOR,
+    RADAR,
+    CLOAK,
+    CLOAKRATE,
+    CLOAKMIN,
+    CLOAKENERGY,
+    CLOAKGLASS,
+    CLOAKWAV,
+    CLOAKMP3,
+    ENGINEWAV,
+    ENGINEMP3,
+    HULLWAV,
+    HULLMP3,
+    ARMORWAV,
+    ARMORMP3,
+    SHIELDWAV,
+    SHIELDMP3,
+    EXPLODEWAV,
+    EXPLODEMP3,
+    EXPLOSIONANI,
+    COCKPIT,
+    JUMP,
+    DELAY,
+    JUMPENERGY,
+    JUMPWAV,
+    NETCOM,
+    NETCOMM_MINFREQ,
+    NETCOMM_MAXFREQ,
+    NETCOMM_SECURED,
+    NETCOMM_VIDEO,
+    NETCOMM_CRYPTO,
+    DOCKINTERNAL,
+    WORMHOLE,
+    RAPID,
+    AFTERBURNENERGY,
+    MISSING,
+    UNITSCALE,
+    PRICE,
+    VOLUME,
+    QUANTITY,
+    CARGO,
+    HOLD,
+    CATEGORY,
+    IMPORT,
+    PRICESTDDEV,
+    QUANTITYSTDDEV,
+    DAMAGE,
+    COCKPITDAMAGE,
+    REPAIRDROID,
+    ECM,
+    DESCRIPTION,
+    UPGRADE,
+    MOUNTOFFSET,
+    SUBUNITOFFSET,
+    SLIDE_START,
+    SLIDE_END,
+    TRACKINGCONE,
+    MISSIONCARGO,
+    MAXIMUM,
+    LIGHTTYPE,
+    COMBATROLE,
+    RECURSESUBUNITCOLLISION,
+    WARPENERGY,
+    FACECAMERA,
+    XYSCALE,
+    INSYSENERGY,
+    ZSCALE,
+    NUMANIMATIONSTAGES,
+    STARTFRAME,
+    TEXTURESTARTTIME
+};
 
-    const EnumMap::Pair element_names[37] = {
-        EnumMap::Pair("UNKNOWN", UNKNOWN),
-        EnumMap::Pair("Unit", UNIT),
-        EnumMap::Pair("SubUnit", SUBUNIT),
-        EnumMap::Pair("Sound", SOUND),
-        EnumMap::Pair("MeshFile", MESHFILE),
-        EnumMap::Pair("ShieldMesh", SHIELDMESH),
-        EnumMap::Pair("RapidMesh", RAPIDMESH),
-        EnumMap::Pair("Light", MESHLIGHT),
-        EnumMap::Pair("Defense", DEFENSE),
-        EnumMap::Pair("Armor", ARMOR),
-        EnumMap::Pair("Shields", SHIELDS),
-        EnumMap::Pair("Hull", HULL),
-        EnumMap::Pair("Stats", STATS),
-        EnumMap::Pair("Thrust", THRUST),
-        EnumMap::Pair("Maneuver", MANEUVER),
-        EnumMap::Pair("Engine", ENGINE),
-        EnumMap::Pair("Computer", COMPUTER),
-        EnumMap::Pair("Cloak", CLOAK),
-        EnumMap::Pair("Energy", ENERGY),
-        EnumMap::Pair("Reactor", REACTOR),
-        EnumMap::Pair("Restricted", RESTRICTED),
-        EnumMap::Pair("Yaw", YAW),
-        EnumMap::Pair("Pitch", PITCH),
-        EnumMap::Pair("Roll", ROLL),
-        EnumMap::Pair("Mount", MOUNT),
-        EnumMap::Pair("Radar", RADAR),
-        EnumMap::Pair("Cockpit", COCKPIT),
-        EnumMap::Pair("Jump", JUMP),
-        EnumMap::Pair("Netcomm", NETCOM),
-        EnumMap::Pair("Dock", DOCK),
-        EnumMap::Pair("Hold", HOLD),
-        EnumMap::Pair("Cargo", CARGO),
-        EnumMap::Pair("Category", CATEGORY),
-        EnumMap::Pair("Import", IMPORT),
-        EnumMap::Pair("CockpitDamage", COCKPITDAMAGE),
-        EnumMap::Pair("Upgrade", UPGRADE),
-        EnumMap::Pair("Description", DESCRIPTION),
-    };
+const EnumMap::Pair element_names[37] = {
+    EnumMap::Pair("UNKNOWN", UNKNOWN),
+    EnumMap::Pair("Unit", UNIT),
+    EnumMap::Pair("SubUnit", SUBUNIT),
+    EnumMap::Pair("Sound", SOUND),
+    EnumMap::Pair("MeshFile", MESHFILE),
+    EnumMap::Pair("ShieldMesh", SHIELDMESH),
+    EnumMap::Pair("RapidMesh", RAPIDMESH),
+    EnumMap::Pair("Light", MESHLIGHT),
+    EnumMap::Pair("Defense", DEFENSE),
+    EnumMap::Pair("Armor", ARMOR),
+    EnumMap::Pair("Shields", SHIELDS),
+    EnumMap::Pair("Hull", HULL),
+    EnumMap::Pair("Stats", STATS),
+    EnumMap::Pair("Thrust", THRUST),
+    EnumMap::Pair("Maneuver", MANEUVER),
+    EnumMap::Pair("Engine", ENGINE),
+    EnumMap::Pair("Computer", COMPUTER),
+    EnumMap::Pair("Cloak", CLOAK),
+    EnumMap::Pair("Energy", ENERGY),
+    EnumMap::Pair("Reactor", REACTOR),
+    EnumMap::Pair("Restricted", RESTRICTED),
+    EnumMap::Pair("Yaw", YAW),
+    EnumMap::Pair("Pitch", PITCH),
+    EnumMap::Pair("Roll", ROLL),
+    EnumMap::Pair("Mount", MOUNT),
+    EnumMap::Pair("Radar", RADAR),
+    EnumMap::Pair("Cockpit", COCKPIT),
+    EnumMap::Pair("Jump", JUMP),
+    EnumMap::Pair("Netcomm", NETCOM),
+    EnumMap::Pair("Dock", DOCK),
+    EnumMap::Pair("Hold", HOLD),
+    EnumMap::Pair("Cargo", CARGO),
+    EnumMap::Pair("Category", CATEGORY),
+    EnumMap::Pair("Import", IMPORT),
+    EnumMap::Pair("CockpitDamage", COCKPITDAMAGE),
+    EnumMap::Pair("Upgrade", UPGRADE),
+    EnumMap::Pair("Description", DESCRIPTION),
+};
 
-    const EnumMap::Pair attribute_names[119] = {
-        EnumMap::Pair("UNKNOWN", UNKNOWN),
-        EnumMap::Pair("missing", MISSING),
-        EnumMap::Pair("file", XFILE),
-        EnumMap::Pair("x", X),
-        EnumMap::Pair("y", Y),
-        EnumMap::Pair("z", Z),
-        EnumMap::Pair("xyscale", XYSCALE),
-        EnumMap::Pair("zscale", ZSCALE),
-        EnumMap::Pair("ri", RI),
-        EnumMap::Pair("rj", RJ),
-        EnumMap::Pair("rk", RK),
-        EnumMap::Pair("qi", QI),
-        EnumMap::Pair("qj", QJ),
-        EnumMap::Pair("qk", QK),
-        EnumMap::Pair("activationSpeed", ACTIVATIONSPEED),
-        EnumMap::Pair("red", RED),
-        EnumMap::Pair("green", GREEN),
-        EnumMap::Pair("blue", BLUE),
-        EnumMap::Pair("alpha", ALPHA),
-        EnumMap::Pair("size", MOUNTSIZE),
-        EnumMap::Pair("forward", FORWARD),
-        EnumMap::Pair("retro", RETRO),
-        EnumMap::Pair("frontrighttop", FRONTRIGHTTOP),
-        EnumMap::Pair("backrighttop", BACKRIGHTTOP),
-        EnumMap::Pair("frontlefttop", FRONTLEFTTOP),
-        EnumMap::Pair("backlefttop", BACKLEFTTOP),
-        EnumMap::Pair("frontrightbottom", FRONTRIGHTBOTTOM),
-        EnumMap::Pair("backrightbottom", BACKRIGHTBOTTOM),
-        EnumMap::Pair("frontleftbottom", FRONTLEFTBOTTOM),
-        EnumMap::Pair("backleftbottom", BACKLEFTBOTTOM),
-        EnumMap::Pair("front", FRONT),
-        EnumMap::Pair("back", BACK),
-        EnumMap::Pair("left", LEFT),
-        EnumMap::Pair("right", RIGHT),
-        EnumMap::Pair("top", TOP),
-        EnumMap::Pair("bottom", BOTTOM),
-        EnumMap::Pair("recharge", RECHARGE),
-        EnumMap::Pair("warpenergy", WARPENERGY),
-        EnumMap::Pair("insysenergy", INSYSENERGY),
-        EnumMap::Pair("leak", LEAK),
-        EnumMap::Pair("strength", STRENGTH),
-        EnumMap::Pair("mass", MASS),
-        EnumMap::Pair("momentofinertia", MOMENTOFINERTIA),
-        EnumMap::Pair("fuel", FUEL),
-        EnumMap::Pair("yaw", YAW),
-        EnumMap::Pair("pitch", PITCH),
-        EnumMap::Pair("roll", ROLL),
-        EnumMap::Pair("accel", AACCEL),
-        EnumMap::Pair("limit", LIMIT),
-        EnumMap::Pair("max", MAX),
-        EnumMap::Pair("min", MIN),
-        EnumMap::Pair("weapon", WEAPON),
-        EnumMap::Pair("maxspeed", MAXSPEED),
-        EnumMap::Pair("afterburner", AFTERBURNER),
-        EnumMap::Pair("tightness", SHIELDTIGHT),
-        EnumMap::Pair("itts", ITTS),
-        EnumMap::Pair("ammo", AMMO),
-        EnumMap::Pair("HudImage", HUDIMAGE),
-        EnumMap::Pair("ExplosionAni", EXPLOSIONANI),
-        EnumMap::Pair("MaxCone", MAXCONE),
-        EnumMap::Pair("TrackingCone", TRACKINGCONE),
-        EnumMap::Pair("LockCone", LOCKCONE),
-        EnumMap::Pair("MinTargetSize", MINTARGETSIZE),
-        EnumMap::Pair("Range", RANGE),
-        EnumMap::Pair("EngineMp3", ENGINEMP3),
-        EnumMap::Pair("EngineWav", ENGINEWAV),
-        EnumMap::Pair("HullMp3", HULLMP3),
-        EnumMap::Pair("HullWav", HULLWAV),
-        EnumMap::Pair("ArmorMp3", ARMORMP3),
-        EnumMap::Pair("ArmorWav", ARMORWAV),
-        EnumMap::Pair("ShieldMp3", SHIELDMP3),
-        EnumMap::Pair("ShieldWav", SHIELDWAV),
-        EnumMap::Pair("ExplodeMp3", EXPLODEMP3),
-        EnumMap::Pair("ExplodeWav", EXPLODEWAV),
-        EnumMap::Pair("CloakRate", CLOAKRATE),
-        EnumMap::Pair("CloakGlass", CLOAKGLASS),
-        EnumMap::Pair("CloakEnergy", CLOAKENERGY),
-        EnumMap::Pair("CloakMin", CLOAKMIN),
-        EnumMap::Pair("CloakMp3", CLOAKMP3),
-        EnumMap::Pair("CloakWav", CLOAKWAV),
-        EnumMap::Pair("Color", ISCOLOR),
-        EnumMap::Pair("Restricted", RESTRICTED),
-        EnumMap::Pair("Delay", DELAY),
-        EnumMap::Pair("AfterburnEnergy", AFTERBURNENERGY),
-        EnumMap::Pair("JumpEnergy", JUMPENERGY),
-        EnumMap::Pair("JumpWav", JUMPWAV),
-        EnumMap::Pair("min_freq", NETCOMM_MINFREQ),
-        EnumMap::Pair("max_freq", NETCOMM_MAXFREQ),
-        EnumMap::Pair("secured", NETCOMM_SECURED),
-        EnumMap::Pair("video", NETCOMM_VIDEO),
-        EnumMap::Pair("crypto_method", NETCOMM_CRYPTO),
-        EnumMap::Pair("DockInternal", DOCKINTERNAL),
-        EnumMap::Pair("RAPID", RAPID),
-        EnumMap::Pair("Wormhole", WORMHOLE),
-        EnumMap::Pair("Scale", UNITSCALE),
-        EnumMap::Pair("Price", PRICE),
-        EnumMap::Pair("Volume", VOLUME),
-        EnumMap::Pair("Quantity", QUANTITY),
-        EnumMap::Pair("PriceStdDev", PRICESTDDEV),
-        EnumMap::Pair("PriceStDev", PRICESTDDEV),
-        EnumMap::Pair("QuantityStdDev", QUANTITYSTDDEV),
-        EnumMap::Pair("Damage", DAMAGE),
-        EnumMap::Pair("RepairDroid", REPAIRDROID),
-        EnumMap::Pair("ECM", ECM),
-        EnumMap::Pair("Description", DESCRIPTION),
-        EnumMap::Pair("MountOffset", MOUNTOFFSET),
-        EnumMap::Pair("SubunitOffset", SUBUNITOFFSET),
-        EnumMap::Pair("SlideEnd", SLIDE_START),
-        EnumMap::Pair("SlideStart", SLIDE_END),
-        EnumMap::Pair("MissionCargo", MISSIONCARGO),
-        EnumMap::Pair("Maximum", MAXIMUM),
-        EnumMap::Pair("LightType", LIGHTTYPE),
-        EnumMap::Pair("CombatRole", COMBATROLE),
-        EnumMap::Pair("RecurseSubunitCollision", RECURSESUBUNITCOLLISION),
-        EnumMap::Pair("FaceCamera", FACECAMERA),
-        EnumMap::Pair("NumAnimationStages", NUMANIMATIONSTAGES),
-        EnumMap::Pair("StartFrame", STARTFRAME),
-        EnumMap::Pair("TextureStartTime", TEXTURESTARTTIME),
-        EnumMap::Pair("WarpDriveRating", WARPDRIVERATING)};
+const EnumMap::Pair attribute_names[119] = {EnumMap::Pair("UNKNOWN", UNKNOWN),
+                                            EnumMap::Pair("missing", MISSING),
+                                            EnumMap::Pair("file", XFILE),
+                                            EnumMap::Pair("x", X),
+                                            EnumMap::Pair("y", Y),
+                                            EnumMap::Pair("z", Z),
+                                            EnumMap::Pair("xyscale", XYSCALE),
+                                            EnumMap::Pair("zscale", ZSCALE),
+                                            EnumMap::Pair("ri", RI),
+                                            EnumMap::Pair("rj", RJ),
+                                            EnumMap::Pair("rk", RK),
+                                            EnumMap::Pair("qi", QI),
+                                            EnumMap::Pair("qj", QJ),
+                                            EnumMap::Pair("qk", QK),
+                                            EnumMap::Pair("activationSpeed", ACTIVATIONSPEED),
+                                            EnumMap::Pair("red", RED),
+                                            EnumMap::Pair("green", GREEN),
+                                            EnumMap::Pair("blue", BLUE),
+                                            EnumMap::Pair("alpha", ALPHA),
+                                            EnumMap::Pair("size", MOUNTSIZE),
+                                            EnumMap::Pair("forward", FORWARD),
+                                            EnumMap::Pair("retro", RETRO),
+                                            EnumMap::Pair("frontrighttop", FRONTRIGHTTOP),
+                                            EnumMap::Pair("backrighttop", BACKRIGHTTOP),
+                                            EnumMap::Pair("frontlefttop", FRONTLEFTTOP),
+                                            EnumMap::Pair("backlefttop", BACKLEFTTOP),
+                                            EnumMap::Pair("frontrightbottom", FRONTRIGHTBOTTOM),
+                                            EnumMap::Pair("backrightbottom", BACKRIGHTBOTTOM),
+                                            EnumMap::Pair("frontleftbottom", FRONTLEFTBOTTOM),
+                                            EnumMap::Pair("backleftbottom", BACKLEFTBOTTOM),
+                                            EnumMap::Pair("front", FRONT),
+                                            EnumMap::Pair("back", BACK),
+                                            EnumMap::Pair("left", LEFT),
+                                            EnumMap::Pair("right", RIGHT),
+                                            EnumMap::Pair("top", TOP),
+                                            EnumMap::Pair("bottom", BOTTOM),
+                                            EnumMap::Pair("recharge", RECHARGE),
+                                            EnumMap::Pair("warpenergy", WARPENERGY),
+                                            EnumMap::Pair("insysenergy", INSYSENERGY),
+                                            EnumMap::Pair("leak", LEAK),
+                                            EnumMap::Pair("strength", STRENGTH),
+                                            EnumMap::Pair("mass", MASS),
+                                            EnumMap::Pair("momentofinertia", MOMENTOFINERTIA),
+                                            EnumMap::Pair("fuel", FUEL),
+                                            EnumMap::Pair("yaw", YAW),
+                                            EnumMap::Pair("pitch", PITCH),
+                                            EnumMap::Pair("roll", ROLL),
+                                            EnumMap::Pair("accel", AACCEL),
+                                            EnumMap::Pair("limit", LIMIT),
+                                            EnumMap::Pair("max", MAX),
+                                            EnumMap::Pair("min", MIN),
+                                            EnumMap::Pair("weapon", WEAPON),
+                                            EnumMap::Pair("maxspeed", MAXSPEED),
+                                            EnumMap::Pair("afterburner", AFTERBURNER),
+                                            EnumMap::Pair("tightness", SHIELDTIGHT),
+                                            EnumMap::Pair("itts", ITTS),
+                                            EnumMap::Pair("ammo", AMMO),
+                                            EnumMap::Pair("HudImage", HUDIMAGE),
+                                            EnumMap::Pair("ExplosionAni", EXPLOSIONANI),
+                                            EnumMap::Pair("MaxCone", MAXCONE),
+                                            EnumMap::Pair("TrackingCone", TRACKINGCONE),
+                                            EnumMap::Pair("LockCone", LOCKCONE),
+                                            EnumMap::Pair("MinTargetSize", MINTARGETSIZE),
+                                            EnumMap::Pair("Range", RANGE),
+                                            EnumMap::Pair("EngineMp3", ENGINEMP3),
+                                            EnumMap::Pair("EngineWav", ENGINEWAV),
+                                            EnumMap::Pair("HullMp3", HULLMP3),
+                                            EnumMap::Pair("HullWav", HULLWAV),
+                                            EnumMap::Pair("ArmorMp3", ARMORMP3),
+                                            EnumMap::Pair("ArmorWav", ARMORWAV),
+                                            EnumMap::Pair("ShieldMp3", SHIELDMP3),
+                                            EnumMap::Pair("ShieldWav", SHIELDWAV),
+                                            EnumMap::Pair("ExplodeMp3", EXPLODEMP3),
+                                            EnumMap::Pair("ExplodeWav", EXPLODEWAV),
+                                            EnumMap::Pair("CloakRate", CLOAKRATE),
+                                            EnumMap::Pair("CloakGlass", CLOAKGLASS),
+                                            EnumMap::Pair("CloakEnergy", CLOAKENERGY),
+                                            EnumMap::Pair("CloakMin", CLOAKMIN),
+                                            EnumMap::Pair("CloakMp3", CLOAKMP3),
+                                            EnumMap::Pair("CloakWav", CLOAKWAV),
+                                            EnumMap::Pair("Color", ISCOLOR),
+                                            EnumMap::Pair("Restricted", RESTRICTED),
+                                            EnumMap::Pair("Delay", DELAY),
+                                            EnumMap::Pair("AfterburnEnergy", AFTERBURNENERGY),
+                                            EnumMap::Pair("JumpEnergy", JUMPENERGY),
+                                            EnumMap::Pair("JumpWav", JUMPWAV),
+                                            EnumMap::Pair("min_freq", NETCOMM_MINFREQ),
+                                            EnumMap::Pair("max_freq", NETCOMM_MAXFREQ),
+                                            EnumMap::Pair("secured", NETCOMM_SECURED),
+                                            EnumMap::Pair("video", NETCOMM_VIDEO),
+                                            EnumMap::Pair("crypto_method", NETCOMM_CRYPTO),
+                                            EnumMap::Pair("DockInternal", DOCKINTERNAL),
+                                            EnumMap::Pair("RAPID", RAPID),
+                                            EnumMap::Pair("Wormhole", WORMHOLE),
+                                            EnumMap::Pair("Scale", UNITSCALE),
+                                            EnumMap::Pair("Price", PRICE),
+                                            EnumMap::Pair("Volume", VOLUME),
+                                            EnumMap::Pair("Quantity", QUANTITY),
+                                            EnumMap::Pair("PriceStdDev", PRICESTDDEV),
+                                            EnumMap::Pair("PriceStDev", PRICESTDDEV),
+                                            EnumMap::Pair("QuantityStdDev", QUANTITYSTDDEV),
+                                            EnumMap::Pair("Damage", DAMAGE),
+                                            EnumMap::Pair("RepairDroid", REPAIRDROID),
+                                            EnumMap::Pair("ECM", ECM),
+                                            EnumMap::Pair("Description", DESCRIPTION),
+                                            EnumMap::Pair("MountOffset", MOUNTOFFSET),
+                                            EnumMap::Pair("SubunitOffset", SUBUNITOFFSET),
+                                            EnumMap::Pair("SlideEnd", SLIDE_START),
+                                            EnumMap::Pair("SlideStart", SLIDE_END),
+                                            EnumMap::Pair("MissionCargo", MISSIONCARGO),
+                                            EnumMap::Pair("Maximum", MAXIMUM),
+                                            EnumMap::Pair("LightType", LIGHTTYPE),
+                                            EnumMap::Pair("CombatRole", COMBATROLE),
+                                            EnumMap::Pair("RecurseSubunitCollision", RECURSESUBUNITCOLLISION),
+                                            EnumMap::Pair("FaceCamera", FACECAMERA),
+                                            EnumMap::Pair("NumAnimationStages", NUMANIMATIONSTAGES),
+                                            EnumMap::Pair("StartFrame", STARTFRAME),
+                                            EnumMap::Pair("TextureStartTime", TEXTURESTARTTIME),
+                                            EnumMap::Pair("WarpDriveRating", WARPDRIVERATING)};
 
-    const EnumMap element_map(element_names, 37);
-    const EnumMap attribute_map(attribute_names, 119);
+const EnumMap element_map(element_names, 37);
+const EnumMap attribute_map(attribute_names, 119);
 } // namespace UnitXML
 
 std::string delayucharStarHandler(const XMLType &input, void *mythis)
@@ -441,7 +440,7 @@ std::string delayucharStarHandler(const XMLType &input, void *mythis)
     return XMLSupport::tostring((int)uc);
 }
 
-//USED TO BE IN UNIT_FUNCTIONS*.CPP BUT NOW ON BOTH CLIENT AND SERVER SIDE
+// USED TO BE IN UNIT_FUNCTIONS*.CPP BUT NOW ON BOTH CLIENT AND SERVER SIDE
 std::vector<Mesh *> MakeMesh(unsigned int mysize)
 {
     std::vector<Mesh *> temp;
@@ -467,15 +466,8 @@ void addRapidMesh(Unit::XML *xml, const char *filename, const float scale, int f
     xml->rapidmesh = Mesh::LoadMesh(filename, Vector(scale, scale, scale), faction, fg);
 }
 
-void pushMesh(std::vector<Mesh *> &meshes,
-              float &randomstartframe,
-              float &randomstartseconds,
-              const char *filename,
-              const float scale,
-              int faction,
-              class Flightgroup *fg,
-              int startframe,
-              double texturestarttime)
+void pushMesh(std::vector<Mesh *> &meshes, float &randomstartframe, float &randomstartseconds, const char *filename,
+              const float scale, int faction, class Flightgroup *fg, int startframe, double texturestarttime)
 {
     vector<Mesh *> m = Mesh::LoadMeshes(filename, Vector(scale, scale, scale), faction, fg);
     for (unsigned int i = 0; i < m.size(); ++i)
@@ -493,7 +485,8 @@ void pushMesh(std::vector<Mesh *> &meshes,
         else if (startframe == -1)
         {
             if (randomstartseconds == 0)
-                randomstartseconds = randomstartframe * meshes.back()->getNumLOD() / meshes.back()->getFramesPerSecond();
+                randomstartseconds =
+                    randomstartframe * meshes.back()->getNumLOD() / meshes.back()->getFramesPerSecond();
             meshes.back()->setCurrentFrame(randomstartseconds * meshes.back()->getFramesPerSecond());
         }
         if (texturestarttime > 0)
@@ -518,7 +511,7 @@ void pushMesh(std::vector<Mesh *> &meshes,
     }
 }
 
-Mount *createMount(const std::string &name, int ammo, int volume, float xyscale, float zscale, bool banked) //short fix
+Mount *createMount(const std::string &name, int ammo, int volume, float xyscale, float zscale, bool banked) // short fix
 {
     return new Mount(name.c_str(), ammo, volume, xyscale, zscale, 1, 1, banked);
 }
@@ -530,42 +523,42 @@ extern int parseMountSizes(const char *str);
 static unsigned int CLAMP_UINT(float x)
 {
     return (unsigned int)(((x) > 4294967295.0) ? (unsigned int)4294967295U : ((x) < 0 ? 0 : (x)));
-} //short fix
+} // short fix
 
-#define ADDTAGNAME(a)                  \
-    do                                 \
-    {                                  \
-        pImage->unitwriter->AddTag(a); \
+#define ADDTAGNAME(a)                                                                                                  \
+    do                                                                                                                 \
+    {                                                                                                                  \
+        pImage->unitwriter->AddTag(a);                                                                                 \
     } while (0)
-#define ADDTAG                            \
-    do                                    \
-    {                                     \
-        pImage->unitwriter->AddTag(name); \
+#define ADDTAG                                                                                                         \
+    do                                                                                                                 \
+    {                                                                                                                  \
+        pImage->unitwriter->AddTag(name);                                                                              \
     } while (0)
-#define ADDELEMNAME(a, b, c)                     \
-    do                                           \
-    {                                            \
-        pImage->unitwriter->AddElement(a, b, c); \
+#define ADDELEMNAME(a, b, c)                                                                                           \
+    do                                                                                                                 \
+    {                                                                                                                  \
+        pImage->unitwriter->AddElement(a, b, c);                                                                       \
     } while (0)
-#define ADDELEM(b, c)                                       \
-    do                                                      \
-    {                                                       \
-        pImage->unitwriter->AddElement((*iter).name, b, c); \
+#define ADDELEM(b, c)                                                                                                  \
+    do                                                                                                                 \
+    {                                                                                                                  \
+        pImage->unitwriter->AddElement((*iter).name, b, c);                                                            \
     } while (0)
-#define ADDDEFAULT                                                                           \
-    do                                                                                       \
-    {                                                                                        \
-        pImage->unitwriter->AddElement((*iter).name, stringHandler, XMLType((*iter).value)); \
+#define ADDDEFAULT                                                                                                     \
+    do                                                                                                                 \
+    {                                                                                                                  \
+        pImage->unitwriter->AddElement((*iter).name, stringHandler, XMLType((*iter).value));                           \
     } while (0)
-#define ADDELEMI(b)                           \
-    do                                        \
-    {                                         \
-        ADDELEM(intStarHandler, XMLType(&b)); \
+#define ADDELEMI(b)                                                                                                    \
+    do                                                                                                                 \
+    {                                                                                                                  \
+        ADDELEM(intStarHandler, XMLType(&b));                                                                          \
     } while (0)
-#define ADDELEMF(b)                             \
-    do                                          \
-    {                                           \
-        ADDELEM(floatStarHandler, XMLType(&b)); \
+#define ADDELEMF(b)                                                                                                    \
+    do                                                                                                                 \
+    {                                                                                                                  \
+        ADDELEM(floatStarHandler, XMLType(&b));                                                                        \
     } while (0)
 
 void Unit::beginElement(const string &name, const AttributeList &attributes)
@@ -575,7 +568,7 @@ void Unit::beginElement(const string &name, const AttributeList &attributes)
     static float game_accel = XMLSupport::parse_float(vs_config->getVariable("physics", "game_accel", "1"));
     Cargo carg;
     float act_speed = 0;
-    int volume = -1; //short fix
+    int volume = -1; // short fix
     string filename;
     QVector P;
     int indx;
@@ -590,8 +583,8 @@ void Unit::beginElement(const string &name, const AttributeList &attributes)
     unsigned int dirfrac = 0;
     float fbrltb[6] = {-1};
     AttributeList::const_iterator iter;
-    GFXColor halocolor; //FIXME it's set, but not actually used
-    int ammo = -1;      //short fix
+    GFXColor halocolor; // FIXME it's set, but not actually used
+    int ammo = -1;      // short fix
     int mntsiz = weapon_info::NOWEAP;
     string light_type;
     Names elem = (Names)element_map.lookup(name);
@@ -664,7 +657,7 @@ void Unit::beginElement(const string &name, const AttributeList &attributes)
             {
             case QUANTITY:
                 carg.quantity = parse_int((*iter).value);
-                //import cargo from ze maztah liztz
+                // import cargo from ze maztah liztz
                 break;
             case PRICE:
                 carg.price = parse_float((*iter).value);
@@ -680,7 +673,7 @@ void Unit::beginElement(const string &name, const AttributeList &attributes)
         ImportPartList(xml->cargo_category, carg.price, Q.i, carg.quantity, Q.k);
         break;
     case CATEGORY:
-        //this is autogenerated by the handler
+        // this is autogenerated by the handler
         xml->unitlevel++;
         for (iter = attributes.begin(); iter != attributes.end(); iter++)
         {
@@ -693,7 +686,7 @@ void Unit::beginElement(const string &name, const AttributeList &attributes)
         }
         break;
     case CARGO:
-        ///handling taken care of above;
+        /// handling taken care of above;
         assert(xml->unitlevel >= 2);
         xml->unitlevel++;
         carg.category = xml->cargo_category;
@@ -720,15 +713,14 @@ void Unit::beginElement(const string &name, const AttributeList &attributes)
                 carg.content = XMLSupport::replace_space((*iter).value);
                 break;
             case DESCRIPTION:
-                carg.description = strdup((*iter).value.c_str()); //mem leak...but hey--only for mpl
+                carg.description = strdup((*iter).value.c_str()); // mem leak...but hey--only for mpl
                 break;
             }
         }
         if (carg.mass != 0)
             AddCargo(carg, false);
         break;
-    case MESHFILE:
-    {
+    case MESHFILE: {
         std::string file = "box.bfxm";
         int startframe = 0;
         double texturestarttime = 0;
@@ -763,20 +755,19 @@ void Unit::beginElement(const string &name, const AttributeList &attributes)
         case NO_MESH:
             break;
         default:
-            pushMesh(xml->meshes, xml->randomstartframe, xml->randomstartseconds,
-                     file.c_str(), xml->unitscale, faction, flightgroup, startframe, texturestarttime);
+            pushMesh(xml->meshes, xml->randomstartframe, xml->randomstartseconds, file.c_str(), xml->unitscale, faction,
+                     flightgroup, startframe, texturestarttime);
         }
         break;
     }
-    case UPGRADE:
-    {
+    case UPGRADE: {
         assert(xml->unitlevel >= 1);
         xml->unitlevel++;
 
         double percent;
         int moffset = 0;
         int soffset = 0;
-        //don't serialize
+        // don't serialize
         for (iter = attributes.begin(); iter != attributes.end(); iter++)
         {
             switch (attribute_map.lookup((*iter).name))
@@ -798,8 +789,7 @@ void Unit::beginElement(const string &name, const AttributeList &attributes)
         upgradee->Kill();
         break;
     }
-    case DOCK:
-    {
+    case DOCK: {
         ADDTAG;
         DockingPorts::Type::Value dockType = DockingPorts::Type::DEFAULT;
         assert(xml->unitlevel == 1);
@@ -969,7 +959,8 @@ void Unit::beginElement(const string &name, const AttributeList &attributes)
         R = QVector(0, 0, 1);
         pos = QVector(0, 0, 0);
         tempbool = false;
-        ADDELEMNAME("size", Unit::mountSerializer, XMLType(XMLSupport::tostring(xml->unitscale), (int)xml->mountz.size()));
+        ADDELEMNAME("size", Unit::mountSerializer,
+                    XMLType(XMLSupport::tostring(xml->unitscale), (int)xml->mountz.size()));
         for (iter = attributes.begin(); iter != attributes.end(); iter++)
         {
             switch (attribute_map.lookup((*iter).name))
@@ -1033,9 +1024,10 @@ void Unit::beginElement(const string &name, const AttributeList &attributes)
         CrossProduct(Q, R, P);
         CrossProduct(R, P, Q);
         Q.Normalize();
-        //Transformation(Quaternion (from_vectors (P,Q,R),pos);
+        // Transformation(Quaternion (from_vectors (P,Q,R),pos);
         indx = xml->mountz.size();
-        xml->mountz.push_back(createMount(filename.c_str(), ammo, volume, xyscale, zscale, false /*no way to do banked in XML*/));
+        xml->mountz.push_back(
+            createMount(filename.c_str(), ammo, volume, xyscale, zscale, false /*no way to do banked in XML*/));
         xml->mountz[indx]->SetMountOrientation(Quaternion::from_vectors(P.Cast(), Q.Cast(), R.Cast()));
         xml->mountz[indx]->SetMountPosition(pos.Cast());
         if (tempbool)
@@ -1097,12 +1089,13 @@ void Unit::beginElement(const string &name, const AttributeList &attributes)
                 break;
             case RESTRICTED:
                 ADDDEFAULT;
-                fbrltb[0] = parse_float((*iter).value); //minimum dot turret can have with "fore" vector
+                fbrltb[0] = parse_float((*iter).value); // minimum dot turret can have with "fore" vector
                 break;
             }
         }
         indx = xml->units.size();
-        xml->units.push_back(UnitFactory::createUnit(filename.c_str(), true, faction, xml->unitModifications, nullptr)); //I set here the fg arg to nullptr
+        xml->units.push_back(UnitFactory::createUnit(filename.c_str(), true, faction, xml->unitModifications,
+                                                     nullptr)); // I set here the fg arg to nullptr
         if (xml->units.back()->name == "LOAD_FAILED")
         {
             xml->units.back()->limits.yaw = 0;
@@ -1121,7 +1114,7 @@ void Unit::beginElement(const string &name, const AttributeList &attributes)
         xml->units[indx]->name = filename;
         if (xml->units[indx]->pImage->unitwriter != nullptr)
             xml->units[indx]->pImage->unitwriter->setName(filename);
-        CheckAccessory(xml->units[indx]); //turns on the ceerazy rotation for the turret
+        CheckAccessory(xml->units[indx]); // turns on the ceerazy rotation for the turret
         break;
     case COCKPITDAMAGE:
         xml->unitlevel++;
@@ -1135,8 +1128,7 @@ void Unit::beginElement(const string &name, const AttributeList &attributes)
             }
         }
         break;
-    case NETCOM:
-    {
+    case NETCOM: {
         string method;
         assert(xml->unitlevel == 1);
         xml->unitlevel++;
@@ -1159,43 +1151,42 @@ void Unit::beginElement(const string &name, const AttributeList &attributes)
         }
         break;
     }
-    case JUMP:
-    {
+    case JUMP: {
         static float insys_jump_cost =
             XMLSupport::parse_float(vs_config->getVariable("physics", "insystem_jump_cost", ".1"));
         bool foundinsysenergy = false;
-        //serialization covered in LoadXML
+        // serialization covered in LoadXML
         assert(xml->unitlevel == 1);
         xml->unitlevel++;
-        jump.drive = -1; //activate the jump unit
+        jump.drive = -1; // activate the jump unit
         for (iter = attributes.begin(); iter != attributes.end(); iter++)
         {
             switch (attribute_map.lookup((*iter).name))
             {
             case MISSING:
-                //serialization covered in LoadXML
+                // serialization covered in LoadXML
                 if (parse_bool((*iter).value))
                     jump.drive = -2;
                 break;
             case JUMPENERGY:
-                //serialization covered in LoadXML
-                jump.energy = parse_float((*iter).value); //short fix
+                // serialization covered in LoadXML
+                jump.energy = parse_float((*iter).value); // short fix
                 if (!foundinsysenergy)
                     jump.insysenergy = jump.energy * insys_jump_cost;
                 break;
             case INSYSENERGY:
-                //serialization covered in LoadXML
-                jump.insysenergy = parse_float((*iter).value); //short fix
+                // serialization covered in LoadXML
+                jump.insysenergy = parse_float((*iter).value); // short fix
                 foundinsysenergy = true;
                 break;
             case WARPDRIVERATING:
                 jump.warpDriveRating = parse_float((*iter).value);
                 break;
             case DAMAGE:
-                jump.damage = float_to_int(parse_float((*iter).value)); //short fix
+                jump.damage = float_to_int(parse_float((*iter).value)); // short fix
                 break;
             case DELAY:
-                //serialization covered in LoadXML
+                // serialization covered in LoadXML
                 {
                     static int jumpdelaymult =
                         XMLSupport::parse_int(vs_config->getVariable("physics", "jump_delay_multiplier", "5"));
@@ -1203,11 +1194,11 @@ void Unit::beginElement(const string &name, const AttributeList &attributes)
                     break;
                 }
             case FUEL:
-                //serialization covered in LoadXML
-                jump.energy = -parse_float((*iter).value); //short fix
+                // serialization covered in LoadXML
+                jump.energy = -parse_float((*iter).value); // short fix
                 break;
             case WORMHOLE:
-                //serialization covered in LoadXML
+                // serialization covered in LoadXML
                 pImage->forcejump = parse_bool((*iter).value);
                 if (pImage->forcejump)
                     jump.drive = -2;
@@ -1315,36 +1306,36 @@ void Unit::beginElement(const string &name, const AttributeList &attributes)
         }
         break;
     case CLOAK:
-        //serialization covered elsewhere
+        // serialization covered elsewhere
         assert(xml->unitlevel == 2);
         xml->unitlevel++;
-        pImage->cloakrate = (int)(.2 * (2147483647)); //short fix
+        pImage->cloakrate = (int)(.2 * (2147483647)); // short fix
         cloakmin = 1;
         pImage->cloakenergy = 0;
-        cloaking = INT_MIN; //lowest negative number  //short fix
+        cloaking = INT_MIN; // lowest negative number  //short fix
         for (iter = attributes.begin(); iter != attributes.end(); iter++)
         {
             switch (attribute_map.lookup((*iter).name))
             {
             case MISSING:
-                //serialization covered in LoadXML
+                // serialization covered in LoadXML
                 if (parse_bool((*iter).value))
-                    cloaking = -1; //short fix
+                    cloaking = -1; // short fix
                 break;
             case CLOAKMIN:
-                //serialization covered in LoadXML
-                cloakmin = (int)(((-1) > 1) * parse_float((*iter).value)); //short fix
+                // serialization covered in LoadXML
+                cloakmin = (int)(((-1) > 1) * parse_float((*iter).value)); // short fix
                 break;
             case CLOAKGLASS:
-                //serialization covered in LoadXML
+                // serialization covered in LoadXML
                 pImage->cloakglass = parse_bool((*iter).value);
                 break;
             case CLOAKRATE:
-                //serialization covered in LoadXML
-                pImage->cloakrate = (int)((2147483647) * parse_float((*iter).value)); //short fix
+                // serialization covered in LoadXML
+                pImage->cloakrate = (int)((2147483647) * parse_float((*iter).value)); // short fix
                 break;
             case CLOAKENERGY:
-                //serialization covered in LoadXML
+                // serialization covered in LoadXML
                 pImage->cloakenergy = parse_float((*iter).value);
                 break;
             }
@@ -1391,42 +1382,42 @@ void Unit::beginElement(const string &name, const AttributeList &attributes)
                 break;
 
             case FRONTRIGHTTOP:
-                //serialization covered in LoadXML
-                armor.frontrighttop = CLAMP_UINT(parse_float((*iter).value)); //short fix
+                // serialization covered in LoadXML
+                armor.frontrighttop = CLAMP_UINT(parse_float((*iter).value)); // short fix
                 break;
             case BACKRIGHTTOP:
-                //serialization covered in LoadXML
-                armor.backrighttop = CLAMP_UINT(parse_float((*iter).value)); //short fix
+                // serialization covered in LoadXML
+                armor.backrighttop = CLAMP_UINT(parse_float((*iter).value)); // short fix
                 break;
             case FRONTLEFTTOP:
-                //serialization covered in LoadXML
-                armor.frontlefttop = CLAMP_UINT(parse_float((*iter).value)); //short fix
+                // serialization covered in LoadXML
+                armor.frontlefttop = CLAMP_UINT(parse_float((*iter).value)); // short fix
                 break;
             case BACKLEFTTOP:
-                //serialization covered in LoadXML
-                armor.backlefttop = CLAMP_UINT(parse_float((*iter).value)); //short fix
+                // serialization covered in LoadXML
+                armor.backlefttop = CLAMP_UINT(parse_float((*iter).value)); // short fix
                 break;
             case FRONTRIGHTBOTTOM:
-                //serialization covered in LoadXML
-                armor.frontrightbottom = CLAMP_UINT(parse_float((*iter).value)); //short fix
+                // serialization covered in LoadXML
+                armor.frontrightbottom = CLAMP_UINT(parse_float((*iter).value)); // short fix
                 break;
             case BACKRIGHTBOTTOM:
-                //serialization covered in LoadXML
-                armor.backrightbottom = CLAMP_UINT(parse_float((*iter).value)); //short fix
+                // serialization covered in LoadXML
+                armor.backrightbottom = CLAMP_UINT(parse_float((*iter).value)); // short fix
                 break;
             case FRONTLEFTBOTTOM:
-                //serialization covered in LoadXML
-                armor.frontleftbottom = CLAMP_UINT(parse_float((*iter).value)); //short fix
+                // serialization covered in LoadXML
+                armor.frontleftbottom = CLAMP_UINT(parse_float((*iter).value)); // short fix
                 break;
             case BACKLEFTBOTTOM:
-                //serialization covered in LoadXML
-                armor.backleftbottom = CLAMP_UINT(parse_float((*iter).value)); //short fix
+                // serialization covered in LoadXML
+                armor.backleftbottom = CLAMP_UINT(parse_float((*iter).value)); // short fix
                 break;
             }
         }
         break;
     case SHIELDS:
-        //serialization covered in LoadXML
+        // serialization covered in LoadXML
         assert(xml->unitlevel == 2);
         xml->unitlevel++;
         for (iter = attributes.begin(); iter != attributes.end(); iter++)
@@ -1434,41 +1425,41 @@ void Unit::beginElement(const string &name, const AttributeList &attributes)
             switch (attribute_map.lookup((*iter).name))
             {
             case FRONT:
-                //serialization covered in LoadXML
+                // serialization covered in LoadXML
                 fbrltb[0] = parse_float((*iter).value);
                 shield.number++;
                 break;
             case BACK:
-                //serialization covered in LoadXML
+                // serialization covered in LoadXML
                 fbrltb[1] = parse_float((*iter).value);
                 shield.number++;
                 break;
             case LEFT:
-                //serialization covered in LoadXML
+                // serialization covered in LoadXML
                 fbrltb[3] = parse_float((*iter).value);
                 shield.number++;
                 break;
             case RIGHT:
-                //serialization covered in LoadXML
+                // serialization covered in LoadXML
                 fbrltb[2] = parse_float((*iter).value);
                 shield.number++;
                 break;
             case TOP:
-                //serialization covered in LoadXML
+                // serialization covered in LoadXML
                 fbrltb[4] = parse_float((*iter).value);
                 shield.number++;
                 break;
             case BOTTOM:
-                //serialization covered in LoadXML
+                // serialization covered in LoadXML
                 fbrltb[5] = parse_float((*iter).value);
                 shield.number++;
                 break;
             case RECHARGE:
-                //serialization covered in LoadXML
+                // serialization covered in LoadXML
                 shield.recharge = parse_float((*iter).value);
                 break;
             case LEAK:
-                //serialization covered in LoadXML
+                // serialization covered in LoadXML
                 shield.leak = parse_int((*iter).value);
                 break;
             }
@@ -1476,26 +1467,26 @@ void Unit::beginElement(const string &name, const AttributeList &attributes)
         switch (shield.number)
         {
         case 2:
-            shield.shield2fb.frontmax = shield.shield2fb.front = fbrltb[0]; //short fix
-            shield.shield2fb.backmax = shield.shield2fb.back = fbrltb[1];   //short fix
+            shield.shield2fb.frontmax = shield.shield2fb.front = fbrltb[0]; // short fix
+            shield.shield2fb.backmax = shield.shield2fb.back = fbrltb[1];   // short fix
             break;
-        case 8:                                                                              //short fix
-            shield.shield8.frontrighttop = CLAMP_UINT(.25 * fbrltb[0] + .25 * fbrltb[2]);    //short fix
-            shield.shield8.backrighttop = CLAMP_UINT(.25 * fbrltb[1] + .25 * fbrltb[2]);     //short fix
-            shield.shield8.frontlefttop = CLAMP_UINT(.25 * fbrltb[0] + .25 * fbrltb[3]);     //short fix
-            shield.shield8.backlefttop = CLAMP_UINT(.25 * fbrltb[1] + .25 * fbrltb[3]);      //short fix
-            shield.shield8.frontrightbottom = CLAMP_UINT(.25 * fbrltb[0] + .25 * fbrltb[2]); //short fix
-            shield.shield8.backrightbottom = CLAMP_UINT(.25 * fbrltb[1] + .25 * fbrltb[2]);  //short fix
-            shield.shield8.frontleftbottom = CLAMP_UINT(.25 * fbrltb[0] + .25 * fbrltb[3]);  //short fix
-            shield.shield8.backleftbottom = CLAMP_UINT(.25 * fbrltb[1] + .25 * fbrltb[3]);   //short fix
+        case 8:                                                                              // short fix
+            shield.shield8.frontrighttop = CLAMP_UINT(.25 * fbrltb[0] + .25 * fbrltb[2]);    // short fix
+            shield.shield8.backrighttop = CLAMP_UINT(.25 * fbrltb[1] + .25 * fbrltb[2]);     // short fix
+            shield.shield8.frontlefttop = CLAMP_UINT(.25 * fbrltb[0] + .25 * fbrltb[3]);     // short fix
+            shield.shield8.backlefttop = CLAMP_UINT(.25 * fbrltb[1] + .25 * fbrltb[3]);      // short fix
+            shield.shield8.frontrightbottom = CLAMP_UINT(.25 * fbrltb[0] + .25 * fbrltb[2]); // short fix
+            shield.shield8.backrightbottom = CLAMP_UINT(.25 * fbrltb[1] + .25 * fbrltb[2]);  // short fix
+            shield.shield8.frontleftbottom = CLAMP_UINT(.25 * fbrltb[0] + .25 * fbrltb[3]);  // short fix
+            shield.shield8.backleftbottom = CLAMP_UINT(.25 * fbrltb[1] + .25 * fbrltb[3]);   // short fix
 
             break;
         case 4:
         default:
-            shield.shield4fbrl.frontmax = shield.shield4fbrl.front = (fbrltb[0]); //short fix
-            shield.shield4fbrl.backmax = shield.shield4fbrl.back = (fbrltb[1]);   //short fix
-            shield.shield4fbrl.rightmax = shield.shield4fbrl.right = (fbrltb[2]); //short fix
-            shield.shield4fbrl.leftmax = shield.shield4fbrl.left = fbrltb[3];     //short fix
+            shield.shield4fbrl.frontmax = shield.shield4fbrl.front = (fbrltb[0]); // short fix
+            shield.shield4fbrl.backmax = shield.shield4fbrl.back = (fbrltb[1]);   // short fix
+            shield.shield4fbrl.rightmax = shield.shield4fbrl.right = (fbrltb[2]); // short fix
+            shield.shield4fbrl.leftmax = shield.shield4fbrl.left = fbrltb[3];     // short fix
         }
         break;
     case HULL:
@@ -1536,8 +1527,8 @@ void Unit::beginElement(const string &name, const AttributeList &attributes)
                 break;
             case FUEL:
                 fuel = Mass * 60 * getFuelConversion();
-                //FIXME! This is a hack until we get csv support
-                //FIXME FIXME FIXME got support a long time ago! --chuck_starchaser
+                // FIXME! This is a hack until we get csv support
+                // FIXME FIXME FIXME got support a long time ago! --chuck_starchaser
                 break;
             }
         }
@@ -1643,7 +1634,7 @@ void Unit::beginElement(const string &name, const AttributeList &attributes)
         pImage->unitwriter->EndTag("Radar");
         break;
     case RADAR:
-        //handled above
+        // handled above
         assert(xml->unitlevel == 2);
         xml->unitlevel++;
         for (iter = attributes.begin(); iter != attributes.end(); iter++)
@@ -1687,7 +1678,7 @@ void Unit::beginElement(const string &name, const AttributeList &attributes)
                 recharge = parse_float((*iter).value);
                 break;
             case WARPENERGY:
-                maxwarpenergy = (parse_float((*iter).value)); //short fix
+                maxwarpenergy = (parse_float((*iter).value)); // short fix
                 break;
             case LIMIT:
                 maxenergy = energy = parse_float((*iter).value);
@@ -1857,7 +1848,7 @@ void Unit::beginElement(const string &name, const AttributeList &attributes)
                 break;
             case ECM:
 
-                pImage->ecm = (int)(((-1) > 1) * parse_float((*iter).value)); //short fix
+                pImage->ecm = (int)(((-1) > 1) * parse_float((*iter).value)); // short fix
                 pImage->ecm = pImage->ecm > 0 ? -pImage->ecm : pImage->ecm;
                 break;
             default:
@@ -1877,7 +1868,7 @@ void Unit::beginElement(const string &name, const AttributeList &attributes)
             switch (attribute_map.lookup((*iter).name))
             {
             case AFTERBURNENERGY:
-                afterburnenergy = (parse_float((*iter).value)); //short fix
+                afterburnenergy = (parse_float((*iter).value)); // short fix
                 break;
             default:
                 break;
@@ -1944,8 +1935,8 @@ void Unit::LoadXML(VSFileSystem::VSFile &f, const char *modifications, string *x
         pImage->unitwriter->AddTag("Jump");
         pImage->unitwriter->AddElement("missing", lessNeg1Handler, XMLType(&jump.drive));
         pImage->unitwriter->AddElement("warpDriveRating", floatStarHandler, XMLType(&jump.warpDriveRating));
-        pImage->unitwriter->AddElement("jumpenergy", floatStarHandler, XMLType(&jump.energy));       //short fix
-        pImage->unitwriter->AddElement("insysenergy", floatStarHandler, XMLType(&jump.insysenergy)); //short fix
+        pImage->unitwriter->AddElement("jumpenergy", floatStarHandler, XMLType(&jump.energy));       // short fix
+        pImage->unitwriter->AddElement("insysenergy", floatStarHandler, XMLType(&jump.insysenergy)); // short fix
         pImage->unitwriter->AddElement("delay", delayucharStarHandler, XMLType(&jump.delay));
         pImage->unitwriter->AddElement("damage", ucharStarHandler, XMLType(&jump.damage));
         pImage->unitwriter->AddElement("wormhole", ucharStarHandler, XMLType(&pImage->forcejump));
@@ -1966,26 +1957,31 @@ void Unit::LoadXML(VSFileSystem::VSFile &f, const char *modifications, string *x
         if (pImage->explosion_type.get().length())
             pImage->unitwriter->AddElement("ExplosionAni", stringStarHandler, XMLType(&pImage->explosion_type));
         pImage->unitwriter->AddElement("RepairDroid", ucharStarHandler, XMLType(&pImage->repair_droid));
-        pImage->unitwriter->AddElement("ECM", intToFloatHandler, XMLType(&pImage->ecm)); //short fix
+        pImage->unitwriter->AddElement("ECM", intToFloatHandler, XMLType(&pImage->ecm)); // short fix
         {
             pImage->unitwriter->AddTag("Cloak");
             pImage->unitwriter->AddElement("missing", cloakHandler, XMLType(&cloaking));
-            pImage->unitwriter->AddElement("cloakmin", intToFloatHandler, XMLType(&cloakmin)); //short fix
+            pImage->unitwriter->AddElement("cloakmin", intToFloatHandler, XMLType(&cloakmin)); // short fix
             pImage->unitwriter->AddElement("cloakglass", ucharStarHandler, XMLType(&pImage->cloakglass));
-            pImage->unitwriter->AddElement("cloakrate", intToFloatHandler, XMLType(&pImage->cloakrate)); //short fix
+            pImage->unitwriter->AddElement("cloakrate", intToFloatHandler, XMLType(&pImage->cloakrate)); // short fix
             pImage->unitwriter->AddElement("cloakenergy", floatStarHandler, XMLType(&pImage->cloakenergy));
             pImage->unitwriter->EndTag("Cloak");
         }
         {
             pImage->unitwriter->AddTag("Armor");
-            pImage->unitwriter->AddElement("frontrighttop", floatStarHandler, XMLType(&armor.frontrighttop));       //short fix
-            pImage->unitwriter->AddElement("backrighttop", floatStarHandler, XMLType(&armor.backrighttop));         //short fix
-            pImage->unitwriter->AddElement("frontlefttop", floatStarHandler, XMLType(&armor.frontlefttop));         //short fix
-            pImage->unitwriter->AddElement("backlefttop", floatStarHandler, XMLType(&armor.backlefttop));           //short fix
-            pImage->unitwriter->AddElement("frontrightbottom", floatStarHandler, XMLType(&armor.frontrightbottom)); //short fix
-            pImage->unitwriter->AddElement("backrightbottom", floatStarHandler, XMLType(&armor.backrightbottom));   //short fix
-            pImage->unitwriter->AddElement("frontleftbottom", floatStarHandler, XMLType(&armor.frontleftbottom));   //short fix
-            pImage->unitwriter->AddElement("backleftbottom", floatStarHandler, XMLType(&armor.backleftbottom));     //short fix
+            pImage->unitwriter->AddElement("frontrighttop", floatStarHandler,
+                                           XMLType(&armor.frontrighttop));                                  // short fix
+            pImage->unitwriter->AddElement("backrighttop", floatStarHandler, XMLType(&armor.backrighttop)); // short fix
+            pImage->unitwriter->AddElement("frontlefttop", floatStarHandler, XMLType(&armor.frontlefttop)); // short fix
+            pImage->unitwriter->AddElement("backlefttop", floatStarHandler, XMLType(&armor.backlefttop));   // short fix
+            pImage->unitwriter->AddElement("frontrightbottom", floatStarHandler,
+                                           XMLType(&armor.frontrightbottom)); // short fix
+            pImage->unitwriter->AddElement("backrightbottom", floatStarHandler,
+                                           XMLType(&armor.backrightbottom)); // short fix
+            pImage->unitwriter->AddElement("frontleftbottom", floatStarHandler,
+                                           XMLType(&armor.frontleftbottom)); // short fix
+            pImage->unitwriter->AddElement("backleftbottom", floatStarHandler,
+                                           XMLType(&armor.backleftbottom)); // short fix
             pImage->unitwriter->EndTag("Armor");
         }
         {
@@ -2007,11 +2003,11 @@ void Unit::LoadXML(VSFileSystem::VSFile &f, const char *modifications, string *x
     }
     {
         pImage->unitwriter->AddTag("Energy");
-        pImage->unitwriter->AddElement("afterburnenergy", floatStarHandler, XMLType(&afterburnenergy)); //short fix
+        pImage->unitwriter->AddElement("afterburnenergy", floatStarHandler, XMLType(&afterburnenergy)); // short fix
         pImage->unitwriter->AddTag("Reactor");
         pImage->unitwriter->AddElement("recharge", floatStarHandler, XMLType(&recharge));
         pImage->unitwriter->AddElement("limit", floatStarHandler, XMLType(&maxenergy));
-        pImage->unitwriter->AddElement("warpenergy", floatStarHandler, XMLType(&maxwarpenergy)); //short fix
+        pImage->unitwriter->AddElement("warpenergy", floatStarHandler, XMLType(&maxwarpenergy)); // short fix
         pImage->unitwriter->EndTag("Reactor");
 
         pImage->unitwriter->EndTag("Energy");
@@ -2063,7 +2059,7 @@ void Unit::LoadXML(VSFileSystem::VSFile &f, const char *modifications, string *x
     else
         XML_Parse(parser, (f.ReadFull()).c_str(), f.Size(), 1);
     XML_ParserFree(parser);
-    //Load meshes into subunit
+    // Load meshes into subunit
     pImage->unitwriter->EndTag("Unit");
     meshdata = xml->meshes;
     meshdata.push_back(nullptr);
@@ -2074,7 +2070,7 @@ void Unit::LoadXML(VSFileSystem::VSFile &f, const char *modifications, string *x
     unsigned int a;
     if (xml->mountz.size())
     {
-        //DO not destroy anymore, just affect address
+        // DO not destroy anymore, just affect address
         for (a = 0; a < xml->mountz.size(); a++)
             mounts.push_back(*xml->mountz[a]);
     }
@@ -2086,13 +2082,16 @@ void Unit::LoadXML(VSFileSystem::VSFile &f, const char *modifications, string *x
         {
             int b = a;
             if (a % 4 == 2 && (int)a < (GetNumMounts() - 1))
-                if (mounts[a].type->type != weapon_info::PROJECTILE && mounts[a + 1].type->type != weapon_info::PROJECTILE)
+                if (mounts[a].type->type != weapon_info::PROJECTILE &&
+                    mounts[a + 1].type->type != weapon_info::PROJECTILE)
                     b = a + 1;
             mounts[b].sound = AUDCreateSound(mounts[b].type->sound, mounts[b].type->type != weapon_info::PROJECTILE);
         }
         else if ((!half_sounds) || mounts[a].type->type == weapon_info::PROJECTILE)
         {
-            mounts[a].sound = AUDCreateSound(mounts[a].type->sound, mounts[a].type->type != weapon_info::PROJECTILE); //lloping also flase in unit_customize
+            mounts[a].sound =
+                AUDCreateSound(mounts[a].type->sound,
+                               mounts[a].type->type != weapon_info::PROJECTILE); // lloping also flase in unit_customize
         }
         if (a > 0)
             if (mounts[a].sound == mounts[a - 1].sound && mounts[a].sound != -1)
@@ -2125,7 +2124,8 @@ void Unit::LoadXML(VSFileSystem::VSFile &f, const char *modifications, string *x
         static int shieldstacks = XMLSupport::parse_int(vs_config->getVariable("graphics", "shield_detail", "16"));
         static std::string shieldtex = vs_config->getVariable("graphics", "shield_texture", "shield.bmp");
         static std::string shieldtechnique = vs_config->getVariable("graphics", "shield_technique", "");
-        meshdata.back() = new SphereMesh(rSize(), shieldstacks, shieldstacks, shieldtex.c_str(), shieldtechnique, nullptr, false, ONE, ONE);
+        meshdata.back() = new SphereMesh(rSize(), shieldstacks, shieldstacks, shieldtex.c_str(), shieldtechnique,
+                                         nullptr, false, ONE, ONE);
     }
     meshdata.back()->EnableSpecialFX();
     if (!this->colTrees)
@@ -2135,20 +2135,14 @@ void Unit::LoadXML(VSFileSystem::VSFile &f, const char *modifications, string *x
             xml->rapidmesh->GetPolys(polies);
         csOPCODECollider *csrc = nullptr;
         if (xml->hasColTree)
-            csrc = getCollideTree(Vector(1, 1, 1),
-                                  xml->rapidmesh
-                                      ? &polies
-                                      : nullptr);
-        this->colTrees = new collideTrees(collideTreeHash,
-                                          csrc,
-                                          colShield);
-        if (xml->rapidmesh && xml->hasColTree) //if we have a speciaal rapid mesh we need to generate things now
+            csrc = getCollideTree(Vector(1, 1, 1), xml->rapidmesh ? &polies : nullptr);
+        this->colTrees = new collideTrees(collideTreeHash, csrc, colShield);
+        if (xml->rapidmesh && xml->hasColTree) // if we have a speciaal rapid mesh we need to generate things now
             for (unsigned int i = 1; i < collideTreesMaxTrees; ++i)
                 if (!this->colTrees->rapidColliders[i])
                 {
                     unsigned int which = 1 << i;
-                    this->colTrees->rapidColliders[i] = getCollideTree(Vector(which, which, which),
-                                                                       &polies);
+                    this->colTrees->rapidColliders[i] = getCollideTree(Vector(which, which, which), &polies);
                 }
     }
     if (xml->rapidmesh)

@@ -26,11 +26,11 @@
 #include "force_feedback.h"
 
 #include "vegastrike.h"
-#include "vsfilesystem.h"
 #include "vs_globals.h"
+#include "vsfilesystem.h"
 
-#include "config_xml.h"
 #include "cmd/script/mission.h"
+#include "config_xml.h"
 #include "options.h"
 #include <stdint.h>
 
@@ -129,7 +129,7 @@ void ForceFeedback::playLaser()
     double nowtime = mission->getGametime();
     if (nowtime < eff_last_time[eff_nr] + min_effect_time)
     {
-        //to make sure that effects aren't done too fast after another
+        // to make sure that effects aren't done too fast after another
         return;
     }
     playEffect(eff_laser_jerk);
@@ -173,7 +173,7 @@ void ForceFeedback::playShortEffect(uint32_t eff_nr)
     double nowtime = mission->getGametime();
     if (nowtime < eff_last_time[eff_nr] + min_effect_time)
     {
-        //to make sure that effects aren't done too fast after another
+        // to make sure that effects aren't done too fast after another
         return;
     }
     playEffect(eff_nr);
@@ -482,8 +482,8 @@ void ForceFeedback::init()
 #endif
     effects[eff_force].type = FF_CONSTANT;
     effects[eff_force].id = -1;
-    effects[eff_force].u.constant.level = 0x0; //dynamically
-    effects[eff_force].direction = 0x0;        //dynamically
+    effects[eff_force].u.constant.level = 0x0; // dynamically
+    effects[eff_force].direction = 0x0;        // dynamically
     effects[eff_force].u.constant.envelope.attack_length = 0x000;
     effects[eff_force].u.constant.envelope.attack_level = 0;
     effects[eff_force].u.constant.envelope.fade_length = 0x000;

@@ -1,26 +1,24 @@
 #ifndef _ENHANCER_H_
 #define _ENHANCER_H_
-#include "enhancement_generic.h"
 #include "cmd/unit.h"
+#include "enhancement_generic.h"
 #include "savegame.h"
 
 class GameEnhancement : public GameUnit<Enhancement>
 {
     friend class UnitFactory;
 
-protected:
+  protected:
     /// constructor only to be called by UnitFactory
-    GameEnhancement(const char *filename,
-                    int faction,
-                    const string &modifications,
-                    Flightgroup *flightgrp = nullptr,
-                    int fg_subnumber = 0) : GameUnit<Enhancement>(filename, false, faction, modifications, flightgrp, fg_subnumber)
+    GameEnhancement(const char *filename, int faction, const string &modifications, Flightgroup *flightgrp = nullptr,
+                    int fg_subnumber = 0)
+        : GameUnit<Enhancement>(filename, false, faction, modifications, flightgrp, fg_subnumber)
     {
         string file(filename);
         this->filename = filename;
     }
 
-private:
+  private:
     /// default constructor forbidden
     GameEnhancement();
     /// copy constructor forbidden

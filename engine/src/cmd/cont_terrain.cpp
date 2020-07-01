@@ -1,21 +1,22 @@
 #include "cont_terrain.h"
-#include "universe.h"
-#include "star_system.h"
 #include "gfx/matrix.h"
-#include "vegastrike.h"
 #include "gfx/mesh.h"
+#include "star_system.h"
 #include "unit_generic.h"
+#include "universe.h"
+#include "vegastrike.h"
 
+#include "config_xml.h"
 #include "unit_collide.h"
 #include "vs_globals.h"
-#include "config_xml.h"
 ContinuousTerrain::ContinuousTerrain(const char *filename, const Vector &Scales, const float mass)
 {
     float tmass;
     FILE *fp = VSFileSystem::vs_open(filename, "r");
     if (fp)
     {
-        VSFileSystem::vs_fscanf(fp, "%d %f\n<%f %f %f>", &width, &tmass, &this->Scales.i, &this->Scales.j, &this->Scales.k);
+        VSFileSystem::vs_fscanf(fp, "%d %f\n<%f %f %f>", &width, &tmass, &this->Scales.i, &this->Scales.j,
+                                &this->Scales.k);
         if (mass)
             tmass = mass;
         if (Scales.i && Scales.j && Scales.k)
@@ -82,8 +83,8 @@ ContinuousTerrain::ContinuousTerrain(const char *filename, const Vector &Scales,
             if (data[i])
             {
                 if (sizeX != data[i]->getSizeX() || sizeZ != data[i]->getSizeZ())
-                    VSFileSystem::vs_fprintf(stderr,
-                                             "Warning: Sizes of terrain do not match...expect gaps in continuous terrain\n");
+                    VSFileSystem::vs_fprintf(
+                        stderr, "Warning: Sizes of terrain do not match...expect gaps in continuous terrain\n");
                 data[i]->SetTotalSize(sizeX * width, sizeZ * width);
             }
         for (i = 0; i < width; i++)
@@ -91,11 +92,11 @@ ContinuousTerrain::ContinuousTerrain(const char *filename, const Vector &Scales,
             {
                 int nj = j - 1 < 0 ? width - 1 : j - 1;
                 int ni = i - 1 < 0 ? width - 1 : i - 1;
-                if (data[j + width * i] && data[(j + 1) % width + width * i] && data[j + width * ((i + 1) % width)] && data[nj + width * i] && data[j + width * ni])
+                if (data[j + width * i] && data[(j + 1) % width + width * i] && data[j + width * ((i + 1) % width)] &&
+                    data[nj + width * i] && data[j + width * ni])
                 {
                     data[j + width * i]->SetNeighbors(data[(j + 1) % width + width * i],
-                                                      data[j + width * ((i + 1) % width)],
-                                                      data[nj + width * i],
+                                                      data[j + width * ((i + 1) % width)], data[nj + width * i],
                                                       data[j + width * ni]);
                     data[j + width * i]->StaticCullData(25);
                 }
@@ -142,7 +143,7 @@ void ContinuousTerrain::Collide()
     {
         if (data[i])
             data[i]->Collide();
-        //FIXME
+        // FIXME
         else
             assert(0);
     }
@@ -169,7 +170,9 @@ QVector ContinuousTerrain::GetGroundPosIdentTrans(QVector ShipPos, Vector &norm)
     ShipPos.k /= Scales.k;
     for (int i = 0; i < numcontterr; i++)
     {
-        QVector tmploc = ShipPos - location[i] + QVector((data[i])->getminX() + .5 * (data[i])->getSizeX(), 0, (data[i])->getminZ() + .5 * (data[i])->getSizeZ());
+        QVector tmploc = ShipPos - location[i] +
+                         QVector((data[i])->getminX() + .5 * (data[i])->getSizeX(), 0,
+                                 (data[i])->getminZ() + .5 * (data[i])->getSizeZ());
         if (data[i]->GetGroundPos(tmploc, norm, ident, sizeX * width, sizeZ * width))
         {
             tmploc += location[i] - QVector((data[i])->getminX() + .5 * (data[i])->getSizeX(), 0,
@@ -229,10 +232,8 @@ void ContinuousTerrain::Draw()
         }
         else if (md[i].mesh)
         {
-            Vector TransformedPosition = Transform(md[i].mat,
-                                                   md[i].mesh->Position());
-            float d = GFXSphereInFrustum(TransformedPosition,
-                                         md[i].mesh->rSize());
+            Vector TransformedPosition = Transform(md[i].mat, md[i].mesh->Position());
+            float d = GFXSphereInFrustum(TransformedPosition, md[i].mesh->rSize());
             if (d)
                 md[i].mesh->Draw(1000, md[i].mat, d, -1, (_Universe->AccessCamera()->GetNebula() != nullptr) ? -1 : 0);
         }
@@ -274,10 +275,15 @@ void ContinuousTerrain::Collide(Unit *un, Matrix t)
     CopyMatrix(transform, t);
     for (int i = 0; i < numcontterr; i++)
     {
-        QVector tmp(Transform(t, location[i] - QVector(
-                                                   (data[i] ? (data[i])->getminX() : md[i].mesh->corner_min().i) + .5 * (data[i] ? (data[i])->getSizeX() : (md[i].mesh->corner_max().i - md[i].mesh->corner_min().i)),
-                                                   0,
-                                                   (data[i] ? (data[i])->getminZ() : md[i].mesh->corner_min().k) + (.5 * (data[i] ? (data[i])->getSizeZ() : (md[i].mesh->corner_max().i - md[i].mesh->corner_min().i))))));
+        QVector tmp(Transform(
+            t,
+            location[i] - QVector((data[i] ? (data[i])->getminX() : md[i].mesh->corner_min().i) +
+                                      .5 * (data[i] ? (data[i])->getSizeX()
+                                                    : (md[i].mesh->corner_max().i - md[i].mesh->corner_min().i)),
+                                  0,
+                                  (data[i] ? (data[i])->getminZ() : md[i].mesh->corner_min().k) +
+                                      (.5 * (data[i] ? (data[i])->getSizeZ()
+                                                     : (md[i].mesh->corner_max().i - md[i].mesh->corner_min().i))))));
 
         transform.p = tmp;
         if (data[i])
@@ -327,7 +333,8 @@ void ContinuousTerrain::Collide(Unit *un, Matrix t)
                 {
                     if (un->colTrees->colTree(un, Vector(0, 0, 0)))
                     {
-                        if (un->colTrees->colTree(un, Vector(0, 0, 0))->Collide(*md[i].collider, &smalltransform, &bigtransform))
+                        if (un->colTrees->colTree(un, Vector(0, 0, 0))
+                                ->Collide(*md[i].collider, &smalltransform, &bigtransform))
                         {
                             csCollisionPair *mycollide = csOPCODECollider::GetCollisions();
                             unsigned int numHits = csOPCODECollider::GetCollisionPairCount();
@@ -359,8 +366,11 @@ void ContinuousTerrain::Collide(Unit *un, Matrix t)
             if (autocol)
             {
                 static float mass = 1000;
-                un->ApplyForce(bigNormal * .4 * un->GetMass() * fabs(bigNormal.Dot((un->GetVelocity() / SIMULATION_ATOM))));
-                un->ApplyDamage(un->Position().Cast() - bigNormal * un->rSize(), -bigNormal, .5 * fabs(bigNormal.Dot(un->GetVelocity())) * mass * SIMULATION_ATOM, un, GFXColor(1, 1, 1, 1), nullptr);
+                un->ApplyForce(bigNormal * .4 * un->GetMass() *
+                               fabs(bigNormal.Dot((un->GetVelocity() / SIMULATION_ATOM))));
+                un->ApplyDamage(un->Position().Cast() - bigNormal * un->rSize(), -bigNormal,
+                                .5 * fabs(bigNormal.Dot(un->GetVelocity())) * mass * SIMULATION_ATOM, un,
+                                GFXColor(1, 1, 1, 1), nullptr);
             }
         }
     }
@@ -371,10 +381,15 @@ void ContinuousTerrain::AdjustTerrain(Matrix &transform, const Matrix &transform
     dirty[i] |= checkInvScale(location[i].i, campos.i, sizeX);
     dirty[i] |= checkInvScale(location[i].k, campos.k, sizeZ);
     CopyMatrix(transform, transformation);
-    QVector tmp(Transform(transformation, location[i] - QVector(
-                                                            (data[i] ? (data[i])->getminX() : md[i].mesh->corner_min().i) + .5 * (data[i] ? (data[i])->getSizeX() : (md[i].mesh->corner_max().i - md[i].mesh->corner_min().i)),
-                                                            0,
-                                                            (data[i] ? (data[i])->getminZ() : md[i].mesh->corner_min().k) + (.5 * (data[i] ? (data[i])->getSizeZ() : (md[i].mesh->corner_max().i - md[i].mesh->corner_min().i))))));
+    QVector tmp(Transform(
+        transformation,
+        location[i] - QVector((data[i] ? (data[i])->getminX() : md[i].mesh->corner_min().i) +
+                                  .5 * (data[i] ? (data[i])->getSizeX()
+                                                : (md[i].mesh->corner_max().i - md[i].mesh->corner_min().i)),
+                              0,
+                              (data[i] ? (data[i])->getminZ() : md[i].mesh->corner_min().k) +
+                                  (.5 * (data[i] ? (data[i])->getSizeZ()
+                                                 : (md[i].mesh->corner_max().i - md[i].mesh->corner_min().i))))));
     transform.p = tmp;
 }
 void ContinuousTerrain::AdjustTerrain(StarSystem *ss)
@@ -396,9 +411,7 @@ void ContinuousTerrain::AdjustTerrain(StarSystem *ss)
 
 Vector ContinuousTerrain::GetUpVector(const Vector &pos)
 {
-    return (data[0])
-               ? data[0]->GetUpVector(pos)
-               : Vector(transformation.getQ());
+    return (data[0]) ? data[0]->GetUpVector(pos) : Vector(transformation.getQ());
 }
 
 void disableTerrainDraw(ContinuousTerrain *ct)

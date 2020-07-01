@@ -1,7 +1,7 @@
 #ifndef __FACTIONGENERIC_H
 #define __FACTIONGENERIC_H
-#include <string>
 #include <memory>
+#include <string>
 //#include <gnuhash.h>
 
 #include "xml_support.h"
@@ -14,47 +14,49 @@ typedef vsUMap<std::string, float> MapStringFloat;
 
 class Faction
 {
-public:
+  public:
     /**
- * Faction_stuff holds the index and relationship of each and every
- * Other faction.  After it has been properly processed when calling
- * LoadXML, it will hold an ordered list containing all factions.
- * myfaction.faction[theirfaction].relationship will contain my
- * attitude to their faction
- */
+     * Faction_stuff holds the index and relationship of each and every
+     * Other faction.  After it has been properly processed when calling
+     * LoadXML, it will hold an ordered list containing all factions.
+     * myfaction.faction[theirfaction].relationship will contain my
+     * attitude to their faction
+     */
     struct faction_stuff
     {
-        ///for internal purposes only.
+        /// for internal purposes only.
         union faction_name {
             int32_t index;
             char *name;
         } stats;
-        ///A value between 0 and 1 indicating my attitude towards index
+        /// A value between 0 and 1 indicating my attitude towards index
         float relationship;
-        std::shared_ptr<FSM> conversation; //a conversation any two factions can have
-        faction_stuff() : relationship(0.0) {}
+        std::shared_ptr<FSM> conversation; // a conversation any two factions can have
+        faction_stuff() : relationship(0.0)
+        {
+        }
     };
 
-public:
+  public:
     /**
- * holds the relationships to all _other_ factions loaded
- * hold misguided info for self FIXME
- */
+     * holds the relationships to all _other_ factions loaded
+     * hold misguided info for self FIXME
+     */
     bool citizen;
     int32_t playlist;
     float sparkcolor[4];
     std::vector<faction_stuff> faction;
-    ///If logo==0, load from this one
+    /// If logo==0, load from this one
     std::string logoName;
     std::string logoAlphaName;
-    ///If secondaryLogo==0, load from this one
+    /// If secondaryLogo==0, load from this one
     std::string secondaryLogoName;
     std::string secondaryLogoAlphaName;
-    ///Logos used by the ships of that faction
+    /// Logos used by the ships of that faction
     Texture *logo;
-    //if the squadron doens't; have its own particular logo
+    // if the squadron doens't; have its own particular logo
     Texture *secondaryLogo;
-    ///char * of the name
+    /// char * of the name
     char *factionname;
     struct comm_face_t
     {
@@ -67,7 +69,9 @@ public:
         };
         CHOICE dockable;
         CHOICE base;
-        comm_face_t() : dockable(CEITHER), base(CEITHER) {}
+        comm_face_t() : dockable(CEITHER), base(CEITHER)
+        {
+        }
     };
     std::vector<comm_face_t> comm_faces;
     std::vector<std::shared_ptr<Animation>> explosion;
@@ -76,7 +80,7 @@ public:
     MapStringFloat ship_relation_modifier;
     // This should be a std::auto_ptr, but then "cmd/unit.h" has to be included
     std::shared_ptr<Unit> contraband;
-    ///Figures out the relationships of each faction with each other
+    /// Figures out the relationships of each faction with each other
     static void ParseAllAllies(/*Universe * thisuni*/);
     void ParseAllies(/*Universe * thisuni,*/ unsigned int whichfaction);
     static void LoadXML(const char *factionfile, char *xmlbuffer = nullptr, int buflength = 0);
@@ -93,78 +97,78 @@ public:
         sparkcolor[2] = 1;
         sparkcolor[3] = 1;
     }
-    ~Faction(); //destructor
+    ~Faction(); // destructor
 };
 
-extern std::vector<std::shared_ptr<Faction>> factions; //the factions
+extern std::vector<std::shared_ptr<Faction>> factions; // the factions
 
 namespace FactionUtil
 {
-    extern int32_t upgradefac;
-    extern int32_t neutralfac;
-    extern int32_t planetfac;
-    std::vector<class Animation *> *GetRandCommAnimation(int faction, Unit *unit, unsigned char &sex);
-    void SerializeFaction(FILE *file);
-    std::string SerializeFaction();
-    void LoadSerializedFaction(FILE *file);
-    void LoadSerializedFaction(char *&buf);
-    int32_t numnums(const char *str);
-    ///returns the index of the faction with that name
-    //int GetFaction (const char *factionname);
-    int32_t GetNumAnimation(int faction);
-    class Unit *GetContraband(int faction);
+extern int32_t upgradefac;
+extern int32_t neutralfac;
+extern int32_t planetfac;
+std::vector<class Animation *> *GetRandCommAnimation(int faction, Unit *unit, unsigned char &sex);
+void SerializeFaction(FILE *file);
+std::string SerializeFaction();
+void LoadSerializedFaction(FILE *file);
+void LoadSerializedFaction(char *&buf);
+int32_t numnums(const char *str);
+/// returns the index of the faction with that name
+// int GetFaction (const char *factionname);
+int32_t GetNumAnimation(int faction);
+class Unit *GetContraband(int faction);
 
-    const char *GetFaction(int faction);
+const char *GetFaction(int faction);
 
-    /**
+/**
  * Returns the relationship between myfaction and theirfaction
  * 1 is happy. 0 is neutral (btw 1 and 0 will not attack)
  * -1 is mad. <0 will attack
  */
-    int GetFactionIndex(const std::string &name);
+int GetFactionIndex(const std::string &name);
 
-    inline int32_t GetUpgradeFaction()
-    {
-        return upgradefac;
-    }
+inline int32_t GetUpgradeFaction()
+{
+    return upgradefac;
+}
 
-    inline int32_t GetNeutralFaction()
-    {
-        return neutralfac;
-    }
+inline int32_t GetNeutralFaction()
+{
+    return neutralfac;
+}
 
-    inline int32_t GetPlanetFaction()
-    {
-        return planetfac;
-    }
+inline int32_t GetPlanetFaction()
+{
+    return planetfac;
+}
 
-    inline float GetIntRelation(const int32_t &myfaction, const int32_t &theirfaction)
-    {
-        return factions[myfaction]->faction[theirfaction].relationship;
-    }
+inline float GetIntRelation(const int32_t &myfaction, const int32_t &theirfaction)
+{
+    return factions[myfaction]->faction[theirfaction].relationship;
+}
 
-    //float GetRelation (std::string myfaction, std::string theirfaction);
-    std::string GetFactionName(int32_t index);
-    bool isCitizenInt(int32_t index);
-    bool isCitizen(const std::string &name);
-    void AdjustIntRelation(const int32_t &myfaction, const int32_t &theirfaction, const float factor, const float rank);
-    //void AdjustRelation(std::string myfaction,std::string theirfaction, float factor, float rank);
-    int32_t GetPlaylist(const int32_t &myfaction);
-    const float *GetSparkColor(const int32_t &myfaction);
-    uint32_t GetNumFactions();
-    //Returns a conversation that a myfaction might have with a theirfaction
-    FSM *GetConversation(const int32_t &myfaction, const int32_t &theirfaction);
-    Texture *getForceLogo(int32_t faction);
-    Texture *getSquadLogo(int32_t faction);
+// float GetRelation (std::string myfaction, std::string theirfaction);
+std::string GetFactionName(int32_t index);
+bool isCitizenInt(int32_t index);
+bool isCitizen(const std::string &name);
+void AdjustIntRelation(const int32_t &myfaction, const int32_t &theirfaction, const float factor, const float rank);
+// void AdjustRelation(std::string myfaction,std::string theirfaction, float factor, float rank);
+int32_t GetPlaylist(const int32_t &myfaction);
+const float *GetSparkColor(const int32_t &myfaction);
+uint32_t GetNumFactions();
+// Returns a conversation that a myfaction might have with a theirfaction
+FSM *GetConversation(const int32_t &myfaction, const int32_t &theirfaction);
+Texture *getForceLogo(int32_t faction);
+Texture *getSquadLogo(int32_t faction);
 
-    Animation *createAnimation(const char *anim);
-    Texture *createTexture(const char *tex, const char *tmp, bool force = false);
-    Texture *createTexture(const char *tex, bool force = false);
-    std::vector<class Animation *> *GetAnimation(int32_t faction, int32_t n, unsigned char &sex);
-    Animation *GetRandExplosionAnimation(int32_t whichfaction, std::string &which);
-    void LoadFactionPlaylists();
-    /** Still in faction_xml.cpp because createUnit **/
-    void LoadContrabandLists();
+Animation *createAnimation(const char *anim);
+Texture *createTexture(const char *tex, const char *tmp, bool force = false);
+Texture *createTexture(const char *tex, bool force = false);
+std::vector<class Animation *> *GetAnimation(int32_t faction, int32_t n, unsigned char &sex);
+Animation *GetRandExplosionAnimation(int32_t whichfaction, std::string &which);
+void LoadFactionPlaylists();
+/** Still in faction_xml.cpp because createUnit **/
+void LoadContrabandLists();
 }; // namespace FactionUtil
 
 #endif

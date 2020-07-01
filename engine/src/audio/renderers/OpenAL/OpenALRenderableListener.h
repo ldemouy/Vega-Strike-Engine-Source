@@ -12,24 +12,24 @@
 namespace Audio
 {
 
-    /**
-     * OpenAL Renderable Listener class
-     *
-     * @remarks This class implements the RenderableListener interface for the
-     *      OpenAL renderer.
-     *
-     */
-    class OpenALRenderableListener : public RenderableListener
-    {
-    public:
-        OpenALRenderableListener(Listener *listener);
+/**
+ * OpenAL Renderable Listener class
+ *
+ * @remarks This class implements the RenderableListener interface for the
+ *      OpenAL renderer.
+ *
+ */
+class OpenALRenderableListener : public RenderableListener
+{
+  public:
+    OpenALRenderableListener(Listener *listener);
 
-        virtual ~OpenALRenderableListener();
+    virtual ~OpenALRenderableListener();
 
-    protected:
-        /** @see RenderableListener::update. */
-        virtual void updateImpl(int32_t flags);
-    };
+  protected:
+    /** @see RenderableListener::update. */
+    virtual void updateImpl(int32_t flags);
+};
 
 }; // namespace Audio
 

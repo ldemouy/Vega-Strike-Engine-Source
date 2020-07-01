@@ -1,23 +1,23 @@
-#include "vegastrike.h"
+#include "gamemenu.h"
+#include "cmd/music.h"
+#include "configxml.h"
+#include "gldrv/gfxlib_struct.h"
+#include "gui/eventmanager.h"
+#include "gui/groupcontrol.h"
+#include "gui/modaldialog.h"
+#include "gui/newbutton.h"
+#include "gui/scroller.h"
+#include "gui/simplepicker.h"
+#include "gui/staticdisplay.h"
+#include "gui/textinputdisplay.h"
 #include "in_kb.h"
 #include "in_kb_data.h"
 #include "in_mouse.h"
-#include "main_loop.h"
-#include "universe_util.h"
 #include "lin_time.h"
-#include "gui/modaldialog.h"
-#include "gui/eventmanager.h"
-#include "gui/newbutton.h"
-#include "gui/staticdisplay.h"
-#include "gui/textinputdisplay.h"
-#include "gui/simplepicker.h"
-#include "gui/groupcontrol.h"
-#include "gui/scroller.h"
-#include "gamemenu.h"
-#include "gldrv/gfxlib_struct.h"
-#include "cmd/music.h"
+#include "main_loop.h"
 #include "options.h"
-#include "configxml.h"
+#include "universe_util.h"
+#include "vegastrike.h"
 
 extern void TerminateCurrentBase(void);
 vector<uint32_t> gamemenu_keyboard_queue;
@@ -37,7 +37,9 @@ GameMenu::GameMenu(bool firstTime) : m_firstTime(firstTime)
 {
 }
 
-GameMenu::~GameMenu() {}
+GameMenu::~GameMenu()
+{
+}
 
 void GameMenu::run()
 {
@@ -47,16 +49,18 @@ void GameMenu::run()
 int32_t shiftup(int32_t);
 void gamemenu_keyboard_handler(uint32_t ch, uint32_t mod, bool release, int32_t x, int32_t y)
 {
-    //Set modifiers
+    // Set modifiers
     uint32_t amods = 0;
     amods |= (mod & (WSK_MOD_LSHIFT | WSK_MOD_RSHIFT)) ? KB_MOD_SHIFT : 0;
     amods |= (mod & (WSK_MOD_LCTRL | WSK_MOD_RCTRL)) ? KB_MOD_CTRL : 0;
     amods |= (mod & (WSK_MOD_LALT | WSK_MOD_RALT)) ? KB_MOD_ALT : 0;
     setActiveModifiers(amods);
-    //Queue keystroke
+    // Queue keystroke
     if (!release)
     {
-        gamemenu_keyboard_queue.push_back(((WSK_MOD_LSHIFT == (mod & WSK_MOD_LSHIFT)) || (WSK_MOD_RSHIFT == (mod & WSK_MOD_RSHIFT))) ? shiftup(ch) : ch);
+        gamemenu_keyboard_queue.push_back(
+            ((WSK_MOD_LSHIFT == (mod & WSK_MOD_LSHIFT)) || (WSK_MOD_RSHIFT == (mod & WSK_MOD_RSHIFT))) ? shiftup(ch)
+                                                                                                       : ch);
     }
 }
 
@@ -69,11 +73,11 @@ void gamemenu_draw()
     GFXEndScene();
 }
 
-//static
+// static
 void GameMenu::createNetworkControls(GroupControl *serverConnGroup, std::vector<uint32_t> *inputqueue)
 {
     GFXColor color(1, .5, 0, .1);
-    //Account Server button.
+    // Account Server button.
     NewButton *joinAcct = new NewButton;
     joinAcct->setRect(Rect(-.50, .7, .37, .09));
     joinAcct->setLabel("Online Account Server");
@@ -87,7 +91,7 @@ void GameMenu::createNetworkControls(GroupControl *serverConnGroup, std::vector<
     joinAcct->setFont(Font(.07));
     serverConnGroup->addChild(joinAcct);
 
-    //Ship Stats button.
+    // Ship Stats button.
     NewButton *joinServer = new NewButton;
     joinServer->setRect(Rect(.05, .7, .37, .09));
     joinServer->setLabel("Independent Server");
@@ -118,7 +122,7 @@ void GameMenu::createNetworkControls(GroupControl *serverConnGroup, std::vector<
     mplayTitle->setId("HostTitle");
     hostConnGroup->addChild(mplayTitle);
 
-    //Description box.
+    // Description box.
     StaticDisplay *serverInputText = new TextInputDisplay(inputqueue, "\x1b\n \t\r*?\\/|:<>\"^");
     serverInputText->setRect(Rect(-.6, .42, 1.2, .15));
     serverInputText->setColor(GFXColor(1, .5, 0, .1));
@@ -140,8 +144,9 @@ void GameMenu::createNetworkControls(GroupControl *serverConnGroup, std::vector<
     mplayTitle->setId("PortTitle");
     hostConnGroup->addChild(mplayTitle);
 
-    StaticDisplay *portInputText = new TextInputDisplay(inputqueue, "\x1b\n \t\r*?\\/|:<>\"!@#$%^&*()[]{},.=_-+`~"
-                                                                    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
+    StaticDisplay *portInputText =
+        new TextInputDisplay(inputqueue, "\x1b\n \t\r*?\\/|:<>\"!@#$%^&*()[]{},.=_-+`~"
+                                         "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
     portInputText->setRect(Rect(-.6, .12, .4, .15));
     portInputText->setColor(GFXColor(1, .5, 0, .1));
     portInputText->setOutlineColor(GUI_OPAQUE_MEDIUM_GRAY());
@@ -241,24 +246,24 @@ void GameMenu::createNetworkControls(GroupControl *serverConnGroup, std::vector<
 
 namespace UniverseUtil
 {
-    void startMenuInterface(bool firstTime, string error)
-    {
-        winsys_set_keyboard_func(gamemenu_keyboard_handler);
-        winsys_set_mouse_func(EventManager::ProcessMouseClick);
-        winsys_set_passive_motion_func(EventManager::ProcessMousePassive);
-        winsys_set_motion_func(EventManager::ProcessMouseActive);
+void startMenuInterface(bool firstTime, string error)
+{
+    winsys_set_keyboard_func(gamemenu_keyboard_handler);
+    winsys_set_mouse_func(EventManager::ProcessMouseClick);
+    winsys_set_passive_motion_func(EventManager::ProcessMousePassive);
+    winsys_set_motion_func(EventManager::ProcessMouseActive);
 
-        GameMenu *gm = new GameMenu(firstTime);
-        gm->init();
-        gm->run();
-        if (!error.empty())
-        {
-            gm->window()->findControlById("MainMenu")->setHidden(true);
-            gm->window()->findControlById("MultiPlayerMenu")->setHidden(false);
-            showAlert(error);
-        }
-        GFXLoop(gamemenu_draw);
+    GameMenu *gm = new GameMenu(firstTime);
+    gm->init();
+    gm->run();
+    if (!error.empty())
+    {
+        gm->window()->findControlById("MainMenu")->setHidden(true);
+        gm->window()->findControlById("MultiPlayerMenu")->setHidden(false);
+        showAlert(error);
     }
+    GFXLoop(gamemenu_draw);
+}
 } // namespace UniverseUtil
 
 void GameMenu::init()
@@ -275,7 +280,7 @@ void GameMenu::init()
 
 void GameMenu::createControls()
 {
-    //Base info title.
+    // Base info title.
     StaticDisplay *baseTitle = new StaticDisplay;
     baseTitle->setRect(Rect(-.96, .83, 1.9, .1));
     baseTitle->setText("Vega Strike menu");
@@ -284,7 +289,7 @@ void GameMenu::createControls()
     baseTitle->setColor(GUI_CLEAR);
     baseTitle->setFont(Font(.07, 2));
     baseTitle->setId("GameTitle");
-    //Put it on the window.
+    // Put it on the window.
 
     GroupControl *mainMenuGroup = new GroupControl;
     mainMenuGroup->setId("MainMenu");
@@ -337,7 +342,7 @@ void GameMenu::createControls()
     mplayTitle->setColor(GUI_CLEAR);
     mplayTitle->setFont(Font(.07, 2));
     mplayTitle->setId("GameTitle");
-    //Put it on the window.
+    // Put it on the window.
     serverConnGroup->addChild(mplayTitle);
 
     NewButton *returnMainMenu = new NewButton;
@@ -364,35 +369,33 @@ void GameMenu::createControls()
 
     createNetworkControls(serverConnGroup, &gamemenu_keyboard_queue);
 
-    //Make a tab for mode switching...
+    // Make a tab for mode switching...
     //(Add buttons for acctserver/modname) (acctserver mode is default).
     //
-    //Add a user/password box (as well as create account button if in acctserver mode).
-    //Connect button
+    // Add a user/password box (as well as create account button if in acctserver mode).
+    // Connect button
     //
-    //Scan local network button (I guess...)
-    //Host game menu... also might take plenty of work...
+    // Scan local network button (I guess...)
+    // Host game menu... also might take plenty of work...
 
-    //Single Player button
-    //Options button (Requires restart if not done at the beginning... static variables)
-    //Options button requires porting vegasettings code to be used inside VS... should be simple to do.  Is it worth it?
-    //Network button
-    //About
-    //Exit game
+    // Single Player button
+    // Options button (Requires restart if not done at the beginning... static variables)
+    // Options button requires porting vegasettings code to be used inside VS... should be simple to do.  Is it worth
+    // it? Network button About Exit game
 
-    //Submenu of single player: (for now, call base computer like it does now))
+    // Submenu of single player: (for now, call base computer like it does now))
     //
-    //New Game (taken from save/load dialog?)
-    //Load Game (save/load dialog without save option?)
-    //Simple space fight (equivalent to mission command line option?)
+    // New Game (taken from save/load dialog?)
+    // Load Game (save/load dialog without save option?)
+    // Simple space fight (equivalent to mission command line option?)
 
-    //Submenu of multiplayer:
+    // Submenu of multiplayer:
     //
-    //Account Server. // Mod name.
-    //No downloading server lists...
-    //User name
-    //Password
-    //Create account... goes through CGI page.
+    // Account Server. // Mod name.
+    // No downloading server lists...
+    // User name
+    // Password
+    // Create account... goes through CGI page.
 }
 
 extern void bootstrap_main_loop();
@@ -456,13 +459,15 @@ class ShipSelectorCallback : public ModalDialogCallback
     NetActionConfirm *nac;
     bool onlyMessage;
 
-public:
-    ShipSelectorCallback(NetActionConfirm *nac, bool onlyMessage) : nac(nac), onlyMessage(onlyMessage) {}
+  public:
+    ShipSelectorCallback(NetActionConfirm *nac, bool onlyMessage) : nac(nac), onlyMessage(onlyMessage)
+    {
+    }
     virtual void modalDialogResult(const std::string &id, int32_t result, WindowController &controller)
     {
         if (onlyMessage)
         {
-            //The result is slightly different (OK=1 and Cancel=0)
+            // The result is slightly different (OK=1 and Cancel=0)
             if (result == YES_ANSWER)
             {
                 result = 0;
@@ -472,13 +477,15 @@ public:
                 result = -1;
             }
         }
-        //Ship = 0 or above, Cancel = -1
+        // Ship = 0 or above, Cancel = -1
         nac->finalizeJoinGame(result);
     }
-    virtual ~ShipSelectorCallback() {}
+    virtual ~ShipSelectorCallback()
+    {
+    }
 };
 
-//Create the window and controls for the Options Menu.
+// Create the window and controls for the Options Menu.
 void NetActionConfirm::init(void)
 {
     Window *window = new Window;
@@ -491,7 +498,7 @@ void NetActionConfirm::init(void)
     window->setOutlineWidth(2.0);
     window->setController(this);
 
-    //Information.
+    // Information.
     StaticDisplay *text = new StaticDisplay;
     text->setRect(Rect(-.4, -.15, .8, .3));
     if (netAction == JOINGAME)
@@ -511,10 +518,10 @@ void NetActionConfirm::init(void)
     text->setColor(GUI_CLEAR);
     text->setFont(Font(.07, 1.25));
     text->setId("Information");
-    //Put it on the window.
+    // Put it on the window.
     window->addControl(text);
 
-    //Save button.
+    // Save button.
     NewButton *cont = new NewButton;
     cont->setRect(Rect(.05, -.19, .30, .1));
     if (netAction == SAVEACCT)
@@ -538,10 +545,10 @@ void NetActionConfirm::init(void)
     cont->setDownTextColor(GUI_OPAQUE_BLACK());
     cont->setHighlightColor(GFXColor(0, 1, 0, .4));
     cont->setFont(Font(.08, BOLD_STROKE));
-    //Put the button on the window.
+    // Put the button on the window.
     window->addControl(cont);
 
-    //Abort action button
+    // Abort action button
     NewButton *resume = new NewButton;
     resume->setRect(Rect(-.35, -.20, .30, .12));
     resume->setLabel("Cancel");
@@ -552,13 +559,13 @@ void NetActionConfirm::init(void)
     resume->setDownTextColor(GUI_OPAQUE_BLACK());
     resume->setHighlightColor(GFXColor(0, 1, 0, .4));
     resume->setFont(Font(.08, BOLD_STROKE));
-    //Put the button on the window.
+    // Put the button on the window.
     window->addControl(resume);
 
     window->setModal(true);
 }
 
-//Process a command event from the Options Menu window.
+// Process a command event from the Options Menu window.
 bool NetActionConfirm::processWindowCommand(const EventCommandId &command, Control *control)
 {
     if (command == "Save")
@@ -577,7 +584,7 @@ bool NetActionConfirm::processWindowCommand(const EventCommandId &command, Contr
     }
     else
     {
-        //Not a command we know about.
+        // Not a command we know about.
         return WindowController::processWindowCommand(command, control);
     }
     return true;
@@ -603,8 +610,8 @@ bool NetActionConfirm::confirmedJoinGame()
     return true;
 }
 
-//Caller is responsible for closing the window afterwards. (?)
-//static
+// Caller is responsible for closing the window afterwards. (?)
+// static
 bool NetActionConfirm::finalizeJoinGame(int launchShip)
 {
     return true;

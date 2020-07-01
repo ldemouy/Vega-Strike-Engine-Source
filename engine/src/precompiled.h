@@ -1,10 +1,10 @@
-#include <string>
-#include <vector>
+#include <algorithm>
 #include <list>
 #include <map>
 #include <set>
-#include <algorithm>
+#include <string>
 #include <utility>
+#include <vector>
 
 #ifdef _WIN32
 #include <hash_map>
@@ -21,7 +21,7 @@
 #else
 #ifndef NOMINMAX
 #define NOMINMAX
-#endif //tells VCC not to generate min/max macros
+#endif // tells VCC not to generate min/max macros
 #include <windows.h>
 #endif
 

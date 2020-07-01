@@ -3,7 +3,7 @@
 
 using namespace FactionUtil;
 
-vector<std::shared_ptr<Faction>> factions; //the factions
+vector<std::shared_ptr<Faction>> factions; // the factions
 
 // TODO: look at switching over to Range Based for loops
 

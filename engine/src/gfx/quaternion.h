@@ -1,20 +1,22 @@
 #ifndef _QUATERNION_H_
 #define _QUATERNION_H_
 
-#include "vec.h"
 #include "matrix.h"
+#include "vec.h"
 
 struct Quaternion
 {
     float s;
     Vector v;
-    inline Quaternion() : s(0), v(0, 0, 0) {}
+    inline Quaternion() : s(0), v(0, 0, 0)
+    {
+    }
     inline Quaternion(float s, Vector v)
     {
         this->s = s;
         this->v = v;
     }
-    //inline Quaternion(float s, Vector v) {this->s = s; this->v = v;};
+    // inline Quaternion(float s, Vector v) {this->s = s; this->v = v;};
     inline Quaternion Conjugate() const
     {
         return Quaternion(s, Vector(-v.i, -v.j, -v.k));
@@ -32,8 +34,7 @@ struct Quaternion
     }
     inline Quaternion operator*(const Quaternion &rval) const
     {
-        return Quaternion(s * rval.s - DotProduct(v, rval.v),
-                          s * rval.v + rval.s * v + v.Cross(rval.v));
+        return Quaternion(s * rval.s - DotProduct(v, rval.v), s * rval.v + rval.s * v + v.Cross(rval.v));
     }
     inline Quaternion &operator*=(const Quaternion &rval)
     {
@@ -51,8 +52,9 @@ struct Quaternion
     static Quaternion from_axis_angle(const Vector &axis, float angle);
     void to_matrix(Matrix &mat) const
     {
-        float W = v.i * v.i + v.j * v.j + v.k * v.k + s * s; //norm
-        W = (W < 0 + std::numeric_limits<float>::epsilon() && W > 0 - std::numeric_limits<float>::epsilon()) ? 0 : 2.0 / W;
+        float W = v.i * v.i + v.j * v.j + v.k * v.k + s * s; // norm
+        W = (W < 0 + std::numeric_limits<float>::epsilon() && W > 0 - std::numeric_limits<float>::epsilon()) ? 0
+                                                                                                             : 2.0 / W;
 
         float xw = v.i * W;
         float yw = v.j * W;
@@ -83,8 +85,8 @@ struct Quaternion
         M(2, 0) = (xz - sy);
         M(2, 1) = (yz + sx);
         M(2, 2) = 1.0f - (xx + yy);
-        //M(3,0)  = M(3,1) = M(3,2) = M(0,3) = M(1,3) = M(2,3) = 0;
-        //M(3,3) = 1;
+        // M(3,0)  = M(3,1) = M(3,2) = M(0,3) = M(1,3) = M(2,3) = 0;
+        // M(3,3) = 1;
 
 #undef M
     }
@@ -111,9 +113,13 @@ struct Transformation
 {
     Quaternion orientation;
     QVector position;
-    inline Transformation() : orientation(identity_quaternion), position(0, 0, 0) {}
-    inline Transformation(const Quaternion &orient, const QVector &pos) : orientation(orient), position(pos) {}
-    //inline Transformation(const Quaternion &orient, const QVector &pos) : orientation(orient), position(pos) { }
+    inline Transformation() : orientation(identity_quaternion), position(0, 0, 0)
+    {
+    }
+    inline Transformation(const Quaternion &orient, const QVector &pos) : orientation(orient), position(pos)
+    {
+    }
+    // inline Transformation(const Quaternion &orient, const QVector &pos) : orientation(orient), position(pos) { }
 
     inline void netswap()
     {

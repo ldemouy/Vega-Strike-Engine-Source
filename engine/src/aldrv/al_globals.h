@@ -21,8 +21,8 @@ struct AUDSoundProperties
 
     bool success;
 
-    //Hashing.
-    //Set even if AUDLoadSoundFile fails so that a hash entry can be written.
+    // Hashing.
+    // Set even if AUDLoadSoundFile fails so that a hash entry can be written.
     bool shared;
     std::string hashname;
 
@@ -31,11 +31,11 @@ struct AUDSoundProperties
     // From here on, AL-dependent stuff
 
 #ifdef HAVE_AL
-    //OpenAL properties.
+    // OpenAL properties.
     ALenum format;
     ALsizei size;
     ALsizei freq;
-    ALboolean looping; //can be set by caller.
+    ALboolean looping; // can be set by caller.
 #endif
 
     AUDSoundProperties()
@@ -64,6 +64,7 @@ struct OurSound
     bool music;
     OurSound(ALuint source, ALuint buffername)
     {
+        this->source = source;
         buffer = buffername;
         pos.Set(0, 0, 0);
         vel.Set(0, 0, 0);
@@ -73,8 +74,7 @@ struct OurSound
 
 extern float scalepos;
 extern float scalevel;
-template <typename a, typename b, int c>
-class Hashtable;
+template <typename a, typename b, int c> class Hashtable;
 
 extern std::vector<ALuint> unusedsrcs;
 extern std::vector<ALuint> buffers;
@@ -94,7 +94,7 @@ char AUDQueryAudability(const int32_t &sound, const Vector &pos, const Vector &v
 void AUDAddWatchedPlayed(const int32_t &sound, const Vector &pos);
 bool AUDLoadSoundFile(const char *s, struct AUDSoundProperties *info, bool use_fileptr = false);
 
-//It is up to the caller to free(info.wave) after using!!!
+// It is up to the caller to free(info.wave) after using!!!
 int AUDBufferSound(const struct AUDSoundProperties *info, bool music);
 
 #endif

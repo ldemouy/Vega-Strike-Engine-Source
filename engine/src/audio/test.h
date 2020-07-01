@@ -6,10 +6,10 @@
 
 namespace Audio
 {
-    namespace Test
-    {
-        int main(int argc, char **argv);
-    };
+namespace Test
+{
+int main(int argc, char **argv);
+};
 }; // namespace Audio
 
 #endif //__AUDIO_TEST_H__INCLUDED__

@@ -1,33 +1,20 @@
 #include "mesh.h"
 //#include "aux_logo.h"
 //#include "aux_texture.h"
-#include <stdio.h>
+#include "file_main.h"
 #include "vegastrike.h"
 #include "vs_globals.h"
-#include "file_main.h"
 #include "vsfilesystem.h"
+#include <stdio.h>
 
 using namespace VSFileSystem;
 
-extern Texture *createTexture(char const *ccc,
-                              char const *cc,
-                              int k = 0,
-                              enum FILTER f1 = MIPMAP,
-                              enum TEXTURE_TARGET t0 = TEXTURE2D,
-                              enum TEXTURE_IMAGE_TARGET t = TEXTURE_2D,
-                              float f = 1,
-                              int j = 0,
-                              unsigned char c = GFXFALSE,
-                              int i = 65536);
+extern Texture *createTexture(char const *ccc, char const *cc, int k = 0, enum FILTER f1 = MIPMAP,
+                              enum TEXTURE_TARGET t0 = TEXTURE2D, enum TEXTURE_IMAGE_TARGET t = TEXTURE_2D, float f = 1,
+                              int j = 0, unsigned char c = GFXFALSE, int i = 65536);
 
-extern Logo *createLogo(int numberlogos,
-                        Vector *center,
-                        Vector *normal,
-                        float *sizes,
-                        float *rotations,
-                        float offset,
-                        Texture *Dec,
-                        Vector *Ref);
+extern Logo *createLogo(int numberlogos, Vector *center, Vector *normal, float *sizes, float *rotations, float offset,
+                        Texture *Dec, Vector *Ref);
 
 #ifdef __cplusplus
 extern "C"
@@ -91,7 +78,7 @@ void Mesh::LoadBinary(const char *filename, int faction)
     readf(fp, vb, NumPoints * 6);
     for (ii = jj = 0; jj < NumPoints; ii += 6, jj++)
     {
-        //x,y,z,i,j,k
+        // x,y,z,i,j,k
         if (vb[ii] > mx.i)
             mx.i = vb[ii];
         if (vb[ii] < mn.i)
@@ -133,7 +120,7 @@ void Mesh::LoadBinary(const char *filename, int faction)
      *       k[ii] = -readf (fp);
      *
      *  }*/
-    //below, the square fo teh radial size, because sqrtf will be useless l8r
+    // below, the square fo teh radial size, because sqrtf will be useless l8r
     radialSize = .5 * (mx - mn).Magnitude();
     NumTris = readi(fp);
     Tris = new int[NumTris * 3];
@@ -149,11 +136,11 @@ void Mesh::LoadBinary(const char *filename, int faction)
      *       for (int jj=0; jj<4; jj++)
      *               Quads[ii*4+jj] = readi(fp);*/
 
-    //int numtrivertex = NumTris*3;
-    //int numquadvertex = NumQuads*4;
+    // int numtrivertex = NumTris*3;
+    // int numquadvertex = NumQuads*4;
     int numvertex = NumTris * 3 + NumQuads * 4;
     GFXVertex *vertexlist;
-    //GFXVertex *alphalist;
+    // GFXVertex *alphalist;
 
     vertexlist = new GFXVertex[numvertex];
 
@@ -222,8 +209,8 @@ void Mesh::LoadBinary(const char *filename, int faction)
     delete[] vb;
     if (objtex)
     {
-        //int temp = NumTris*3;
-        //float oo256 = .00390625;
+        // int temp = NumTris*3;
+        // float oo256 = .00390625;
         /*long pos =*/fp.GetPosition();
         {
             int temp = (NumTris * 3 + NumTris * 3 + NumQuads * 4) * 2;
@@ -267,7 +254,7 @@ void Mesh::LoadBinary(const char *filename, int faction)
     float *rotations = new float[numforcelogo];
     float *offset = new float[numforcelogo];
     char polytype;
-    int offst; //FIXME
+    int offst; // FIXME
     Vector *Ref;
     Ref = new Vector[numforcelogo];
     for (ii = 0; ii < numforcelogo; ii++)
@@ -331,13 +318,13 @@ void Mesh::LoadBinary(const char *filename, int faction)
             break;
         case '7':
         case '3':
-            offst = 3 * NumTris + 4 * readi(fp); //total number of triangles incl pents
+            offst = 3 * NumTris + 4 * readi(fp); // total number of triangles incl pents
             Ref[ii].i = vertexlist[offst].x - vertexlist[offst + 3].x;
             Ref[ii].j = vertexlist[offst].y - vertexlist[offst + 3].y;
             Ref[ii].k = vertexlist[offst].z - vertexlist[offst + 3].z;
             break;
         default:
-            offst = 0.0f; //FIXME added by chuck_starchaser to shut off warnings; please verify correctness
+            offst = 0.0f; // FIXME added by chuck_starchaser to shut off warnings; please verify correctness
             break;
         }
         switch (polytype)
@@ -354,18 +341,19 @@ void Mesh::LoadBinary(const char *filename, int faction)
             Ref[ii].k = -Ref[ii].k;
             break;
         default:
-            break; //FIXME added by chuck_starchaser to shut off warnings; please verify correctness
+            break; // FIXME added by chuck_starchaser to shut off warnings; please verify correctness
         }
-        PolyNormal[ii] = PolygonNormal(
-            Vector(vertexlist[offst].x, vertexlist[offst].y, vertexlist[offst].z),
-            Vector(vertexlist[offst + 1].x, vertexlist[offst + 1].y, vertexlist[offst + 1].z),
-            Vector(vertexlist[offst + 2].x, vertexlist[offst + 2].y, vertexlist[offst + 2].z));
+        PolyNormal[ii] =
+            PolygonNormal(Vector(vertexlist[offst].x, vertexlist[offst].y, vertexlist[offst].z),
+                          Vector(vertexlist[offst + 1].x, vertexlist[offst + 1].y, vertexlist[offst + 1].z),
+                          Vector(vertexlist[offst + 2].x, vertexlist[offst + 2].y, vertexlist[offst + 2].z));
 
         sizes[ii] = readf(fp);
         rotations[ii] = readf(fp);
         offset[ii] = readf(fp);
     }
-    forcelogos = createLogo(numforcelogo, center, PolyNormal, sizes, rotations, 0.01F, FactionUtil::getForceLogo(faction), Ref);
+    forcelogos =
+        createLogo(numforcelogo, center, PolyNormal, sizes, rotations, 0.01F, FactionUtil::getForceLogo(faction), Ref);
     delete[] Ref;
     delete[] PolyNormal;
     delete[] center;
@@ -374,15 +362,13 @@ void Mesh::LoadBinary(const char *filename, int faction)
     delete[] offset;
     for (ii = 0; ii < NumTris * 3; ii += 3)
     {
-        Vector Norm1(vertexlist[ii + 1].x - vertexlist[ii].x,
-                     vertexlist[ii + 1].y - vertexlist[ii].y,
+        Vector Norm1(vertexlist[ii + 1].x - vertexlist[ii].x, vertexlist[ii + 1].y - vertexlist[ii].y,
                      vertexlist[ii + 1].z - vertexlist[ii].z);
-        Vector Norm2(vertexlist[ii + 2].x - vertexlist[ii].x,
-                     vertexlist[ii + 2].y - vertexlist[ii].y,
+        Vector Norm2(vertexlist[ii + 2].x - vertexlist[ii].x, vertexlist[ii + 2].y - vertexlist[ii].y,
                      vertexlist[ii + 2].z - vertexlist[ii].z);
         Vector Normal;
         CrossProduct(Norm2, Norm1, Normal);
-        //CrossProduct (Norm1,Norm2,Normal);
+        // CrossProduct (Norm1,Norm2,Normal);
         Normalize(Normal);
         vertexlist[ii].i = vertexlist[ii + 1].i = vertexlist[ii + 2].i = Normal.i;
         vertexlist[ii].j = vertexlist[ii + 1].j = vertexlist[ii + 2].j = Normal.j;
@@ -390,15 +376,13 @@ void Mesh::LoadBinary(const char *filename, int faction)
     }
     for (ii = NumTris * 3; ii < NumTris * 3 + NumQuads * 4; ii += 4)
     {
-        Vector Norm1(vertexlist[ii + 1].x - vertexlist[ii].x,
-                     vertexlist[ii + 1].y - vertexlist[ii].y,
+        Vector Norm1(vertexlist[ii + 1].x - vertexlist[ii].x, vertexlist[ii + 1].y - vertexlist[ii].y,
                      vertexlist[ii + 1].z - vertexlist[ii].z);
-        Vector Norm2(vertexlist[ii + 3].x - vertexlist[ii].x,
-                     vertexlist[ii + 3].y - vertexlist[ii].y,
+        Vector Norm2(vertexlist[ii + 3].x - vertexlist[ii].x, vertexlist[ii + 3].y - vertexlist[ii].y,
                      vertexlist[ii + 3].z - vertexlist[ii].z);
         Vector Normal;
         CrossProduct(Norm2, Norm1, Normal);
-        //CrossProduct (Norm1,Norm2,Normal);
+        // CrossProduct (Norm1,Norm2,Normal);
         Normalize(Normal);
         vertexlist[ii].i = vertexlist[ii + 1].i = vertexlist[ii + 2].i = vertexlist[ii + 3].i = Normal.i;
         vertexlist[ii].j = vertexlist[ii + 1].j = vertexlist[ii + 2].j = vertexlist[ii + 3].j = Normal.j;
@@ -410,8 +394,8 @@ void Mesh::LoadBinary(const char *filename, int faction)
     sizes = new float[numsquadlogo];
     rotations = new float[numsquadlogo];
     offset = new float[numsquadlogo];
-    //char polytype;
-    //int offset;
+    // char polytype;
+    // int offset;
     Ref = new Vector[numsquadlogo];
     for (ii = 0; ii < numsquadlogo; ii++)
     {
@@ -474,13 +458,13 @@ void Mesh::LoadBinary(const char *filename, int faction)
             break;
         case '7':
         case '3':
-            offst = 3 * NumTris + 4 * readi(fp); //total number of triangles incl pents
+            offst = 3 * NumTris + 4 * readi(fp); // total number of triangles incl pents
             Ref[ii].i = vertexlist[offst].x - vertexlist[offst + 3].x;
             Ref[ii].j = vertexlist[offst].y - vertexlist[offst + 3].y;
             Ref[ii].k = vertexlist[offst].z - vertexlist[offst + 3].z;
             break;
         default:
-            offst = 0.0f; //FIXME added by chuck_starchaser to shut off warnings; please verify correctness
+            offst = 0.0f; // FIXME added by chuck_starchaser to shut off warnings; please verify correctness
             break;
         }
         switch (polytype)
@@ -497,20 +481,20 @@ void Mesh::LoadBinary(const char *filename, int faction)
             Ref[ii].k = -Ref[ii].k;
             break;
         default:
-            break; //FIXME added by chuck_starchaser to shut off warnings; please verify correctness
+            break; // FIXME added by chuck_starchaser to shut off warnings; please verify correctness
         }
-        PolyNormal[ii] = PolygonNormal(
-            Vector(vertexlist[offst].x, vertexlist[offst].y, vertexlist[offst].z),
-            Vector(vertexlist[offst + 1].x, vertexlist[offst + 1].y, vertexlist[offst + 1].z),
-            Vector(vertexlist[offst + 2].x, vertexlist[offst + 2].y, vertexlist[offst + 2].z));
+        PolyNormal[ii] =
+            PolygonNormal(Vector(vertexlist[offst].x, vertexlist[offst].y, vertexlist[offst].z),
+                          Vector(vertexlist[offst + 1].x, vertexlist[offst + 1].y, vertexlist[offst + 1].z),
+                          Vector(vertexlist[offst + 2].x, vertexlist[offst + 2].y, vertexlist[offst + 2].z));
         sizes[ii] = readf(fp);
         rotations[ii] = readf(fp);
         offset[ii] = readf(fp);
     }
-    squadlogos =
-        createLogo(numsquadlogo, center, PolyNormal, sizes, rotations, (float)0.01, FactionUtil::getSquadLogo(faction), Ref);
+    squadlogos = createLogo(numsquadlogo, center, PolyNormal, sizes, rotations, (float)0.01,
+                            FactionUtil::getSquadLogo(faction), Ref);
     delete[] Ref;
-    //VSFileSystem::Fprintf (stderr, "Ri:%f Rj: %f Rk %f",vertexlist[0].i,vertexlist[0].j,vertexlist[0].k);
+    // VSFileSystem::Fprintf (stderr, "Ri:%f Rj: %f Rk %f",vertexlist[0].i,vertexlist[0].j,vertexlist[0].k);
     int vert_offset[2];
     vert_offset[0] = NumTris * 3;
     vert_offset[1] = NumQuads * 4;
@@ -518,7 +502,7 @@ void Mesh::LoadBinary(const char *filename, int faction)
     modes[0] = GFXTRI;
     modes[1] = GFXQUAD;
     vlist = new GFXVertexList(modes, NumTris * 3 + NumQuads * 4, vertexlist, 2, vert_offset);
-    //vlist = new GFXVertexList(numtris*4,0,numquads*4, vertexlist+numtris*3);
+    // vlist = new GFXVertexList(numtris*4,0,numquads*4, vertexlist+numtris*3);
     /*long pos =*/fp.GetPosition();
     myMatNum = readi(fp);
     fp.Close();

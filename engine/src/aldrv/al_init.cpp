@@ -8,17 +8,17 @@
 #include <AL/al.h>
 #include <AL/alc.h>
 #endif
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include <vector>
 
+#include "al_globals.h"
 #include "aldrv/audiolib.h"
 #include "config_xml.h"
-#include "xml_support.h"
-#include "vs_globals.h"
-#include "al_globals.h"
 #include "options.h"
+#include "vs_globals.h"
+#include "xml_support.h"
 
 #if 1
 #define AL_GET_PROC(name) (alGetProcAddress(const_cast<ALubyte *>(reinterpret_cast<const ALubyte *>(name))))
@@ -67,7 +67,8 @@ static void fixup_function_pointers(void)
      *     alCaptureGetData = (ALsizei (*)( ALvoid*, ALsizei, ALenum, ALuint )) GP("alCaptureGetData_EXT");
      *
      *     talBufferAppendData = (ALuint (*)(ALuint, ALenum, ALvoid *, ALint, ALint)) GP("alBufferAppendData_LOKI");
-     *     talBufferAppendWriteData = (ALuint (*)(ALuint, ALenum, ALvoid *, ALint, ALint, ALenum)) GP("alBufferAppendWriteData_LOKI");
+     *     talBufferAppendWriteData = (ALuint (*)(ALuint, ALenum, ALvoid *, ALint, ALint, ALenum))
+     * GP("alBufferAppendWriteData_LOKI");
      *
      *     talGenStreamingBuffers = (void (*)(ALsizei n, ALuint *bids )) GP("alGenStreamingBuffers_LOKI");
      *     if( talGenStreamingBuffers == nullptr ) {
@@ -125,7 +126,7 @@ float AUDGetDoppler()
 }
 
 #ifdef HAVE_AL
-///I don't think we'll need to switch contexts or devices in vegastrike
+/// I don't think we'll need to switch contexts or devices in vegastrike
 static ALCdevice *dev = nullptr;
 
 #ifndef _WIN32
@@ -150,8 +151,7 @@ bool AUDInit()
     scalevel = game_options.DopplerScale;
     g_game.audio_frequency_mode = game_options.frequency;
     maxallowedsingle = game_options.MaxSingleSounds;
-    g_game.max_sound_sources =
-        maxallowedtotal = game_options.MaxTotalSounds;
+    g_game.max_sound_sources = maxallowedtotal = game_options.MaxTotalSounds;
     if (!game_options.Sound && !game_options.Music)
     {
         return false;
@@ -206,7 +206,7 @@ bool AUDInit()
 void AUDDestroy()
 {
 #ifdef HAVE_AL
-    //Go through and delete all loaded wavs
+    // Go through and delete all loaded wavs
 
     for (uint32_t i = 0; i < sounds.size(); i++)
     {

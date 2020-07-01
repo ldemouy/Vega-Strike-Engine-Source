@@ -23,26 +23,26 @@
 #define __STATICDISPLAY_H__
 
 #include "control.h"
-#include "painttext.h"
 #include "guitexture.h"
+#include "painttext.h"
 
-//See cpp file for detailed descriptions of classes, functions, etc.
+// See cpp file for detailed descriptions of classes, functions, etc.
 
-//FORWARD REFERENCES.
+// FORWARD REFERENCES.
 class Scroller;
 
-//The StaticDisplay class is used to show something on a window.
-//Right now, it only supports text, but could be expanded to support
-//images, textures, meshes, etc.
-//This control does not respond to input events.
+// The StaticDisplay class is used to show something on a window.
+// Right now, it only supports text, but could be expanded to support
+// images, textures, meshes, etc.
+// This control does not respond to input events.
 
 class StaticDisplay : public Control
 {
-public:
-    //Draw the control.
+  public:
+    // Draw the control.
     virtual void draw(void);
 
-    //Text that appears on the control.
+    // Text that appears on the control.
     virtual std::string text(void)
     {
         return m_paintText.text();
@@ -52,7 +52,7 @@ public:
         m_paintText.setText(t);
     }
 
-    //Set justification.
+    // Set justification.
     virtual Justification justification(void)
     {
         return m_paintText.justification();
@@ -62,7 +62,7 @@ public:
         m_paintText.setJustification(j);
     }
 
-    //Whether the text is multi-line.
+    // Whether the text is multi-line.
     virtual bool multiLine(void)
     {
         return m_paintText.widthExceeded() == PaintText::MULTI_LINE;
@@ -72,19 +72,19 @@ public:
         m_paintText.setWidthExceeded(multi ? PaintText::MULTI_LINE : PaintText::ELLIPSIS);
     }
 
-    //Text margins.
+    // Text margins.
     virtual Size textMargins(void)
     {
         return m_textMargins;
     }
     virtual void setTextMargins(const Size &s);
 
-    //Set the object that takes care of scrolling.
+    // Set the object that takes care of scrolling.
     virtual void setScroller(Scroller *s);
 
-    //OVERRIDES
+    // OVERRIDES
 
-    //Color of text in control.
+    // Color of text in control.
     virtual GFXColor textColor(void)
     {
         return m_paintText.color();
@@ -94,7 +94,7 @@ public:
         m_paintText.setColor(c);
     }
 
-    //Font for text in control.
+    // Font for text in control.
     virtual Font font(void)
     {
         return m_paintText.font();
@@ -104,61 +104,67 @@ public:
         m_paintText.setFont(f);
     }
 
-    //The outside boundaries of the control.
+    // The outside boundaries of the control.
     virtual void setRect(const Rect &r);
 
-    //OVERRIDES - used for scrolling.
+    // OVERRIDES - used for scrolling.
     virtual bool processMouseDown(const InputEvent &event);
 
-    //Process a command event.
+    // Process a command event.
     virtual bool processCommand(const EventCommandId &command, Control *control);
 
-    //CONSTRUCTION
-public:
+    // CONSTRUCTION
+  public:
     StaticDisplay(void);
-    virtual ~StaticDisplay(void) {}
+    virtual ~StaticDisplay(void)
+    {
+    }
 
-protected:
-    //INTERNAL IMPLEMENTATION
+  protected:
+    // INTERNAL IMPLEMENTATION
 
-    //The rect for the text object has changed -- reset it.
+    // The rect for the text object has changed -- reset it.
     void setPaintTextRect(void);
 
-    //VARIABLES
-protected:
-    PaintText m_paintText; //Text object.
-    Size m_textMargins;    //Inset area where no text appears.
-    int m_scrollPosition;  //Index of first display cell shown.
-    int m_layoutVersion;   //A way to tell when the PaintText layout has changed.
+    // VARIABLES
+  protected:
+    PaintText m_paintText; // Text object.
+    Size m_textMargins;    // Inset area where no text appears.
+    int m_scrollPosition;  // Index of first display cell shown.
+    int m_layoutVersion;   // A way to tell when the PaintText layout has changed.
     Scroller *m_scroller;
 };
 
 class StaticImageDisplay : public Control
 {
-public:
-    //Draw the control.
+  public:
+    // Draw the control.
     virtual void draw(void)
     {
         if (texturename.length())
             texture.draw(m_rect);
     }
 
-    //Text that appears on the control.
+    // Text that appears on the control.
     virtual void setTexture(std::string t)
     {
         texturename = t;
         texture.read(t);
     }
 
-    //CONSTRUCTION
-public:
-    StaticImageDisplay(void) {}
-    virtual ~StaticImageDisplay(void) {}
+    // CONSTRUCTION
+  public:
+    StaticImageDisplay(void)
+    {
+    }
+    virtual ~StaticImageDisplay(void)
+    {
+    }
 
-protected:
+  protected:
     std::string texturename;
     GuiTexture texture;
-    //INTERNAL IMPLEMENTATION
+    // INTERNAL IMPLEMENTATION
 };
 
 #endif //__STATICDISPLAY_H__

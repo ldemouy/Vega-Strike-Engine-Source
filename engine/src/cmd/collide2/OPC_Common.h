@@ -20,65 +20,79 @@
 #ifndef __OPC_COMMON_H__
 #define __OPC_COMMON_H__
 
-#include "Ice/IcePoint.h"
 #include "Ice/IceAABB.h"
+#include "Ice/IcePoint.h"
 // [GOTTFRIED]: Just a small change for readability.
 #define GREATER(x, y) fabsf(x) > (y)
 
 class CollisionAABB
 {
-public:
-	//! Constructor
-	inline CollisionAABB() {}
-	//! Constructor
-	inline CollisionAABB(const AABB &b)
-	{
-		b.GetCenter(mCenter);
-		b.GetExtents(mExtents);
-	}
-	//! Destructor
-	inline ~CollisionAABB() {}
+  public:
+    //! Constructor
+    inline CollisionAABB()
+    {
+    }
+    //! Constructor
+    inline CollisionAABB(const AABB &b)
+    {
+        b.GetCenter(mCenter);
+        b.GetExtents(mExtents);
+    }
+    //! Destructor
+    inline ~CollisionAABB()
+    {
+    }
 
-	//! Get min point of the box
-	inline void GetMin(Point &min) const { min = mCenter - mExtents; }
-	//! Get max point of the box
-	inline void GetMax(Point &max) const { max = mCenter + mExtents; }
+    //! Get min point of the box
+    inline void GetMin(Point &min) const
+    {
+        min = mCenter - mExtents;
+    }
+    //! Get max point of the box
+    inline void GetMax(Point &max) const
+    {
+        max = mCenter + mExtents;
+    }
 
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/**
-		 *	Setups an AABB from min & max vectors.
-		 *	\param		min			[in] the min point
-		 *	\param		max			[in] the max point
-		 */
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	inline void SetMinMax(const Point &min, const Point &max)
-	{
-		mCenter = (max + min) * 0.5f;
-		mExtents = (max - min) * 0.5f;
-	}
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     *	Setups an AABB from min & max vectors.
+     *	\param		min			[in] the min point
+     *	\param		max			[in] the max point
+     */
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    inline void SetMinMax(const Point &min, const Point &max)
+    {
+        mCenter = (max + min) * 0.5f;
+        mExtents = (max - min) * 0.5f;
+    }
 
-	Point mCenter;	//!< Box center
-	Point mExtents; //!< Box extents
+    Point mCenter;  //!< Box center
+    Point mExtents; //!< Box extents
 };
 
 class QuantizedAABB
 {
-public:
-	//! Constructor
-	inline QuantizedAABB() {}
-	//! Destructor
-	inline ~QuantizedAABB() {}
+  public:
+    //! Constructor
+    inline QuantizedAABB()
+    {
+    }
+    //! Destructor
+    inline ~QuantizedAABB()
+    {
+    }
 
-	int16_t mCenter[3];	  //!< Quantized center
-	uint16_t mExtents[3]; //!< Quantized extents
+    int16_t mCenter[3];   //!< Quantized center
+    uint16_t mExtents[3]; //!< Quantized extents
 };
 
 //! Quickly rotates & translates a vector
 inline void TransformPoint(Point &dest, const Point &source, const Matrix3x3 &rot, const Point &trans)
 {
-	dest.x = trans.x + source.x * rot.m[0][0] + source.y * rot.m[1][0] + source.z * rot.m[2][0];
-	dest.y = trans.y + source.x * rot.m[0][1] + source.y * rot.m[1][1] + source.z * rot.m[2][1];
-	dest.z = trans.z + source.x * rot.m[0][2] + source.y * rot.m[1][2] + source.z * rot.m[2][2];
+    dest.x = trans.x + source.x * rot.m[0][0] + source.y * rot.m[1][0] + source.z * rot.m[2][0];
+    dest.y = trans.y + source.x * rot.m[0][1] + source.y * rot.m[1][1] + source.z * rot.m[2][1];
+    dest.z = trans.z + source.x * rot.m[0][2] + source.y * rot.m[1][2] + source.z * rot.m[2][2];
 }
 
 #endif //__OPC_COMMON_H__

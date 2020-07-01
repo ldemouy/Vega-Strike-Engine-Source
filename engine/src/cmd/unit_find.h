@@ -2,12 +2,8 @@
 #define _UNIT_FIND_H_
 #include "unit_util.h"
 template <class Locator>
-void findObjectsFromPosition(CollideMap *cm,
-                             CollideMap::iterator location,
-                             Locator *check,
-                             QVector thispos,
-                             float thisrad,
-                             bool acquire_on_location)
+void findObjectsFromPosition(CollideMap *cm, CollideMap::iterator location, Locator *check, QVector thispos,
+                             float thisrad, bool acquire_on_location)
 {
     CollideMap::iterator cmend = cm->end();
     CollideMap::iterator cmbegin = cm->begin();
@@ -32,10 +28,10 @@ void findObjectsFromPosition(CollideMap *cm,
         }
         else
         {
-            //location == cmend
+            // location == cmend
             --location;
             if (acquire_on_location)
-                --tless; //allowed because cmend!=cmbegin
+                --tless; // allowed because cmend!=cmbegin
             workB = false;
         }
         check->init(cm, location);
@@ -53,8 +49,9 @@ void findObjectsFromPosition(CollideMap *cm,
                 float rad = (*tless)->radius;
                 if (rad != 0.0f && (check->BoltsOrUnits() || (check->UnitsOnly() == (rad > 0))))
                 {
-                    float trad =
-                        check->NeedDistance() ? ((*tless)->GetPosition() - thispos).Magnitude() - fabs(rad) - thisrad : 0;
+                    float trad = check->NeedDistance()
+                                     ? ((*tless)->GetPosition() - thispos).Magnitude() - fabs(rad) - thisrad
+                                     : 0;
                     if (!check->acquire(trad, tless))
                         workA = false;
                 }
@@ -72,8 +69,9 @@ void findObjectsFromPosition(CollideMap *cm,
                 float rad = (*tmore)->radius;
                 if (rad != 0.0f && (check->BoltsOrUnits() || (check->UnitsOnly() == (rad > 0))))
                 {
-                    float trad =
-                        check->NeedDistance() ? ((*tmore)->GetPosition() - thispos).Magnitude() - fabs(rad) - thisrad : 0;
+                    float trad = check->NeedDistance()
+                                     ? ((*tmore)->GetPosition() - thispos).Magnitude() - fabs(rad) - thisrad
+                                     : 0;
                     if (!check->acquire(trad, tmore))
                         workB = false;
                 }
@@ -87,8 +85,7 @@ void findObjectsFromPosition(CollideMap *cm,
     }
 }
 
-template <class Locator>
-void findObjects(CollideMap *cm, CollideMap::iterator location, Locator *check)
+template <class Locator> void findObjects(CollideMap *cm, CollideMap::iterator location, Locator *check)
 {
     if (is_null(location))
         return;
@@ -103,7 +100,7 @@ class NearestUnitLocator
     double startkey;
     float rad;
 
-public:
+  public:
     Collidable::CollideRef retval;
     bool BoltsOrUnits()
     {
@@ -148,7 +145,7 @@ public:
 };
 class NearestBoltLocator : public NearestUnitLocator
 {
-public:
+  public:
     bool UnitsOnly()
     {
         return false;
@@ -156,7 +153,7 @@ public:
 };
 class NearestObjectLocator : public NearestUnitLocator
 {
-public:
+  public:
     bool isUnit;
     bool UnitsOnly()
     {
@@ -177,7 +174,7 @@ public:
 };
 class NearestNavLocator : public NearestUnitLocator
 {
-public:
+  public:
     bool BoltsOrUnits()
     {
         return false;
@@ -195,7 +192,7 @@ public:
 };
 class NearestNavOrCapshipLocator : public NearestUnitLocator
 {
-public:
+  public:
     bool BoltsOrUnits()
     {
         return false;
@@ -211,15 +208,17 @@ public:
         return true;
     }
 };
-template <class T>
-class UnitWithinRangeLocator
+template <class T> class UnitWithinRangeLocator
 {
-public:
+  public:
     T action;
     double startkey;
     float radius;
     float maxUnitRadius;
-    UnitWithinRangeLocator(float radius, float maxUnitRadius) : startkey(0), radius(radius), maxUnitRadius(maxUnitRadius) {}
+    UnitWithinRangeLocator(float radius, float maxUnitRadius)
+        : startkey(0), radius(radius), maxUnitRadius(maxUnitRadius)
+    {
+    }
 
     bool UnitsOnly()
     {
@@ -251,26 +250,28 @@ public:
     bool acquire(float dist, CollideMap::iterator i)
     {
         if (dist < radius)
-            //Inside radius...
+            // Inside radius...
             return action.acquire((*i)->ref.unit, dist);
         return true;
     }
 };
-template <class T>
-class UnitWithinRangeOfPosition : public UnitWithinRangeLocator<T>
+template <class T> class UnitWithinRangeOfPosition : public UnitWithinRangeLocator<T>
 {
-public:
-    UnitWithinRangeOfPosition(float radius, float maxUnitRadius, const Collidable &key_iterator) : UnitWithinRangeLocator<T>(radius, maxUnitRadius)
+  public:
+    UnitWithinRangeOfPosition(float radius, float maxUnitRadius, const Collidable &key_iterator)
+        : UnitWithinRangeLocator<T>(radius, maxUnitRadius)
     {
         this->startkey = key_iterator.getKey();
     }
-    void init(CollideMap *cm, CollideMap::iterator parent) {}
+    void init(CollideMap *cm, CollideMap::iterator parent)
+    {
+    }
 };
 class UnitPtrLocator
 {
     const void *unit;
 
-public:
+  public:
     bool retval;
     bool BoltsOrUnits()
     {
@@ -301,7 +302,9 @@ public:
     {
         return retval = (((const void *)((*i)->ref.unit)) == unit);
     }
-    void init(CollideMap *cm, CollideMap::iterator parent) {}
+    void init(CollideMap *cm, CollideMap::iterator parent)
+    {
+    }
 };
 
 #endif

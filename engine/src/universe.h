@@ -21,11 +21,11 @@
 #ifndef _WrapGFX_H
 #define _WrapGFX_H
 
-#include "universe_generic.h"
-#include "gfx/camera.h"
-#include "star_system.h"
-#include "gfx/cockpit.h"
 #include "faction_generic.h"
+#include "gfx/camera.h"
+#include "gfx/cockpit.h"
+#include "star_system.h"
+#include "universe_generic.h"
 
 /**
  * Class GameUniverse Deals with universal constants. It is a global,
@@ -38,64 +38,65 @@
  */
 class GameUniverse : public Universe
 {
-protected:
-    ///The users cockpit
-    //unsigned int current_cockpit;
-    //std::vector <Cockpit *> cockpit;
-    ///a generic camera facing the HUD
+  protected:
+    /// The users cockpit
+    // unsigned int current_cockpit;
+    // std::vector <Cockpit *> cockpit;
+    /// a generic camera facing the HUD
     Camera hud_camera;
-    ///init proc
+    /// init proc
     void StartGL();
 
-private:
-    //so it can get all cockpits
+  private:
+    // so it can get all cockpits
     friend void bootstrap_main_loop();
-    ///A list of all factions
+    /// A list of all factions
 
-public:
+  public:
     StarSystem *GenerateStarSystem(const char *file, const char *jumpback, Vector origin);
     void WriteSaveGame(bool auto_save);
     void SetupCockpits(std::vector<std::string> players);
     void activateLightMap(int stage = 1);
     Texture *getLightMap();
-    ///inits graphics with args
+    /// inits graphics with args
     GameUniverse(int argc, char **argv, const char *galaxy);
     GameUniverse();
     void Init(int argc, char **argv, const char *galaxy);
     ~GameUniverse();
-    ///Loads Defaults in Graphics Drivers
+    /// Loads Defaults in Graphics Drivers
     void StartGFX();
-    ///Should load the Universe data file. Now just inits system with test.xml
-    class StarSystem *Init(string systemfile, const Vector &centroid = Vector(0, 0, 0), const string planetname = string());
-    ///Begins a scene
+    /// Should load the Universe data file. Now just inits system with test.xml
+    class StarSystem *Init(string systemfile, const Vector &centroid = Vector(0, 0, 0),
+                           const string planetname = string());
+    /// Begins a scene
     void StartDraw();
-    ///Runs the main loop
+    /// Runs the main loop
     void Loop(void main_loop());
-    ///Wrapper function for Star System
+    /// Wrapper function for Star System
     void SelectCamera(int cam)
     {
         AccessCockpit()->SelectCamera(cam);
     }
-    ///Accessor to cockpit
-    //unsigned int CurrentCockpit(){return current_cockpit;}
-    //Cockpit *AccessCockpit() {return cockpit[current_cockpit];}
-    //Cockpit *AccessCockpit (int i) {return cockpit[i];}
-    ///Wrapper function for Star System
+    /// Accessor to cockpit
+    // unsigned int CurrentCockpit(){return current_cockpit;}
+    // Cockpit *AccessCockpit() {return cockpit[current_cockpit];}
+    // Cockpit *AccessCockpit (int i) {return cockpit[i];}
+    /// Wrapper function for Star System
     Camera *AccessCamera(int num)
     {
         return AccessCockpit()->AccessCamera(num);
     }
-    ///Wrapper function for star system
+    /// Wrapper function for star system
     Camera *AccessCamera()
     {
         return AccessCockpit()->AccessCamera();
     }
-    ///Returns the current hud cam
+    /// Returns the current hud cam
     Camera *AccessHudCamera()
     {
         return &hud_camera;
     }
-    ///Wrapper function for star system
+    /// Wrapper function for star system
     void SetViewport()
     {
         AccessCockpit()->SetViewport();

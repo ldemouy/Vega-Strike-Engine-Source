@@ -18,21 +18,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+#include "gfx/vec.h"
 #include "gl_globals.h"
 #include "gldrv/gfxlib.h"
-#include "gfx/vec.h"
 #include <stdio.h>
-//typedef float GLdouble;
+// typedef float GLdouble;
+#include <assert.h>
 #include <math.h>
 #include <string.h>
-#include <assert.h>
 //#include "vegastrike.h"
 #include "gfx/matrix.h"
 #include "vs_globals.h"
 #ifdef WIN32
 #ifndef NOMINMAX
 #define NOMINMAX
-#endif //tells VCC not to generate min/max macros
+#endif // tells VCC not to generate min/max macros
 #include <windows.h>
 #ifndef M_PI
 #define M_PI 3.14159265358979323846 /* pi */
@@ -41,7 +41,7 @@
 #include "gl_matrix.h"
 #include "vs_globals.h"
 
-using namespace GFXMatrices; //causes problems with g_game
+using namespace GFXMatrices; // causes problems with g_game
 
 void getInverseProjection(float *&inv)
 {
@@ -50,17 +50,17 @@ void getInverseProjection(float *&inv)
 
 float GFXGetXInvPerspective()
 {
-    return /*invprojection[11]*  */ invprojection[0]; //invprojection[15];//should be??  c/d == invproj[15]
+    return /*invprojection[11]*  */ invprojection[0]; // invprojection[15];//should be??  c/d == invproj[15]
 }
 
 float GFXGetYInvPerspective()
 {
-    return /*invprojection[11]*  */ invprojection[5]; //invprojection[15];//should be??  c/d == invproj[15]
+    return /*invprojection[11]*  */ invprojection[5]; // invprojection[15];//should be??  c/d == invproj[15]
 }
 
 void MatrixToDoubles(double t[], const Matrix &m)
 {
-    t[0] = m.r[0]; //possible performance hit?!?!
+    t[0] = m.r[0]; // possible performance hit?!?!
     t[1] = m.r[1];
     t[2] = m.r[2];
     t[3] = 0;
@@ -81,7 +81,7 @@ void MatrixToDoubles(double t[], const Matrix &m)
 inline void ViewToModel()
 {
     double t[16];
-    t[0] = model.r[0] * GFX_SCALE; //possible performance hit?!?!
+    t[0] = model.r[0] * GFX_SCALE; // possible performance hit?!?!
     t[1] = model.r[1] * GFX_SCALE;
     t[2] = model.r[2] * GFX_SCALE;
     t[3] = 0;
@@ -97,7 +97,7 @@ inline void ViewToModel()
     t[13] = (model.p.j - view.p.j) * GFX_SCALE;
     t[14] = (model.p.k - view.p.k) * GFX_SCALE;
     t[15] = 1;
-    //MatrixToDoubles (t,model);
+    // MatrixToDoubles (t,model);
     glMatrixMode(GL_MODELVIEW);
     glLoadMatrixd(t);
 }
@@ -165,10 +165,10 @@ void ConstructAndLoadProjection()
 void /*GLDRVAPI*/ GFXTranslateView(const QVector &a)
 {
     view.p += TransformNormal(view, a);
-    //glPopMatrix();
-    //glLoadIdentity();
-    //glTranslatef(-view[12],-view[13],-view[14]);
-    //glPushMatrix();
+    // glPopMatrix();
+    // glLoadIdentity();
+    // glTranslatef(-view[12],-view[13],-view[14]);
+    // glPushMatrix();
     ViewToModel();
 }
 
@@ -194,8 +194,8 @@ void /*GFXDRVAPI*/ GFXMultMatrixModel(const Matrix &matrix)
     ViewToModel();
 }
 
-//Matrix *mm = model;
-//Matrix *vv = view;
+// Matrix *mm = model;
+// Matrix *vv = view;
 
 void GFXLoadMatrixView(const Matrix &matrix)
 {
@@ -273,7 +273,7 @@ void /*GFXDRVAPI*/ GFXLoadIdentity(const MATRIXMODE mode)
     case MODEL:
         Identity(model);
         glMatrixMode(GL_MODELVIEW);
-        //glLoadMatrixf(transview);
+        // glLoadMatrixf(transview);
         glLoadIdentity();
         glTranslated(-view.p.i * GFX_SCALE, -view.p.j * GFX_SCALE, -view.p.k * GFX_SCALE);
         glScalef(GFX_SCALE, GFX_SCALE, GFX_SCALE);
@@ -313,7 +313,7 @@ void GFXFrustum(float *m, float *i, float left, float right, float bottom, float
     y = (((float)2.0) * nearval) / (top - bottom);
     a = (right + left) / (right - left);
     b = (top + bottom) / (top - bottom);
-    //If farval == 0, we'll build an infinite-farplane projection matrix.
+    // If farval == 0, we'll build an infinite-farplane projection matrix.
     if (farval == 0)
     {
         c = -1.0;
@@ -367,16 +367,16 @@ void /*GFXDRVAPI*/ GFXPerspective(float fov, float aspect, float znear, float zf
     znear *= GFX_SCALE;
     zfar *= GFX_SCALE;
     cockpit_offset *= GFX_SCALE;
-    //gluPerspective (fov,aspect,znear,zfar);
+    // gluPerspective (fov,aspect,znear,zfar);
 
     float xmin, xmax, ymin, ymax;
 
-    ymax = znear * tanf(fov * M_PI / ((float)360.0)); //78.0 --> 4.7046
+    ymax = znear * tanf(fov * M_PI / ((float)360.0)); // 78.0 --> 4.7046
 
     ymin = -ymax; //-4.7046
 
     xmin = (ymin - cockpit_offset / 2) * aspect; //-6.2571
-    xmax = (ymax + cockpit_offset / 2) * aspect; //6.2571
+    xmax = (ymax + cockpit_offset / 2) * aspect; // 6.2571
     ymin -= cockpit_offset;
     gl_Frustum(xmin, xmax, ymin, ymax, znear, zfar);
     ConstructAndLoadProjection();
@@ -414,17 +414,10 @@ void /*GFXDRVAPI*/ GFXParallel(float left, float right, float bottom, float top,
     GFXGetFrustumVars(false, &left, &right, &bottom, &top, &nearval, &farval);
 }
 
-static void LookAtHelper(float eyex,
-                         float eyey,
-                         float eyez,
-                         double centerx,
-                         double centery,
-                         double centerz,
-                         float upx,
-                         float upy,
-                         float upz)
+static void LookAtHelper(float eyex, float eyey, float eyez, double centerx, double centery, double centerz, float upx,
+                         float upy, float upz)
 {
-    //Matrix m;
+    // Matrix m;
     double x[3], y[3], z[3];
     double mag;
 
@@ -448,17 +441,17 @@ static void LookAtHelper(float eyex,
     y[2] = upz;
 
     /* X vector = Y cross Z */
-    //x[0] =  z[1]*y[2] - z[2]*y[1];
-    //x[1] = -z[0]*y[2] + z[2]*y[0];
-    //x[2] =  z[0]*y[1] - z[1]*y[0];
+    // x[0] =  z[1]*y[2] - z[2]*y[1];
+    // x[1] = -z[0]*y[2] + z[2]*y[0];
+    // x[2] =  z[0]*y[1] - z[1]*y[0];
     x[0] = y[1] * z[2] - y[2] * z[1];
     x[1] = -y[0] * z[2] + y[2] * z[0];
     x[2] = y[0] * z[1] - y[1] * z[0];
 
     /* Recompute Y = Z cross X */
-    //y[0] =  x[1]*z[2] - x[2]*z[1];
-    //y[1] = -x[0]*z[2] + x[2]*z[0];
-    //y[2] =  x[0]*z[1] - x[1]*z[0];
+    // y[0] =  x[1]*z[2] - x[2]*z[1];
+    // y[1] = -x[0]*z[2] + x[2]*z[0];
+    // y[2] =  x[0]*z[1] - x[1]*z[0];
     y[0] = z[1] * x[2] - z[2] * x[1];
     y[1] = -z[0] * x[2] + z[2] * x[0];
     y[2] = z[0] * x[1] - z[1] * x[0];
@@ -485,23 +478,23 @@ static void LookAtHelper(float eyex,
 #define M(row, col) view.r[col * 3 + row]
     M(0, 0) = x[0];
     M(0, 1) = x[1];
-    M(0, 2) = x[2]; //M(0,3) = 0.0;
+    M(0, 2) = x[2]; // M(0,3) = 0.0;
     M(1, 0) = y[0];
     M(1, 1) = y[1];
-    M(1, 2) = y[2]; //M(1,3) = 0.0;
+    M(1, 2) = y[2]; // M(1,3) = 0.0;
     M(2, 0) = z[0];
     M(2, 1) = z[1];
-    M(2, 2) = z[2]; //M(2,3) = 0.0;
+    M(2, 2) = z[2]; // M(2,3) = 0.0;
 #undef M
-    //M(3,0) = 0.0;   M(3,1) = 0.0;   M(3,2) = 0.0;   M(3,3) = 1.0;
+    // M(3,0) = 0.0;   M(3,1) = 0.0;   M(3,2) = 0.0;   M(3,3) = 1.0;
 
-    //Matrix tm;
-    //Identity(tm);
+    // Matrix tm;
+    // Identity(tm);
     view.p.i = centerx + eyex;
     view.p.j = centery + eyey;
     view.p.k = centerz + eyez;
-    //CopyMatrix (view,m);
-    //MultMatrix(view, m, tm);
+    // CopyMatrix (view,m);
+    // MultMatrix(view, m, tm);
 }
 
 void /*GFXDRVAPI*/ GFXLookAt(Vector eye, QVector center, Vector up)

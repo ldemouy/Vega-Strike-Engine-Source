@@ -1,17 +1,17 @@
-/* 
- * Tux Racer 
+/*
+ * Tux Racer
  * Copyright (C) 1999-2001 Jasmin F. Patry
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -180,7 +180,7 @@ extern "C"
 /*---------------------------------------------------------------------------*/
 /*---------------------------------------------------------------------------*/
 
-/* GLUT doesn't define as many keysyms as SDL; we map those to 
+/* GLUT doesn't define as many keysyms as SDL; we map those to
    WSK_NOT_AVAIL (0) */
 
 typedef enum
@@ -265,7 +265,7 @@ typedef enum
     WSK_BREAK = 0,
     WSK_PAUSE = 0,
     WSK_LAST = UCHAR_MAX /* GLUT doesn't define a max key, but this is more
-			    than enough as of version 3.7 */
+                than enough as of version 3.7 */
 } winsys_keysym_t;
 typedef enum
 {
@@ -303,8 +303,7 @@ typedef enum
     typedef void (*winsys_display_func_t)();
     typedef void (*winsys_idle_func_t)();
     typedef void (*winsys_reshape_func_t)(int w, int h);
-    typedef void (*winsys_keyboard_func_t)(unsigned int key, unsigned int mod,
-                                           bool release, int x, int y);
+    typedef void (*winsys_keyboard_func_t)(unsigned int key, unsigned int mod, bool release, int x, int y);
     typedef void (*winsys_mouse_func_t)(int button, int state, int x, int y);
     typedef void (*winsys_motion_func_t)(int x, int y);
 
@@ -324,8 +323,7 @@ typedef enum
     void winsys_warp_pointer(int x, int y);
     void winsys_show_cursor(bool visible);
 
-    void winsys_init(int *argc, char **argv, char const *window_title,
-                     char const *icon_title);
+    void winsys_init(int *argc, char **argv, char const *window_title, char const *icon_title);
     void winsys_shutdown();
 
     void winsys_process_events(); /* Never returns */

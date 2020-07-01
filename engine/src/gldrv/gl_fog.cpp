@@ -1,5 +1,5 @@
-#include "gldrv/gfxlib.h"
 #include "gl_globals.h"
+#include "gldrv/gfxlib.h"
 static struct _GFXFogState
 {
     bool enabled;
@@ -46,7 +46,7 @@ void GFXFogMode(const FOGMODE fog)
         glEnable(GL_FOG);
     GFXFogState.curmode = fog;
     GFXFogState.enabled = true;
-    //glHint (GL_FOG_HINT,GL_NICEST );
+    // glHint (GL_FOG_HINT,GL_NICEST );
 }
 
 void GFXFogDensity(const float fogdensity)

@@ -1,9 +1,9 @@
-#include "faction_generic.h"
-#include "unit_generic.h"
-#include "pilot.h"
 #include "ai/order.h"
-#include "universe_util.h"
 #include "cmd/unit_util.h"
+#include "faction_generic.h"
+#include "pilot.h"
+#include "unit_generic.h"
+#include "universe_util.h"
 
 #include <vector>
 
@@ -22,7 +22,7 @@ Pilot::Pilot(int faction)
 void Pilot::SetComm(Unit *parent)
 {
     this->faction = parent->faction;
-    //GET BETTER REACTION TIME AND RANK HERE
+    // GET BETTER REACTION TIME AND RANK HERE
 }
 
 float Pilot::adjustSpecificRelationship(Unit *parent, void *aggressor, float factor, int faction)
@@ -34,7 +34,8 @@ float Pilot::adjustSpecificRelationship(Unit *parent, void *aggressor, float fac
         bool abovezero = (*i).second + rel < 0;
         if (!abovezero)
         {
-            static float slowrel = XMLSupport::parse_float(vs_config->getVariable("AI", "SlowDiplomacyForEnemies", ".25"));
+            static float slowrel =
+                XMLSupport::parse_float(vs_config->getVariable("AI", "SlowDiplomacyForEnemies", ".25"));
             factor *= slowrel;
         }
         (*i).second += factor;
@@ -47,7 +48,8 @@ float Pilot::adjustSpecificRelationship(Unit *parent, void *aggressor, float fac
         bool abovezero = (*i).second < lessrel;
         if (!abovezero)
         {
-            static float slowrel = XMLSupport::parse_float(vs_config->getVariable("AI", "SlowDiplomacyForEnemies", ".25"));
+            static float slowrel =
+                XMLSupport::parse_float(vs_config->getVariable("AI", "SlowDiplomacyForEnemies", ".25"));
             factor *= slowrel;
         }
         (*i).second += factor;
@@ -153,7 +155,7 @@ extern float roundclamp(float i);
 Animation *Pilot::getCommFace(Unit *parent, float mood, unsigned char &sex)
 {
     vector<Animation *> *ani = getCommFaces(sex);
-    //this #ifndef hack below by chuck_starchaser, to get around missing faction_util.o in vegaserver make list
+    // this #ifndef hack below by chuck_starchaser, to get around missing faction_util.o in vegaserver make list
     if (ani->size() == 0)
         return nullptr;
     mood += .1;

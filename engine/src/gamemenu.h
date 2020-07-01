@@ -1,21 +1,22 @@
 #ifndef __GAMEMENU_H__
 #define __GAMEMENU_H__
 
-#include "gui/windowcontroller.h"
 #include "gui/simplepicker.h"
+#include "gui/windowcontroller.h"
+#include <string>
 
 class GameMenu : public WctlBase<GameMenu>
 {
     friend class WctlBase<GameMenu>;
 
-public:
+  public:
     virtual void init(void);
     virtual void run(void);
 
     GameMenu(bool firsttime);
     virtual ~GameMenu(void);
 
-protected:
+  protected:
     bool m_firstTime;
 
     bool processSinglePlayerButton(const EventCommandId &command, Control *control);
@@ -28,17 +29,17 @@ protected:
 
     void createControls();
 
-public:
-    //Helper functions for use in a submenu of BaseComputer.
+  public:
+    // Helper functions for use in a submenu of BaseComputer.
 
-    //Caller is responsible for making a return button, as well as adding the "JoinGame" WctlTableEntry
+    // Caller is responsible for making a return button, as well as adding the "JoinGame" WctlTableEntry
     static void createNetworkControls(GroupControl *serverConnGroup, std::vector<unsigned int> *keyboard_input_queue);
-    static void readJoinGameControls(Window *window, string &user, string &pass);
+    static void readJoinGameControls(Window *window, std::string &user, std::string &pass);
 };
 
 class NetActionConfirm : public WindowController
 {
-public:
+  public:
     enum ActionMode
     {
         SAVEACCT,
@@ -46,23 +47,27 @@ public:
         DIE
     };
 
-private:
+  private:
     int32_t player;
     Window *m_parent;
-    string type;
-    string text;
-    string savefile;
+    std::string type;
+    std::string text;
+    std::string savefile;
     ActionMode netAction;
 
-public:
-    //CONSTRUCTION.
-    NetActionConfirm(int32_t pnum, Window *w, ActionMode action) : player(pnum), m_parent(w), netAction(action) {}
-    virtual ~NetActionConfirm(void) {}
+  public:
+    // CONSTRUCTION.
+    NetActionConfirm(int32_t pnum, Window *w, ActionMode action) : player(pnum), m_parent(w), netAction(action)
+    {
+    }
+    virtual ~NetActionConfirm(void)
+    {
+    }
 
-    //Set up the window and get everything ready.
+    // Set up the window and get everything ready.
     virtual void init(void);
 
-    //Process a command event from the window.
+    // Process a command event from the window.
     virtual bool processWindowCommand(const EventCommandId &command, Control *control);
 
     virtual bool finalizeJoinGame(int launchShip = 0);

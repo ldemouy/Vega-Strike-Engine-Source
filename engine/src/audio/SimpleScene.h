@@ -5,77 +5,77 @@
 #define __AUDIO_SIMPLESCENE_H__INCLUDED__
 
 #include "Exceptions.h"
-#include "Types.h"
-#include "Scene.h"
 #include "Listener.h"
+#include "Scene.h"
+#include "Types.h"
 
-#include <set>
 #include <memory>
+#include <set>
 
 namespace Audio
 {
 
-    // Forwards
-    class Source;
-    class SimpleSource;
+// Forwards
+class Source;
+class SimpleSource;
 
-    /**
-     * SimpleScene, basic implementation of the Scene interface
-     *
-     * @remarks This class implements the scene interface for a basic Scene manager.
-     *
+/**
+ * SimpleScene, basic implementation of the Scene interface
+ *
+ * @remarks This class implements the scene interface for a basic Scene manager.
+ *
+ */
+class SimpleScene : public Scene
+{
+    typedef std::set<std::shared_ptr<Source>> SourceSet;
+
+    Listener listener;
+
+    SourceSet activeSources;
+
+  public:
+    typedef SourceSet::iterator SourceIterator;
+
+  public:
+    //
+    // Standard Scene interface
+    //
+
+    /** Construct a new, empty scene */
+    SimpleScene(const std::string &name);
+
+    virtual ~SimpleScene();
+
+    /** @copydoc Scene::add
+     * @remarks source MUST be a SimpleSource
      */
-    class SimpleScene : public Scene
-    {
-        typedef std::set<std::shared_ptr<Source>> SourceSet;
+    virtual void add(std::shared_ptr<Source> source);
 
-        Listener listener;
+    /** @copydoc Scene::remove
+     * @remarks source MUST be a SimpleSource
+     */
+    virtual void remove(std::shared_ptr<Source> source);
 
-        SourceSet activeSources;
+    /** @copydoc Scene::getListener */
+    virtual Listener &getListener();
 
-    public:
-        typedef SourceSet::iterator SourceIterator;
+    //
+    // SimpleScene-specific interface
+    //
 
-    public:
-        //
-        // Standard Scene interface
-        //
+    /** Notify the scene of a source that starts or stops playing. */
+    virtual void notifySourcePlaying(std::shared_ptr<Source> source, bool playing);
 
-        /** Construct a new, empty scene */
-        SimpleScene(const std::string &name);
+    /** Gets an iterator over active sources */
+    SourceIterator getActiveSources();
 
-        virtual ~SimpleScene();
+    /** Gets the ending iterator of active sources */
+    SourceIterator getActiveSourcesEnd();
 
-        /** @copydoc Scene::add 
-         * @remarks source MUST be a SimpleSource
-         */
-        virtual void add(std::shared_ptr<Source> source);
-
-        /** @copydoc Scene::remove 
-         * @remarks source MUST be a SimpleSource
-         */
-        virtual void remove(std::shared_ptr<Source> source);
-
-        /** @copydoc Scene::getListener */
-        virtual Listener &getListener();
-
-        //
-        // SimpleScene-specific interface
-        //
-
-        /** Notify the scene of a source that starts or stops playing. */
-        virtual void notifySourcePlaying(std::shared_ptr<Source> source, bool playing);
-
-        /** Gets an iterator over active sources */
-        SourceIterator getActiveSources();
-
-        /** Gets the ending iterator of active sources */
-        SourceIterator getActiveSourcesEnd();
-
-    protected:
-        void attach(SimpleSource *source);
-        void detach(SimpleSource *source);
-    };
+  protected:
+    void attach(SimpleSource *source);
+    void detach(SimpleSource *source);
+};
 
 }; // namespace Audio
 

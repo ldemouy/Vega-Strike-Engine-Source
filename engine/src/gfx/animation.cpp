@@ -19,20 +19,20 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "cmd/unit_generic.h"
 #include "animation.h"
+#include "../gldrv/gl_globals.h"
 #include "aux_texture.h"
 #include "camera.h"
-#include "lin_time.h"
-#include <stack>
-#include "vsfilesystem.h"
-#include "vs_globals.h"
-#include "point_to_cam.h"
+#include "cmd/unit_generic.h"
 #include "config_xml.h"
-#include "xml_support.h"
+#include "lin_time.h"
+#include "point_to_cam.h"
 #include "sprite.h"
+#include "vs_globals.h"
+#include "vsfilesystem.h"
+#include "xml_support.h"
 #include <algorithm>
-#include "../gldrv/gl_globals.h"
+#include <stack>
 using std::stack;
 using std::vector;
 
@@ -68,27 +68,19 @@ void Animation::SetFaceCam(bool face)
 
 using namespace VSFileSystem;
 
-Animation::Animation(VSFileSystem::VSFile *f,
-                     bool Rep,
-                     float priority,
-                     enum FILTER ismipmapped,
-                     bool camorient,
-                     bool appear_near_by_radius,
-                     const GFXColor &c) : mycolor(c)
+Animation::Animation(VSFileSystem::VSFile *f, bool Rep, float priority, enum FILTER ismipmapped, bool camorient,
+                     bool appear_near_by_radius, const GFXColor &c)
+    : mycolor(c)
 {
 }
 
-Animation::Animation(const char *FileName,
-                     bool Rep,
-                     float priority,
-                     enum FILTER ismipmapped,
-                     bool camorient,
-                     bool appear_near_by_radius,
-                     const GFXColor &c) : mycolor(c)
+Animation::Animation(const char *FileName, bool Rep, float priority, enum FILTER ismipmapped, bool camorient,
+                     bool appear_near_by_radius, const GFXColor &c)
+    : mycolor(c)
 {
     Identity(local_transformation);
     VSCONSTRUCT2('a')
-    //repeat = Rep;
+    // repeat = Rep;
     options = 0;
     if (Rep)
         options |= ani_repeat;
@@ -96,13 +88,14 @@ Animation::Animation(const char *FileName,
         options |= ani_up;
     if (appear_near_by_radius)
         options |= ani_close;
-    SetLoop(Rep);       //setup AnimatedTexture's loop flag - NOTE: Load() will leave it like this unless a force(No)Loop option is present
-    SetLoopInterp(Rep); //Default interpolation method == looping method
+    SetLoop(Rep); // setup AnimatedTexture's loop flag - NOTE: Load() will leave it like this unless a force(No)Loop
+                  // option is present
+    SetLoopInterp(Rep); // Default interpolation method == looping method
     VSFile f;
     VSError err = f.OpenReadOnly(FileName, AnimFile);
     if (err > Ok)
     {
-        //load success already set false
+        // load success already set false
     }
     else
     {
@@ -114,14 +107,13 @@ Animation::Animation(const char *FileName,
         Load(f, 0, ismipmapped);
         f.Close();
     }
-    //VSFileSystem::ResetCurrentPath();
+    // VSFileSystem::ResetCurrentPath();
 }
 Animation::~Animation()
 {
     vector<Animation *>::iterator i;
-    while ((i =
-                std::find(far_animationdrawqueue.begin(), far_animationdrawqueue.end(),
-                          this)) != far_animationdrawqueue.end())
+    while ((i = std::find(far_animationdrawqueue.begin(), far_animationdrawqueue.end(), this)) !=
+           far_animationdrawqueue.end())
         far_animationdrawqueue.erase(i);
     while ((i = std::find(animationdrawqueue.begin(), animationdrawqueue.end(), this)) != animationdrawqueue.end())
         animationdrawqueue.erase(i);
@@ -165,7 +157,7 @@ bool Animation::NeedsProcessDrawQueue()
 }
 void Animation::ProcessFarDrawQueue(float farval)
 {
-    //set farshit
+    // set farshit
     GFXBlendMode(SRCALPHA, INVSRCALPHA);
     GFXDisable(LIGHTING);
     GFXEnable(TEXTURE0);
@@ -182,10 +174,10 @@ void Animation::ProcessDrawQueue(std::vector<Animation *> &animationdrawqueue, f
     if (g_game.use_animations == 0 && g_game.use_textures == 0)
         return;
     unsigned char alphamaps = ani_alpha;
-    int i, j; //NOT UNSIGNED
+    int i, j; // NOT UNSIGNED
     for (i = animationdrawqueue.size() - 1; i >= 0; i--)
     {
-        GFXColorf(animationdrawqueue[i]->mycolor); //fixme, should we need this? we get som egreenie explosions
+        GFXColorf(animationdrawqueue[i]->mycolor); // fixme, should we need this? we get som egreenie explosions
         Matrix result;
         if (alphamaps != (animationdrawqueue[i]->options & ani_alpha))
         {
@@ -194,15 +186,18 @@ void Animation::ProcessDrawQueue(std::vector<Animation *> &animationdrawqueue, f
         }
         QVector campos = _Universe->AccessCamera()->GetPosition();
         animationdrawqueue[i]->CalculateOrientation(result);
-        if ((limit <= -FLT_MAX) || (animationdrawqueue[i]->Position() - campos).Magnitude() - animationdrawqueue[i]->height > limit)
+        if ((limit <= -FLT_MAX) ||
+            (animationdrawqueue[i]->Position() - campos).Magnitude() - animationdrawqueue[i]->height > limit)
         {
-            //other way was inconsistent about what was far and what was not--need to use the same test for putting to far queueu and drawing it--otherwise graphical glitches
+            // other way was inconsistent about what was far and what was not--need to use the same test for putting to
+            // far queueu and drawing it--otherwise graphical glitches
             GFXFogMode(FOG_OFF);
             animationdrawqueue[i]->DrawNow(result);
-            animationdrawqueue[i] = 0; //Flag for deletion: gets called multiple times with decreasing values, and eventually is called with limit=-FLT_MAX.
+            animationdrawqueue[i] = 0; // Flag for deletion: gets called multiple times with decreasing values, and
+                                       // eventually is called with limit=-FLT_MAX.
         }
     }
-    //Delete flagged ones
+    // Delete flagged ones
     i = 0;
     while (i < static_cast<int>(animationdrawqueue.size()) && animationdrawqueue[i])
         ++i;
@@ -224,16 +219,8 @@ bool Animation::CalculateOrientation(Matrix &result)
     float hei = height;
     float wid = width;
     static float HaloOffset = XMLSupport::parse_float(vs_config->getVariable("graphics", "HaloOffset", ".1"));
-    bool retval =
-        ::CalculateOrientation(pos,
-                               camp,
-                               camq,
-                               camr,
-                               wid,
-                               hei,
-                               (options & ani_close) ? HaloOffset : 0,
-                               false,
-                               (options & ani_up) ? nullptr : &local_transformation);
+    bool retval = ::CalculateOrientation(pos, camp, camq, camr, wid, hei, (options & ani_close) ? HaloOffset : 0, false,
+                                         (options & ani_up) ? nullptr : &local_transformation);
 
     /*
      *  Camera* TempCam = _Universe->AccessCamera();
@@ -284,44 +271,18 @@ void Animation::DrawNow(const Matrix &final_orientation)
                 if (!multitex)
                 {
                     const float verts[4 * (3 + 2)] = {
-                        -width, -height, 0.0f, ms, Mt, //lower left
-                        width, -height, 0.0f, Ms, Mt,  //upper left
-                        width, height, 0.0f, Ms, mt,   //upper right
-                        -width, height, 0.0f, ms, mt,  //lower right
+                        -width, -height, 0.0f, ms, Mt, // lower left
+                        width,  -height, 0.0f, Ms, Mt, // upper left
+                        width,  height,  0.0f, Ms, mt, // upper right
+                        -width, height,  0.0f, ms, mt, // lower right
                     };
                     GFXDraw(GFXQUAD, verts, 4, 3, 0, 2);
                 }
                 else
                 {
                     const float verts[4 * (3 + 4)] = {
-                        -width,
-                        -height,
-                        0.0f,
-                        ms,
-                        Mt,
-                        ms,
-                        Mt,
-                        width,
-                        -height,
-                        0.0f,
-                        Ms,
-                        Mt,
-                        Ms,
-                        Mt,
-                        width,
-                        height,
-                        0.0f,
-                        Ms,
-                        mt,
-                        Ms,
-                        mt,
-                        -width,
-                        height,
-                        0.0f,
-                        ms,
-                        mt,
-                        ms,
-                        mt,
+                        -width, -height, 0.0f, ms, Mt, ms, Mt, width,  -height, 0.0f, Ms, Mt, Ms, Mt,
+                        width,  height,  0.0f, Ms, mt, Ms, mt, -width, height,  0.0f, ms, mt, ms, mt,
                     };
                     GFXDraw(GFXQUAD, verts, 4, 3, 0, 2, 2);
                 }
@@ -338,7 +299,7 @@ void Animation::DrawAsVSSprite(VSSprite *spr)
         return;
     if (g_game.use_animations != 0 || g_game.use_textures != 0)
     {
-        //unsigned char alphamaps=ani_alpha;
+        // unsigned char alphamaps=ani_alpha;
         GFXPushBlendMode();
         if (options & ani_alpha)
             GFXBlendMode(SRCALPHA, INVSRCALPHA);
@@ -369,44 +330,18 @@ void Animation::DrawAsVSSprite(VSSprite *spr)
                 if (!multitex)
                 {
                     const float verts[4 * (3 + 2)] = {
-                        ll.i, ll.j, ll.k, ms, Mt, //lower left
-                        lr.i, lr.j, lr.k, Ms, Mt, //upper left
-                        ur.i, ur.j, ur.k, Ms, mt, //upper right
-                        ul.i, ul.j, ul.k, ms, mt, //lower right
+                        ll.i, ll.j, ll.k, ms, Mt, // lower left
+                        lr.i, lr.j, lr.k, Ms, Mt, // upper left
+                        ur.i, ur.j, ur.k, Ms, mt, // upper right
+                        ul.i, ul.j, ul.k, ms, mt, // lower right
                     };
                     GFXDraw(GFXQUAD, verts, 4, 3, 0, 2);
                 }
                 else
                 {
                     const float verts[4 * (3 + 4)] = {
-                        ll.i,
-                        ll.j,
-                        ll.k,
-                        ms,
-                        Mt,
-                        ms,
-                        Mt,
-                        lr.i,
-                        lr.j,
-                        lr.k,
-                        Ms,
-                        Mt,
-                        Ms,
-                        Mt,
-                        ur.i,
-                        ur.j,
-                        ur.k,
-                        Ms,
-                        mt,
-                        Ms,
-                        mt,
-                        ul.i,
-                        ul.j,
-                        ul.k,
-                        ms,
-                        mt,
-                        ms,
-                        mt,
+                        ll.i, ll.j, ll.k, ms, Mt, ms, Mt, lr.i, lr.j, lr.k, Ms, Mt, Ms, Mt,
+                        ur.i, ur.j, ur.k, Ms, mt, Ms, mt, ul.i, ul.j, ul.k, ms, mt, ms, mt,
                     };
                     GFXDraw(GFXQUAD, verts, 4, 3, 0, 2, 2);
                 }
@@ -460,112 +395,34 @@ void Animation::DrawNoTransform(bool cross, bool blendoption)
                 if (!multitex)
                 {
                     const float verts[12 * (3 + 2)] = {
-                        -width, -height, 0.0f, ms, Mt, //lower left
-                        width, -height, 0.0f, Ms, Mt,  //upper left
-                        width, height, 0.0f, Ms, mt,   //upper right
-                        -width, height, 0.0f, ms, mt,  //lower right
+                        -width, -height, 0.0f,    ms, Mt, // lower left
+                        width,  -height, 0.0f,    Ms, Mt, // upper left
+                        width,  height,  0.0f,    Ms, mt, // upper right
+                        -width, height,  0.0f,    ms, mt, // lower right
 
-                        -width, 0.0f, -height, ms, Mt, //lower left
-                        width, 0.0f, -height, Ms, Mt,  //upper left
-                        width, 0.0f, height, Ms, mt,   //upper right
-                        -width, 0.0f, height, ms, mt,  //lower right
+                        -width, 0.0f,    -height, ms, Mt, // lower left
+                        width,  0.0f,    -height, Ms, Mt, // upper left
+                        width,  0.0f,    height,  Ms, mt, // upper right
+                        -width, 0.0f,    height,  ms, mt, // lower right
 
-                        0.0f, -height, -height, ms, Mt, //lower left
-                        0.0f, height, -height, Ms, Mt,  //upper left
-                        0.0f, height, height, Ms, mt,   //upper right
-                        0.0f, -height, height, ms, mt,  //lower right
+                        0.0f,   -height, -height, ms, Mt, // lower left
+                        0.0f,   height,  -height, Ms, Mt, // upper left
+                        0.0f,   height,  height,  Ms, mt, // upper right
+                        0.0f,   -height, height,  ms, mt, // lower right
                     };
                     GFXDraw(GFXQUAD, verts, vnum, 3, 0, 2);
                 }
                 else
                 {
                     const float verts[12 * (3 + 4)] = {
-                        -width,
-                        -height,
-                        0.0f,
-                        ms,
-                        Mt,
-                        ms,
-                        Mt,
-                        width,
-                        -height,
-                        0.0f,
-                        Ms,
-                        Mt,
-                        Ms,
-                        Mt,
-                        width,
-                        height,
-                        0.0f,
-                        Ms,
-                        mt,
-                        Ms,
-                        mt,
-                        -width,
-                        height,
-                        0.0f,
-                        ms,
-                        mt,
-                        ms,
-                        mt,
+                        -width, -height, 0.0f,    ms, Mt, ms, Mt, width,  -height, 0.0f,    Ms, Mt, Ms, Mt,
+                        width,  height,  0.0f,    Ms, mt, Ms, mt, -width, height,  0.0f,    ms, mt, ms, mt,
 
-                        -width,
-                        0.0f,
-                        -height,
-                        ms,
-                        Mt,
-                        ms,
-                        Mt,
-                        width,
-                        0.0f,
-                        -height,
-                        Ms,
-                        Mt,
-                        Ms,
-                        Mt,
-                        width,
-                        0.0f,
-                        height,
-                        Ms,
-                        mt,
-                        Ms,
-                        mt,
-                        -width,
-                        0.0f,
-                        height,
-                        ms,
-                        mt,
-                        ms,
-                        mt,
+                        -width, 0.0f,    -height, ms, Mt, ms, Mt, width,  0.0f,    -height, Ms, Mt, Ms, Mt,
+                        width,  0.0f,    height,  Ms, mt, Ms, mt, -width, 0.0f,    height,  ms, mt, ms, mt,
 
-                        0.0f,
-                        -height,
-                        -height,
-                        ms,
-                        Mt,
-                        ms,
-                        Mt,
-                        0.0f,
-                        height,
-                        -height,
-                        Ms,
-                        Mt,
-                        Ms,
-                        Mt,
-                        0.0f,
-                        height,
-                        height,
-                        Ms,
-                        mt,
-                        Ms,
-                        mt,
-                        0.0f,
-                        -height,
-                        height,
-                        ms,
-                        mt,
-                        ms,
-                        mt,
+                        0.0f,   -height, -height, ms, Mt, ms, Mt, 0.0f,   height,  -height, Ms, Mt, Ms, Mt,
+                        0.0f,   height,  height,  Ms, mt, Ms, mt, 0.0f,   -height, height,  ms, mt, ms, mt,
                     };
                     GFXDraw(GFXQUAD, verts, vnum, 3, 0, 2, 2);
                 }
@@ -588,13 +445,16 @@ void Animation::Draw()
         static float HaloOffset = XMLSupport::parse_float(vs_config->getVariable("graphics", "HaloOffset", ".1"));
 
         /**/
-        //Why do all this if we can use ::CalculateOrientation?
-        //-- well one reason is that the code change broke it :-/  Until suns display properly or we switch to ogre we should keep it as it was (problem was, flare wouldn't display--- or would display behind the sun)
+        // Why do all this if we can use ::CalculateOrientation?
+        //-- well one reason is that the code change broke it :-/  Until suns display properly or we switch to ogre we
+        //should keep it as it was (problem was, flare wouldn't display--- or would display behind the sun)
         QVector R(_Universe->AccessCamera()->GetR().i, _Universe->AccessCamera()->GetR().j,
                   _Universe->AccessCamera()->GetR().k);
-        static float too_far_dist = XMLSupport::parse_float(vs_config->getVariable("graphics", "anim_far_percent", ".8"));
-        if ((/*R.Dot*/ (Position() - _Universe->AccessCamera()->GetPosition()).Magnitude() + HaloOffset * (height > width ? height : width)) < too_far_dist * g_game.zfar)
-            //if (::CalculateOrientation (pos,camp,camq,camr,wid,hei,(options&ani_close)?HaloOffset:0,false)) {ss
+        static float too_far_dist =
+            XMLSupport::parse_float(vs_config->getVariable("graphics", "anim_far_percent", ".8"));
+        if ((/*R.Dot*/ (Position() - _Universe->AccessCamera()->GetPosition()).Magnitude() +
+             HaloOffset * (height > width ? height : width)) < too_far_dist * g_game.zfar)
+            // if (::CalculateOrientation (pos,camp,camq,camr,wid,hei,(options&ani_close)?HaloOffset:0,false)) {ss
             animationdrawqueue.push_back(this);
         else
             far_animationdrawqueue.push_back(this);

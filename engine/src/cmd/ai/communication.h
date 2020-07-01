@@ -5,14 +5,14 @@
 
 class FSM
 {
-protected:
-public:
+  protected:
+  public:
     struct Node
     {
         vector<std::string> messages;
-        vector<std::string> soundfiles; //messages.size() sound file path for each sex
-        vector<int32_t> sounds;         //messages.size() sound for each sex
-        vector<float> gains;            //messages.size()
+        vector<std::string> soundfiles; // messages.size() sound file path for each sex
+        vector<int32_t> sounds;         // messages.size() sound for each sex
+        vector<float> gains;            // messages.size()
         float messagedelta;
         vector<uint32_t> edges;
         int32_t GetSound(uint8_t sex, uint32_t multiple, float &gain);
@@ -67,21 +67,17 @@ class CommunicationMessage
     void Init(Unit *send, Unit *recv);
     void SetAnimation(std::vector<class Animation *> *ani, unsigned char sex);
 
-public:
-    FSM *fsm; //the finite state that this communcation stage is in
+  public:
+    FSM *fsm; // the finite state that this communcation stage is in
     class Animation *ani;
-    unsigned char sex; //which sound should play
+    unsigned char sex; // which sound should play
     int prevstate;
     int curstate;
-    int edgenum; //useful for server validation, -1 = did not move via an edge.
+    int edgenum; // useful for server validation, -1 = did not move via an edge.
     UnitContainer sender;
     CommunicationMessage(Unit *send, Unit *recv, std::vector<class Animation *> *ani, unsigned char sex);
     CommunicationMessage(Unit *send, Unit *recv, int curstate, std::vector<class Animation *> *ani, unsigned char sex);
-    CommunicationMessage(Unit *send,
-                         Unit *recv,
-                         int prevvstate,
-                         int curstate,
-                         std::vector<class Animation *> *ani,
+    CommunicationMessage(Unit *send, Unit *recv, int prevvstate, int curstate, std::vector<class Animation *> *ani,
                          unsigned char sex);
     CommunicationMessage(Unit *send, Unit *recv, const CommunicationMessage &prevsvtate, int curstate,
                          std::vector<class Animation *> *ani, unsigned char sex);

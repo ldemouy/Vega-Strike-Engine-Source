@@ -1,7 +1,7 @@
-#include "in_joystick.h"
-#include "vs_globals.h"
 #include "config_xml.h"
+#include "in_joystick.h"
 #include "in_kb_data.h"
+#include "vs_globals.h"
 #include <assert.h>                                      /// needed for assert() calls.
 void DefaultJoyHandler(const KBData &, KBSTATE newState) // DELETE ME
 {
@@ -29,19 +29,14 @@ enum JSSwitches
     NUMSWITCHES
 };
 #define MAXOR(A, B) (((A) < (B)) ? (B) : (A))
-JSHandlerCall JoystickBindings[NUMSWITCHES][MAXOR(MAX_HATSWITCHES, MAX_JOYSTICKS)][MAXOR(NUMJBUTTONS,
-                                                                                         MAXOR(MAX_VALUES,
-                                                                                               MAX_DIGITAL_HATSWITCHES
-                                                                                                   *MAX_DIGITAL_VALUES))];
-KBSTATE JoystickState[NUMSWITCHES][MAXOR(MAX_HATSWITCHES, MAX_JOYSTICKS)][MAXOR(MAX_VALUES,
-                                                                                MAXOR(NUMJBUTTONS, MAX_DIGITAL_HATSWITCHES
-                                                                                                       *MAX_DIGITAL_VALUES))];
+JSHandlerCall JoystickBindings[NUMSWITCHES][MAXOR(MAX_HATSWITCHES, MAX_JOYSTICKS)]
+                              [MAXOR(NUMJBUTTONS, MAXOR(MAX_VALUES, MAX_DIGITAL_HATSWITCHES *MAX_DIGITAL_VALUES))];
+KBSTATE JoystickState[NUMSWITCHES][MAXOR(MAX_HATSWITCHES, MAX_JOYSTICKS)]
+                     [MAXOR(MAX_VALUES, MAXOR(NUMJBUTTONS, MAX_DIGITAL_HATSWITCHES *MAX_DIGITAL_VALUES))];
 
 static void GenUnbindJoyKey(JSSwitches whichswitch, int32_t joystick, int32_t key)
 {
-    assert(key < MAXOR(NUMJBUTTONS,
-                       MAXOR(MAX_VALUES,
-                             MAX_DIGITAL_HATSWITCHES * MAX_DIGITAL_VALUES)) &&
+    assert(key < MAXOR(NUMJBUTTONS, MAXOR(MAX_VALUES, MAX_DIGITAL_HATSWITCHES * MAX_DIGITAL_VALUES)) &&
            joystick < MAXOR(MAX_JOYSTICKS, MAX_HATSWITCHES));
     JoystickBindings[whichswitch][joystick][key] = JSHandlerCall();
     JoystickState[whichswitch][joystick][key] = UP;
@@ -88,7 +83,7 @@ void ProcessJoystick(int32_t whichplayer)
 {
     float x, y, z;
     int32_t buttons;
-    SDL_JoystickUpdate(); //FIXME isn't this supposed to be called already by SDL?
+    SDL_JoystickUpdate(); // FIXME isn't this supposed to be called already by SDL?
 
     for (int32_t i = whichplayer; i < whichplayer + 1 && i < MAX_JOYSTICKS; i++)
     {
@@ -109,7 +104,7 @@ void ProcessJoystick(int32_t whichplayer)
                 {
                     bool press = false;
 
-                    //CENTERED is an exact position.
+                    // CENTERED is an exact position.
                     if (dir_index == VS_HAT_CENTERED && (hsw == SDL_HAT_CENTERED))
                     {
                         if (joystick[i]->debug_digital_hatswitch)
@@ -151,10 +146,8 @@ void ProcessJoystick(int32_t whichplayer)
                         press = true;
                     }
 
-                    KBSTATE *state =
-                        &JoystickState[DIGHATSWITCH][i][h * MAX_DIGITAL_VALUES + dir_index];
-                    JSHandlerCall *handler =
-                        &JoystickBindings[DIGHATSWITCH][i][h * MAX_DIGITAL_VALUES + dir_index];
+                    KBSTATE *state = &JoystickState[DIGHATSWITCH][i][h * MAX_DIGITAL_VALUES + dir_index];
+                    JSHandlerCall *handler = &JoystickBindings[DIGHATSWITCH][i][h * MAX_DIGITAL_VALUES + dir_index];
                     if (press == true)
                     {
                         if (*state == UP)
@@ -173,7 +166,7 @@ void ProcessJoystick(int32_t whichplayer)
                     }
                     (*handler->function)(handler->data, *state);
                 }
-            } //digital_hatswitch
+            } // digital_hatswitch
             for (int32_t j = 0; j < NUMJBUTTONS; j++)
             {
                 KBSTATE *state = &JoystickState[JOYSTICK_SWITCH][i][j];
@@ -196,14 +189,14 @@ void ProcessJoystick(int32_t whichplayer)
                 }
                 (*handler->function)(handler->data, *state);
             }
-        } //is available
-    }     //for nr joysticks
+        } // is available
+    }     // for nr joysticks
     for (int32_t h = 0; h < MAX_HATSWITCHES; h++)
     {
         float margin = fabs(vs_config->hatswitch_margin[h]);
         if (margin < 1.0)
         {
-            //we have hatswitch nr. h
+            // we have hatswitch nr. h
             int32_t hs_axis = vs_config->hatswitch_axis[h];
             int32_t hs_joy = vs_config->hatswitch_joystick[h];
             if (joystick[hs_joy]->isAvailable())
@@ -214,12 +207,12 @@ void ProcessJoystick(int32_t whichplayer)
                     float hs_val = vs_config->hatswitch[h][v];
                     if (fabs(hs_val) <= 1.0)
                     {
-                        //this is set
+                        // this is set
                         JSHandlerCall *handler = &JoystickBindings[HATSWITCH][h][v];
                         KBSTATE *state = &JoystickState[HATSWITCH][h][v];
                         if (hs_val - margin <= axevalue && axevalue <= hs_val + margin)
                         {
-                            //hatswitch pressed
+                            // hatswitch pressed
                             if (*state == UP)
                             {
                                 (*handler->function)(handler->data, PRESS);
@@ -228,15 +221,15 @@ void ProcessJoystick(int32_t whichplayer)
                         }
                         else
                         {
-                            //not pressed
+                            // not pressed
                             if (*state == DOWN)
                                 (*handler->function)(handler->data, RELEASE);
                             *state = UP;
                         }
                         (*handler->function)(handler->data, *state);
                     }
-                } //for all values
-            }     //is available
+                } // for all values
+            }     // is available
         }
     }
 }

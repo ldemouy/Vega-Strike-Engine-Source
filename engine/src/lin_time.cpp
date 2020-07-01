@@ -19,8 +19,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "vegastrike.h"
 #include "in_kb.h"
+#include "vegastrike.h"
 #include "vs_random.h"
 static double firsttime;
 VSRandom vsrandom(time(nullptr));
@@ -28,7 +28,7 @@ VSRandom vsrandom(time(nullptr));
 #ifdef WIN32
 #ifndef NOMINMAX
 #define NOMINMAX
-#endif //tells VCC not to generate min/max macros
+#endif // tells VCC not to generate min/max macros
 #include <windows.h>
 static LONGLONG ttime;
 static LONGLONG newtime = 0;
@@ -114,7 +114,7 @@ float getTimeCompression()
 void setTimeCompression(float tc)
 {
     timecompression = tc;
-    timecount = 0; //to avoid any problems with time compression sounds... use getTimeCompression() instead
+    timecount = 0; // to avoid any problems with time compression sounds... use getTimeCompression() instead
 }
 
 bool toggle_pause()
@@ -137,7 +137,7 @@ bool toggle_pause()
 
 #ifndef NOMINMAX
 #define NOMINMAX
-#endif //tells VCC not to generate min/max macros
+#endif // tells VCC not to generate min/max macros
 
 #include <windows.h>
 
@@ -159,8 +159,7 @@ void micro_sleep(unsigned int n)
 
 void micro_sleep(unsigned int n)
 {
-    struct timeval tv = {
-        0, 0};
+    struct timeval tv = {0, 0};
 
     tv.tv_usec = n % 1000000;
     tv.tv_sec = n / 1000000;

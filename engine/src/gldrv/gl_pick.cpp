@@ -3,8 +3,8 @@
 
 //#include <GL/gl.h>
 #include "gl_globals.h"
-#include "gldrv/gfxlib.h"
 #include "gl_matrix.h"
+#include "gldrv/gfxlib.h"
 #include <GL/glu.h>
 #include <assert.h>
 #define SELECTBUF_SIZE MAX_PICK * 4
@@ -17,7 +17,7 @@ using namespace GFXMatrices;
 
 void GFXBeginPick(int x, int y, int xsize, int ysize)
 {
-    //save and change gl projection matrix
+    // save and change gl projection matrix
     GLint viewport[4];
 
     float left, right, bottom, top, fnear, ffar;
@@ -74,7 +74,7 @@ void drawRects(GLenum mode)
     glEnd();
 }
 
-//Don't call this function
+// Don't call this function
 bool GFXCheckPicked()
 {
     assert(0);
@@ -90,14 +90,14 @@ vector<PickData> *GFXEndPick()
 {
     int num_hits = glRenderMode(GL_RENDER);
     assert(num_hits != -1);
-    //num_hits could == -1, check for this case
+    // num_hits could == -1, check for this case
     unsigned *ptr = selectbuf;
     for (int a = 0; a < num_hits; a++)
     {
         picked_objects->push_back(PickData(ptr[3], ptr[1], ptr[2]));
         ptr += ptr[0] + 3;
     }
-    //restore gl projection matrix
+    // restore gl projection matrix
     glMatrixMode(GL_PROJECTION);
     glPopMatrix();
     return picked_objects;

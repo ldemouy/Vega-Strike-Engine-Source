@@ -19,13 +19,13 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "matrix.h"
 #include "gldrv/gfxlib.h"
+#include "matrix.h"
 #include "physics.h"
 
 #ifndef _CAMERA_H_
 #define _CAMERA_H_
-//class PlanetaryTransform; commented out by chuck_starchaser --never used
+// class PlanetaryTransform; commented out by chuck_starchaser --never used
 #include "cmd/container.h"
 class Nebula;
 
@@ -44,7 +44,7 @@ class Camera
     float cockpit_offset;
     UnitContainer nebula;
 
-public:
+  public:
     void setCockpitOffset(float c)
     {
         cockpit_offset = c;
@@ -60,11 +60,11 @@ public:
         PERSPECTIVE
     };
 
-private:
+  private:
     ProjectionType projectionType;
     //    PlanetaryTransform *planet; commented out by chuck_starchaser; --never used
-private:
-    //Last GFX Update, for partial updates
+  private:
+    // Last GFX Update, for partial updates
     struct LastGFXUpdateStruct
     {
         GFXBOOL clip;
@@ -74,22 +74,22 @@ private:
         float overrideZNear, overrideZFar;
     } lastGFXUpdate;
 
-public:
+  public:
     explicit Camera(ProjectionType proj = PERSPECTIVE);
     void LookDirection(const Vector &forevec, const Vector &up);
     Vector P, Q, R;
     void SetNebula(Nebula *neb);
-    Nebula *GetNebula(); //this function can't be const, as it must return a non-const ptr --chuck_starchaser
-                         /*    PlanetaryTransform const * GetPlanetaryTransform() const   commented out by chuck_starchaser; --never used
-    {
-        return planet;
-    }
-    void SetPlanetaryTransform( PlanetaryTransform *t )
-    {
-        planet = t;
-    }*/
+    Nebula *GetNebula(); // this function can't be const, as it must return a non-const ptr --chuck_starchaser
+    /*    PlanetaryTransform const * GetPlanetaryTransform() const   commented out by chuck_starchaser; --never used
+{
+return planet;
+}
+void SetPlanetaryTransform( PlanetaryTransform *t )
+{
+planet = t;
+}*/
     PhysicsSystem myPhysics;
-    ///This function updates the sound if sound is not updated on a per frame basis
+    /// This function updates the sound if sound is not updated on a per frame basis
     void UpdateCameraSounds();
     void GetView(Matrix &);
     const Vector &GetR() const
@@ -97,43 +97,28 @@ public:
         return R;
     }
     void GetPQR(Vector &p1, Vector &q1, Vector &r1) const;
-    void UpdateGFX(GFXBOOL clip,
-                   GFXBOOL updateFrustum,
-                   GFXBOOL centerCamera,
-                   GFXBOOL overrideZFrustum,
-                   float overrideZNear,
-                   float overrideZFar);
+    void UpdateGFX(GFXBOOL clip, GFXBOOL updateFrustum, GFXBOOL centerCamera, GFXBOOL overrideZFrustum,
+                   float overrideZNear, float overrideZFar);
     void UpdateGFX(GFXBOOL clip = GFXTRUE, GFXBOOL updateFrustum = GFXTRUE, GFXBOOL centerCamera = GFXFALSE)
     {
-        UpdateGFX(clip,
-                  updateFrustum,
-                  centerCamera,
-                  lastGFXUpdate.overrideZFrustum,
-                  lastGFXUpdate.overrideZNear,
+        UpdateGFX(clip, updateFrustum, centerCamera, lastGFXUpdate.overrideZFrustum, lastGFXUpdate.overrideZNear,
                   lastGFXUpdate.overrideZFar);
     }
     void UpdateGFXFrustum(GFXBOOL overrideZFrustum, float overrideZNear, float overrideZFar)
     {
-        UpdateGFX(lastGFXUpdate.clip,
-                  lastGFXUpdate.updateFrustum,
-                  lastGFXUpdate.centerCamera,
-                  overrideZFrustum,
-                  overrideZNear,
-                  overrideZFar);
+        UpdateGFX(lastGFXUpdate.clip, lastGFXUpdate.updateFrustum, lastGFXUpdate.centerCamera, overrideZFrustum,
+                  overrideZNear, overrideZFar);
     }
     void UpdateGFXAgain()
     {
-        UpdateGFX(lastGFXUpdate.clip,
-                  lastGFXUpdate.updateFrustum,
-                  lastGFXUpdate.centerCamera,
-                  lastGFXUpdate.overrideZFrustum,
-                  lastGFXUpdate.overrideZNear,
-                  lastGFXUpdate.overrideZFar);
+        UpdateGFX(lastGFXUpdate.clip, lastGFXUpdate.updateFrustum, lastGFXUpdate.centerCamera,
+                  lastGFXUpdate.overrideZFrustum, lastGFXUpdate.overrideZNear, lastGFXUpdate.overrideZFar);
     }
-    void UpdatePlanetGFX(); //clip true, frustum true at all times
+    void UpdatePlanetGFX(); // clip true, frustum true at all times
     Matrix *GetPlanetGFX();
     void UpdateGLCenter();
-    void SetPosition(const QVector &origin, const Vector &velocity, const Vector &angular_velocity, const Vector &acceleration);
+    void SetPosition(const QVector &origin, const Vector &velocity, const Vector &angular_velocity,
+                     const Vector &acceleration);
     void GetPosition(QVector &vect)
     {
         vect = Coord;

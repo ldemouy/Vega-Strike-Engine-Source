@@ -35,7 +35,7 @@
 
 namespace VSFileSystem
 {
-    class VSFile;
+class VSFile;
 };
 
 class Animation : public AnimatedTexture
@@ -44,7 +44,7 @@ class Animation : public AnimatedTexture
 
     Matrix local_transformation;
 
-    float height; //half the height so you can do fancy vector translatons to campspace
+    float height; // half the height so you can do fancy vector translatons to campspace
 
     float width;
 
@@ -52,10 +52,11 @@ class Animation : public AnimatedTexture
 
     void InitAnimation();
 
-public:
+  public:
     Animation();
 
-    Animation(VSFileSystem::VSFile *f, bool Rep = 0, float priority = .1, enum FILTER ismipmapped = MIPMAP, bool camorient = false, bool appear_near_by_radius = false, const GFXColor &col = GFXColor(1, 1, 1, 1));
+    Animation(VSFileSystem::VSFile *f, bool Rep = 0, float priority = .1, enum FILTER ismipmapped = MIPMAP,
+              bool camorient = false, bool appear_near_by_radius = false, const GFXColor &col = GFXColor(1, 1, 1, 1));
     Animation(const char *, bool Rep = 0, float priority = .1, enum FILTER ismipmapped = MIPMAP, bool camorient = false,
               bool appear_near_by_radius = false, const GFXColor &col = GFXColor(1, 1, 1, 1));
 

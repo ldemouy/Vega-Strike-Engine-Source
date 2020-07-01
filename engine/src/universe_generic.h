@@ -24,10 +24,10 @@
 #define NUM_LIGHT 8
 #define NUM_FORCES 64
 
-#include <memory>
-#include "star_system_generic.h"
 #include "faction_generic.h"
+#include "star_system_generic.h"
 #include "stardate.h"
+#include <memory>
 
 class Cockpit;
 class Camera;
@@ -45,32 +45,32 @@ class Texture;
  */
 namespace GalaxyXML
 {
-    class Galaxy;
+class Galaxy;
 }
 class Universe
 {
-protected:
+  protected:
     std::unique_ptr<GalaxyXML::Galaxy> galaxy;
-    ///The users cockpit
+    /// The users cockpit
     unsigned int current_cockpit;
     std::vector<Cockpit *> cockpit;
-    ///a generic camera facing the HUD
-    //Camera hud_camera;
-    ///init proc
-    //void StartGL();
-    ///currently only 1 star system is stored
+    /// a generic camera facing the HUD
+    // Camera hud_camera;
+    /// init proc
+    // void StartGL();
+    /// currently only 1 star system is stored
     std::vector<StarSystem *> active_star_system;
 
-    //the system currently used by the scripting
+    // the system currently used by the scripting
     StarSystem *script_system;
 
-private:
-    ///Many C++ implementations count classes within as friends. (not all)
+  private:
+    /// Many C++ implementations count classes within as friends. (not all)
     friend class Faction;
-    //friend void bootstrap_main_loop();//so it can get all cockpits
-    ///A list of all factions
+    // friend void bootstrap_main_loop();//so it can get all cockpits
+    /// A list of all factions
 
-public:
+  public:
     void netLock(bool enable);
     bool netLocked();
 
@@ -82,8 +82,8 @@ public:
     Cockpit *isPlayerStarship(const Unit *fighter);
     Cockpit *isPlayerStarshipVoid(const void *pointercompare)
     {
-        //void *newp = const_cast<void *>(pointercompare);
-        //return this->isPlayerStarship(reinterpret_cast<Unit*>(newp));
+        // void *newp = const_cast<void *>(pointercompare);
+        // return this->isPlayerStarship(reinterpret_cast<Unit*>(newp));
         return isPlayerStarship((const Unit *)pointercompare);
     }
     int whichPlayerStarship(const Unit *fighter);
@@ -99,7 +99,7 @@ public:
     {
         return current_cockpit;
     }
-    ///Wrapper function for Star System
+    /// Wrapper function for Star System
     virtual Camera *AccessCamera(int num)
     {
         return nullptr;
@@ -108,24 +108,32 @@ public:
     {
         return nullptr;
     }
-    ///Returns the current hud cam
+    /// Returns the current hud cam
     virtual Camera *AccessHudCamera()
     {
         return nullptr;
     }
-    ///Wrapper function for star system
-    virtual void SetViewport() {}
+    /// Wrapper function for star system
+    virtual void SetViewport()
+    {
+    }
     void SetActiveCockpit(int whichcockpit);
     void SetActiveCockpit(Cockpit *which);
-    virtual void WriteSaveGame(bool auto_save) {}
+    virtual void WriteSaveGame(bool auto_save)
+    {
+    }
     virtual void SetupCockpits(std::vector<std::string> players);
-    virtual void activateLightMap(int stage = 1) {}
+    virtual void activateLightMap(int stage = 1)
+    {
+    }
     virtual Texture *getLightMap()
     {
         return nullptr;
     }
-    virtual void SelectCamera(int cam) {}
-    //virtual unsigned int CurrentCockpit(){return 0;}
+    virtual void SelectCamera(int cam)
+    {
+    }
+    // virtual unsigned int CurrentCockpit(){return 0;}
     Cockpit *createCockpit(std::string player);
 
     void getJumpPath(const std::string &from, const std::string &to, std::vector<std::string> &path) const;
@@ -154,8 +162,8 @@ public:
             active_star_system.pop_back();
     }
     void clearAllSystems();
-    //void SetActiveCockpit (int whichcockpit);
-    //void SetActiveCockpit (Cockpit * which);
+    // void SetActiveCockpit (int whichcockpit);
+    // void SetActiveCockpit (Cockpit * which);
     StarSystem *getActiveStarSystem(unsigned int size)
     {
         return size >= active_star_system.size() ? nullptr : active_star_system[size];
@@ -169,69 +177,73 @@ public:
     void Generate1(const char *file, const char *jumpback);
     void Generate2(StarSystem *ss);
     virtual StarSystem *GenerateStarSystem(const char *file, const char *jumpback, Vector origin);
-    ///Loads and parses factions
+    /// Loads and parses factions
     void LoadFactionXML(const char *factfile)
     {
         Faction::LoadXML(factfile);
     }
-    //void SetupCockpits (std::vector <std::string> players);
-    //void WriteSaveGame(bool auto_save);
-    //void activateLightMap();
-    ///inits graphics with args
+    // void SetupCockpits (std::vector <std::string> players);
+    // void WriteSaveGame(bool auto_save);
+    // void activateLightMap();
+    /// inits graphics with args
     Universe();
     Universe(int argc, char **argv, const char *galaxy, bool server = false);
     void Init(const char *gal);
     virtual ~Universe();
-    ///Loads Defaults in Graphics Drivers
-    //void StartGFX();
-    ///Should load the Universe data file. Now just inits system with test.xml
-    virtual class StarSystem *Init(string systemfile, const Vector &centroid = Vector(0, 0, 0), const string planetname = string());
-    ///Begins a scene
-    virtual void StartDraw() {}
-    //Update starsystems (for server side)
+    /// Loads Defaults in Graphics Drivers
+    // void StartGFX();
+    /// Should load the Universe data file. Now just inits system with test.xml
+    virtual class StarSystem *Init(string systemfile, const Vector &centroid = Vector(0, 0, 0),
+                                   const string planetname = string());
+    /// Begins a scene
+    virtual void StartDraw()
+    {
+    }
+    // Update starsystems (for server side)
     void Update();
-    ///Runs the main loop
-    virtual void Loop(void f()) {}
-    ///returns active star system
+    /// Runs the main loop
+    virtual void Loop(void f())
+    {
+    }
+    /// returns active star system
     StarSystem *activeStarSystem()
     {
-        return active_star_system.empty() ? nullptr
-                                          : active_star_system.back();
+        return active_star_system.empty() ? nullptr : active_star_system.back();
     }
-    ///Wrapper function for Star System
+    /// Wrapper function for Star System
     /*
- *  void SelectCamera(int cam) {
- *  AccessCockpit()->SelectCamera(cam);
- *  }
- */
-    ///Accessor to cockpit
-    //unsigned int CurrentCockpit(){return current_cockpit;}
-    //Cockpit *AccessCockpit() {return cockpit[current_cockpit];}
+     *  void SelectCamera(int cam) {
+     *  AccessCockpit()->SelectCamera(cam);
+     *  }
+     */
+    /// Accessor to cockpit
+    // unsigned int CurrentCockpit(){return current_cockpit;}
+    // Cockpit *AccessCockpit() {return cockpit[current_cockpit];}
     unsigned int numPlayers()
     {
         return cockpit.size();
     }
-    //Cockpit *AccessCockpit (int i) {return cockpit[i];}
-    ///Wrapper function for Star System
+    // Cockpit *AccessCockpit (int i) {return cockpit[i];}
+    /// Wrapper function for Star System
     /*
- *  Camera *AccessCamera(int num) {
- *  return AccessCockpit()->AccessCamera(num);
- *  }
- */
-    ///Wrapper function for star system
+     *  Camera *AccessCamera(int num) {
+     *  return AccessCockpit()->AccessCamera(num);
+     *  }
+     */
+    /// Wrapper function for star system
     /*
- *  Camera *AccessCamera() {
- *  return AccessCockpit()->AccessCamera();
- *  }
- */
-    ///Returns the current hud cam
-    //Camera *AccessHudCamera() { return &hud_camera; }
-    ///Wrapper function for star system
+     *  Camera *AccessCamera() {
+     *  return AccessCockpit()->AccessCamera();
+     *  }
+     */
+    /// Returns the current hud cam
+    // Camera *AccessHudCamera() { return &hud_camera; }
+    /// Wrapper function for star system
     /*
- *  void SetViewport() {
- *  AccessCockpit()->SetViewport();
- *  }
- */
+     *  void SetViewport() {
+     *  AccessCockpit()->SetViewport();
+     *  }
+     */
 
     StarSystem *getStarSystem(string name);
     StarSystem *scriptStarSystem()
@@ -259,7 +271,7 @@ public:
         return false;
     }
 
-public:
+  public:
     std::vector<StarSystem *> star_system;
     int StarSystemIndex(StarSystem *ss);
 };

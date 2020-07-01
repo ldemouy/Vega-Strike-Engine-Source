@@ -11,8 +11,8 @@
 
 class Unit;
 
-//TODO: Attempt to figure out purpose of this rather than just using std collections.
-//It feels like a wrapper class just for the sake of being a wrapper.
+// TODO: Attempt to figure out purpose of this rather than just using std collections.
+// It feels like a wrapper class just for the sake of being a wrapper.
 /*
  * UnitCollection is the list container for units.
  * It's used to contain subunits, units in a system, etc.
@@ -22,7 +22,7 @@ class Unit;
  */
 class UnitCollection
 {
-public:
+  public:
     /*
      * UnitIterator is the "node" class for UnitCollection.
      * It's meant to mimic std::iterator's for the most part, but
@@ -32,8 +32,10 @@ public:
      */
     class UnitIterator
     {
-    public:
-        UnitIterator() : col(nullptr) {}
+      public:
+        UnitIterator() : col(nullptr)
+        {
+        }
         UnitIterator(const UnitIterator &);
         UnitIterator(UnitCollection *);
         virtual ~UnitIterator();
@@ -90,12 +92,12 @@ public:
             return nullptr;
         }
 
-    protected:
+      protected:
         friend class UnitCollection;
-        //Pointer back to the collection we were spawned from
+        // Pointer back to the collection we were spawned from
         UnitCollection *col;
 
-        //Current position in the list
+        // Current position in the list
         std::list<class Unit *>::iterator it;
     };
 
@@ -106,8 +108,10 @@ public:
      */
     class ConstIterator
     {
-    public:
-        ConstIterator() : col(nullptr) {}
+      public:
+        ConstIterator() : col(nullptr)
+        {
+        }
         ConstIterator(const ConstIterator &);
         ConstIterator(const UnitCollection *);
         ~ConstIterator();
@@ -138,7 +142,7 @@ public:
             return nullptr;
         }
 
-    protected:
+      protected:
         friend class UnitCollection;
         const UnitCollection *col;
         std::list<class Unit *>::const_iterator it;
@@ -256,7 +260,7 @@ public:
         return nullptr;
     }
 
-private:
+  private:
     friend class UnitIterator;
     friend class ConstIterator;
 

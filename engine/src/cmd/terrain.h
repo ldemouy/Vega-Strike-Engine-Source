@@ -17,11 +17,8 @@ class Terrain : public QuadTree
     char draw;
     void ApplyForce(Unit *un, const Vector &norm, float distance);
 
-public:
-    Terrain(const char *filename,
-            const Vector &Scales,
-            const float mass,
-            const float radius,
+  public:
+    Terrain(const char *filename, const Vector &Scales, const float mass, const float radius,
             updateparity *updatetransform = identityparity);
     void SetTotalSize(float X, float Z)
     {

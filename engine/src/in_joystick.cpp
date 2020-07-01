@@ -22,19 +22,19 @@
 /*
  *  Joystick support written by Alexander Rawass <alexannika@users.sourceforge.net>
  */
-#include <list>
-#include <lin_time.h>
 #include "vegastrike.h"
 #include "vs_globals.h"
+#include <lin_time.h>
+#include <list>
 
+#include "config_xml.h"
 #include "in_handler.h"
 #include "in_joystick.h"
-#include "config_xml.h"
 #include "in_mouse.h"
 
 #include "options.h"
 
-//Used for storing the max and min values of the tree Joystick Axes - Okona
+// Used for storing the max and min values of the tree Joystick Axes - Okona
 static int32_t maxx = 1;
 static int32_t minx = -1;
 static int32_t maxy = 1;
@@ -42,7 +42,7 @@ static int32_t miny = -1;
 static int32_t maxz = 1;
 static int32_t minz = -1;
 
-JoyStick *joystick[MAX_JOYSTICKS]; //until I know where I place it
+JoyStick *joystick[MAX_JOYSTICKS]; // until I know where I place it
 int32_t num_joysticks = 0;
 void modifyDeadZone(JoyStick *j)
 {
@@ -64,8 +64,8 @@ void modifyExponent(JoyStick *j)
     {
         for (int32_t a = 0; a < j->nr_of_axes; a++)
         {
-            j->joy_axis[a] =
-                ((j->joy_axis[a] < 0) ? -pow(-j->joy_axis[a], game_options.joystick_exponent) : pow(j->joy_axis[a], game_options.joystick_exponent));
+            j->joy_axis[a] = ((j->joy_axis[a] < 0) ? -pow(-j->joy_axis[a], game_options.joystick_exponent)
+                                                   : pow(j->joy_axis[a], game_options.joystick_exponent));
         }
     }
 }
@@ -92,7 +92,7 @@ void myGlutJoystickCallback(uint32_t buttonmask, int32_t x, int32_t y, int32_t z
     {
         joystick[0]->joy_buttons = buttonmask;
         if (joystick[0]->nr_of_axes > 0)
-        { //Set the max and min of each axis - Okona
+        { // Set the max and min of each axis - Okona
             if (x < minx)
             {
                 minx = x;
@@ -102,7 +102,7 @@ void myGlutJoystickCallback(uint32_t buttonmask, int32_t x, int32_t y, int32_t z
         {
             maxx = x;
         }
-        //Calculate an autocalibrated value based on the max min values - Okona
+        // Calculate an autocalibrated value based on the max min values - Okona
         joystick[0]->joy_axis[0] = ((float)x - (((float)(maxx + minx)) / 2.0)) / (((float)(maxx - minx)) / 2.0);
         if (joystick[0]->nr_of_axes > 1)
         {
@@ -186,7 +186,7 @@ void InitJoystick()
         {
             printf("    %s\n", SDL_JoystickName(i));
         }
-        joystick[i] = new JoyStick(i); //SDL_Init is done in main.cpp
+        joystick[i] = new JoyStick(i); // SDL_Init is done in main.cpp
     }
 }
 
@@ -207,7 +207,7 @@ JoyStick::JoyStick(int32_t which) : mouse(which == MOUSE_JOYSTICK)
     }
     joy_buttons = 0;
 
-    player = which; //by default bind players to whichever joystick it is
+    player = which; // by default bind players to whichever joystick it is
     debug_digital_hatswitch = game_options.debug_digital_hatswitch;
     if (which != MOUSE_JOYSTICK)
     {
@@ -234,7 +234,7 @@ JoyStick::JoyStick(int32_t which) : mouse(which == MOUSE_JOYSTICK)
         }
         return;
     }
-    joy = SDL_JoystickOpen(which); //joystick nr should be configurable
+    joy = SDL_JoystickOpen(which); // joystick nr should be configurable
     if (joy == nullptr)
     {
         printf("warning: no joystick nr %d\n", which);
@@ -250,9 +250,9 @@ JoyStick::JoyStick(int32_t which) : mouse(which == MOUSE_JOYSTICK)
 }
 void JoyStick::InitMouse(int32_t which)
 {
-    player = 0; //default to first player
+    player = 0; // default to first player
     joy_available = true;
-    nr_of_axes = 2; //x and y for mouse
+    nr_of_axes = 2; // x and y for mouse
     nr_of_buttons = 15;
     nr_of_hats = 0;
 }
@@ -314,13 +314,13 @@ void JoyStick::GetMouse(float &x, float &y, float &z, int &buttons)
                 int32_t ldy = (*i).dy;
                 if ((ldx >= 0) * _dx * ldx == (_dx >= 0) * _dx * ldx)
                 {
-                    //make sure same sign or zero
+                    // make sure same sign or zero
                     valx += (*i).dx;
                     found = true;
                 }
                 if ((ldy >= 0) * _dy * ldy == (_dy >= 0) * _dy * ldy)
                 {
-                    //make sure same sign or zero
+                    // make sure same sign or zero
                     valy += (*i).dy;
                     found = true;
                 }
@@ -363,7 +363,7 @@ void JoyStick::GetMouse(float &x, float &y, float &z, int &buttons)
 }
 void JoyStick::GetJoyStick(float &x, float &y, float &z, int32_t &buttons)
 {
-    //int status;
+    // int status;
     if (joy_available == false)
     {
         for (int32_t a = 0; a < MAX_AXES; a++)

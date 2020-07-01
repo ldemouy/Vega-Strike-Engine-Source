@@ -23,9 +23,9 @@
 
 #include "simplepicker.h"
 
-static const int CHILD_VECTOR_RESERVE = 20; //Make sure we don't get many re-alloc's.
+static const int CHILD_VECTOR_RESERVE = 20; // Make sure we don't get many re-alloc's.
 
-//Add a child to the list of children of this cell.
+// Add a child to the list of children of this cell.
 void SimplePickerCell::addChild(SimplePickerCell *c)
 {
     createEmptyChildList();
@@ -33,7 +33,7 @@ void SimplePickerCell::addChild(SimplePickerCell *c)
     m_children->addCell(c);
 }
 
-//Make sure there is an empty list for children.
+// Make sure there is an empty list for children.
 SimplePickerCells *SimplePickerCell::createEmptyChildList(void)
 {
     if (m_children == nullptr)
@@ -41,12 +41,13 @@ SimplePickerCells *SimplePickerCell::createEmptyChildList(void)
     return m_children;
 }
 
-//Constructor.
-SimplePickerCell::SimplePickerCell(const std::string &t, const std::string &id, const GFXColor &c, int tag) : m_text(t), m_id(id), m_textColor(c), m_tag(tag), m_children(nullptr)
+// Constructor.
+SimplePickerCell::SimplePickerCell(const std::string &t, const std::string &id, const GFXColor &c, int tag)
+    : m_text(t), m_id(id), m_textColor(c), m_tag(tag), m_children(nullptr)
 {
 }
 
-//Destructor.
+// Destructor.
 SimplePickerCell::~SimplePickerCell(void)
 {
     if (m_children != nullptr)
@@ -61,7 +62,7 @@ SimplePickerCell &SimplePickerCell::operator=(const SimplePickerCell &cell)
     m_tag = cell.m_tag;
     m_children = nullptr;
     if (cell.m_children != nullptr)
-        //Need to make a copy of the children.
+        // Need to make a copy of the children.
         m_children = new SimplePickerCells(*cell.m_children);
     return *this;
 }
@@ -73,7 +74,7 @@ SimplePickerCell::SimplePickerCell(const SimplePickerCell &cell)
 
 ////////////////////////////////////////////////////////////////////////////
 
-//Constructor.
+// Constructor.
 SimplePickerCells::SimplePickerCells(void)
 {
     m_cells.reserve(CHILD_VECTOR_RESERVE);
@@ -88,7 +89,7 @@ void SimplePickerCells::clear(void)
 
 ////////////////////////////////////////////////////////////////////////////
 
-//Clear out all the cells.
+// Clear out all the cells.
 void SimplePicker::clear(void)
 {
     m_cellPressed = nullptr;
@@ -100,7 +101,7 @@ void SimplePicker::clear(void)
     setMustRecalc();
 }
 
-//Constructor.
+// Constructor.
 SimplePicker::SimplePicker(void)
 {
     m_cells = new SimplePickerCells();

@@ -1,13 +1,13 @@
 #include "bolt.h"
-#include "gldrv/gfxlib.h"
 #include "gfx/mesh.h"
+#include "gldrv/gfxlib.h"
 #include "gldrv/gfxlib_struct.h"
 #include <vector>
 
-#include <string>
-#include <algorithm>
-#include "unit_generic.h"
 #include "configxml.h"
+#include "unit_generic.h"
+#include <algorithm>
+#include <string>
 GFXVertexList *bolt_draw::boltmesh = nullptr;
 
 bolt_draw::~bolt_draw()
@@ -53,7 +53,9 @@ int32_t Bolt::AddAnimation(bolt_draw *q, std::string file, QVector cur_position)
     return decal;
 }
 
-void Bolt::Draw() {}
+void Bolt::Draw()
+{
+}
 extern void BoltDestroyGeneric(Bolt *whichbolt, uint32_t index, int32_t decal, bool isBall);
 void Bolt::Destroy(uint32_t index)
 {

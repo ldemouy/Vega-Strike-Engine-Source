@@ -23,7 +23,7 @@
 #define _LIN_TIME_H_
 #include "vegastrike.h"
 
-#define VEGA_EPOCH 1136073600. //Jan 1, 2006 GMT
+#define VEGA_EPOCH 1136073600. // Jan 1, 2006 GMT
 
 void InitTime();
 double GetElapsedTime();
@@ -32,11 +32,11 @@ void micro_sleep(unsigned int n);
 double getNewTime();
 void setNewTime(double newnewtime);
 
-//Essentially calling UpdateTime();getNewTime() without modifying any state.
-//Always use this except at the beginning of a frame.
+// Essentially calling UpdateTime();getNewTime() without modifying any state.
+// Always use this except at the beginning of a frame.
 double queryTime();
 
-//like query time, but returns a monotonous increasing sequence
+// like query time, but returns a monotonous increasing sequence
 double realTime();
 
 extern float getTimeCompression();

@@ -9,7 +9,7 @@ Transformation linear_interpolate_uncapped(const Transformation &A, const Transf
     double f = blend, omf = 1.0 - f, f0, f1, sadj = 1.0;
     double cos_omega = DotProduct(a.v, b.v) + a.s * b.s;
 
-    //Adjust signs if necessary.
+    // Adjust signs if necessary.
     if (cos_omega < 0.0)
     {
         cos_omega = -cos_omega;
@@ -17,7 +17,7 @@ Transformation linear_interpolate_uncapped(const Transformation &A, const Transf
     }
     if (cos_omega < 0.99)
     {
-        //Do the spherical interp.
+        // Do the spherical interp.
         double omega = acos(cos_omega);
         double isin_omega = 1.0 / sin(omega);
         f0 = sin(omf * omega) * isin_omega;
@@ -25,7 +25,7 @@ Transformation linear_interpolate_uncapped(const Transformation &A, const Transf
     }
     else
     {
-        //Quaternions are close; just do straight lerp and avoid division by near-zero.
+        // Quaternions are close; just do straight lerp and avoid division by near-zero.
         f0 = omf;
         f1 = f;
     }

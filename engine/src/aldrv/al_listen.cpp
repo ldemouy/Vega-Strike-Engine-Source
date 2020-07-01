@@ -5,14 +5,14 @@
 #include <AL/al.h>
 #endif
 #endif
-#include <stdio.h>
-#include <vector>
-#include "aldrv/audiolib.h"
 #include "al_globals.h"
-#include "vs_globals.h"
-#include "vsfilesystem.h"
+#include "aldrv/audiolib.h"
 #include "config_xml.h"
 #include "options.h"
+#include "vs_globals.h"
+#include "vsfilesystem.h"
+#include <stdio.h>
+#include <vector>
 
 using std::vector;
 
@@ -23,7 +23,9 @@ struct Listener
     Vector p, q, r;
     float gain;
     float rsize;
-    Listener() : pos(0, 0, 0), vel(0, 0, 0), p(1, 0, 0), q(0, 1, 0), r(0, 0, 1), gain(1), rsize(1) {}
+    Listener() : pos(0, 0, 0), vel(0, 0, 0), p(1, 0, 0), q(0, 1, 0), r(0, 0, 1), gain(1), rsize(1)
+    {
+    }
 } mylistener;
 
 unsigned int totalplaying = 0;
@@ -97,12 +99,12 @@ char AUDQueryAudability(const int32_t &sound, const Vector &pos, const Vector &v
     {
         return 1;
     }
-    ///could theoretically "steal" buffer from playing sound at this point
+    /// could theoretically "steal" buffer from playing sound at this point
     if (playingbuffers[hashed].empty())
     {
         return 1;
     }
-    //int target = rand()%playingbuffers[hashed].size();
+    // int target = rand()%playingbuffers[hashed].size();
     float est_gain = EstimateGain(pos, gain);
     float min_gain = est_gain;
     int32_t min_index = -1;
@@ -112,7 +114,7 @@ char AUDQueryAudability(const int32_t &sound, const Vector &pos, const Vector &v
         t = sounds[target1].pos - mylistener.pos;
         if (sounds[target1].pos == Vector(0, 0, 0))
             t = Vector(0, 0, 0);
-        //steal sound!
+        // steal sound!
         if (sounds[target1].buffer == sounds[sound].buffer)
         {
             float target_est_gain;
@@ -173,7 +175,7 @@ void AUDAddWatchedPlayed(const int32_t &sound, const Vector &pos)
             VSFileSystem::vs_fprintf(stderr, "adding null sound");
         playingbuffers[h].push_back(ApproxSound());
         playingbuffers[h].back().soundname = sound;
-        //VSFileSystem::vs_fprintf (stderr,"pushingback %f",(pos-mylistener.pos).Magnitude());
+        // VSFileSystem::vs_fprintf (stderr,"pushingback %f",(pos-mylistener.pos).Magnitude());
     }
 #endif
 }
@@ -238,7 +240,7 @@ void AUDListener(const QVector &pos, const Vector &vel)
         if (usedoppler)
             alListener3f(AL_VELOCITY, scalevel * vel.i, scalevel * vel.j, scalevel * vel.k);
     }
-    //printf ("(%f,%f,%f) <%f %f %f>\n",pos.i,pos.j,pos.k,vel.i,vel.j,vel.k);
+    // printf ("(%f,%f,%f) <%f %f %f>\n",pos.i,pos.j,pos.k,vel.i,vel.j,vel.k);
 #endif
 }
 
@@ -256,7 +258,7 @@ void AUDListenerOrientation(const Vector &p, const Vector &q, const Vector &r)
     mylistener.q = q;
     mylistener.r = r;
     ALfloat orient[] = {r.i, r.j, r.k, q.i, q.j, q.k};
-    //printf ("R%f,%f,%f>Q<%f %f %f>",r.i,r.j,r.k,q.i,q.j,q.k);
+    // printf ("R%f,%f,%f>Q<%f %f %f>",r.i,r.j,r.k,q.i,q.j,q.k);
     if (g_game.sound_enabled)
     {
         alListenerfv(AL_ORIENTATION, orient);
@@ -276,7 +278,7 @@ void AUDSoundGain(int32_t sound, float gain, bool music)
             alSourcef(sounds[sound].source, AL_GAIN, val <= 1. / 16384 ? 0 : val);
         }
         sounds[sound].gain = gain;
-        //alSourcefv(sounds[sound].source,AL_VELOCITY,v);
+        // alSourcefv(sounds[sound].source,AL_VELOCITY,v);
     }
 #endif
 }

@@ -1,8 +1,8 @@
 #ifndef __ALIGNED_H
 #define __ALIGNED_H
 
-#include <memory>
 #include <cstddef>
+#include <memory>
 
 #if __GNUC__ < 4 || (__GNUC__ == 4 && __GNUC_MINOR__ < 7)
 #define __alpn(x, a) x
@@ -24,10 +24,9 @@
 #endif
 #endif
 
-template <typename T, int ALIGN = 16>
-class aligned_allocator : public std::allocator<T>
+template <typename T, int ALIGN = 16> class aligned_allocator : public std::allocator<T>
 {
-public:
+  public:
     typedef typename std::allocator<T>::pointer pointer;
     typedef typename std::allocator<T>::const_pointer const_pointer;
     typedef typename std::allocator<T>::reference reference;
@@ -38,9 +37,12 @@ public:
 
     static const int _OVERHEAD = (sizeof(T) + ALIGN - 1) / ALIGN + sizeof(size_t);
 
-    aligned_allocator() {}
-    template <typename A>
-    explicit aligned_allocator(const A &other) : std::allocator<T>(other) {}
+    aligned_allocator()
+    {
+    }
+    template <typename A> explicit aligned_allocator(const A &other) : std::allocator<T>(other)
+    {
+    }
 
     typename std::allocator<T>::pointer address(typename std::allocator<T>::reference x) const
     {
@@ -96,7 +98,8 @@ public:
         return (typename std::allocator<T>::pointer)vrv;
     }
 
-    typename std::allocator<T>::pointer allocate(typename std::allocator<T>::size_type n, typename std::allocator<void>::const_pointer hint = 0)
+    typename std::allocator<T>::pointer allocate(typename std::allocator<T>::size_type n,
+                                                 typename std::allocator<void>::const_pointer hint = 0)
     {
         return __alpn(_align(std::allocator<T>::allocate(n + _OVERHEAD, _dealign(hint))), ALIGN);
     }
@@ -107,78 +110,69 @@ public:
     }
 };
 
-template <typename ALLOC>
-class aligned_allocator_traits
+template <typename ALLOC> class aligned_allocator_traits
 {
-public:
-    static typename ALLOC::pointer
-    ifaligned_start_pointer(const ALLOC &a, typename ALLOC::pointer p)
+  public:
+    static typename ALLOC::pointer ifaligned_start_pointer(const ALLOC &a, typename ALLOC::pointer p)
     {
         return p;
     }
 
-    static typename ALLOC::pointer
-    ifaligned_start_pointer(const ALLOC &a, typename ALLOC::reference r)
+    static typename ALLOC::pointer ifaligned_start_pointer(const ALLOC &a, typename ALLOC::reference r)
     {
         return a.address(r);
     }
 
-    static typename ALLOC::const_pointer
-    ifaligned_start_pointer(const ALLOC &a, typename ALLOC::const_pointer p)
+    static typename ALLOC::const_pointer ifaligned_start_pointer(const ALLOC &a, typename ALLOC::const_pointer p)
     {
         return p;
     }
 
-    static typename ALLOC::const_pointer
-    ifaligned_start_pointer(const ALLOC &a, typename ALLOC::const_reference r)
+    static typename ALLOC::const_pointer ifaligned_start_pointer(const ALLOC &a, typename ALLOC::const_reference r)
     {
         return a.address(r);
     }
 };
 
-template <typename T, int ALIGN>
-class aligned_allocator_traits<aligned_allocator<T, ALIGN>>
+template <typename T, int ALIGN> class aligned_allocator_traits<aligned_allocator<T, ALIGN>>
 {
-public:
-    static typename aligned_allocator<T, ALIGN>::pointer
-    ifaligned_start_pointer(const aligned_allocator<T, ALIGN> &a, typename aligned_allocator<T, ALIGN>::pointer p)
+  public:
+    static typename aligned_allocator<T, ALIGN>::pointer ifaligned_start_pointer(
+        const aligned_allocator<T, ALIGN> &a, typename aligned_allocator<T, ALIGN>::pointer p)
     {
         return __alpn(p, ALIGN);
     }
 
-    static typename aligned_allocator<T, ALIGN>::pointer
-    ifaligned_start_pointer(const aligned_allocator<T, ALIGN> &a, typename aligned_allocator<T, ALIGN>::reference r)
+    static typename aligned_allocator<T, ALIGN>::pointer ifaligned_start_pointer(
+        const aligned_allocator<T, ALIGN> &a, typename aligned_allocator<T, ALIGN>::reference r)
     {
         return __alpn(a.address(r), ALIGN);
     }
 
-    static typename aligned_allocator<T, ALIGN>::const_pointer
-    ifaligned_start_pointer(const aligned_allocator<T, ALIGN> &a, typename aligned_allocator<T, ALIGN>::const_pointer p)
+    static typename aligned_allocator<T, ALIGN>::const_pointer ifaligned_start_pointer(
+        const aligned_allocator<T, ALIGN> &a, typename aligned_allocator<T, ALIGN>::const_pointer p)
     {
         return __alpn(p, ALIGN);
     }
 
-    static typename aligned_allocator<T, ALIGN>::const_pointer
-    ifaligned_start_pointer(const aligned_allocator<T, ALIGN> &a, typename aligned_allocator<T, ALIGN>::const_reference r)
+    static typename aligned_allocator<T, ALIGN>::const_pointer ifaligned_start_pointer(
+        const aligned_allocator<T, ALIGN> &a, typename aligned_allocator<T, ALIGN>::const_reference r)
     {
         return __alpn(a.address(r), ALIGN);
     }
 };
 
-template <typename ALLOC, typename AP, typename UP>
-AP ifaligned_start_pointer(const ALLOC &a, UP p)
+template <typename ALLOC, typename AP, typename UP> AP ifaligned_start_pointer(const ALLOC &a, UP p)
 {
     return aligned_allocator_traits<ALLOC>::ifaligned_start_pointer(a, p);
 }
 
-template <typename COLL>
-typename COLL::const_pointer coll_start_pointer(const COLL &a)
+template <typename COLL> typename COLL::const_pointer coll_start_pointer(const COLL &a)
 {
     return aligned_allocator_traits<typename COLL::allocator_type>::ifaligned_start_pointer(a.get_allocator(), a[0]);
 }
 
-template <typename COLL>
-typename COLL::pointer coll_start_pointer(COLL &a)
+template <typename COLL> typename COLL::pointer coll_start_pointer(COLL &a)
 {
     return aligned_allocator_traits<typename COLL::allocator_type>::ifaligned_start_pointer(a.get_allocator(), a[0]);
 }

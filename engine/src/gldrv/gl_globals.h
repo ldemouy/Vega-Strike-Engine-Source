@@ -23,7 +23,7 @@
 #include <queue>
 const static bool GFX_BUFFER_MAP_UNMAP = false;
 /* Hack for multitexture on Mac, here and in gl_init, ifdefined - griff */
-//Moved this because defining GL_EXT_texture... doesn't work under Jaguar
+// Moved this because defining GL_EXT_texture... doesn't work under Jaguar
 #ifdef __APPLE_PANTHER_GCC33_CLI__
 #define GL_EXT_texture_env_combine 1
 #endif /* __APPLE_PANTHER_GCC33_CLI__ */
@@ -81,8 +81,8 @@ struct GFXStats
 #define MAX_NUM_MATERIAL 4
 #define TEXTURE_CUBE_MAP_ARB 0x8513
 
-//extern Matrix model;
-//extern Matrix view;
+// extern Matrix model;
+// extern Matrix view;
 #if defined(__CYGWIN__)
 #define GL_EXT_color_subtable 1
 #endif
@@ -94,9 +94,9 @@ struct GFXStats
 #if defined(_WIN32) || defined(__CYGWIN__)
 #ifndef NOMINMAX
 #define NOMINMAX
-#endif //tells VCC not to generate min/max macros
-#include <windows.h>
+#endif // tells VCC not to generate min/max macros
 #include <GL/gl.h>
+#include <windows.h>
 #endif
 #if defined(__APPLE__) || defined(MACOSX)
 #include <GLUT/glut.h>
@@ -111,8 +111,8 @@ struct GFXStats
 #include <OpenGL/glext.h>
 #else
 #define __glext_h_
-#include <GL/glut.h>
 #include "gl_undefined_extensions.h"
+#include <GL/glut.h>
 #undef __glext_h_
 
 #include <GL/glext.h>
@@ -225,7 +225,8 @@ struct GFXStats
 #define glUnlockArraysEXT_p glUnlockArraysEXT
 #endif
 
-#if !defined(glDeleteBuffersARB) || !defined(glGenBuffersARB) || !defined(glBindBuffersARB) || !defined(glMapBufferARB) || !defined(glUnmapBufferARB)
+#if !defined(glDeleteBuffersARB) || !defined(glGenBuffersARB) || !defined(glBindBuffersARB) ||                         \
+    !defined(glMapBufferARB) || !defined(glUnmapBufferARB)
 #define NO_VBO_SUPPORT
 #endif
 
@@ -292,7 +293,7 @@ extern PFNGLDELETEPROGRAMPROC glDeleteProgram_p;
 
 #endif /* __APPLE_PANTHER_GCC33_CLI__ */
 
-//extern int sharedcolortable;
+// extern int sharedcolortable;
 #ifdef STATS_QUEUE
 extern queue<GFXStats> statsqueue;
 #endif
@@ -305,7 +306,7 @@ typedef struct
     size_t Multitexture;
     int PaletteExt;
     int display_lists;
-    int mipmap; //0 = nearest 1 = linear 2 = mipmap
+    int mipmap; // 0 = nearest 1 = linear 2 = mipmap
     int color_depth;
     int cubemap;
     int compression;
@@ -332,7 +333,7 @@ extern gl_options_t gl_options;
 extern int gl_vertices_this_frame;
 extern int gl_batches_this_frame;
 
-//Maximum number of things that can be returned in a pick operation
+// Maximum number of things that can be returned in a pick operation
 #define MAX_PICK 2048
 #define GFX_SCALE 1. / 1024.
 #endif

@@ -23,11 +23,11 @@
  *  xml Configuration written by Alexander Rawass <alexannika@users.sourceforge.net>
  */
 
-#include <expat.h>
-#include "xml_support.h"
-#include <assert.h>
 #include "configxml.h"
 #include "easydom.h"
+#include "xml_support.h"
+#include <assert.h>
+#include <expat.h>
 
 using std::cerr;
 using std::cout;
@@ -88,7 +88,7 @@ bool VegaConfig::checkConfig(configNode *node)
         }
         else if (cnode->Name() == "bindings")
         {
-            bindings = cnode; //delay the bindings until keyboard/joystick is initialized
+            bindings = cnode; // delay the bindings until keyboard/joystick is initialized
         }
         else
         {
@@ -347,8 +347,8 @@ string VegaConfig::getVariable(configNode *section, string name, string defaultv
     }
     if (shouldwarn)
     {
-        cout << "WARNING: no var named " << name << " in section " << section->attr_value("name") << " using default: " << defaultval
-             << endl;
+        cout << "WARNING: no var named " << name << " in section " << section->attr_value("name")
+             << " using default: " << defaultval << endl;
     }
     return defaultval;
 }
@@ -427,7 +427,7 @@ bool VegaConfig::setVariable(string section, string name, string value)
         configNode *varnode = findEntry(name, sectionnode);
         if (varnode != nullptr)
         {
-            //now set the thing
+            // now set the thing
             setVariable(varnode, value);
         }
     }
@@ -447,7 +447,7 @@ bool VegaConfig::setVariable(string section, string subsection, string name, str
             configNode *varnode = findEntry(name, subnode);
             if (varnode != nullptr)
             {
-                //now set the thing
+                // now set the thing
                 setVariable(varnode, value);
             }
         }

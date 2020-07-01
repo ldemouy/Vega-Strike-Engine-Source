@@ -1,16 +1,16 @@
-#include <boost/version.hpp>
-#include "python/python_class.h"
-#include "script.h"
-#include "cmd/unit_generic.h"
 #include "hard_coded_scripts.h"
-#include "flybywire.h"
-#include "navigation.h"
-#include "tactics.h"
-#include "fire.h"
-#include "order.h"
-#include "vs_random.h"
+#include "cmd/unit_generic.h"
 #include "cmd/unit_util.h"
 #include "configxml.h"
+#include "fire.h"
+#include "flybywire.h"
+#include "navigation.h"
+#include "order.h"
+#include "python/python_class.h"
+#include "script.h"
+#include "tactics.h"
+#include "vs_random.h"
+#include <boost/version.hpp>
 using Orders::FireAt;
 
 BOOST_PYTHON_BEGIN_CONVERSION_NAMESPACE
@@ -28,7 +28,8 @@ bool useAfterburnerToRun()
 }
 bool useAfterburnerToFollow()
 {
-    static bool useafterburner = XMLSupport::parse_bool(vs_config->getVariable("AI", "use_afterburner_to_follow", "true"));
+    static bool useafterburner =
+        XMLSupport::parse_bool(vs_config->getVariable("AI", "use_afterburner_to_follow", "true"));
     return useafterburner;
 }
 void AddOrd(Order *aisc, Unit *un, Order *ord)
@@ -97,7 +98,8 @@ void FireAt::MoveTo(QVector vec, bool afterburn)
 void FireAt::MatchVelocity(bool terminate, Vector vec, Vector angvel, bool afterburn, bool local)
 {
     afterburn = afterburn && useAfterburner();
-    lastOrder = new Orders::MatchVelocity(parent->ClampVelocity(vec, afterburn), parent->ClampAngVel(angvel), local, afterburn, terminate);
+    lastOrder = new Orders::MatchVelocity(parent->ClampVelocity(vec, afterburn), parent->ClampAngVel(angvel), local,
+                                          afterburn, terminate);
 }
 void FireAt::Cloak(bool enable, float seconds)
 {
@@ -130,7 +132,7 @@ class EvadeLeftRightC : public FlyByWire
     Vector facing;
     bool dir;
 
-public:
+  public:
     EvadeLeftRightC(bool updown)
     {
         this->updown = updown;
@@ -164,16 +166,17 @@ public:
         Vector P, Q, R;
         parent->GetOrientation(P, Q, R);
         static float ang = cos(XMLSupport::parse_float(vs_config->getVariable("AI", "evasion_angle", "45")));
-        if (R.Dot(facing) < ang || (desired_ang_velocity.i == 0 && desired_ang_velocity.j == 0 && desired_ang_velocity.k == 0))
+        if (R.Dot(facing) < ang ||
+            (desired_ang_velocity.i == 0 && desired_ang_velocity.j == 0 && desired_ang_velocity.k == 0))
         {
             SetOppositeDir();
         }
     }
 };
 
-//these can be used in the XML scripts if they are allowed to be called
+// these can be used in the XML scripts if they are allowed to be called
 
-//these can be used in the XML scripts if they are allowed to be called
+// these can be used in the XML scripts if they are allowed to be called
 
 void AfterburnTurnTowards(Order *aisc, Unit *un)
 {
@@ -220,7 +223,8 @@ void BarrelRoll(Order *aisc, Unit *un)
         broll->Right(per);
     }
     bool afterburn = useAfterburner();
-    broll->MatchSpeed(Vector(0, 0, afterburn ? un->GetComputerData().max_ab_speed() : un->GetComputerData().max_speed()));
+    broll->MatchSpeed(
+        Vector(0, 0, afterburn ? un->GetComputerData().max_ab_speed() : un->GetComputerData().max_speed()));
     broll->Afterburn(afterburn);
 }
 
@@ -230,7 +234,8 @@ static void EvadeWavy(Order *aisc, Unit *un, bool updown, bool ab)
     broll = new EvadeLeftRightC(updown);
     AddOrd(aisc, un, broll);
     bool afterburn = ab && useAfterburner();
-    broll->MatchSpeed(Vector(0, 0, afterburn ? un->GetComputerData().max_ab_speed() : un->GetComputerData().max_speed()));
+    broll->MatchSpeed(
+        Vector(0, 0, afterburn ? un->GetComputerData().max_ab_speed() : un->GetComputerData().max_speed()));
     broll->Afterburn(afterburn);
 }
 void AfterburnEvadeLeftRight(Order *aisc, Unit *un)
@@ -252,311 +257,337 @@ void EvadeUpDown(Order *aisc, Unit *un)
 
 namespace Orders
 {
-    class LoopAround : public Orders::FaceTargetITTS
+class LoopAround : public Orders::FaceTargetITTS
+{
+    Orders::MatchLinearVelocity m;
+    float qq;
+    float pp;
+    Vector rr; // place to go for @ end1111
+    bool afterburn;
+    bool aggressive;
+    bool force_afterburn;
+
+  public:
+    void SetParent(Unit *parent1)
     {
-        Orders::MatchLinearVelocity m;
-        float qq;
-        float pp;
-        Vector rr; //place to go for @ end1111
-        bool afterburn;
-        bool aggressive;
-        bool force_afterburn;
+        FaceTargetITTS::SetParent(parent1);
+        m.SetParent(parent1);
+    }
+    LoopAround(bool aggressive, bool afterburn, bool force_afterburn, int seed)
+        : FaceTargetITTS(false, 3), m(Vector(0, 0, 1000), true, afterburn, false)
+    {
+        VSRandom vsr(seed);
+        this->aggressive = aggressive;
+        this->afterburn = afterburn;
+        this->force_afterburn = force_afterburn;
 
-    public:
-        void SetParent(Unit *parent1)
+        static float loopdis = XMLSupport::parse_float(vs_config->getVariable("AI", "loop_around_distance", "1"));
+        qq = pp = 0;
+        static float loopdisd =
+            XMLSupport::parse_float(vs_config->getVariable("AI", "loop_around_destination_distance", "20.0"));
+        static float loopdisv =
+            XMLSupport::parse_float(vs_config->getVariable("AI", "loop_around_destination_vertical", "4.0"));
+        static float loopdisl =
+            XMLSupport::parse_float(vs_config->getVariable("AI", "loop_around_destination_lateral", "4.0"));
+        rr.Set(loopdisl * vsr.uniformInc(-1, 1), loopdisv * vsr.uniformInc(-1, 1),
+               1.0 + loopdisd * vsr.uniformInc(0, 1));
+        if (vsr.rand() < VS_RAND_MAX / 2)
         {
-            FaceTargetITTS::SetParent(parent1);
-            m.SetParent(parent1);
-        }
-        LoopAround(bool aggressive, bool afterburn, bool force_afterburn, int seed) : FaceTargetITTS(false, 3), m(Vector(0, 0, 1000), true, afterburn, false)
-        {
-            VSRandom vsr(seed);
-            this->aggressive = aggressive;
-            this->afterburn = afterburn;
-            this->force_afterburn = force_afterburn;
-
-            static float loopdis = XMLSupport::parse_float(vs_config->getVariable("AI", "loop_around_distance", "1"));
-            qq = pp = 0;
-            static float loopdisd =
-                XMLSupport::parse_float(vs_config->getVariable("AI", "loop_around_destination_distance", "20.0"));
-            static float loopdisv =
-                XMLSupport::parse_float(vs_config->getVariable("AI", "loop_around_destination_vertical", "4.0"));
-            static float loopdisl = XMLSupport::parse_float(vs_config->getVariable("AI", "loop_around_destination_lateral", "4.0"));
-            rr.Set(loopdisl * vsr.uniformInc(-1, 1), loopdisv * vsr.uniformInc(-1, 1), 1.0 + loopdisd * vsr.uniformInc(0, 1));
-            if (vsr.rand() < VS_RAND_MAX / 2)
+            qq = vsr.uniformInc(-1, 1);
+            rr.j = qq;
+            if (qq > 0)
             {
-                qq = vsr.uniformInc(-1, 1);
-                rr.j = qq;
-                if (qq > 0)
+                qq += loopdis;
+            }
+            if (qq < 0)
+            {
+                qq -= loopdis;
+            }
+        }
+        else
+        {
+            pp = vsr.uniformInc(-1, 1);
+            rr.i = pp;
+            if (pp > 0)
+            {
+                pp += loopdis;
+            }
+            if (pp < 0)
+            {
+                pp -= loopdis;
+            }
+        }
+    }
+    void Execute()
+    {
+        Unit *targ = parent->Target();
+        if (targ)
+        {
+            Vector relloc = parent->Position() - targ->Position();
+            Vector r = targ->cumulative_transformation_matrix.getR();
+            bool afterburn = useAfterburner() && this->afterburn;
+            bool ab_needed =
+                force_afterburn || targ->GetVelocity().MagnitudeSquared() > parent->GetComputerData().max_speed();
+            m.SetDesiredVelocity(Vector(0, 0,
+                                        afterburn && ab_needed ? parent->GetComputerData().max_ab_speed()
+                                                               : parent->GetComputerData().max_speed()),
+                                 true);
+            float spseed, grange = 0, mrange = 0;
+            parent->getAverageGunSpeed(spseed, grange, mrange);
+            if (r.Dot(relloc) < 0)
+            {
+                static float gun_range_pct =
+                    XMLSupport::parse_float(vs_config->getVariable("AI", "gun_range_percent_ok", ".66"));
+                FaceTargetITTS::Execute();
+                float dist = UnitUtil::getDistance(parent, targ);
+                if (dist < grange * gun_range_pct || (grange == 0 && dist < mrange))
                 {
-                    qq += loopdis;
+                    static float velocity_adjustment_pct = XMLSupport::parse_float(
+                        vs_config->getVariable("AI", "loop_around_pursuit_velocity_percent", ".9"));
+                    m.SetDesiredVelocity(Vector(0, 0, targ->cumulative_velocity.Magnitude() * velocity_adjustment_pct),
+                                         true);
                 }
-                if (qq < 0)
-                {
-                    qq -= loopdis;
-                }
+                m.SetAfterburn(afterburn && ab_needed);
+                m.Execute();
             }
             else
             {
-                pp = vsr.uniformInc(-1, 1);
-                rr.i = pp;
-                if (pp > 0)
+                done = false;
+                if (afterburn)
                 {
-                    pp += loopdis;
-                }
-                if (pp < 0)
-                {
-                    pp -= loopdis;
-                }
-            }
-        }
-        void Execute()
-        {
-            Unit *targ = parent->Target();
-            if (targ)
-            {
-                Vector relloc = parent->Position() - targ->Position();
-                Vector r = targ->cumulative_transformation_matrix.getR();
-                bool afterburn = useAfterburner() && this->afterburn;
-                bool ab_needed = force_afterburn || targ->GetVelocity().MagnitudeSquared() > parent->GetComputerData().max_speed();
-                m.SetDesiredVelocity(Vector(0, 0, afterburn && ab_needed ? parent->GetComputerData().max_ab_speed() : parent->GetComputerData().max_speed()), true);
-                float spseed, grange = 0, mrange = 0;
-                parent->getAverageGunSpeed(spseed, grange, mrange);
-                if (r.Dot(relloc) < 0)
-                {
-                    static float gun_range_pct =
-                        XMLSupport::parse_float(vs_config->getVariable("AI", "gun_range_percent_ok", ".66"));
-                    FaceTargetITTS::Execute();
-                    float dist = UnitUtil::getDistance(parent, targ);
-                    if (dist < grange * gun_range_pct || (grange == 0 && dist < mrange))
-                    {
-                        static float velocity_adjustment_pct =
-                            XMLSupport::parse_float(vs_config->getVariable("AI", "loop_around_pursuit_velocity_percent", ".9"));
-                        m.SetDesiredVelocity(Vector(0, 0, targ->cumulative_velocity.Magnitude() * velocity_adjustment_pct), true);
-                    }
-                    m.SetAfterburn(afterburn && ab_needed);
-                    m.Execute();
+                    m.SetAfterburn(ab_needed);
                 }
                 else
                 {
-                    done = false;
-                    if (afterburn)
-                    {
-                        m.SetAfterburn(ab_needed);
-                    }
-                    else
-                    {
-                        m.SetAfterburn(0);
-                    }
-                    Vector scala =
-                        targ->cumulative_transformation_matrix.getQ().Scale(qq * (parent->rSize() + targ->rSize())) + targ->cumulative_transformation_matrix.getP().Scale(pp * (parent->rSize() + targ->rSize()));
-                    QVector dest = targ->Position() + scala;
+                    m.SetAfterburn(0);
+                }
+                Vector scala =
+                    targ->cumulative_transformation_matrix.getQ().Scale(qq * (parent->rSize() + targ->rSize())) +
+                    targ->cumulative_transformation_matrix.getP().Scale(pp * (parent->rSize() + targ->rSize()));
+                QVector dest = targ->Position() + scala;
+                SetDest(dest);
+                ChangeHeading::Execute();
+                m.Execute();
+            }
+        }
+    }
+};
+
+class LoopAroundAgro : public Orders::FaceTargetITTS
+{
+    Orders::MoveToParent m;
+    float qq;
+    float pp;
+    Vector rr; // place to go for @ end
+    bool aggressive;
+    bool afterburn;
+    bool force_afterburn;
+
+  public:
+    LoopAroundAgro(bool aggressive, bool afterburn, bool force_afterburn, int seed)
+        : FaceTargetITTS(false, 3), m(false, 2, false)
+    {
+        VSRandom vsr(seed);
+        this->afterburn = afterburn;
+        this->force_afterburn = force_afterburn;
+        this->aggressive = aggressive;
+        static float loopdis = XMLSupport::parse_float(vs_config->getVariable("AI", "loop_around_distance", "1"));
+        qq = pp = 0;
+        static float loopdisd =
+            XMLSupport::parse_float(vs_config->getVariable("AI", "loop_around_destination_distance", "20.0"));
+        static float loopdisv =
+            XMLSupport::parse_float(vs_config->getVariable("AI", "loop_around_destination_vertical", "4.0"));
+        static float loopdisl =
+            XMLSupport::parse_float(vs_config->getVariable("AI", "loop_around_destination_lateral", "4.0"));
+        rr.Set(loopdisl * vsr.uniformInc(-1, 1), loopdisv * vsr.uniformInc(-1, 1),
+               1.0 + loopdisd * vsr.uniformInc(0, 1));
+        if (vsr.rand() < VS_RAND_MAX / 2)
+        {
+            qq = vsr.uniformInc(-1, 1);
+            rr.j = qq;
+            if (qq > 0)
+            {
+                qq += loopdis;
+            }
+            if (qq < 0)
+            {
+                qq -= loopdis;
+            }
+        }
+        else
+        {
+            pp = vsr.uniformInc(-1, 1);
+            rr.i = pp;
+            if (pp > 0)
+            {
+                pp += loopdis;
+            }
+            if (pp < 0)
+            {
+                pp -= loopdis;
+            }
+        }
+    }
+    void Execute()
+    {
+        Unit *targ = parent->Target();
+        if (targ)
+        {
+            Vector relloc = parent->Position() - targ->Position();
+            Vector r = targ->cumulative_transformation_matrix.getR();
+            bool afterburn = useAfterburner() && this->afterburn;
+            bool ab_needed =
+                force_afterburn || targ->GetVelocity().MagnitudeSquared() > parent->GetComputerData().max_speed();
+            if (r.Dot(relloc) < 0)
+            {
+                FaceTargetITTS::Execute();
+                m.SetAfterburn(afterburn && ab_needed);
+                m.Execute(parent, targ->Position() - r.Scale(rr.k * parent->rSize() + targ->rSize()) +
+                                      targ->cumulative_transformation_matrix.getP() * (rr.i * parent->rSize()) +
+                                      targ->cumulative_transformation_matrix.getQ() * (rr.j * parent->rSize()));
+            }
+            else
+            {
+                done = false;
+                if (afterburn)
+                {
+                    m.SetAfterburn(ab_needed);
+                }
+                else
+                {
+                    m.SetAfterburn(0);
+                }
+                Vector scala =
+                    targ->cumulative_transformation_matrix.getQ().Scale(qq * (parent->rSize() + targ->rSize())) +
+                    targ->cumulative_transformation_matrix.getP().Scale(pp * (parent->rSize() + targ->rSize()));
+                QVector dest = targ->Position() + scala;
+                if (aggressive)
+                {
+                    FaceTargetITTS::Execute();
+                }
+                else
+                {
                     SetDest(dest);
                     ChangeHeading::Execute();
-                    m.Execute();
                 }
+                m.Execute(parent, dest + scala);
             }
         }
-    };
+    }
+};
 
-    class LoopAroundAgro : public Orders::FaceTargetITTS
+class FacePerpendicular : public Orders::FaceTargetITTS
+{
+    Orders::MatchLinearVelocity m;
+    float qq;
+    float pp;
+    Vector rr; // place to go for @ end1111
+    bool afterburn;
+    bool aggressive;
+    bool force_afterburn;
+
+  public:
+    void SetParent(Unit *parent1)
     {
-        Orders::MoveToParent m;
-        float qq;
-        float pp;
-        Vector rr; //place to go for @ end
-        bool aggressive;
-        bool afterburn;
-        bool force_afterburn;
+        FaceTargetITTS::SetParent(parent1);
+        m.SetParent(parent1);
+    }
+    FacePerpendicular(bool aggressive, bool afterburn, bool force_afterburn, int seed)
+        : FaceTargetITTS(false, 3), m(Vector(0, 0, 1000), true, afterburn, false)
+    {
+        this->aggressive = aggressive;
+        VSRandom vsr(seed);
+        this->afterburn = afterburn;
+        this->force_afterburn = force_afterburn;
 
-    public:
-        LoopAroundAgro(bool aggressive, bool afterburn, bool force_afterburn, int seed) : FaceTargetITTS(false, 3), m(false, 2, false)
+        static float loopdis = XMLSupport::parse_float(vs_config->getVariable("AI", "loop_around_distance", "1"));
+        qq = pp = 0;
+        static float loopdisd =
+            XMLSupport::parse_float(vs_config->getVariable("AI", "loop_around_destination_distance", "20.0"));
+        static float loopdisv =
+            XMLSupport::parse_float(vs_config->getVariable("AI", "loop_around_destination_vertical", "4.0"));
+        static float loopdisl =
+            XMLSupport::parse_float(vs_config->getVariable("AI", "loop_around_destination_lateral", "4.0"));
+        rr.Set(loopdisl * vsr.uniformInc(-1, 1), loopdisv * vsr.uniformInc(-1, 1),
+               1.0 + loopdisd * vsr.uniformInc(0, 1));
+        if (vsr.rand() < VS_RAND_MAX / 2)
         {
-            VSRandom vsr(seed);
-            this->afterburn = afterburn;
-            this->force_afterburn = force_afterburn;
-            this->aggressive = aggressive;
-            static float loopdis = XMLSupport::parse_float(vs_config->getVariable("AI", "loop_around_distance", "1"));
-            qq = pp = 0;
-            static float loopdisd =
-                XMLSupport::parse_float(vs_config->getVariable("AI", "loop_around_destination_distance", "20.0"));
-            static float loopdisv =
-                XMLSupport::parse_float(vs_config->getVariable("AI", "loop_around_destination_vertical", "4.0"));
-            static float loopdisl = XMLSupport::parse_float(vs_config->getVariable("AI", "loop_around_destination_lateral", "4.0"));
-            rr.Set(loopdisl * vsr.uniformInc(-1, 1), loopdisv * vsr.uniformInc(-1, 1), 1.0 + loopdisd * vsr.uniformInc(0, 1));
-            if (vsr.rand() < VS_RAND_MAX / 2)
+            qq = vsr.uniformInc(-1, 1);
+            rr.j = qq;
+            if (qq > 0)
             {
-                qq = vsr.uniformInc(-1, 1);
-                rr.j = qq;
-                if (qq > 0)
+                qq += loopdis;
+            }
+            if (qq < 0)
+            {
+                qq -= loopdis;
+            }
+        }
+        else
+        {
+            pp = vsr.uniformInc(-1, 1);
+            rr.i = pp;
+            if (pp > 0)
+            {
+                pp += loopdis;
+            }
+            if (pp < 0)
+            {
+                pp -= loopdis;
+            }
+        }
+    }
+    void Execute()
+    {
+        static float gun_range_pct =
+            XMLSupport::parse_float(vs_config->getVariable("AI", "gun_range_percent_ok", ".66"));
+        Unit *targ = parent->Target();
+        if (targ)
+        {
+            Vector relloc = parent->Position() - targ->Position();
+            Vector r = targ->cumulative_transformation_matrix.getR();
+            bool afterburn = useAfterburner() && this->afterburn;
+            bool ab_needed =
+                force_afterburn || targ->GetVelocity().MagnitudeSquared() > parent->GetComputerData().max_speed();
+            m.SetDesiredVelocity(Vector(0, 0,
+                                        afterburn && ab_needed ? parent->GetComputerData().max_ab_speed()
+                                                               : parent->GetComputerData().max_speed()),
+                                 true);
+            float speed, grange = 0, mrange = 0;
+            parent->getAverageGunSpeed(speed, grange, mrange);
+            if (r.Dot(relloc) < 0)
+            {
+                FaceTargetITTS::Execute();
+                float dist = UnitUtil::getDistance(parent, targ);
+                if (dist < grange * gun_range_pct || (grange == 0 && dist < mrange))
                 {
-                    qq += loopdis;
+                    static float velocity_adjustment_pct = XMLSupport::parse_float(
+                        vs_config->getVariable("AI", "loop_around_pursuit_velocity_percent", ".9"));
+                    m.SetDesiredVelocity(Vector(0, 0, targ->cumulative_velocity.Magnitude() * velocity_adjustment_pct),
+                                         true);
                 }
-                if (qq < 0)
-                {
-                    qq -= loopdis;
-                }
+                m.SetAfterburn(afterburn && ab_needed);
+                m.Execute();
             }
             else
             {
-                pp = vsr.uniformInc(-1, 1);
-                rr.i = pp;
-                if (pp > 0)
-                {
-                    pp += loopdis;
-                }
-                if (pp < 0)
-                {
-                    pp -= loopdis;
-                }
-            }
-        }
-        void Execute()
-        {
-            Unit *targ = parent->Target();
-            if (targ)
-            {
-                Vector relloc = parent->Position() - targ->Position();
-                Vector r = targ->cumulative_transformation_matrix.getR();
-                bool afterburn = useAfterburner() && this->afterburn;
-                bool ab_needed = force_afterburn || targ->GetVelocity().MagnitudeSquared() > parent->GetComputerData().max_speed();
-                if (r.Dot(relloc) < 0)
-                {
-                    FaceTargetITTS::Execute();
-                    m.SetAfterburn(afterburn && ab_needed);
-                    m.Execute(parent, targ->Position() - r.Scale(rr.k * parent->rSize() + targ->rSize()) + targ->cumulative_transformation_matrix.getP() * (rr.i * parent->rSize()) + targ->cumulative_transformation_matrix.getQ() * (rr.j * parent->rSize()));
-                }
+                done = false;
+                if (afterburn)
+                    m.SetAfterburn(ab_needed);
                 else
-                {
-                    done = false;
-                    if (afterburn)
-                    {
-                        m.SetAfterburn(ab_needed);
-                    }
-                    else
-                    {
-                        m.SetAfterburn(0);
-                    }
-                    Vector scala =
-                        targ->cumulative_transformation_matrix.getQ().Scale(qq * (parent->rSize() + targ->rSize())) + targ->cumulative_transformation_matrix.getP().Scale(pp * (parent->rSize() + targ->rSize()));
-                    QVector dest = targ->Position() + scala;
-                    if (aggressive)
-                    {
-                        FaceTargetITTS::Execute();
-                    }
-                    else
-                    {
-                        SetDest(dest);
-                        ChangeHeading::Execute();
-                    }
-                    m.Execute(parent, dest + scala);
-                }
+                    m.SetAfterburn(0);
+                Vector scala =
+                    targ->cumulative_transformation_matrix.getR().Cross(
+                        aggressive ? parent->cumulative_transformation_matrix.getQ() : Vector(.01, .99, -.001)) *
+                    parent->rSize() * 100.;
+                QVector dest = parent->Position() + scala;
+                SetDest(dest);
+                ChangeHeading::Execute();
+                m.Execute();
             }
         }
-    };
-
-    class FacePerpendicular : public Orders::FaceTargetITTS
-    {
-        Orders::MatchLinearVelocity m;
-        float qq;
-        float pp;
-        Vector rr; //place to go for @ end1111
-        bool afterburn;
-        bool aggressive;
-        bool force_afterburn;
-
-    public:
-        void SetParent(Unit *parent1)
-        {
-            FaceTargetITTS::SetParent(parent1);
-            m.SetParent(parent1);
-        }
-        FacePerpendicular(bool aggressive, bool afterburn, bool force_afterburn, int seed) : FaceTargetITTS(false, 3), m(Vector(0, 0, 1000), true, afterburn, false)
-        {
-            this->aggressive = aggressive;
-            VSRandom vsr(seed);
-            this->afterburn = afterburn;
-            this->force_afterburn = force_afterburn;
-
-            static float loopdis = XMLSupport::parse_float(vs_config->getVariable("AI", "loop_around_distance", "1"));
-            qq = pp = 0;
-            static float loopdisd =
-                XMLSupport::parse_float(vs_config->getVariable("AI", "loop_around_destination_distance", "20.0"));
-            static float loopdisv =
-                XMLSupport::parse_float(vs_config->getVariable("AI", "loop_around_destination_vertical", "4.0"));
-            static float loopdisl = XMLSupport::parse_float(vs_config->getVariable("AI", "loop_around_destination_lateral", "4.0"));
-            rr.Set(loopdisl * vsr.uniformInc(-1, 1), loopdisv * vsr.uniformInc(-1, 1), 1.0 + loopdisd * vsr.uniformInc(0, 1));
-            if (vsr.rand() < VS_RAND_MAX / 2)
-            {
-                qq = vsr.uniformInc(-1, 1);
-                rr.j = qq;
-                if (qq > 0)
-                {
-                    qq += loopdis;
-                }
-                if (qq < 0)
-                {
-                    qq -= loopdis;
-                }
-            }
-            else
-            {
-                pp = vsr.uniformInc(-1, 1);
-                rr.i = pp;
-                if (pp > 0)
-                {
-                    pp += loopdis;
-                }
-                if (pp < 0)
-                {
-                    pp -= loopdis;
-                }
-            }
-        }
-        void Execute()
-        {
-            static float gun_range_pct = XMLSupport::parse_float(vs_config->getVariable("AI", "gun_range_percent_ok", ".66"));
-            Unit *targ = parent->Target();
-            if (targ)
-            {
-                Vector relloc = parent->Position() - targ->Position();
-                Vector r = targ->cumulative_transformation_matrix.getR();
-                bool afterburn = useAfterburner() && this->afterburn;
-                bool ab_needed = force_afterburn || targ->GetVelocity().MagnitudeSquared() > parent->GetComputerData().max_speed();
-                m.SetDesiredVelocity(Vector(0, 0, afterburn && ab_needed ? parent->GetComputerData().max_ab_speed() : parent->GetComputerData().max_speed()), true);
-                float speed, grange = 0, mrange = 0;
-                parent->getAverageGunSpeed(speed, grange, mrange);
-                if (r.Dot(relloc) < 0)
-                {
-                    FaceTargetITTS::Execute();
-                    float dist = UnitUtil::getDistance(parent, targ);
-                    if (dist < grange * gun_range_pct || (grange == 0 && dist < mrange))
-                    {
-                        static float velocity_adjustment_pct =
-                            XMLSupport::parse_float(vs_config->getVariable("AI", "loop_around_pursuit_velocity_percent", ".9"));
-                        m.SetDesiredVelocity(Vector(0, 0, targ->cumulative_velocity.Magnitude() * velocity_adjustment_pct), true);
-                    }
-                    m.SetAfterburn(afterburn && ab_needed);
-                    m.Execute();
-                }
-                else
-                {
-                    done = false;
-                    if (afterburn)
-                        m.SetAfterburn(ab_needed);
-                    else
-                        m.SetAfterburn(0);
-                    Vector scala = targ->cumulative_transformation_matrix.getR().Cross(
-                                       aggressive ? parent->cumulative_transformation_matrix.getQ() : Vector(.01, .99, -.001)) *
-                                   parent->rSize() * 100.;
-                    QVector dest = parent->Position() + scala;
-                    SetDest(dest);
-                    ChangeHeading::Execute();
-                    m.Execute();
-                }
-            }
-        }
-    };
+    }
+};
 } // namespace Orders
 void LoopAround(Order *aisc, Unit *un)
 {
@@ -572,14 +603,16 @@ void RollLeft(Order *aisc, Unit *un)
 {
     if (un->aistate)
     {
-        AddOrd(un->aistate, un, new Orders::ExecuteFor(new Orders::MatchRoll(un->GetComputerData().max_roll_right, false), 1.0f));
+        AddOrd(un->aistate, un,
+               new Orders::ExecuteFor(new Orders::MatchRoll(un->GetComputerData().max_roll_right, false), 1.0f));
     }
 }
 void RollRight(Order *aisc, Unit *un)
 {
     if (un->aistate)
     {
-        AddOrd(un->aistate, un, new Orders::ExecuteFor(new Orders::MatchRoll(-un->GetComputerData().max_roll_left, false), 1.0f));
+        AddOrd(un->aistate, un,
+               new Orders::ExecuteFor(new Orders::MatchRoll(-un->GetComputerData().max_roll_left, false), 1.0f));
     }
 }
 void RollLeftHard(Order *aisc, Unit *un)
@@ -587,7 +620,8 @@ void RollLeftHard(Order *aisc, Unit *un)
     static float durvar = XMLSupport::parse_float(vs_config->getVariable("AI", "roll_order_duration", "5.0"));
     if (un->aistate)
     {
-        AddOrd(un->aistate, un, new Orders::ExecuteFor(new Orders::MatchRoll(un->GetComputerData().max_roll_right, false), durvar));
+        AddOrd(un->aistate, un,
+               new Orders::ExecuteFor(new Orders::MatchRoll(un->GetComputerData().max_roll_right, false), durvar));
     }
 }
 void RollRightHard(Order *aisc, Unit *un)
@@ -595,7 +629,8 @@ void RollRightHard(Order *aisc, Unit *un)
     static float durvar = XMLSupport::parse_float(vs_config->getVariable("AI", "roll_order_duration", "5.0"));
     if (un->aistate)
     {
-        AddOrd(un->aistate, un, new Orders::ExecuteFor(new Orders::MatchRoll(-un->GetComputerData().max_roll_left, false), durvar));
+        AddOrd(un->aistate, un,
+               new Orders::ExecuteFor(new Orders::MatchRoll(-un->GetComputerData().max_roll_left, false), durvar));
     }
 }
 void LoopAroundFast(Order *aisc, Unit *un)
@@ -657,10 +692,10 @@ void SelfDestruct(Order *aisc, Unit *un)
     un->armor.backrightbottom = -1;
     un->armor.frontleftbottom = -1;
     un->armor.backleftbottom = -1;
-    un->hull = -1; //hull goes to zero but no kill, same for armor. strangely enough, all of them together work.
+    un->hull = -1; // hull goes to zero but no kill, same for armor. strangely enough, all of them together work.
     un->Split(rand() % 3 + 1);
-    un->Explode(true, 0);   //displays explosion, unit continues
-    un->RemoveFromSystem(); //has no effect
+    un->Explode(true, 0);   // displays explosion, unit continues
+    un->RemoveFromSystem(); // has no effect
 }
 
 void AggressiveLoopAroundSlow(Order *aisc, Unit *un)
@@ -707,7 +742,8 @@ void CoastToStop(Order *aisc, Unit *un)
     vec.j = vec.j * 0.1;
     vec.k = vec.k * 0.1;
 
-    Order *ord = new Orders::ExecuteFor(new Orders::MatchLinearVelocity(un->ClampVelocity(vec, false), true, false, true), 1);
+    Order *ord =
+        new Orders::ExecuteFor(new Orders::MatchLinearVelocity(un->ClampVelocity(vec, false), true, false, true), 1);
     AddOrd(aisc, un, ord);
 }
 
@@ -872,7 +908,8 @@ void AfterburnTurnAway(Order *aisc, Unit *un)
         u = targ->Position();
     }
     bool afterburn = useAfterburner() || useAfterburnerToRun();
-    Order *ord = new Orders::MatchLinearVelocity(un->ClampVelocity(200 * (v - u).Cast(), afterburn), false, afterburn, false);
+    Order *ord =
+        new Orders::MatchLinearVelocity(un->ClampVelocity(200 * (v - u).Cast(), afterburn), false, afterburn, false);
     AddOrd(aisc, un, ord);
     ord = new Orders::ChangeHeading((200 * (v - u)) + v, 3);
     AddOrd(aisc, un, ord);
@@ -887,7 +924,8 @@ void TurnAway(Order *aisc, Unit *un)
         u = targ->Position();
     }
     bool afterburn = false;
-    Order *ord = new Orders::MatchLinearVelocity(un->ClampVelocity(200 * (v - u).Cast(), afterburn), false, afterburn, false);
+    Order *ord =
+        new Orders::MatchLinearVelocity(un->ClampVelocity(200 * (v - u).Cast(), afterburn), false, afterburn, false);
     AddOrd(aisc, un, ord);
     ord = new Orders::ChangeHeading((200 * (v - u)) + v, 3);
     AddOrd(aisc, un, ord);
@@ -919,7 +957,7 @@ void FlyStraightAfterburner(Order *aisc, Unit *un)
     AddOrd(aisc, un, ord);
 }
 
-//spiritplumber was here and added some orders, mostly for carriers and their spawn (eep, can carriers have kids?)
+// spiritplumber was here and added some orders, mostly for carriers and their spawn (eep, can carriers have kids?)
 
 void Takeoff(Order *aisc, Unit *un)
 {
@@ -933,7 +971,8 @@ void Takeoff(Order *aisc, Unit *un)
         AddOrd(aisc, un, ord);
         ord = new Orders::MatchAngularVelocity(Vector(0, 0, 0), 1, false);
         AddOrd(aisc, un, ord);
-        ord = new Orders::ExecuteFor(new Orders::MatchVelocity(un->ClampVelocity(vec, true), Vector(0, 0, 0), true, true, false), 1.5f);
+        ord = new Orders::ExecuteFor(
+            new Orders::MatchVelocity(un->ClampVelocity(vec, true), Vector(0, 0, 0), true, true, false), 1.5f);
         AddOrd(aisc, un, ord);
         ord = new Orders::ExecuteFor(new Orders::MatchAngularVelocity(Vector(0, 0, 0), 1, false), 1.5f);
         AddOrd(aisc, un, ord);
@@ -975,7 +1014,8 @@ void TakeoffEveryZig(Order *aisc, Unit *un)
     AddOrd(aisc, un, ord);
     ord = new Orders::ExecuteFor(new Orders::MatchAngularVelocity(Vector(0, 0, 0), 1, false), 3.4f);
     AddOrd(aisc, un, ord);
-    ord = new Orders::ExecuteFor(new Orders::MatchVelocity(un->ClampVelocity(vec, true), Vector(0, 0, 0), true, true, false), 0.1f);
+    ord = new Orders::ExecuteFor(
+        new Orders::MatchVelocity(un->ClampVelocity(vec, true), Vector(0, 0, 0), true, true, false), 0.1f);
     AddOrd(aisc, un, ord);
     ord = new Orders::ExecuteFor(new Orders::FaceTarget(0, 3), 1.0f);
     AddOrd(aisc, un, ord);
@@ -983,7 +1023,7 @@ void TakeoffEveryZig(Order *aisc, Unit *un)
     AddOrd(aisc, un, ord);
     ord = new Orders::MatchAngularVelocity(Vector(0, 0, 0), 1, false);
     AddOrd(aisc, un, ord);
-    un->Fire(weapon_info::CAPSHIPHEAVY, false); //doesn't have time to happen anyway
+    un->Fire(weapon_info::CAPSHIPHEAVY, false); // doesn't have time to happen anyway
     un->SelectAllWeapon(false);
 }
 

@@ -1,12 +1,18 @@
+#include "gfx/matrix.h"
 #include "gldrv/gfxlib.h"
 #include "gldrv/gfxlib_struct.h"
-#include "gfx/matrix.h"
 #include <assert.h>
 
-void GFXSphereVertexList::Draw() {}
+void GFXSphereVertexList::Draw()
+{
+}
 
-void GFXSphereVertexList::Draw(enum POLYTYPE *poly, const INDEX index, const int numLists, const int *offsets) {}
-void GFXSphereVertexList::BeginDrawState(GFXBOOL lock) {}
+void GFXSphereVertexList::Draw(enum POLYTYPE *poly, const INDEX index, const int numLists, const int *offsets)
+{
+}
+void GFXSphereVertexList::BeginDrawState(GFXBOOL lock)
+{
+}
 void GFXSphereVertexList::GetPolys(GFXVertex **vert, int *numPolys, int *numTris)
 {
     sphere->GetPolys(vert, numPolys, numTris);
@@ -20,7 +26,9 @@ void GFXSphereVertexList::GetPolys(GFXVertex **vert, int *numPolys, int *numTris
         (*vert)[i].z *= radius;
     }
 }
-void GFXSphereVertexList::EndDrawState(GFXBOOL lock) {}
+void GFXSphereVertexList::EndDrawState(GFXBOOL lock)
+{
+}
 GFXVertexList::VDAT *GFXSphereVertexList::BeginMutate(int offset)
 {
     return nullptr;
@@ -61,8 +69,8 @@ GFXSphereVertexList::GFXSphereVertexList(float radius, int detail, bool Insideou
         int i, j, imin, imax;
         float nsign = Insideout ? -1.0 : 1.0;
         float normalscale = reverse_normals ? -1.0 : 1.0;
-        int fir = 0; //Insideout?1:0;
-        int sec = 1; //Insideout?0:1;
+        int fir = 0; // Insideout?1:0;
+        int sec = 1; // Insideout?0:1;
         /* Code below adapted from gluSphere */
         drho = (rho_max - rho_min) / (float)stacks;
         dtheta = (theta_max - theta_min) / (float)slices;
@@ -75,10 +83,10 @@ GFXSphereVertexList::GFXSphereVertexList(float radius, int detail, bool Insideou
         imax = stacks;
 
         int numQuadstrips = stacks;
-        //numQuadstrips = 0;
+        // numQuadstrips = 0;
         int *QSOffsets = new int[numQuadstrips];
 
-        //draw intermediate stacks as quad strips
+        // draw intermediate stacks as quad strips
         int numvertex = stacks * (slices + 1) * 2;
         GFXVertex *vertexlist = new GFXVertex[numvertex];
 
@@ -87,7 +95,7 @@ GFXSphereVertexList::GFXSphereVertexList(float radius, int detail, bool Insideou
         /*   SetOrientation(Vector(1,0,0),
          *    Vector(0,0,-1),
          *    Vector(0,1,0));//that's the way prop*/
-        //taken care of in loading
+        // taken care of in loading
         for (i = imin; i < imax; i++)
         {
             GFXVertex *vertexlist = vl + (i * (slices + 1) * 2);
@@ -107,8 +115,8 @@ GFXSphereVertexList::GFXSphereVertexList(float radius, int detail, bool Insideou
 #define GetS(theta, theta_min, theta_max) (1 - (theta - theta_min) / (theta_max - theta_min))
 #define GetT(rho, rho_min, rho_max) (1 - (rho - rho_min) / (rho_max - rho_min))
 
-                vertexlist[j * 2 + fir].s = GetS(theta, theta_min, theta_max); //1-s;//insideout?1-s:s;
-                vertexlist[j * 2 + fir].t = GetT(rho, rho_min, rho_max);       //t;
+                vertexlist[j * 2 + fir].s = GetS(theta, theta_min, theta_max); // 1-s;//insideout?1-s:s;
+                vertexlist[j * 2 + fir].t = GetT(rho, rho_min, rho_max);       // t;
                 vertexlist[j * 2 + fir].x = x * radius;
                 vertexlist[j * 2 + fir].z = -y * radius;
                 vertexlist[j * 2 + fir].y = z * radius;
@@ -119,9 +127,9 @@ GFXSphereVertexList::GFXSphereVertexList(float radius, int detail, bool Insideou
 
                 vertexlist[j * 2 + sec].i = x * normalscale;
                 vertexlist[j * 2 + sec].k = -y * normalscale;
-                vertexlist[j * 2 + sec].j = z * normalscale;                    //double negative
-                vertexlist[j * 2 + sec].s = GetS(theta, theta_min, theta_max);  //1-s;//insideout?1-s:s;
-                vertexlist[j * 2 + sec].t = GetT(rho + drho, rho_min, rho_max); //t - dt;
+                vertexlist[j * 2 + sec].j = z * normalscale;                    // double negative
+                vertexlist[j * 2 + sec].s = GetS(theta, theta_min, theta_max);  // 1-s;//insideout?1-s:s;
+                vertexlist[j * 2 + sec].t = GetT(rho + drho, rho_min, rho_max); // t - dt;
                 vertexlist[j * 2 + sec].x = x * radius;
                 vertexlist[j * 2 + sec].z = -y * radius;
                 vertexlist[j * 2 + sec].y = z * radius;

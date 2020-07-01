@@ -3,12 +3,12 @@
 #include <list>
 #include <vector>
 #ifndef LIST_TESTING
-#include "unit_util.h"
 #include "unit_generic.h"
+#include "unit_util.h"
 
 using std::list;
 using std::vector;
-//UnitIterator  BEGIN:
+// UnitIterator  BEGIN:
 
 UnitCollection::UnitIterator &UnitCollection::UnitIterator::operator=(const UnitCollection::UnitIterator &orig)
 {
@@ -139,9 +139,9 @@ Unit *UnitCollection::UnitIterator::next()
     return *it;
 }
 
-//UnitIterator END:
+// UnitIterator END:
 
-//ConstIterator Begin:
+// ConstIterator Begin:
 
 UnitCollection::ConstIterator &UnitCollection::ConstIterator::operator=(const UnitCollection::ConstIterator &orig)
 {
@@ -222,9 +222,9 @@ const UnitCollection::ConstIterator UnitCollection::ConstIterator::operator++(in
     return tmp;
 }
 
-//ConstIterator  END:
+// ConstIterator  END:
 
-//UnitCollection  BEGIN:
+// UnitCollection  BEGIN:
 
 UnitCollection::UnitCollection()
 {
@@ -372,7 +372,7 @@ inline void UnitCollection::erase(list<Unit *>::iterator &it2)
         ++it2;
         return;
     }
-    //If we have more than 4 iterators, just push node onto vector.
+    // If we have more than 4 iterators, just push node onto vector.
     if (activeIters.size() > 3)
     {
         removedIters.push_back(it2);
@@ -381,10 +381,10 @@ inline void UnitCollection::erase(list<Unit *>::iterator &it2)
         ++it2;
         return;
     }
-    //If we have between 2 and 4 iterators, see if any are actually
-    //on the node we want to remove, if so, just push onto vector.
-    //Purpose : This special case is to reduce the size of the list in the
-    //situation where removedIters isn't being processed.
+    // If we have between 2 and 4 iterators, see if any are actually
+    // on the node we want to remove, if so, just push onto vector.
+    // Purpose : This special case is to reduce the size of the list in the
+    // situation where removedIters isn't being processed.
     if (activeIters.size() > 1)
     {
         for (vector<UnitCollection::UnitIterator *>::size_type i = 0; i < activeIters.size(); ++i)
@@ -399,8 +399,8 @@ inline void UnitCollection::erase(list<Unit *>::iterator &it2)
             }
         }
     }
-    //If we have 1 iterator, or none of the iterators are currently on the
-    //requested node to be removed, then remove it right away.
+    // If we have 1 iterator, or none of the iterators are currently on the
+    // requested node to be removed, then remove it right away.
     (*it2)->UnRef();
     (*it2) = nullptr;
     it2 = units.erase(it2);
@@ -450,7 +450,8 @@ inline void UnitCollection::unreg(UnitCollection::UnitIterator *iter)
             break;
         }
     }
-    if (activeIters.empty() || (activeIters.size() == 1 && (activeIters[0]->it == units.end() || (*(activeIters[0]->it)))))
+    if (activeIters.empty() ||
+        (activeIters.size() == 1 && (activeIters[0]->it == units.end() || (*(activeIters[0]->it)))))
     {
         while (!removedIters.empty())
         {
@@ -460,6 +461,6 @@ inline void UnitCollection::unreg(UnitCollection::UnitIterator *iter)
     }
 }
 
-//UnitCollection END:
+// UnitCollection END:
 
-#endif //USE_STL_COLLECTION
+#endif // USE_STL_COLLECTION

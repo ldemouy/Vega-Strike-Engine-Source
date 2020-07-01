@@ -1,22 +1,22 @@
 
 #ifdef HAVE_PYTHON
-#include <boost/version.hpp>
-#include <boost/python/class.hpp>
 #include <Python.h>
+#include <boost/python/class.hpp>
+#include <boost/version.hpp>
 #endif
 
-#include "cmd/unit_generic.h"
 #include "cmd/ai/order.h"
+#include "cmd/unit_generic.h"
 
 #include "configxml.h"
 #include "gfx/cockpit_generic.h"
 
 #include "python/python_class.h"
 
-#include "pythonmission.h"
-#include "mission.h"
-#include "savegame.h"
 #include "gnuhash.h"
+#include "mission.h"
+#include "pythonmission.h"
+#include "savegame.h"
 
 using std::cerr;
 using std::cout;
@@ -399,4 +399,3 @@ void InitDirector2()
     PYTHON_INIT_MODULE(Director);
     Python::reseterrors();
 }
-

@@ -1,29 +1,29 @@
 /***************************************************************************
-*                           button.cpp  -  description
-*                           --------------------------
-*                           begin                : January 10, 2002
-*                           copyright            : (C) 2002 by David Ranger
-*                           email                : ussreliant@users.sourceforge.net
-***************************************************************************/
+ *                           button.cpp  -  description
+ *                           --------------------------
+ *                           begin                : January 10, 2002
+ *                           copyright            : (C) 2002 by David Ranger
+ *                           email                : ussreliant@users.sourceforge.net
+ ***************************************************************************/
 
 /***************************************************************************
-*                                                                         *
-*   This program is free software; you can redistribute it and/or modify  *
-*   it under the terms of the GNU General Public License as published by  *
-*   the Free Software Foundation; either version 2 of the License, or     *
-*   any later version.                                                    *
-*                                                                         *
-***************************************************************************/
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   any later version.                                                    *
+ *                                                                         *
+ ***************************************************************************/
 
 #include "button.h"
 #include "gldrv/winsys.h"
 #include <cstdlib>
 #include <cstring>
 
-//Button::Button(float x, float y, float wid, float hei, char *name) { ; }
+// Button::Button(float x, float y, float wid, float hei, char *name) { ; }
 Button::Button(float x, float y, float wid, float hei, const char *name)
 {
-    //Initialize the variables
+    // Initialize the variables
     xcoord = x;
     ycoord = y;
     width = wid;
@@ -62,7 +62,7 @@ int Button::MouseClick(int button, int state, float x, float y)
     if (Inside(x, y) == 0)
         return 0;
     if (state != WS_MOUSE_UP)
-        return 0; //Returning the 1 says it's been clicked
+        return 0; // Returning the 1 says it's been clicked
 
     return 1;
 }
@@ -80,7 +80,7 @@ int Button::MouseMove(float x, float y)
 
 int Button::MouseMoveClick(float x, float y)
 {
-    //Nothing to do
+    // Nothing to do
     return 0;
 }
 

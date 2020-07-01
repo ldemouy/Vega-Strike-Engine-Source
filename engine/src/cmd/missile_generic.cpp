@@ -1,40 +1,40 @@
-#include "universe_util.h"
 #include "missile_generic.h"
+#include "ai/order.h"
+#include "collection.h"
+#include "configxml.h"
+#include "faction_generic.h"
+#include "images.h"
+#include "role_bitmask.h"
+#include "star_system_generic.h"
 #include "unit_generic.h"
+#include "unit_util.h"
+#include "universe_util.h"
 #include "vegastrike.h"
 #include "vs_globals.h"
-#include "configxml.h"
-#include "images.h"
-#include "collection.h"
-#include "star_system_generic.h"
-#include "role_bitmask.h"
-#include "ai/order.h"
-#include "faction_generic.h"
-#include "unit_util.h"
 #include "vsfilesystem.h"
 
 void StarSystem::UpdateMissiles()
 {
-    //if false, missiles collide with rocks as units, but not harm them with explosions
-    //FIXME that's how it's used now, but not really correct, as there could be separate AsteroidWeaponDamage for this
-    static bool collideroids = XMLSupport::parse_bool(vs_config->getVariable("physics", "AsteroidWeaponCollision", "false"));
+    // if false, missiles collide with rocks as units, but not harm them with explosions
+    // FIXME that's how it's used now, but not really correct, as there could be separate AsteroidWeaponDamage for this
+    static bool collideroids =
+        XMLSupport::parse_bool(vs_config->getVariable("physics", "AsteroidWeaponCollision", "false"));
 
-    //WARNING: This is a big performance problem...
+    // WARNING: This is a big performance problem...
     //...responsible for many hiccups.
-    //TODO: Make it use the collidemap to only iterate through potential hits...
-    //PROBLEM: The current collidemap does not allow this efficiently (no way of
-    //taking the other unit's rSize() into account).
+    // TODO: Make it use the collidemap to only iterate through potential hits...
+    // PROBLEM: The current collidemap does not allow this efficiently (no way of
+    // taking the other unit's rSize() into account).
     if (!dischargedMissiles.empty())
     {
         if (dischargedMissiles.back()->GetRadius() > 0)
-        { //we can avoid this iterated check for kinetic projectiles even if they "discharge" on hit
+        { // we can avoid this iterated check for kinetic projectiles even if they "discharge" on hit
             Unit *un;
-            for (auto ui = getUnitList().createIterator();
-                 nullptr != (un = (*ui));
-                 ++ui)
+            for (auto ui = getUnitList().createIterator(); nullptr != (un = (*ui)); ++ui)
             {
                 enum clsptr type = un->isUnit();
-                if (collideroids || type != ASTEROIDPTR) // could check for more, unless someone wants planet-killer missiles, but what it would change?
+                if (collideroids || type != ASTEROIDPTR) // could check for more, unless someone wants planet-killer
+                                                         // missiles, but what it would change?
                     dischargedMissiles.back()->ApplyDamage(un);
             }
         }
@@ -93,9 +93,9 @@ void MissileEffect::DoApplyDamage(Unit *parent, Unit *un, float distance, float 
     }
     if (damage_left > 0)
     {
-        VSFileSystem::vs_dprintf(1, "Missile damaging %s/%s (dist=%.3f r=%.3f dmg=%.3f)\n",
-                                 parent->name.get().c_str(), ((un == parent) ? "." : un->name.get().c_str()),
-                                 distance, radius, damage * damage_fraction * damage_left);
+        VSFileSystem::vs_dprintf(1, "Missile damaging %s/%s (dist=%.3f r=%.3f dmg=%.3f)\n", parent->name.get().c_str(),
+                                 ((un == parent) ? "." : un->name.get().c_str()), distance, radius,
+                                 damage * damage_fraction * damage_left);
         parent->ApplyDamage(pos.Cast(), norm, damage * damage_fraction * damage_left, un, GFXColor(1, 1, 1, 1),
                             ownerDoNotDereference, phasedamage * damage_fraction * damage_left);
     }
@@ -109,10 +109,10 @@ void MissileEffect::ApplyDamage(Unit *smaller)
     if (distance < radius)
     { // "smaller->isUnit() != MISSILEPTR &&" was removed - why disable antimissiles?
         if (distance < 0)
-            distance = 0.f; //it's inside the bounding sphere, so we'll not reduce the effect
+            distance = 0.f; // it's inside the bounding sphere, so we'll not reduce the effect
         if (radialmultiplier < .001)
             radialmultiplier = .001;
-        float dist_part = distance / radialmultiplier; //radialmultiplier is radius of the set damage
+        float dist_part = distance / radialmultiplier; // radialmultiplier is radius of the set damage
         float damage_mul;
         if (dist_part > 1.f)
         { // there can be something else, such as different eye- and ear- candy
@@ -125,11 +125,10 @@ void MissileEffect::ApplyDamage(Unit *smaller)
         /*
          *  contrived formula to create paraboloid falloff rather than quadratic peaking at 2x damage at origin
          *  k = 2-distance^2/radmul^2
-         * 
-         * if the explosion itself was a weapon, it would have double the base damage, longrange=0.5 (counted at Rm) and more generic form:
-         * Kclose = 1-(1-longrange)*(R/Rm)^2
-         * Kfar   = longrange/(R/Rm)^2
-         * or Kapprox = longrange/(longrange-(R/Rm)^3*(1-longrange)) ; obviously, with more checks preventing /0
+         *
+         * if the explosion itself was a weapon, it would have double the base damage, longrange=0.5 (counted at Rm) and
+         * more generic form: Kclose = 1-(1-longrange)*(R/Rm)^2 Kfar   = longrange/(R/Rm)^2 or Kapprox =
+         * longrange/(longrange-(R/Rm)^3*(1-longrange)) ; obviously, with more checks preventing /0
          */
         DoApplyDamage(smaller, smaller, distance, damage_mul);
     }
@@ -156,8 +155,7 @@ void Missile::Discharge()
         VSFileSystem::vs_dprintf(1, "Missile discharged (target %s)\n",
                                  (targ != nullptr) ? targ->name.get().c_str() : "nullptr");
         _Universe->activeStarSystem()->AddMissileToQueue(
-            new MissileEffect(Position(), damage, phasedamage,
-                              radial_effect, radial_multiplier, owner));
+            new MissileEffect(Position(), damage, phasedamage, radial_effect, radial_multiplier, owner));
         discharged = true;
     }
 }
@@ -165,44 +163,40 @@ void Missile::Discharge()
 void Missile::Kill(bool erase)
 {
     Unit *targ = Unit::Target();
-    VSFileSystem::vs_dprintf(1, "Missile killed (target %s)\n", (targ != nullptr) ? targ->name.get().c_str() : "nullptr");
+    VSFileSystem::vs_dprintf(1, "Missile killed (target %s)\n",
+                             (targ != nullptr) ? targ->name.get().c_str() : "nullptr");
     Discharge();
     Unit::Kill(erase);
 }
 
-void Missile::reactToCollision(Unit *smaller,
-                               const QVector &biglocation,
-                               const Vector &bignormal,
-                               const QVector &smalllocation,
-                               const Vector &smallnormal,
-                               float dist)
+void Missile::reactToCollision(Unit *smaller, const QVector &biglocation, const Vector &bignormal,
+                               const QVector &smalllocation, const Vector &smallnormal, float dist)
 {
-    static bool doesmissilebounce = XMLSupport::parse_bool(vs_config->getVariable("physics", "missile_bounce", "false"));
+    static bool doesmissilebounce =
+        XMLSupport::parse_bool(vs_config->getVariable("physics", "missile_bounce", "false"));
     if (doesmissilebounce)
         Unit::reactToCollision(smaller, biglocation, bignormal, smalllocation, smallnormal, dist);
     VSFileSystem::vs_dprintf(1, "Missile collided with %s\n", smaller->name.get().c_str());
     if (smaller->isUnit() != MISSILEPTR)
     {
-        //2 missiles in a row can't hit each other
+        // 2 missiles in a row can't hit each other
         this->Velocity = smaller->Velocity;
         Velocity = smaller->Velocity;
         Discharge();
         if (!killed)
-            DealDamageToHull(smalllocation.Cast(), hull + 1); //should kill, applying addmissile effect
+            DealDamageToHull(smalllocation.Cast(), hull + 1); // should kill, applying addmissile effect
     }
 }
 
 Unit *getNearestTarget(Unit *me)
 {
-    return nullptr; //THIS FUNCTION IS TOO SLOW__AND ECM SHOULD WORK DIFFERENTLY ANYHOW...WILL SAVE FIXING IT FOR LATER
+    return nullptr; // THIS FUNCTION IS TOO SLOW__AND ECM SHOULD WORK DIFFERENTLY ANYHOW...WILL SAVE FIXING IT FOR LATER
 
     QVector pos(me->Position());
     Unit *un = nullptr;
     Unit *targ = nullptr;
     double minrange = FLT_MAX;
-    for (auto i = _Universe->activeStarSystem()->getUnitList().createIterator();
-         (un = (*i));
-         ++i)
+    for (auto i = _Universe->activeStarSystem()->getUnitList().createIterator(); (un = (*i)); ++i)
     {
         if (un == me)
             continue;
@@ -225,9 +219,7 @@ Unit *getNearestTarget(Unit *me)
     }
     if (targ == nullptr)
     {
-        for (auto i = _Universe->activeStarSystem()->getUnitList().createIterator();
-             (un = (*i));
-             ++i)
+        for (auto i = _Universe->activeStarSystem()->getUnitList().createIterator(); (un = (*i)); ++i)
             if (UnitUtil::isSun(un))
             {
                 targ = un;
@@ -236,14 +228,9 @@ Unit *getNearestTarget(Unit *me)
     }
     return targ;
 }
-void Missile::UpdatePhysics2(const Transformation &trans,
-                             const Transformation &old_physical_state,
-                             const Vector &accel,
-                             float difficulty,
-                             const Matrix &transmat,
-                             const Vector &CumulativeVelocity,
-                             bool ResolveLast,
-                             UnitCollection *uc)
+void Missile::UpdatePhysics2(const Transformation &trans, const Transformation &old_physical_state, const Vector &accel,
+                             float difficulty, const Matrix &transmat, const Vector &CumulativeVelocity,
+                             bool ResolveLast, UnitCollection *uc)
 {
     Unit *targ;
     if ((targ = (Unit::Target())))
@@ -259,7 +246,7 @@ void Missile::UpdatePhysics2(const Transformation &trans,
             size_t missile_hash = ((size_t)this) / 16383;
             if ((int)(missile_hash % max_ecm) < UnitUtil::getECM(targ))
             {
-                Target(nullptr); //go wild
+                Target(nullptr); // go wild
             }
             else if (hull > 0)
             {
@@ -293,7 +280,7 @@ void Missile::UpdatePhysics2(const Transformation &trans,
             retarget = 0;
     }
     if (retarget && targ == nullptr)
-        Target(nullptr); //BROKEN
+        Target(nullptr); // BROKEN
     if (had_target && !(Unit::Target()))
     {
         static float max_lost_target_live_time =
@@ -315,17 +302,17 @@ void Missile::UpdatePhysics2(const Transformation &trans,
         }
         if (checker && detonation_radius >= 0)
         {
-            //spiritplumber assumes that the missile is hitting a much larger object than itself
-            static float percent_missile_match_target_velocity =
-                XMLSupport::parse_float(vs_config->getVariable("physics", "percent_missile_match_target_velocity", "1.0"));
+            // spiritplumber assumes that the missile is hitting a much larger object than itself
+            static float percent_missile_match_target_velocity = XMLSupport::parse_float(
+                vs_config->getVariable("physics", "percent_missile_match_target_velocity", "1.0"));
 
             this->Velocity += percent_missile_match_target_velocity * (targ->Velocity - this->Velocity);
 
             VSFileSystem::vs_dprintf(1, "Missile hit target %s (time %.3f)\n", targ->name.get().c_str(), time);
             Discharge();
             time = -1;
-            //Vector norm;
-            //float dist;
+            // Vector norm;
+            // float dist;
             /*** WARNING COLLISION STUFF... TO FIX FOR SERVER SIDE SOMEDAY ***
              *    if ((targ)->queryBoundingBox (Position(),detonation_radius+rSize())) {
              *    Discharge();

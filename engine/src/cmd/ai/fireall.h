@@ -1,10 +1,10 @@
 #include "order.h"
 namespace Orders
 {
-    class FireAllYouGot : public Order
-    {
-    public:
-        FireAllYouGot();
-        void Execute();
-    };
+class FireAllYouGot : public Order
+{
+  public:
+    FireAllYouGot();
+    void Execute();
+};
 } // namespace Orders

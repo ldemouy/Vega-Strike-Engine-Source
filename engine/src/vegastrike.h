@@ -36,38 +36,38 @@ extern float AUDIO_ATOM;
 
 #include "vs_math.h"
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <errno.h>
-#include <time.h>
 #include <ctype.h>
+#include <errno.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 
-#include <string.h>
+#include "debug_vs.h"
 #include <limits.h>
 #include <stdarg.h>
-#include "debug_vs.h"
+#include <string.h>
 
 #if defined(WIN32) || defined(__CYGWIN__)
 /* Note that this will define WIN32 for us, if it isn't defined already
  */
 #ifndef NOMINMAX
 #define NOMINMAX
-#endif //tells VCC not to generate min/max macros
+#endif // tells VCC not to generate min/max macros
 #include <windows.h>
 //#include <wingdi.h>
 #include <time.h>
 #else
-#include <sys/time.h>
 #include <sys/stat.h>
+#include <sys/time.h>
 #include <unistd.h>
 //#include "command.h"
 #endif /* defined( WIN32 ) || defined( __CYGWIN__ ) */
 
 #ifndef NO_GFX
 #if defined(__APPLE__) || defined(MACOSX)
+#include <GLUT/glut.h>
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
-#include <GLUT/glut.h>
 #else
 #define __glext_h_
 #include <GL/gl.h>

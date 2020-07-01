@@ -1,11 +1,11 @@
 #ifndef __PLANETGENERIC_H
 #define __PLANETGENERIC_H
 
-#include "unit_generic.h"
 #include "ai/order.h"
 #include "configxml.h"
 #include "gldrv/gfxlib_struct.h"
 #include "images.h"
+#include "unit_generic.h"
 
 class Atmosphere;
 class PlanetaryTransform;
@@ -13,7 +13,7 @@ class ContinuousTerrain;
 
 class PlanetaryOrbit : public Order
 {
-private:
+  private:
     double velocity;
     double theta;
     double inittheta;
@@ -28,83 +28,57 @@ private:
     int current_orbit_frame;
     bool orbit_list_filled;
 
-protected:
-    ///A vector containing all lihgts currently activated on current planet
+  protected:
+    /// A vector containing all lihgts currently activated on current planet
     std::vector<int> lights;
 
-public:
-    PlanetaryOrbit(Unit *p,
-                   double velocity,
-                   double initpos,
-                   const QVector &x_axis,
-                   const QVector &y_axis,
-                   const QVector &Centre,
-                   Unit *target = nullptr);
+  public:
+    PlanetaryOrbit(Unit *p, double velocity, double initpos, const QVector &x_axis, const QVector &y_axis,
+                   const QVector &Centre, Unit *target = nullptr);
     ~PlanetaryOrbit();
     void Execute();
 };
 
 class Planet : public Unit
 {
-protected:
+  protected:
     PlanetaryTransform *terraintrans;
     Atmosphere *atmosphere;
     ContinuousTerrain *terrain;
     Vector TerrainUp;
     Vector TerrainH;
     bool inside;
-    bool atmospheric; //then users can go inside!
+    bool atmospheric; // then users can go inside!
     float radius;
     float gravity;
     UnitCollection insiders;
     std::vector<int> lights;
 
-protected:
+  protected:
     /// default constructor - only to be called by UnitFactory
     Planet();
     /// constructor - only to be called by UnitFactory
-    Planet(QVector x,
-           QVector y,
-           float vely,
-           const Vector &rotvel,
-           float pos,
-           float gravity,
-           float radius,
-           const string &filename,
-           const string &technique,
-           const string &unitname,
-           const vector<string> &dest,
-           const QVector &orbitcent,
-           Unit *parent,
-           int faction,
-           string fullname,
-           bool inside_out = false,
+    Planet(QVector x, QVector y, float vely, const Vector &rotvel, float pos, float gravity, float radius,
+           const string &filename, const string &technique, const string &unitname, const vector<string> &dest,
+           const QVector &orbitcent, Unit *parent, int faction, string fullname, bool inside_out = false,
            unsigned int lights_num = 0);
-    void InitPlanet(QVector x,
-                    QVector y,
-                    float vely,
-                    const Vector &rotvel,
-                    float pos,
-                    float gravity,
-                    float radius,
-                    const string &filename,
-                    const string &technique,
-                    const string &unitname,
-                    const vector<string> &dest,
-                    const QVector &orbitcent,
-                    Unit *parent,
-                    int faction,
-                    string fullname,
-                    bool inside_out,
+    void InitPlanet(QVector x, QVector y, float vely, const Vector &rotvel, float pos, float gravity, float radius,
+                    const string &filename, const string &technique, const string &unitname, const vector<string> &dest,
+                    const QVector &orbitcent, Unit *parent, int faction, string fullname, bool inside_out,
                     unsigned int lights_num);
 
     friend class UnitFactory;
-    Planet(std::vector<Mesh *> m, bool b, int i) : Unit(m, b, i) {}
+    Planet(std::vector<Mesh *> m, bool b, int i) : Unit(m, b, i)
+    {
+    }
 
-public:
+  public:
     UnitCollection satellites;
     virtual ~Planet();
-    constexpr inline float getRadius() const { return radius; }
+    constexpr inline float getRadius() const
+    {
+        return radius;
+    }
     virtual Vector AddSpaceElevator(const std::string &name, const std::string &faction, char direction);
     // virtual void AddFog(const vector<AtmosphericFogMesh> &meshes, bool optical_illusion) {}
     // virtual void AddAtmosphere(const std::string &texture,
@@ -139,25 +113,10 @@ public:
         return getFullname();
     }
     string getHumanReadablePlanetType() const;
-    Unit *beginElement(QVector x,
-                       QVector y,
-                       float vely,
-                       const Vector &rotvel,
-                       float pos,
-                       float gravity,
-                       float radius,
-                       const string &filename,
-                       const string &technique,
-                       const string &unitname,
-                       BLENDFUNC blendsrc,
-                       BLENDFUNC blenddst,
-                       const vector<string> &dest,
-                       int level,
-                       const GFXMaterial &ourmat,
-                       const std::vector<GFXLightLocal> &ligh,
-                       bool isunit,
-                       int faction,
-                       string fullname,
+    Unit *beginElement(QVector x, QVector y, float vely, const Vector &rotvel, float pos, float gravity, float radius,
+                       const string &filename, const string &technique, const string &unitname, BLENDFUNC blendsrc,
+                       BLENDFUNC blenddst, const vector<string> &dest, int level, const GFXMaterial &ourmat,
+                       const std::vector<GFXLightLocal> &ligh, bool isunit, int faction, string fullname,
                        bool inside_out);
     Planet *GetTopPlanet(int level);
     virtual enum clsptr isUnit() const
@@ -182,25 +141,23 @@ public:
     // {
     //     return nullptr;
     // }
-    virtual void reactToCollision(Unit *smaller,
-                                  const QVector &biglocation,
-                                  const Vector &bignormal,
-                                  const QVector &smalllocation,
-                                  const Vector &smallnormal,
-                                  float dist)
+    virtual void reactToCollision(Unit *smaller, const QVector &biglocation, const Vector &bignormal,
+                                  const QVector &smalllocation, const Vector &smallnormal, float dist)
     {
         this->Unit::reactToCollision(smaller, biglocation, bignormal, smalllocation, smallnormal, dist);
     }
 
     class PlanetIterator
     {
-    public:
+      public:
         PlanetIterator(Planet *p)
         {
             localCollection.append(p);
             pos = localCollection.createIterator();
         }
-        ~PlanetIterator() {}
+        ~PlanetIterator()
+        {
+        }
 
         inline Unit *current()
         {
@@ -231,7 +188,7 @@ public:
             return current();
         }
 
-    private:
+      private:
         // inline UnitCollection::UnitIterator operator++(int)
         // {
         //     abort();
@@ -260,7 +217,7 @@ public:
     friend class Planet::PlanetIterator;
     friend class PlanetaryOrbit;
 
-private:
+  private:
     /// copy constructor forbidden
     Planet(const Planet &);
     /// assignment operator forbidden

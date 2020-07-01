@@ -1,11 +1,11 @@
 #include "planet_generic.h"
-#include "unit_factory.h"
-#include "gfx/mesh.h"
 #include "galaxy_xml.h"
-#include <sys/types.h>
-#include <sys/stat.h>
-#include "universe_util.h"
+#include "gfx/mesh.h"
 #include "lin_time.h"
+#include "unit_factory.h"
+#include "universe_util.h"
+#include <sys/stat.h>
+#include <sys/types.h>
 
 char *getnoslash(char *inp)
 {
@@ -31,13 +31,10 @@ string getCargoUnitName(const char *textname)
     return retval;
 }
 
-PlanetaryOrbit::PlanetaryOrbit(Unit *p,
-                               double velocity,
-                               double initpos,
-                               const QVector &x_axis,
-                               const QVector &y_axis,
-                               const QVector &centre,
-                               Unit *targetunit) : Order(MOVEMENT, 0), velocity(velocity), theta(initpos), inittheta(initpos), x_size(x_axis), y_size(y_axis), current_orbit_frame(0)
+PlanetaryOrbit::PlanetaryOrbit(Unit *p, double velocity, double initpos, const QVector &x_axis, const QVector &y_axis,
+                               const QVector &centre, Unit *targetunit)
+    : Order(MOVEMENT, 0), velocity(velocity), theta(initpos), inittheta(initpos), x_size(x_axis), y_size(y_axis),
+      current_orbit_frame(0)
 {
     for (unsigned int t = 0; t < NUM_ORBIT_AVERAGE; ++t)
         orbiting_average[t] = QVector(0, 0, 0);
@@ -78,11 +75,12 @@ void PlanetaryOrbit::Execute()
     bool mining = parent->rSize() > 1444 && parent->rSize() < 1445;
     bool done = this->done;
     this->Order::Execute();
-    this->done = done; //we ain't done till the cows come home
+    this->done = done; // we ain't done till the cows come home
     if (done)
         return;
     QVector origin(targetlocation);
-    static float orbit_centroid_averaging = XMLSupport::parse_float(vs_config->getVariable("physics", "orbit_averaging", "16"));
+    static float orbit_centroid_averaging =
+        XMLSupport::parse_float(vs_config->getVariable("physics", "orbit_averaging", "16"));
     float averaging = (float)orbit_centroid_averaging / (float)(parent->predicted_priority + 1.0f);
     if (averaging < 1.0f)
         averaging = 1.0f;
@@ -98,7 +96,7 @@ void PlanetaryOrbit::Execute()
             QVector desired = unit->prev_physical_state.position;
             if (orbiting_average[o].i == 0 && orbiting_average[o].j == 0 && orbiting_average[o].k == 0)
             {
-                //clear all of them.
+                // clear all of them.
                 for (o = 0; o < NUM_ORBIT_AVERAGE; o++)
                     orbiting_average[o] = desired;
                 orbiting_last_simatom = SIMULATION_ATOM;
@@ -126,7 +124,8 @@ void PlanetaryOrbit::Execute()
                     }
                     for (int i = 0; i < limit; i++)
                     {
-                        sum_diff += (orbiting_average[o] - orbiting_average[(o + NUM_ORBIT_AVERAGE - 1) % NUM_ORBIT_AVERAGE]);
+                        sum_diff +=
+                            (orbiting_average[o] - orbiting_average[(o + NUM_ORBIT_AVERAGE - 1) % NUM_ORBIT_AVERAGE]);
                         sum_position += orbiting_average[o];
                         o = (o + 1) % NUM_ORBIT_AVERAGE;
                     }
@@ -142,7 +141,7 @@ void PlanetaryOrbit::Execute()
                         number_to_fill = NUM_ORBIT_AVERAGE;
                     if (ratio_simatom <= 1)
                         number_to_fill = NUM_ORBIT_AVERAGE;
-                    //subtract it so the average remains the same.
+                    // subtract it so the average remains the same.
                     sum_position += (sum_diff * (number_to_fill / -2.));
                     for (o = 0; o < number_to_fill; o++)
                     {
@@ -161,7 +160,7 @@ void PlanetaryOrbit::Execute()
         {
             done = true;
             parent->SetResolveForces(true);
-            return; //flung off into space.
+            return; // flung off into space.
         }
     }
     QVector sum_orbiting_average(0, 0, 0);
@@ -185,17 +184,12 @@ void PlanetaryOrbit::Execute()
     double mag = (destination - parent->LocalPosition()).Magnitude();
     if (mining && 0)
     {
-        printf("(%.2f %.2f %.2f)\n(%.2f %.2f %.2f) del %.2f spd %.2f\n",
-               parent->LocalPosition().i,
-               parent->LocalPosition().j,
-               parent->LocalPosition().k,
-               destination.i,
-               destination.j,
-               destination.k,
-               mag,
+        printf("(%.2f %.2f %.2f)\n(%.2f %.2f %.2f) del %.2f spd %.2f\n", parent->LocalPosition().i,
+               parent->LocalPosition().j, parent->LocalPosition().k, destination.i, destination.j, destination.k, mag,
                mag * (1. / SIMULATION_ATOM));
     }
-    parent->Velocity = parent->cumulative_velocity = (((destination - parent->LocalPosition()) * (1. / SIMULATION_ATOM)).Cast());
+    parent->Velocity = parent->cumulative_velocity =
+        (((destination - parent->LocalPosition()) * (1. / SIMULATION_ATOM)).Cast());
     static float Unreasonable_value =
         XMLSupport::parse_float(vs_config->getVariable("physics", "planet_ejection_stophack", "2000"));
     float v2 = parent->Velocity.Dot(parent->Velocity);
@@ -249,16 +243,13 @@ Vector Planet::AddSpaceElevator(const std::string &name, const std::string &fact
     Matrix ElevatorLoc(Vector(dir.j, dir.k, dir.i), dir, Vector(dir.k, dir.i, dir.j));
     scale = dir * radius + Vector(1, 1, 1) - dir;
     Mesh *shield = meshdata.back();
-    string elevator_mesh = GetElMeshName(name, faction, direction); //filename
-    Mesh *tmp = meshdata.back() = Mesh::LoadMesh(elevator_mesh.c_str(),
-                                                 scale,
-                                                 FactionUtil::
-                                                     GetFactionIndex(faction),
-                                                 nullptr);
+    string elevator_mesh = GetElMeshName(name, faction, direction); // filename
+    Mesh *tmp = meshdata.back() =
+        Mesh::LoadMesh(elevator_mesh.c_str(), scale, FactionUtil::GetFactionIndex(faction), nullptr);
 
     meshdata.push_back(shield);
     {
-        //subunit computations
+        // subunit computations
         Vector mn(tmp->corner_min());
         Vector mx(tmp->corner_max());
         if (dir.Dot(Vector(1, 1, 1)) > 0)
@@ -277,7 +268,9 @@ Vector Planet::AddSpaceElevator(const std::string &name, const std::string &fact
     return dir;
 }
 
-void Planet::endElement() {}
+void Planet::endElement()
+{
+}
 
 Planet *Planet::GetTopPlanet(int level)
 {
@@ -310,28 +303,13 @@ void Planet::AddSatellite(Unit *orbiter)
 extern float ScaleJumpRadius(float);
 extern Flightgroup *getStaticBaseFlightgroup(int faction);
 
-Unit *Planet::beginElement(QVector x,
-                           QVector y,
-                           float vely,
-                           const Vector &rotvel,
-                           float pos,
-                           float gravity,
-                           float radius,
-                           const string &filename,
-                           const string &technique,
-                           const string &unitname,
-                           BLENDFUNC blendSrc,
-                           BLENDFUNC blendDst,
-                           const vector<string> &dest,
-                           int level,
-                           const GFXMaterial &ourmat,
-                           const vector<GFXLightLocal> &ligh,
-                           bool isunit,
-                           int faction,
-                           string fullname,
-                           bool inside_out)
+Unit *Planet::beginElement(QVector x, QVector y, float vely, const Vector &rotvel, float pos, float gravity,
+                           float radius, const string &filename, const string &technique, const string &unitname,
+                           BLENDFUNC blendSrc, BLENDFUNC blendDst, const vector<string> &dest, int level,
+                           const GFXMaterial &ourmat, const vector<GFXLightLocal> &ligh, bool isunit, int faction,
+                           string fullname, bool inside_out)
 {
-    //this function is OBSOLETE
+    // this function is OBSOLETE
     Unit *un = nullptr;
     if (level > 2)
     {
@@ -339,7 +317,9 @@ Unit *Planet::beginElement(QVector x,
         assert(*satiterator);
         if ((*satiterator)->isUnit() == PLANETPTR)
         {
-            un = ((Planet *)(*satiterator))->beginElement(x, y, vely, rotvel, pos, gravity, radius, filename, technique, unitname, blendSrc, blendDst, dest, level - 1, ourmat, ligh, isunit, faction, fullname, inside_out);
+            un = ((Planet *)(*satiterator))
+                     ->beginElement(x, y, vely, rotvel, pos, gravity, radius, filename, technique, unitname, blendSrc,
+                                    blendDst, dest, level - 1, ourmat, ligh, isunit, faction, fullname, inside_out);
         }
         else
         {
@@ -352,7 +332,8 @@ Unit *Planet::beginElement(QVector x,
         {
             Unit *sat_unit = nullptr;
             Flightgroup *fg = getStaticBaseFlightgroup(faction);
-            satellites.prepend(sat_unit = UnitFactory::createUnit(filename.c_str(), false, faction, "", fg, fg->nr_ships - 1));
+            satellites.prepend(sat_unit =
+                                   UnitFactory::createUnit(filename.c_str(), false, faction, "", fg, fg->nr_ships - 1));
             sat_unit->setFullname(fullname);
             un = sat_unit;
             auto satiterator(satellites.createIterator());
@@ -364,10 +345,10 @@ Unit *Planet::beginElement(QVector x,
             Planet *p;
             if (dest.size() != 0)
                 radius = ScaleJumpRadius(radius);
-            satellites.prepend(p = UnitFactory::createPlanet(x, y, vely, rotvel, pos, gravity, radius,
-                                                             filename, technique, unitname,
-                                                             blendSrc, blendDst, dest,
-                                                             QVector(0, 0, 0), this, ourmat, ligh, faction, fullname, inside_out));
+            satellites.prepend(p = UnitFactory::createPlanet(x, y, vely, rotvel, pos, gravity, radius, filename,
+                                                             technique, unitname, blendSrc, blendDst, dest,
+                                                             QVector(0, 0, 0), this, ourmat, ligh, faction, fullname,
+                                                             inside_out));
             un = p;
             p->SetOwner(this);
         }
@@ -378,32 +359,19 @@ Unit *Planet::beginElement(QVector x,
 Planet::Planet() : Unit(0), radius(0.0f), satellites()
 {
     inside = false;
-    //Not needed as Unit default constructor is called and already does Init
-    //Init();
+    // Not needed as Unit default constructor is called and already does Init
+    // Init();
     terraintrans = nullptr;
     atmospheric = false;
-    //Force shields to 0
+    // Force shields to 0
     memset(&(this->shield), 0, sizeof(Unit::shield));
     this->shield.number = 2;
 }
 
-void Planet::InitPlanet(QVector x,
-                        QVector y,
-                        float vely,
-                        const Vector &rotvel,
-                        float pos,
-                        float gravity,
-                        float radius,
-                        const string &filename,
-                        const string &technique,
-                        const string &unitname,
-                        const vector<string> &dest,
-                        const QVector &orbitcent,
-                        Unit *parent,
-                        int faction,
-                        string fullname,
-                        bool inside_out,
-                        unsigned int lights_num)
+void Planet::InitPlanet(QVector x, QVector y, float vely, const Vector &rotvel, float pos, float gravity, float radius,
+                        const string &filename, const string &technique, const string &unitname,
+                        const vector<string> &dest, const QVector &orbitcent, Unit *parent, int faction,
+                        string fullname, bool inside_out, unsigned int lights_num)
 {
     atmosphere = nullptr;
     terrain = nullptr;
@@ -413,14 +381,14 @@ void Planet::InitPlanet(QVector x,
     inside = false;
     curr_physical_state.position = prev_physical_state.position = cumulative_transformation.position = orbitcent + x;
     Init();
-    //static int neutralfaction=FactionUtil::GetFaction("neutral");
-    //this->faction = neutralfaction;
+    // static int neutralfaction=FactionUtil::GetFaction("neutral");
+    // this->faction = neutralfaction;
     killed = false;
     bool notJumppoint = dest.empty();
     for (unsigned int i = 0; i < dest.size(); ++i)
         AddDestination(dest[i]);
-    //name = "Planet - ";
-    //name += textname;
+    // name = "Planet - ";
+    // name += textname;
     name = fullname;
     this->fullname = name;
     this->radius = radius;
@@ -428,16 +396,19 @@ void Planet::InitPlanet(QVector x,
     static float densityOfRock = XMLSupport::parse_float(vs_config->getVariable("physics", "density_of_rock", "3"));
     static float densityOfJumpPoint =
         XMLSupport::parse_float(vs_config->getVariable("physics", "density_of_jump_point", "100000"));
-    //static  float massofplanet = XMLSupport::parse_float(vs_config->getVariable("physics","mass_of_planet","10000000"));
+    // static  float massofplanet =
+    // XMLSupport::parse_float(vs_config->getVariable("physics","mass_of_planet","10000000"));
     hull = (4. / 3) * M_PI * radius * radius * radius * (notJumppoint ? densityOfRock : densityOfJumpPoint);
-    this->Mass = (4. / 3) * M_PI * radius * radius * radius * (notJumppoint ? densityOfRock : (densityOfJumpPoint / 100000));
-    SetAI(new PlanetaryOrbit(this, vely, pos, x, y, orbitcent, parent)); //behavior
+    this->Mass =
+        (4. / 3) * M_PI * radius * radius * radius * (notJumppoint ? densityOfRock : (densityOfJumpPoint / 100000));
+    SetAI(new PlanetaryOrbit(this, vely, pos, x, y, orbitcent, parent)); // behavior
     terraintrans = nullptr;
 
     colTrees = nullptr;
     SetAngularVelocity(rotvel);
     // The docking port is 20% bigger than the planet
-    static float planetdockportsize = XMLSupport::parse_float(vs_config->getVariable("physics", "planet_port_size", "1.2"));
+    static float planetdockportsize =
+        XMLSupport::parse_float(vs_config->getVariable("physics", "planet_port_size", "1.2"));
     static float planetdockportminsize =
         XMLSupport::parse_float(vs_config->getVariable("physics", "planet_port_min_size", "300"));
     if ((!atmospheric) && notJumppoint)
@@ -455,7 +426,8 @@ void Planet::InitPlanet(QVector x,
         tmpfac = FactionUtil::GetPlanetFaction();
     Unit *un = UnitFactory::createUnit(tempname.c_str(), true, tmpfac);
 
-    static bool smartplanets = XMLSupport::parse_bool(vs_config->getVariable("physics", "planets_can_have_subunits", "false"));
+    static bool smartplanets =
+        XMLSupport::parse_bool(vs_config->getVariable("physics", "planets_can_have_subunits", "false"));
     if (un->name != string("LOAD_FAILED"))
     {
         pImage->cargo = un->GetImageInformation().cargo;
@@ -470,7 +442,8 @@ void Planet::InitPlanet(QVector x,
             SubUnits.prepend(un);
             un->SetRecursiveOwner(this);
             this->SetTurretAI();
-            un->SetTurretAI(); //allows adding planetary defenses, also allows launching fighters from planets, interestingly
+            un->SetTurretAI(); // allows adding planetary defenses, also allows launching fighters from planets,
+                               // interestingly
             un->name = "Defense_grid";
         }
         static bool neutralplanets =
@@ -489,36 +462,16 @@ void Planet::InitPlanet(QVector x,
         un->Kill();
 }
 
-Planet::Planet(QVector x,
-               QVector y,
-               float vely,
-               const Vector &rotvel,
-               float pos,
-               float gravity,
-               float radius,
-               const string &filename,
-               const string &technique,
-               const string &unitname,
-               const vector<string> &dest,
-               const QVector &orbitcent,
-               Unit *parent,
-               int faction,
-               string fullname,
-               bool inside_out,
+Planet::Planet(QVector x, QVector y, float vely, const Vector &rotvel, float pos, float gravity, float radius,
+               const string &filename, const string &technique, const string &unitname, const vector<string> &dest,
+               const QVector &orbitcent, Unit *parent, int faction, string fullname, bool inside_out,
                unsigned int lights_num)
 {
     inside = false;
     terraintrans = nullptr;
     atmospheric = false;
-    this->InitPlanet(x, y, vely, rotvel,
-                     pos,
-                     gravity, radius,
-                     filename, technique, unitname,
-                     dest,
-                     orbitcent, parent,
-                     faction, fullname,
-                     inside_out,
-                     lights_num);
+    this->InitPlanet(x, y, vely, rotvel, pos, gravity, radius, filename, technique, unitname, dest, orbitcent, parent,
+                     faction, fullname, inside_out, lights_num);
     corner_min.i = corner_min.j = corner_min.k = -this->radius;
     corner_max.i = corner_max.j = corner_max.k = this->radius;
     this->radial_size = this->radius;
@@ -527,7 +480,7 @@ Planet::Planet(QVector x,
         int l = -1;
         lights.push_back(l);
     }
-    //Force shields to 0
+    // Force shields to 0
     /*
      *  this->shield.number=2;
      *  this->shield.recharge=0;
@@ -546,8 +499,8 @@ Planet::Planet(QVector x,
 
 string Planet::getHumanReadablePlanetType() const
 {
-    //static std::map<std::string, std::string> planetTypes (readPlanetTypes("planet_types.xml"));
-    //return planetTypes[getCargoUnitName()];
+    // static std::map<std::string, std::string> planetTypes (readPlanetTypes("planet_types.xml"));
+    // return planetTypes[getCargoUnitName()];
     return _Universe->getGalaxy()->getPlanetNameFromTexture(getCargoUnitName());
 }
 
@@ -557,7 +510,7 @@ Planet::~Planet()
     {
         Matrix *tmp = new Matrix();
         *tmp = cumulative_transformation_matrix;
-        //terraintrans->SetTransformation (tmp);
+        // terraintrans->SetTransformation (tmp);
     }
 }
 
@@ -565,9 +518,7 @@ void Planet::Kill(bool erasefromsave)
 {
 
     Unit *tmp;
-    for (auto iter = satellites.createIterator();
-         (tmp = *iter);
-         ++iter)
+    for (auto iter = satellites.createIterator(); (tmp = *iter); ++iter)
     {
         tmp->SetAI(new Order);
     }

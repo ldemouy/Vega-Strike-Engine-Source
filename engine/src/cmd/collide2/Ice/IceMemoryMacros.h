@@ -24,7 +24,10 @@
 //!	\see		StoreDwords
 //!	\see		CopyMemory
 //!	\see		MoveMemory
-inline void ZeroMemory(void *addr, uint32_t size) { memset(addr, 0, size); }
+inline void ZeroMemory(void *addr, uint32_t size)
+{
+    memset(addr, 0, size);
+}
 
 //!	Copies a buffer.
 //!	\param		addr	[in] destination buffer address
@@ -34,31 +37,34 @@ inline void ZeroMemory(void *addr, uint32_t size) { memset(addr, 0, size); }
 //!	\see		FillMemory
 //!	\see		StoreDwords
 //!	\see		MoveMemory
-inline void CopyMemory(void *dest, const void *src, uint32_t size) { memcpy(dest, src, size); }
+inline void CopyMemory(void *dest, const void *src, uint32_t size)
+{
+    memcpy(dest, src, size);
+}
 
 #define SIZEOFOBJECT sizeof(*this) //!< Gives the size of current object. Avoid some mistakes (e.g. "sizeof(this)").
 
-#define DELETESINGLE(x) \
-	{                   \
-		delete x;       \
-		x = nullptr;    \
-	} //!< Deletes an instance of a class.
-#define DELETEARRAY(x) \
-	{                  \
-		delete[] x;    \
-		x = nullptr;   \
-	} //!< Deletes an array.
+#define DELETESINGLE(x)                                                                                                \
+    {                                                                                                                  \
+        delete x;                                                                                                      \
+        x = nullptr;                                                                                                   \
+    } //!< Deletes an instance of a class.
+#define DELETEARRAY(x)                                                                                                 \
+    {                                                                                                                  \
+        delete[] x;                                                                                                    \
+        x = nullptr;                                                                                                   \
+    } //!< Deletes an array.
 
 #ifdef __ICEERROR_H__
-#define CHECKALLOC(x) \
-	if (!x)           \
-		return SetIceError("Out of memory.", EC_OUT_OF_MEMORY); //!< Standard alloc checking. HANDLE WITH CARE.
+#define CHECKALLOC(x)                                                                                                  \
+    if (!x)                                                                                                            \
+        return SetIceError("Out of memory.", EC_OUT_OF_MEMORY); //!< Standard alloc checking. HANDLE WITH CARE.
 #else
-#define CHECKALLOC(x) \
-	if (!x)           \
-	{                 \
-		return false; \
-	}
+#define CHECKALLOC(x)                                                                                                  \
+    if (!x)                                                                                                            \
+    {                                                                                                                  \
+        return false;                                                                                                  \
+    }
 #endif
 
 #endif // __ICEMEMORYMACROS_H__

@@ -27,19 +27,20 @@
 
 #define _MSGCENTER_H_
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <errno.h>
-#include <time.h>
-#include <ctype.h>
 #include <assert.h>
+#include <ctype.h>
+#include <errno.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 #ifndef WIN32
-//this file isn't available on my system (all win32 machines?) i dun even know what it has or if we need it as I can compile without it
+// this file isn't available on my system (all win32 machines?) i dun even know what it has or if we need it as I can
+// compile without it
 #include <unistd.h>
 #endif
 
-#include <expat.h>
 #include "xml_support.h"
+#include <expat.h>
 
 #include "vegastrike.h"
 
@@ -53,20 +54,19 @@
 
 class gameMessage
 {
-public:
+  public:
     StringPool::Reference from, to, message;
     double time;
 };
 
 class MessageCenter
 {
-public:
-    bool last(unsigned int n, gameMessage &m,
-              const std::vector<std::string> &who = std::vector<std::string>(), const std::vector<std::string> &whoNOT = std::vector<std::string>());
+  public:
+    bool last(unsigned int n, gameMessage &m, const std::vector<std::string> &who = std::vector<std::string>(),
+              const std::vector<std::string> &whoNOT = std::vector<std::string>());
     void add(string from, string to, string message, double delay = 0.0);
-    void clear(
-        const std::vector<std::string> &who = std::vector<std::string>(), const std::vector<std::string> &whoNOT =
-                                                                              std::vector<std::string>());
+    void clear(const std::vector<std::string> &who = std::vector<std::string>(),
+               const std::vector<std::string> &whoNOT = std::vector<std::string>());
     vector<gameMessage> messages;
 };
 

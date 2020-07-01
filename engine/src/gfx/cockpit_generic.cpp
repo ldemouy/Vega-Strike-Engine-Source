@@ -1,30 +1,30 @@
-#include "in.h"
-#include "vsfilesystem.h"
-#include "vs_globals.h"
-#include "vegastrike.h"
 #include "cockpit_generic.h"
-#include "universe_generic.h"
-#include "star_system_generic.h"
-#include "cmd/unit_generic.h"
-#include "cmd/unit_factory.h"
-#include "cmd/unit_util.h"
 #include "cmd/collection.h"
-#include "lin_time.h" //for fps
-#include "configxml.h"
 #include "cmd/images.h"
 #include "cmd/script/mission.h"
 #include "cmd/script/msgcenter.h"
+#include "cmd/unit_factory.h"
+#include "cmd/unit_generic.h"
+#include "cmd/unit_util.h"
+#include "configxml.h"
+#include "in.h"
+#include "lin_time.h" //for fps
+#include "star_system_generic.h"
+#include "universe_generic.h"
+#include "vegastrike.h"
+#include "vs_globals.h"
+#include "vsfilesystem.h"
 //#include "cmd/ai/flyjoystick.h"
 //#include "cmd/ai/firekeyboard.h"
 #include "cmd/ai/aggressive.h"
 //#include "main_loop.h"
-#include <assert.h> //needed for assert() calls
 #include "savegame.h"
+#include <assert.h> //needed for assert() calls
 //#include "animation.h"
 //#include "mesh.h"
-#include "universe_util.h"
-#include "cmd/ai/fire.h"
 #include "background.h"
+#include "cmd/ai/fire.h"
+#include "universe_util.h"
 //#include "in_mouse.h"
 //#include "gui/glut_support.h"
 #include "save_util.h"
@@ -51,7 +51,11 @@ float Unit::computeLockingPercent()
 {
     float most = -1024;
     for (int i = 0; i < GetNumMounts(); i++)
-        if (mounts[i].type->type == weapon_info::PROJECTILE || (mounts[i].type->size & (weapon_info::SPECIALMISSILE | weapon_info::LIGHTMISSILE | weapon_info::MEDIUMMISSILE | weapon_info::HEAVYMISSILE | weapon_info::CAPSHIPLIGHTMISSILE | weapon_info::CAPSHIPHEAVYMISSILE | weapon_info::SPECIAL)))
+        if (mounts[i].type->type == weapon_info::PROJECTILE ||
+            (mounts[i].type->size &
+             (weapon_info::SPECIALMISSILE | weapon_info::LIGHTMISSILE | weapon_info::MEDIUMMISSILE |
+              weapon_info::HEAVYMISSILE | weapon_info::CAPSHIPLIGHTMISSILE | weapon_info::CAPSHIPHEAVYMISSILE |
+              weapon_info::SPECIAL)))
         {
             if (mounts[i].status == Mount::ACTIVE && mounts[i].type->LockTime > 0)
             {
@@ -100,7 +104,7 @@ void Cockpit::Init(const char *file, bool isDisabled)
     VSError err = f.OpenReadOnly(file, CockpitFile);
     if (err > Ok)
     {
-        //File not found...
+        // File not found...
         if (isDisabled == false && (string(file).find("disabled-") == string::npos))
             Init(file, true);
         else if (!f404)
@@ -122,7 +126,7 @@ void Cockpit::SetParent(Unit *unit, const char *filename, const char *unitmodnam
 {
     if (unit->getFlightgroup() != nullptr)
         fg = unit->getFlightgroup();
-    activeStarSystem = _Universe->activeStarSystem(); //cannot switch to units in other star systems.
+    activeStarSystem = _Universe->activeStarSystem(); // cannot switch to units in other star systems.
     parent.SetUnit(unit);
     savegame->SetPlayerLocation(pos);
     if (filename[0] != '\0')
@@ -156,7 +160,7 @@ void Cockpit::SetParent(Unit *unit, const char *filename, const char *unitmodnam
 }
 void Cockpit::Delete()
 {
-    //int i;
+    // int i;
     viewport_offset = cockpit_offset = 0;
 }
 void Cockpit::RestoreGodliness()
@@ -178,7 +182,8 @@ bool Cockpit::unitInAutoRegion(Unit *un)
         XMLSupport::parse_float(vs_config->getVariable("physics", "auto_pilot_termination_distance", "6000"));
     Unit *targ = autopilot_target.GetUnit();
     if (targ)
-        return UnitUtil::getSignificantDistance(un, targ) < autopilot_term_distance * 2.5; //if both guys just auto'd in.
+        return UnitUtil::getSignificantDistance(un, targ) <
+               autopilot_term_distance * 2.5; // if both guys just auto'd in.
     else
         return false;
 }
@@ -187,10 +192,12 @@ static float getInitialZoomFactor()
     static float inizoom = XMLSupport::parse_float(vs_config->getVariable("graphics", "inital_zoom_factor", "2.25"));
     return inizoom;
 }
-Cockpit::Cockpit(const char *file, Unit *parent, const std::string &pilot_name) : view(CP_FRONT), parent(parent), cockpit_offset(0), viewport_offset(0), zoomfactor(getInitialZoomFactor()), savegame(new SaveGame(pilot_name))
+Cockpit::Cockpit(const char *file, Unit *parent, const std::string &pilot_name)
+    : view(CP_FRONT), parent(parent), cockpit_offset(0), viewport_offset(0), zoomfactor(getInitialZoomFactor()),
+      savegame(new SaveGame(pilot_name))
 {
-    //static int headlag = XMLSupport::parse_int (vs_config->getVariable("graphics","head_lag","10"));
-    //int i;
+    // static int headlag = XMLSupport::parse_int (vs_config->getVariable("graphics","head_lag","10"));
+    // int i;
     partial_number_of_attackers = -1;
     number_of_attackers = 0;
     secondsWithZeroEnergy = 0;
@@ -208,11 +215,11 @@ Cockpit::Cockpit(const char *file, Unit *parent, const std::string &pilot_name) 
      */
     activeStarSystem = nullptr;
     InitStatic();
-    //mesh=nullptr;
+    // mesh=nullptr;
     ejecting = false;
     currentcamera = 0;
     going_to_dock_screen = false;
-    //Radar=Pit[0]=Pit[1]=Pit[2]=Pit[3]=nullptr;
+    // Radar=Pit[0]=Pit[1]=Pit[2]=Pit[3]=nullptr;
     RestoreGodliness();
 
     /*
@@ -302,8 +309,8 @@ int Cockpit::Autopilot(Unit *target)
         {
             if ((retauto = un->AutoPilotTo(un, false)))
             {
-                //can he even start to autopilot
-                //SetView (CP_PAN);
+                // can he even start to autopilot
+                // SetView (CP_PAN);
                 un->AutoPilotTo(target, false);
                 static bool face_target_on_auto =
                     XMLSupport::parse_bool(vs_config->getVariable("physics", "face_on_auto", "false"));
@@ -312,7 +319,8 @@ int Cockpit::Autopilot(Unit *target)
                 static double averagetime = GetElapsedTime() / getTimeCompression();
                 static double numave = 1.0;
                 averagetime += GetElapsedTime() / getTimeCompression();
-                //static float autospeed = XMLSupport::parse_float (vs_config->getVariable ("physics","autospeed",".020"));//10 seconds for auto to kick in;
+                // static float autospeed = XMLSupport::parse_float (vs_config->getVariable
+                // ("physics","autospeed",".020"));//10 seconds for auto to kick in;
                 numave++;
                 /*
                  *  AccessCamera(CP_PAN)->myPhysics.SetAngularVelocity(Vector(0,0,0));
@@ -323,7 +331,8 @@ int Cockpit::Autopilot(Unit *target)
                 static float initialzoom =
                     XMLSupport::parse_float(vs_config->getVariable("graphics", "inital_zoom_factor", "2.25"));
                 zoomfactor = initialzoom;
-                static float autotime = XMLSupport::parse_float(vs_config->getVariable("physics", "autotime", "10")); //10 seconds for auto to kick in;
+                static float autotime = XMLSupport::parse_float(
+                    vs_config->getVariable("physics", "autotime", "10")); // 10 seconds for auto to kick in;
 
                 autopilot_time = autotime;
                 autopilot_target.SetUnit(target);
@@ -444,14 +453,14 @@ void Cockpit::updateAttackers()
             ++attack_iterator;
         else
             attack_iterator = _Universe->activeStarSystem()->getUnitList().createIterator();
-        //too_many_attackers=false;
+        // too_many_attackers=false;
     }
     if (isDone)
     {
         if (_Universe->AccessCockpit(0) == this)
             too_many_attackers = false;
-        //printf ("There are %d folks attacking player\n",partial_number_of_attackers);
-        number_of_attackers = partial_number_of_attackers; //reupdate the count
+        // printf ("There are %d folks attacking player\n",partial_number_of_attackers);
+        number_of_attackers = partial_number_of_attackers; // reupdate the count
         partial_number_of_attackers = 0;
         too_many_attackers = max_attackers > 0 && (too_many_attackers || number_of_attackers > max_attackers);
     }
@@ -472,7 +481,7 @@ void Cockpit::updateAttackers()
     {
         //
 
-        //partial_number_of_attackers=-1;
+        // partial_number_of_attackers=-1;
     }
 }
 void PowerDownShield(Shield *shield, float howmuch)
@@ -537,8 +546,8 @@ bool Cockpit::Update()
             XMLSupport::parse_float(vs_config->getVariable("physics", "shield_energy_downpower", "-.125"));
         static float minEnergyShieldTime =
             XMLSupport::parse_float(vs_config->getVariable("physics", "shield_energy_downpower_time", "5"));
-        static float minEnergyShieldPercent =
-            XMLSupport::parse_float(vs_config->getVariable("physics", "shield_energy_downpower_percent", ".66666666666666"));
+        static float minEnergyShieldPercent = XMLSupport::parse_float(
+            vs_config->getVariable("physics", "shield_energy_downpower_percent", ".66666666666666"));
 
         bool toolittleenergy = (par->EnergyData() <= minEnergyForShieldDownpower);
         if (toolittleenergy)
@@ -561,18 +570,23 @@ bool Cockpit::Update()
         {
             turretcontrol[_Universe->CurrentCockpit()] = 0;
             Unit *par = GetParent();
-            //this being here, it will require poking the turret from the undock script
+            // this being here, it will require poking the turret from the undock script
             if (par)
             {
                 if (par->name == "return_to_cockpit")
                 {
-                    //if (par->owner->isUnit()==UNITPTR ) this->SetParent(par->owner,GetUnitFileName().c_str(),this->unitmodname.c_str(),savegame->GetPlayerLocation());     // this warps back to the parent unit if we're eject-docking. in this position it also causes badness upon loading a game.
+                    // if (par->owner->isUnit()==UNITPTR )
+                    // this->SetParent(par->owner,GetUnitFileName().c_str(),this->unitmodname.c_str(),savegame->GetPlayerLocation());
+                    // // this warps back to the parent unit if we're eject-docking. in this position it also causes
+                    // badness upon loading a game.
 
                     Unit *temp = findUnitInStarsystem(par->owner);
                     if (temp)
                     {
                         SwitchUnits(nullptr, temp);
-                        this->SetParent(temp, GetUnitFileName().c_str(), this->unitmodname.c_str(), temp->Position()); //this warps back to the parent unit if we're eject-docking. causes badness upon loading a game.
+                        this->SetParent(temp, GetUnitFileName().c_str(), this->unitmodname.c_str(),
+                                        temp->Position()); // this warps back to the parent unit if we're eject-docking.
+                                                           // causes badness upon loading a game.
                     }
                     par->Kill();
                 }
@@ -596,7 +610,7 @@ bool Cockpit::Update()
                         }
                         if (i++ == index)
                         {
-                            //NOTE : this may have been a correction to the conditional bug
+                            // NOTE : this may have been a correction to the conditional bug
                             ++index;
                             if (un->name.get().find("accessory") == string::npos)
                             {
@@ -604,8 +618,8 @@ bool Cockpit::Update()
                                 SwitchUnitsTurret(par, un);
                                 parentturret.SetUnit(par);
                                 Unit *finalunit = GetFinalTurret(un);
-                                this->SetParent(finalunit, GetUnitFileName().c_str(),
-                                                this->unitmodname.c_str(), savegame->GetPlayerLocation());
+                                this->SetParent(finalunit, GetUnitFileName().c_str(), this->unitmodname.c_str(),
+                                                savegame->GetPlayerLocation());
                                 break;
                             }
                         }
@@ -619,7 +633,8 @@ bool Cockpit::Update()
                     Unit *un = parentturret.GetUnit();
                     if (un && (!_Universe->isPlayerStarship(un)))
                     {
-                        SetParent(un, GetUnitFileName().c_str(), this->unitmodname.c_str(), savegame->GetPlayerLocation());
+                        SetParent(un, GetUnitFileName().c_str(), this->unitmodname.c_str(),
+                                  savegame->GetPlayerLocation());
                         SwitchUnits(nullptr, un);
                         parentturret.SetUnit(nullptr);
                         un->SetTurretAI();
@@ -638,14 +653,20 @@ bool Cockpit::Update()
             static float autopilot_term_distance =
                 XMLSupport::parse_float(vs_config->getVariable("physics", "auto_pilot_termination_distance", "6000"));
             float doubled = dockingdistance(targ, par);
-            if (((targ->isUnit() != PLANETPTR && doubled < autopilot_term_distance) || (UnitUtil::getSignificantDistance(targ,
-                                                                                                                         par) <= 0)) &&
-                (!(par->IsCleared(targ) || targ->IsCleared(par) || par->isDocked(targ) || targ->isDocked(par))) && (par->getRelation(targ) >= 0) && (targ->getRelation(par) >= 0))
+            if (((targ->isUnit() != PLANETPTR && doubled < autopilot_term_distance) ||
+                 (UnitUtil::getSignificantDistance(targ, par) <= 0)) &&
+                (!(par->IsCleared(targ) || targ->IsCleared(par) || par->isDocked(targ) || targ->isDocked(par))) &&
+                (par->getRelation(targ) >= 0) && (targ->getRelation(par) >= 0))
             {
                 if (targ->isUnit() != PLANETPTR || targ->GetDestinations().empty())
-                    RequestClearence(par, targ, 0); //sex is always 0... don't know how to	 get it.
+                    RequestClearence(par, targ, 0); // sex is always 0... don't know how to	 get it.
             }
-            else if ((par->IsCleared(targ) || targ->IsCleared(par)) && (!(par->isDocked(targ)) || targ->isDocked(par)) && ((targ->isUnit() == PLANETPTR && UnitUtil::getSignificantDistance(par, targ) > 0) || ((targ->isUnit() != PLANETPTR && UnitUtil::getSignificantDistance(par, targ) > (targ->rSize() + par->rSize())) && (doubled >= autopilot_term_distance))))
+            else if ((par->IsCleared(targ) || targ->IsCleared(par)) &&
+                     (!(par->isDocked(targ)) || targ->isDocked(par)) &&
+                     ((targ->isUnit() == PLANETPTR && UnitUtil::getSignificantDistance(par, targ) > 0) ||
+                      ((targ->isUnit() != PLANETPTR &&
+                        UnitUtil::getSignificantDistance(par, targ) > (targ->rSize() + par->rSize())) &&
+                       (doubled >= autopilot_term_distance))))
             {
                 if (targ->isUnit() != PLANETPTR || targ->GetDestinations().empty())
                 {
@@ -668,8 +689,9 @@ bool Cockpit::Update()
             switchunit[_Universe->CurrentCockpit()] = 0;
             static bool switch_nonowned_units =
                 XMLSupport::parse_bool(vs_config->getVariable("AI", "switch_nonowned_units", "true"));
-            //switch_nonowned_units = true;
-            //static bool switch_to_fac=XMLSupport::parse_bool(vs_config->getVariable("AI","switch_to_whole_faction","true"));
+            // switch_nonowned_units = true;
+            // static bool
+            // switch_to_fac=XMLSupport::parse_bool(vs_config->getVariable("AI","switch_to_whole_faction","true"));
 
             Unit *un;
             bool found = false;
@@ -677,11 +699,16 @@ bool Cockpit::Update()
             for (auto ui = _Universe->activeStarSystem()->getUnitList().createIterator(); (un = *ui); ++ui)
                 if (un->faction == this->unitfaction)
                 {
-                    //this switches units UNLESS we're an ejected pilot. Instead, if we are an ejected
-                    //pilot, switch only if we're close enough.
-                    //the trigger is to allow switching only between ships that are actually owned by you, this prevents
-                    //stealing a ship from a hired wingman.
-                    if ((((par != nullptr) && (i++) >= index) || par == nullptr) && (!_Universe->isPlayerStarship(un)) && (switch_nonowned_units || (par != nullptr && un->owner == par->owner) || (par != nullptr && un == par->owner) || (par != nullptr && un->owner == par) || (par == nullptr && un->owner)) && (un->name != "eject") && (un->name != "Pilot") && (un->isUnit() != MISSILEPTR))
+                    // this switches units UNLESS we're an ejected pilot. Instead, if we are an ejected
+                    // pilot, switch only if we're close enough.
+                    // the trigger is to allow switching only between ships that are actually owned by you, this
+                    // prevents stealing a ship from a hired wingman.
+                    if ((((par != nullptr) && (i++) >= index) || par == nullptr) &&
+                        (!_Universe->isPlayerStarship(un)) &&
+                        (switch_nonowned_units || (par != nullptr && un->owner == par->owner) ||
+                         (par != nullptr && un == par->owner) || (par != nullptr && un->owner == par) ||
+                         (par == nullptr && un->owner)) &&
+                        (un->name != "eject") && (un->name != "Pilot") && (un->isUnit() != MISSILEPTR))
                     {
                         found = true;
                         ++index;
@@ -690,38 +717,39 @@ bool Cockpit::Update()
                         if (k)
                             if (k->name == "eject" || k->name == "Pilot" || k->name == "return_to_cockpit")
                                 proceed = false;
-                        //we are an ejected pilot, so, if we can get close enough to the related unit, jump into it and remove the seat. This said, always allow
-                        //switching from the "fake" ejection seat (ejectdock).
-                        if (!proceed && k && (k->Position() - un->Position()).Magnitude() < (un->rSize() + 5 * k->rSize()))
+                        // we are an ejected pilot, so, if we can get close enough to the related unit, jump into it and
+                        // remove the seat. This said, always allow switching from the "fake" ejection seat (ejectdock).
+                        if (!proceed && k &&
+                            (k->Position() - un->Position()).Magnitude() < (un->rSize() + 5 * k->rSize()))
                         {
                             if (!(k->name == "return_to_cockpit"))
                                 SwitchUnits(k, un);
-                            //this refers to cockpit
+                            // this refers to cockpit
                             if (!(k->name == "return_to_cockpit"))
-                                this->SetParent(un, GetUnitFileName().c_str(),
-                                                this->unitmodname.c_str(), savegame->GetPlayerLocation());
+                                this->SetParent(un, GetUnitFileName().c_str(), this->unitmodname.c_str(),
+                                                savegame->GetPlayerLocation());
                             if (!(k->name == "return_to_cockpit"))
                                 k->Kill();
-                            //un->SetAI(new FireKeyboard ())
+                            // un->SetAI(new FireKeyboard ())
                         }
                         if (proceed)
                         {
-                            //k->PrimeOrdersLaunched();
-                            //k->SetAI (new Orders::AggressiveAI ("interceptor.agg.xml"));
-                            //k->SetTurretAI();
+                            // k->PrimeOrdersLaunched();
+                            // k->SetAI (new Orders::AggressiveAI ("interceptor.agg.xml"));
+                            // k->SetTurretAI();
 
-                            //Flightgroup * fg = k->getFlightgroup();
-                            //if (fg!=nullptr) {
+                            // Flightgroup * fg = k->getFlightgroup();
+                            // if (fg!=nullptr) {
                             //
-                            //un->SetFg (fg,fg->nr_ships++);
-                            //fg->nr_ships_left++;
-                            //fg->leader.SetUnit(un);
-                            //fg->directive="b";
+                            // un->SetFg (fg,fg->nr_ships++);
+                            // fg->nr_ships_left++;
+                            // fg->leader.SetUnit(un);
+                            // fg->directive="b";
                             //}
                             SwitchUnits(k, un);
-                            this->SetParent(un, GetUnitFileName().c_str(),
-                                            this->unitmodname.c_str(), savegame->GetPlayerLocation());
-                            //un->SetAI(new FireKeyboard ())
+                            this->SetParent(un, GetUnitFileName().c_str(), this->unitmodname.c_str(),
+                                            savegame->GetPlayerLocation());
+                            // un->SetAI(new FireKeyboard ())
                         }
                         break;
                     }
@@ -730,11 +758,11 @@ bool Cockpit::Update()
                 index = 0;
         }
     }
-    //this causes the physical ejecting. Check going_to_dock_screen in here, also.
+    // this causes the physical ejecting. Check going_to_dock_screen in here, also.
     if (ejecting)
     {
         ejecting = false;
-        //going_to_dock_screen=true; // NO, clear this only after we've UNDOCKED that way we know we don't have issues.
+        // going_to_dock_screen=true; // NO, clear this only after we've UNDOCKED that way we know we don't have issues.
 
         Unit *un = GetParent();
         if (un)
@@ -769,7 +797,7 @@ bool Cockpit::Update()
                     k = 0;
                 if (active_missions.size() > 1)
                 {
-                    for (int i = active_missions.size() - 1; i > 0; --i) //don't terminate zeroth mission
+                    for (int i = active_missions.size() - 1; i > 0; --i) // don't terminate zeroth mission
                         if (active_missions[i]->player_num == k)
                             active_missions[i]->terminateMission();
                 }
@@ -781,14 +809,8 @@ bool Cockpit::Update()
                 QVector tmpoldpos = savegame->GetPlayerLocation();
                 savegame->SetPlayerLocation(QVector(FLT_MAX, FLT_MAX, FLT_MAX));
                 vector<string> packedInfo;
-                savegame->ParseSaveGame(savegamefile,
-                                        newsystem,
-                                        newsystem,
-                                        pos,
-                                        setplayerXloc,
-                                        this->credits,
-                                        packedInfo,
-                                        k);
+                savegame->ParseSaveGame(savegamefile, newsystem, newsystem, pos, setplayerXloc, this->credits,
+                                        packedInfo, k);
                 UnpackUnitInfo(packedInfo);
                 if (pos.i == FLT_MAX && pos.j == FLT_MAX && pos.k == FLT_MAX)
                     pos = tmpoldpos;
@@ -848,8 +870,8 @@ bool Cockpit::Update()
                     fg->nr_ships++;
                     fg->nr_ships_left++;
                 }
-                Unit *un = UnitFactory::createUnit(
-                    GetUnitFileName().c_str(), false, this->unitfaction, unitmodname, fg, fgsnumber);
+                Unit *un = UnitFactory::createUnit(GetUnitFileName().c_str(), false, this->unitfaction, unitmodname, fg,
+                                                   fgsnumber);
                 un->SetCurPosition(UniverseUtil::SafeEntrancePoint(savegame->GetPlayerLocation()));
                 ss->AddUnit(un);
 

@@ -1,9 +1,9 @@
 #ifndef _CMD_AI_EVENT_XML_H_
 #define _CMD_AI_EVENT_XML_H_
 #include "xml_support.h"
+#include <list>
 #include <string>
 #include <vector>
-#include <list>
 /**
  * General namespace that does nothing on its own, but
  * Deals with the parsing of an XML file tha tcontains a number of
@@ -14,60 +14,57 @@
  */
 namespace AIEvents
 {
-    ///A struct indicating an event that may or may not be executed
-    struct AIEvresult
+/// A struct indicating an event that may or may not be executed
+struct AIEvresult
+{
+    /// will never be zero...negative indicates "not"
+    int32_t type;
+    /// The maximum/minimum values that will cause this event
+    float max, min;
+    float timetofinish;
+    float timetointerrupt;
+    float priority;
+    /// The string indicating what type of thing this event evaluates
+    std::string script;
+    AIEvresult(int32_t type, float const min, const float max, float timetofinish, float timetointerrupt,
+               float priority, const std::string &aiscript);
+    bool Eval(const float eval) const
     {
-        ///will never be zero...negative indicates "not"
-        int32_t type;
-        ///The maximum/minimum values that will cause this event
-        float max, min;
-        float timetofinish;
-        float timetointerrupt;
-        float priority;
-        ///The string indicating what type of thing this event evaluates
-        std::string script;
-        AIEvresult(int32_t type,
-                   float const min,
-                   const float max,
-                   float timetofinish,
-                   float timetointerrupt,
-                   float priority,
-                   const std::string &aiscript);
-        bool Eval(const float eval) const
+        if (eval >= min)
         {
-            if (eval >= min)
+            if (eval < max)
             {
-                if (eval < max)
+                if (type > 0)
                 {
-                    if (type > 0)
-                    {
-                        return true;
-                    }
+                    return true;
                 }
             }
-            if (eval < min)
-            {
-                if (eval >= max)
-                {
-                    if (type < 0)
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
         }
-    };
-    struct ElemAttrMap
+        if (eval < min)
+        {
+            if (eval >= max)
+            {
+                if (type < 0)
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+};
+struct ElemAttrMap
+{
+    XMLSupport::EnumMap element_map;
+    int32_t level;
+    float curtime;
+    float maxtime;
+    float obedience; // short fix
+    std::vector<std::list<AIEvresult>> result;
+    ElemAttrMap(const XMLSupport::EnumMap &el) : element_map(el), level(0)
     {
-        XMLSupport::EnumMap element_map;
-        int32_t level;
-        float curtime;
-        float maxtime;
-        float obedience; //short fix
-        std::vector<std::list<AIEvresult>> result;
-        ElemAttrMap(const XMLSupport::EnumMap &el) : element_map(el), level(0) {}
-    };
-    void LoadAI(const char *filename, ElemAttrMap &result, const std::string &faction); //num seconds
+    }
+};
+void LoadAI(const char *filename, ElemAttrMap &result, const std::string &faction); // num seconds
 } // namespace AIEvents
 #endif

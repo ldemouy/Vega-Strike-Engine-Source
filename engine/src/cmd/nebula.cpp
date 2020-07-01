@@ -1,13 +1,13 @@
 #include "nebula.h"
-#include "vegastrike.h"
-#include "vsfilesystem.h"
-#include <assert.h>
 #include "config_xml.h"
-#include "vs_globals.h"
-#include <sys/stat.h>
-#include "xml_support.h"
-#include "gfx/mesh.h"
 #include "gfx/cockpit.h"
+#include "gfx/mesh.h"
+#include "vegastrike.h"
+#include "vs_globals.h"
+#include "vsfilesystem.h"
+#include "xml_support.h"
+#include <assert.h>
+#include <sys/stat.h>
 
 #undef BOOST_NO_CWCHAR
 
@@ -26,35 +26,25 @@ void GameNebula::SetFogState()
     GFXFogIndex(index);
 }
 
-//WARNING : USED TO CALL a GameUnit constructor but now Nebula::Nebula calls a Unit one
-GameNebula::GameNebula(const char *unitfile, bool SubU, int faction, Flightgroup *fg, int fg_snumber) : GameUnit<Nebula>(unitfile, SubU, faction, string(""), fg, fg_snumber)
+// WARNING : USED TO CALL a GameUnit constructor but now Nebula::Nebula calls a Unit one
+GameNebula::GameNebula(const char *unitfile, bool SubU, int faction, Flightgroup *fg, int fg_snumber)
+    : GameUnit<Nebula>(unitfile, SubU, faction, string(""), fg, fg_snumber)
 {
     Nebula::InitNebula(unitfile, SubU, faction, fg, fg_snumber);
     fadeinvalue = 0;
     lastfadein = 0;
 }
-void GameNebula::UpdatePhysics2(const Transformation &trans,
-                                const Transformation &old_physical_state,
-                                const Vector &accel,
-                                float difficulty,
-                                const Matrix &transmat,
-                                const Vector &CumulativeVelocity,
-                                bool ResolveLast,
-                                UnitCollection *uc)
+void GameNebula::UpdatePhysics2(const Transformation &trans, const Transformation &old_physical_state,
+                                const Vector &accel, float difficulty, const Matrix &transmat,
+                                const Vector &CumulativeVelocity, bool ResolveLast, UnitCollection *uc)
 {
     static float nebdelta = XMLSupport::parse_float(vs_config->getVariable("graphics", "fog_time", ".01"));
     lastfadein = fadeinvalue;
     fadeinvalue -= nebdelta * SIMULATION_ATOM;
     if (fadeinvalue < 0)
         fadeinvalue = 0;
-    this->GameUnit<Nebula>::UpdatePhysics2(trans,
-                                           old_physical_state,
-                                           accel,
-                                           difficulty,
-                                           transmat,
-                                           CumulativeVelocity,
-                                           ResolveLast,
-                                           uc);
+    this->GameUnit<Nebula>::UpdatePhysics2(trans, old_physical_state, accel, difficulty, transmat, CumulativeVelocity,
+                                           ResolveLast, uc);
     Vector t1;
     float dis;
     unsigned int i;

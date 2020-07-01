@@ -1,9 +1,9 @@
 #ifndef _XML_SERIALIZER_H_
 #define _XML_SERIALIZER_H_
-#include "xml_support.h"
-#include <vector>
-#include <string>
 #include "vsfilesystem.h"
+#include "xml_support.h"
+#include <string>
+#include <vector>
 using std::string;
 using std::vector;
 struct XMLType
@@ -14,10 +14,10 @@ struct XMLType
         float *f;
         void *p;
         char *c;
-        //short * s;
+        // short * s;
         bool *b;
         double *d;
-        //unsigned short * us;
+        // unsigned short * us;
         unsigned char *uc;
         int hardint;
         float hardfloat;
@@ -59,8 +59,8 @@ struct XMLType
     {
         w.c = mychar;
     }
-    //XMLType (short * mychar) {w.s=mychar;} // removing useless shorts - use integers instead
-    //XMLType (unsigned short * mychar) {w.us=mychar;} // removing useless shorts - use integers instead
+    // XMLType (short * mychar) {w.s=mychar;} // removing useless shorts - use integers instead
+    // XMLType (unsigned short * mychar) {w.us=mychar;} // removing useless shorts - use integers instead
     XMLType(unsigned char *mychar)
     {
         w.uc = mychar;
@@ -86,9 +86,9 @@ typedef std::string(XMLHandler)(const XMLType &input, void *mythis);
 XMLHandler intHandler;
 XMLHandler floatHandler;
 XMLHandler intStarHandler;
-//XMLHandler shortStarHandler;
-//XMLHandler shortToFloatHandler;
-//XMLHandler ushortStarHandler;
+// XMLHandler shortStarHandler;
+// XMLHandler shortToFloatHandler;
+// XMLHandler ushortStarHandler;
 XMLHandler intToFloatHandler;
 XMLHandler uintStarHandler;
 XMLHandler charStarHandler;
@@ -98,7 +98,7 @@ XMLHandler ucharStarHandler;
 XMLHandler negationCharStarHandler;
 XMLHandler floatStarHandler;
 XMLHandler fabsFloatStarHandler;
-//XMLHandler absShortStarHandler;
+// XMLHandler absShortStarHandler;
 XMLHandler absIntStarHandler;
 
 XMLHandler speedStarHandler;
@@ -152,7 +152,7 @@ class XMLSerializer
     XMLnode topnode;
     XMLnode *curnode;
 
-public:
+  public:
     std::string randomdata[1];
     XMLSerializer(const char *filename, const char *modificationname, void *mythis);
     void AddTag(const std::string &tag);

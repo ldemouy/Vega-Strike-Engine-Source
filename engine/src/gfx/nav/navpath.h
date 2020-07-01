@@ -22,13 +22,13 @@
 #ifndef __NAVPATH_H__
 #define __NAVPATH_H__
 
-#include <vector>
+#include "criteria.h"
 #include <deque>
 #include <list>
-#include <set>
 #include <map>
+#include <set>
 #include <string>
-#include "criteria.h"
+#include <vector>
 
 #include "gldrv/gfxlib.h"
 
@@ -41,7 +41,7 @@ enum TopoColor
 
 //*******************************************************************//
 ////
-//NavPath Class                          //
+// NavPath Class                          //
 ////
 //*******************************************************************//
 
@@ -51,7 +51,7 @@ class PathNode;
 
 class NavPath
 {
-public:
+  public:
     bool isAbsolute() const;
     bool isEvaluated() const
     {
@@ -110,7 +110,7 @@ public:
     NavPath();
     ~NavPath();
 
-protected:
+  protected:
     friend class PathManager;
 
     bool visible;
@@ -129,13 +129,13 @@ protected:
 
 //*******************************************************************//
 ////
-//PathManager Class                         //
+// PathManager Class                         //
 ////
 //*******************************************************************//
 
 class PathManager
 {
-public:
+  public:
     void addPath();
     bool removePath(NavPath *path);
     void showAll();
@@ -154,7 +154,7 @@ public:
     PathManager();
     ~PathManager();
 
-protected:
+  protected:
     friend class NavPath;
     friend class NavComputer;
 
@@ -168,17 +168,17 @@ protected:
 
 //*******************************************************************//
 ////
-//PathNode Class                         //
+// PathNode Class                         //
 ////
 //*******************************************************************//
 
 class PathNode
 {
-public:
+  public:
     virtual bool isAbsolute() const = 0;
-    //Desc: True IFF this node can dereference into one absolute system.
+    // Desc: True IFF this node can dereference into one absolute system.
     virtual bool isSourceable() const = 0;
-    //Desc True IFF this node can be used as a source in a path finding algorithm
+    // Desc True IFF this node can be used as a source in a path finding algorithm
 
     virtual bool isCurrentDependant() const
     {
@@ -193,30 +193,34 @@ public:
     {
         return nullptr;
     }
-    //Desc: Returns the list of paths this node is dependant on.
+    // Desc: Returns the list of paths this node is dependant on.
     virtual std::string getDescription() const = 0;
-    //Desc: Returns a textual description of the node
+    // Desc: Returns a textual description of the node
 
     virtual std::deque<unsigned> initSearchQueue() const = 0;
-    //Desc: Returns a deque that may be used to start a search
+    // Desc: Returns a deque that may be used to start a search
     virtual bool isDestination(unsigned index) const = 0;
-    //Desc: True IFF the system index is equivalent to the system
-    //specified in the node
+    // Desc: True IFF the system index is equivalent to the system
+    // specified in the node
 
     virtual PathNode *clone() const = 0;
-    PathNode() {}
-    virtual ~PathNode() {}
+    PathNode()
+    {
+    }
+    virtual ~PathNode()
+    {
+    }
 };
 
 //*******************************************************************//
 ////
-//AbsolutePathNode Class                        //
+// AbsolutePathNode Class                        //
 ////
 //*******************************************************************//
 
 class AbsolutePathNode : public PathNode
 {
-public:
+  public:
     bool isAbsolute() const
     {
         return true;
@@ -237,7 +241,7 @@ public:
     {
         return system;
     }
-    //Desc: Gets the system referenced by this node
+    // Desc: Gets the system referenced by this node
 
     PathNode *clone() const
     {
@@ -247,21 +251,23 @@ public:
     {
         system = index;
     }
-    ~AbsolutePathNode() {}
+    ~AbsolutePathNode()
+    {
+    }
 
-protected:
+  protected:
     unsigned system;
 };
 
 //*******************************************************************//
 ////
-//CurrentPathNode Class                         //
+// CurrentPathNode Class                         //
 ////
 //*******************************************************************//
 
 class CurrentPathNode : public PathNode
 {
-public:
+  public:
     bool isAbsolute() const
     {
         return true;
@@ -287,19 +293,23 @@ public:
     {
         return new CurrentPathNode();
     }
-    CurrentPathNode() {}
-    ~CurrentPathNode() {}
+    CurrentPathNode()
+    {
+    }
+    ~CurrentPathNode()
+    {
+    }
 };
 
 //*******************************************************************//
 ////
-//TargetPathNode Class                        //
+// TargetPathNode Class                        //
 ////
 //*******************************************************************//
 
 class TargetPathNode : public PathNode
 {
-public:
+  public:
     bool isAbsolute() const
     {
         return true;
@@ -325,19 +335,23 @@ public:
     {
         return new TargetPathNode();
     }
-    TargetPathNode() {}
-    ~TargetPathNode() {}
+    TargetPathNode()
+    {
+    }
+    ~TargetPathNode()
+    {
+    }
 };
 
 //*******************************************************************//
 ////
-//CriteriaPathNode Class                        //
+// CriteriaPathNode Class                        //
 ////
 //*******************************************************************//
 
 class CriteriaPathNode : public PathNode
 {
-public:
+  public:
     bool isAbsolute() const
     {
         return false;
@@ -364,19 +378,19 @@ public:
     CriteriaPathNode();
     ~CriteriaPathNode();
 
-private:
+  private:
     CriteriaRoot *criteria;
 };
 
 //*******************************************************************//
 ////
-//ChainPathNode Class                       //
+// ChainPathNode Class                       //
 ////
 //*******************************************************************//
 
 class ChainPathNode : public PathNode
 {
-public:
+  public:
     bool isAbsolute() const
     {
         return type == ALL_POINTS ? false : true;
@@ -430,9 +444,11 @@ public:
         supplierPath = supplier;
         type = part;
     }
-    ~ChainPathNode() {}
+    ~ChainPathNode()
+    {
+    }
 
-private:
+  private:
     NavPath *supplierPath;
     PartType type;
 };

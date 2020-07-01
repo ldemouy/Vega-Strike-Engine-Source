@@ -19,81 +19,100 @@
 // Include Guard
 #ifndef __OPC_AABBTREE_H__
 #define __OPC_AABBTREE_H__
-#include <functional>
 #include "OPC_TreeBuilders.h"
+#include <functional>
 
-typedef std::function<void(uint32_t nb_primitives, uint32_t *node_primitives, bool need_clipping, void *user_data)> CullingCallback;
+typedef std::function<void(uint32_t nb_primitives, uint32_t *node_primitives, bool need_clipping, void *user_data)>
+    CullingCallback;
 
 class AABBTreeNode
 {
-public:
-	/* Constructor / Destructor */
-	AABBTreeNode();
-	~AABBTreeNode();
-	/* Data access */
-	inline const AABB *GetAABB() const { return &mBV; }
-	/* Clear the last bit */
-	inline const AABBTreeNode *GetPos() const { return (const AABBTreeNode *)(mPos & ~1); }
-	inline const AABBTreeNode *GetNeg() const
-	{
-		const AABBTreeNode *P = GetPos();
-		return P ? P + 1 : nullptr;
-	}
+  public:
+    /* Constructor / Destructor */
+    AABBTreeNode();
+    ~AABBTreeNode();
+    /* Data access */
+    inline const AABB *GetAABB() const
+    {
+        return &mBV;
+    }
+    /* Clear the last bit */
+    inline const AABBTreeNode *GetPos() const
+    {
+        return (const AABBTreeNode *)(mPos & ~1);
+    }
+    inline const AABBTreeNode *GetNeg() const
+    {
+        const AABBTreeNode *P = GetPos();
+        return P ? P + 1 : nullptr;
+    }
 
-	/* We don't need to test both nodes since we can't have one without the other	*/
-	inline bool IsLeaf() const { return !GetPos(); }
+    /* We don't need to test both nodes since we can't have one without the other	*/
+    inline bool IsLeaf() const
+    {
+        return !GetPos();
+    }
 
-protected:
-	/* Tree-independent data */
-	/* Following data always belong to the BV-tree, regardless of what the tree actually contains.*/
-	/* Whatever happens we need the two children and the enclosing volume.*/
-	AABB mBV;		/* Global bounding-volume enclosing all the node-related primitives */
-	uintptr_t mPos; /* "Positive" & "Negative" children */
-public:
-	// Data access
-	inline const uint32_t *GetPrimitives() const { return mNodePrimitives; }
-	inline uint32_t GetNbPrimitives() const { return mNbPrimitives; }
+  protected:
+    /* Tree-independent data */
+    /* Following data always belong to the BV-tree, regardless of what the tree actually contains.*/
+    /* Whatever happens we need the two children and the enclosing volume.*/
+    AABB mBV;       /* Global bounding-volume enclosing all the node-related primitives */
+    uintptr_t mPos; /* "Positive" & "Negative" children */
+  public:
+    // Data access
+    inline const uint32_t *GetPrimitives() const
+    {
+        return mNodePrimitives;
+    }
+    inline uint32_t GetNbPrimitives() const
+    {
+        return mNbPrimitives;
+    }
 
-protected:
-	// Tree-dependent data
-	uint32_t *mNodePrimitives; //!< Node-related primitives (shortcut to a position in mIndices below)
-	uint32_t mNbPrimitives;	   //!< Number of primitives for this node
-							   // Internal methods
-	uint32_t Split(uint32_t axis, AABBTreeBuilder *builder);
-	bool Subdivide(AABBTreeBuilder *builder);
-	void _BuildHierarchy(AABBTreeBuilder *builder);
-	void _Refit(AABBTreeBuilder *builder);
+  protected:
+    // Tree-dependent data
+    uint32_t *mNodePrimitives; //!< Node-related primitives (shortcut to a position in mIndices below)
+    uint32_t mNbPrimitives;    //!< Number of primitives for this node
+                               // Internal methods
+    uint32_t Split(uint32_t axis, AABBTreeBuilder *builder);
+    bool Subdivide(AABBTreeBuilder *builder);
+    void _BuildHierarchy(AABBTreeBuilder *builder);
+    void _Refit(AABBTreeBuilder *builder);
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /**
-	 *	User-callback, called for each node by the walking code.
-	 *	\param		current		[in] current node
-	 *	\param		depth		[in] current node's depth
-	 *	\param		user_data	[in] user-defined data
-	 *	\return		true to recurse through children, else false to bypass them
-	 */
+ *	User-callback, called for each node by the walking code.
+ *	\param		current		[in] current node
+ *	\param		depth		[in] current node's depth
+ *	\param		user_data	[in] user-defined data
+ *	\return		true to recurse through children, else false to bypass them
+ */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 typedef std::function<bool(const AABBTreeNode *current, uint32_t depth, void *user_data)> WalkingCallback;
 
 class AABBTree : public AABBTreeNode
 {
-public:
-	// Constructor / Destructor
-	AABBTree();
-	~AABBTree();
-	// Build
-	bool Build(AABBTreeBuilder *builder);
-	void Release();
+  public:
+    // Constructor / Destructor
+    AABBTree();
+    ~AABBTree();
+    // Build
+    bool Build(AABBTreeBuilder *builder);
+    void Release();
 
-	// Data access
-	inline uint32_t GetNbNodes() const { return mTotalNbNodes; } //!< Catch the number of nodes
+    // Data access
+    inline uint32_t GetNbNodes() const
+    {
+        return mTotalNbNodes;
+    } //!< Catch the number of nodes
 
-private:
-	uint32_t *mIndices;		//!< Indices in the app list. Indices are reorganized during build (permutation).
-	AABBTreeNode *mPool;	//!< Linear pool of nodes for complete trees. Null otherwise. [Opcode 1.3]
-							// Stats
-	uint32_t mTotalNbNodes; //!< Number of nodes in the tree.
+  private:
+    uint32_t *mIndices;     //!< Indices in the app list. Indices are reorganized during build (permutation).
+    AABBTreeNode *mPool;    //!< Linear pool of nodes for complete trees. Null otherwise. [Opcode 1.3]
+                            // Stats
+    uint32_t mTotalNbNodes; //!< Number of nodes in the tree.
 };
 
 #endif // __OPC_AABBTREE_H__

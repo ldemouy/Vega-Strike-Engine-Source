@@ -1,12 +1,12 @@
 #include "xml_serializer.h"
-#include "cmd/unit_generic.h"
 #include "cmd/images.h"
-#include "vsfilesystem.h"
+#include "cmd/unit_generic.h"
 #include "configxml.h"
-#include "vs_globals.h"
 #include "vegastrike.h"
+#include "vs_globals.h"
+#include "vsfilesystem.h"
 
-///Assumes that the tag is  <Mount type=\"  and that it will finish with " ></Mount>
+/// Assumes that the tag is  <Mount type=\"  and that it will finish with " ></Mount>
 using namespace XMLSupport;
 using namespace VSFileSystem;
 
@@ -94,7 +94,7 @@ std::string lessNeg1Handler(const XMLType &input, void *mythis)
 
 std::string cloakHandler(const XMLType &input, void *mythis)
 {
-    return XMLSupport::tostring(((*input.w.i) == -1) ? 1 : 0); //short fix
+    return XMLSupport::tostring(((*input.w.i) == -1) ? 1 : 0); // short fix
 }
 
 std::string intToFloatHandler(const XMLType &input, void *mythis)
@@ -197,11 +197,12 @@ string XMLElement::WriteString(void *mythis)
     return ret;
 }
 
-XMLSerializer::XMLSerializer(const char *filename, const char *modificationname, void *mythis) : savedir(modificationname), mythis(mythis)
+XMLSerializer::XMLSerializer(const char *filename, const char *modificationname, void *mythis)
+    : savedir(modificationname), mythis(mythis)
 {
     curnode = &topnode;
-    //In network mode we don't care about saving filename, we want always to save with modification
-    //name since we only work with savegames
+    // In network mode we don't care about saving filename, we want always to save with modification
+    // name since we only work with savegames
     this->filename = string(filename);
 }
 void XMLSerializer::AddTag(const std::string &tag)

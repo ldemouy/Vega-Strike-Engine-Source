@@ -1,12 +1,12 @@
 #include "particle.h"
-#include "gldrv/gfxlib.h"
-#include "lin_time.h"
-#include "vs_globals.h"
+#include "aux_texture.h"
+#include "camera.h"
 #include "cmd/unit_generic.h"
 #include "config_xml.h"
-#include "camera.h"
-#include "aux_texture.h"
+#include "gldrv/gfxlib.h"
 #include "gldrv/gl_globals.h"
+#include "lin_time.h"
+#include "vs_globals.h"
 
 #include <iterator>
 #include <limits>
@@ -27,15 +27,13 @@ void ParticleTrail::ChangeMax(unsigned int max)
     else
         vertices_per_particle = indices_per_particle = 12;
 
-    if (gl_options.max_array_vertices > 0 &&
-        (max * vertices_per_particle) > gl_options.max_array_vertices)
+    if (gl_options.max_array_vertices > 0 && (max * vertices_per_particle) > gl_options.max_array_vertices)
     {
         max = gl_options.max_array_vertices / vertices_per_particle;
         if (max > 0)
             max--; // for a margin
     }
-    if (gl_options.max_array_indices > 0 &&
-        (max * indices_per_particle) > gl_options.max_array_indices)
+    if (gl_options.max_array_indices > 0 && (max * indices_per_particle) > gl_options.max_array_indices)
     {
         max = gl_options.max_array_indices / indices_per_particle;
         if (max > 0)
@@ -49,8 +47,7 @@ void ParticleTrail::ChangeMax(unsigned int max)
 
 static inline void UpdateColor(std::vector<QVector, aligned_allocator<QVector>> &vloc,
                                const std::vector<Vector, aligned_allocator<Vector>> &vvel,
-                               std::vector<GFXColor, aligned_allocator<GFXColor>> &vcol,
-                               const GFXColor &fadetime,
+                               std::vector<GFXColor, aligned_allocator<GFXColor>> &vcol, const GFXColor &fadetime,
                                const float time)
 {
     const double dtime = static_cast<double>(time);
@@ -82,15 +79,17 @@ static inline void UpdateAlpha(LOC &vloc, const VEL &vvel, COL &vcol, const floa
     }
 }
 
-//Write 3 pos and 4 col float values into v and increment v by 7
-static inline void SetPointVertex(const QVector &loc, const GFXColor &col, const float psize, const float grow, const float trans, std::back_insert_iterator<std::vector<float>> &v, const QVector &campos)
+// Write 3 pos and 4 col float values into v and increment v by 7
+static inline void SetPointVertex(const QVector &loc, const GFXColor &col, const float psize, const float grow,
+                                  const float trans, std::back_insert_iterator<std::vector<float>> &v,
+                                  const QVector &campos)
 {
     float size = psize * (grow * (1.0f - col.a) + col.a);
     float maxsize = (psize > size) ? psize : size;
     float minsize = (psize <= size) ? psize : size;
 
-    //Squared, surface-linked decay - looks nicer, more real for emmisive gasses
-    //NOTE: maxsize/minsize allows for inverted growth (shrinkage) while still fading correctly. Cheers!
+    // Squared, surface-linked decay - looks nicer, more real for emmisive gasses
+    // NOTE: maxsize/minsize allows for inverted growth (shrinkage) while still fading correctly. Cheers!
     GFXColor c = col * (col.a * trans * (minsize / ((maxsize > 0) ? maxsize : 1.f)));
     QVector l = loc - campos;
 
@@ -103,15 +102,17 @@ static inline void SetPointVertex(const QVector &loc, const GFXColor &col, const
     *v++ = c.a;
 }
 
-//Write 12 * 3 pos and 12 * 4 col and 12 * 2 tex float values into v and increment v by 108
-static inline void SetQuadVertex(const QVector &loc, const GFXColor &col, const float psize, const float grow, const float trans, std::back_insert_iterator<std::vector<float>> &v, const QVector &campos)
+// Write 12 * 3 pos and 12 * 4 col and 12 * 2 tex float values into v and increment v by 108
+static inline void SetQuadVertex(const QVector &loc, const GFXColor &col, const float psize, const float grow,
+                                 const float trans, std::back_insert_iterator<std::vector<float>> &v,
+                                 const QVector &campos)
 {
     float size = psize * (grow * (1 - col.a) + col.a);
     float maxsize = (psize > size) ? psize : size;
     float minsize = (psize <= size) ? psize : size;
 
-    //Squared, surface-linked decay - looks nicer, more real for emmisive gasses
-    //NOTE: maxsize/minsize allows for inverted growth (shrinkage) while still fading correctly. Cheers!
+    // Squared, surface-linked decay - looks nicer, more real for emmisive gasses
+    // NOTE: maxsize/minsize allows for inverted growth (shrinkage) while still fading correctly. Cheers!
     GFXColor c = col * (col.a * trans * (minsize / ((maxsize > 0) ? maxsize : 1.f)));
     QVector l = loc - campos;
 
@@ -227,12 +228,11 @@ static inline void SetQuadVertex(const QVector &loc, const GFXColor &col, const 
     *v++ = 0;
 }
 
-template <typename R, typename T>
-class IndexCompare
+template <typename R, typename T> class IndexCompare
 {
     const std::vector<R> &ref;
 
-public:
+  public:
     IndexCompare(const std::vector<R> &ref_) : ref(ref_)
     {
     }
@@ -264,8 +264,11 @@ void ParticleTrail::Config::init()
     use = XMLSupport::parse_bool(vs_config->getVariable("graphics", prefix, "true"));
     use_points = XMLSupport::parse_bool(vs_config->getVariable("graphics", prefix + "point", "false"));
     pblend = XMLSupport::parse_bool(vs_config->getVariable("graphics", prefix + "blend", "false"));
-    pgrow = XMLSupport::parse_float(vs_config->getVariable("graphics", prefix + "growrate", "50.0")); //50x size when disappearing
-    ptrans = XMLSupport::parse_float(vs_config->getVariable("graphics", prefix + "alpha", "2.5"));    //NOTE: It's the base transparency, before surface attenuation, so it needn't be within the [0-1] range.
+    pgrow = XMLSupport::parse_float(
+        vs_config->getVariable("graphics", prefix + "growrate", "50.0")); // 50x size when disappearing
+    ptrans = XMLSupport::parse_float(vs_config->getVariable(
+        "graphics", prefix + "alpha", "2.5")); // NOTE: It's the base transparency, before surface attenuation, so it
+                                               // needn't be within the [0-1] range.
     pfade = XMLSupport::parse_float(vs_config->getVariable("graphics", prefix + "fade", "0.1"));
 
     if (use_points)
@@ -300,7 +303,8 @@ void ParticleTrail::DrawAndUpdate()
     {
         config.init();
         ChangeMax(maxparticles);
-        BOOST_LOG_TRIVIAL(info) << boost::format("Configured particle system %1% with %2% particles") % config.prefix % maxparticles;
+        BOOST_LOG_TRIVIAL(info) << boost::format("Configured particle system %1% with %2% particles") % config.prefix %
+                                       maxparticles;
     }
     if (!config.use || particleLoc.empty())
         return;
@@ -374,7 +378,8 @@ void ParticleTrail::DrawAndUpdate()
             distances.clear();
             distances.reserve(nparticles);
             {
-                for (std::vector<QVector, aligned_allocator<QVector>>::const_iterator it = particleLoc.begin(); it != particleLoc.end(); ++it)
+                for (std::vector<QVector, aligned_allocator<QVector>>::const_iterator it = particleLoc.begin();
+                     it != particleLoc.end(); ++it)
                 {
                     distances.push_back((campos - *it).MagnitudeSquared());
                 }
@@ -400,7 +405,8 @@ void ParticleTrail::DrawAndUpdate()
             indices.clear();
             indices.reserve(nindices * vertsPerParticle);
             {
-                for (std::vector<unsigned short>::const_iterator it = pointIndices.begin(); it != pointIndices.end(); ++it)
+                for (std::vector<unsigned short>::const_iterator it = pointIndices.begin(); it != pointIndices.end();
+                     ++it)
                 {
                     for (int i = 0; i < vertsPerParticle; ++i)
                         indices.push_back(*it * vertsPerParticle + i);
@@ -419,10 +425,8 @@ void ParticleTrail::DrawAndUpdate()
         if (dosort)
         {
             BOOST_LOG_TRIVIAL(trace) << boost::format("Drawing %1%/%2% sorted particles") % nparticles % maxparticles;
-            GFXDrawElements(GFXQUAD,
-                            &particleVert[0], nparticles * vertsPerParticle,
-                            &indices[0], indices.size(),
-                            3, 4, 2);
+            GFXDrawElements(GFXQUAD, &particleVert[0], nparticles * vertsPerParticle, &indices[0], indices.size(), 3, 4,
+                            2);
         }
         else
         {
@@ -455,8 +459,8 @@ void ParticleTrail::DrawAndUpdate()
     // Compute alpha for dead particles
     float minalpha = (ptrans > 0.0f) ? sqrtf(alphaMask / ptrans) : 0.0f;
 
-    //if (nparticles) {
-    //BOOST_LOG_TRIVIAL(trace) << boost::format("Drawn %1% particles, minalpha %2%") % nparticles % minalpha;
+    // if (nparticles) {
+    // BOOST_LOG_TRIVIAL(trace) << boost::format("Drawn %1% particles, minalpha %2%") % nparticles % minalpha;
     //}
 
     // Quickly remove dead particles at the end
@@ -539,7 +543,8 @@ void ParticleTrail::AddParticle(const ParticlePoint &P, const Vector &V, float s
     }
 }
 
-void ParticleEmitter::doParticles(const QVector &pos, float rSize, float percent, const Vector &basevelocity, const Vector &velocity, float pSize, const GFXColor &color)
+void ParticleEmitter::doParticles(const QVector &pos, float rSize, float percent, const Vector &basevelocity,
+                                  const Vector &velocity, float pSize, const GFXColor &color)
 {
     percent = 1 - percent;
     int i = rand();
@@ -563,8 +568,10 @@ void ParticleEmitter::doParticles(const QVector &pos, float rSize, float percent
         rand *= 1.0 + config.spread * r4;
 
         pp.col = color;
-        particleTrail.AddParticle(pp,
-                                  rand * (std::max(velocity.Magnitude(), config.absSpeed) * config.spread + config.absSpeed) + velocity * config.speed + basevelocity,
-                                  config.fixedSize ? config.relSize : (pSize * config.relSize));
+        particleTrail.AddParticle(
+            pp,
+            rand * (std::max(velocity.Magnitude(), config.absSpeed) * config.spread + config.absSpeed) +
+                velocity * config.speed + basevelocity,
+            config.fixedSize ? config.relSize : (pSize * config.relSize));
     }
 }

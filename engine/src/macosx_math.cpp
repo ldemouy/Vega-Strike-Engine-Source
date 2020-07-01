@@ -1,16 +1,16 @@
+#include "posh.h"
 #include <macosx_math.h>
 #include <string>
-#include "posh.h"
 #if defined(__APPLE__)
-//these stuffs are included in OSX 10.4 and above--so just check for x86
-#include <stdio.h>
-#include <string.h>
+// these stuffs are included in OSX 10.4 and above--so just check for x86
 #include <assert.h>
-#include <sys/param.h>
-#include <stdlib.h>
 #include <crt_externs.h>
 #include <errno.h>
 #include <mach-o/dyld.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/param.h>
 
 typedef int (*NSGetExecutablePathProcPtr)(char *buf, size_t *bufsize);
 
@@ -26,38 +26,38 @@ static int NSGetExecutablePathOnTenOneAndEarlierOnly(char *execPath, size_t *exe
     assert(execPathSize != nullptr);
 
     cursor = (char **)(*(_NSGetArgv()) + *(_NSGetArgc()));
-    //There should be a nullptr after the argv array.
-    //If not, error out.
+    // There should be a nullptr after the argv array.
+    // If not, error out.
     if (*cursor != 0)
         err = -1;
     if (err == 0)
     {
-        //Skip past the nullptr after the argv array.
+        // Skip past the nullptr after the argv array.
 
         cursor += 1;
-        //Now, skip over the entire kernel-supplied environment,
-        //which is an array of char * terminated by a nullptr.
+        // Now, skip over the entire kernel-supplied environment,
+        // which is an array of char * terminated by a nullptr.
         while (*cursor != 0)
             cursor += 1;
-        //Skip over the nullptr terminating the environment.
+        // Skip over the nullptr terminating the environment.
 
         cursor += 1;
 
-        //Now we have the path that was passed to exec
+        // Now we have the path that was passed to exec
         //(not the argv[0] path, but the path that the kernel
-        //actually executed).
+        // actually executed).
 
         possiblyRelativePath = *cursor;
-        //Convert the possibly relative path to an absolute
-        //path.  We use realpath for expedience, although
-        //the real implementation of _NSGetExecutablePath
-        //uses getcwd and can return a path with symbolic links
-        //etc in it.
+        // Convert the possibly relative path to an absolute
+        // path.  We use realpath for expedience, although
+        // the real implementation of _NSGetExecutablePath
+        // uses getcwd and can return a path with symbolic links
+        // etc in it.
         if (realpath(possiblyRelativePath, absolutePath) == nullptr)
             err = -1;
     }
-    //Now copy the path out into the client's buffer, returning
-    //an error if the buffer isn't big enough.
+    // Now copy the path out into the client's buffer, returning
+    // an error if the buffer isn't big enough.
     if (err == 0)
     {
         absolutePathSize = (strlen(absolutePath) + 1);
@@ -75,10 +75,11 @@ extern "C"
     int XNSGetExecutablePath(char *execPath, size_t *execPathSize)
     {
         if (NSIsSymbolNameDefined("__NSGetExecutablePath"))
-            return ((NSGetExecutablePathProcPtr)NSAddressOfSymbol(NSLookupAndBindSymbol("__NSGetExecutablePath")))(execPath,
-                                                                                                                   execPathSize);
+            return ((NSGetExecutablePathProcPtr)NSAddressOfSymbol(NSLookupAndBindSymbol("__NSGetExecutablePath")))(
+                execPath, execPathSize);
         else
-            //The function _NSGetExecutablePath() is new in Jaguar, so use this custom version when running on 10.1.x and earlier.
+            // The function _NSGetExecutablePath() is new in Jaguar, so use this custom version when running on 10.1.x
+            // and earlier.
             return NSGetExecutablePathOnTenOneAndEarlierOnly(execPath, execPathSize);
     }
 }
@@ -205,13 +206,8 @@ extern "C"
 #define sockaddr void
 #define socklen_t size_t
 #define restrict
-    int getnameinfo(const sockaddr *restrict sa,
-                    socklen_t salen,
-                    char *restrict node,
-                    socklen_t nodelen,
-                    char *restrict service,
-                    socklen_t servicelen,
-                    int flags)
+    int getnameinfo(const sockaddr *restrict sa, socklen_t salen, char *restrict node, socklen_t nodelen,
+                    char *restrict service, socklen_t servicelen, int flags)
     {
         return 1;
     }

@@ -1,13 +1,13 @@
-#include "command.h"
 #include "mmorpgclient.h"
 #include "SDL/SDL.h"
 #include "SDL_thread.h"
+#include "command.h"
 #include "vegastrike.h"
 #include "vs_globals.h"
 
 //#ifdef WIN32
 //#include <winsock.h>     // For socket(), connect(), send(), and recv()
-//typedef int socklen_t;
+// typedef int socklen_t;
 //#else
 //#include <sys/types.h>   // For data types
 //#include <sys/socket.h>  // For socket(), connect(), send(), and recv()
@@ -18,36 +18,37 @@
 //#endif
 #include "networking/inet.h"
 
-//This is created in command.cpp with single like (search for mmoc)
-//If you wish to disable this module, just comment out that single line in command.cpp,
-//and don't compile this .cpp file.
+// This is created in command.cpp with single like (search for mmoc)
+// If you wish to disable this module, just comment out that single line in command.cpp,
+// and don't compile this .cpp file.
 
 mmoc::mmoc()
 {
     //{{{
-    status = false; //used to let the thread exit
+    status = false; // used to let the thread exit
     binmode = false;
     POSmode = false;
     INET_startup();
-    //add the connectto to the players command interp.
+    // add the connectto to the players command interp.
     cmd = new Functor<mmoc>(this, &mmoc::connectTo);
     CommandInterpretor->addCommand(cmd, "connectto");
     //{{{
-    //add commands here to be parsed from network input.
-    //some notes:
-    //just make them like normal, and the word "FOO" will be the "tag" that triggers  it.
-    //eg: the server sends <FOO>args</FOO>, the input routines will parse it to:
-    //FOO , and try sending it through the LOCAL command processor (NOT the main one used for the player console).
+    // add commands here to be parsed from network input.
+    // some notes:
+    // just make them like normal, and the word "FOO" will be the "tag" that triggers  it.
+    // eg: the server sends <FOO>args</FOO>, the input routines will parse it to:
+    // FOO , and try sending it through the LOCAL command processor (NOT the main one used for the player console).
 
-    //now some notes more to myself
-    //The users console at the highest level (in the main ship rendering routines) will need to gather data from the mmoc console to render it there.
-    //and never call mmoc::renderconsole. I'll need to make a mutex'd function for this.
+    // now some notes more to myself
+    // The users console at the highest level (in the main ship rendering routines) will need to gather data from the
+    // mmoc console to render it there. and never call mmoc::renderconsole. I'll need to make a mutex'd function for
+    // this.
     //}}}
 } //}}}
 void mmoc::connectTo(const char *address_in, const char *port_in)
 {
     //{{{
-    //sockaddr_in m_addr;
+    // sockaddr_in m_addr;
     char *address = (char *)address_in;
     char *port = (char *)port_in;
     if (address == nullptr)
@@ -66,28 +67,29 @@ void mmoc::connectTo(const char *address_in, const char *port_in)
     }
     if ((socket = INET_ConnectTo(address, atoi(port))) < 0)
     {
-        CommandInterpretor->conoutf("Error connecting. Specify another host or verify the status if your network connection.");
+        CommandInterpretor->conoutf(
+            "Error connecting. Specify another host or verify the status if your network connection.");
         return;
     }
-    //hostent *server;  // Resolve name
-    //if ((server = gethostbyname(address)) == nullptr) {
-    //CommandInterpretor->conoutf("Error, couldn't find host");
-    //strerror() will not work for gethostbyname() and hstrerror()
-    //is supposedly obsolete
-    //return;
+    // hostent *server;  // Resolve name
+    // if ((server = gethostbyname(address)) == nullptr) {
+    // CommandInterpretor->conoutf("Error, couldn't find host");
+    // strerror() will not work for gethostbyname() and hstrerror()
+    // is supposedly obsolete
+    // return;
     //}
 
-    //bzero((char *) &m_addr, sizeof(m_addr));
-    //m_addr.sin_family = AF_INET;
-    //bcopy((char *)server->h_addr,
+    // bzero((char *) &m_addr, sizeof(m_addr));
+    // m_addr.sin_family = AF_INET;
+    // bcopy((char *)server->h_addr,
     //(char *)&m_addr.sin_addr.s_addr,
-    //server->h_length);
-    //m_addr.sin_port = htons(atoi(port));
-    //int status = 0;
+    // server->h_length);
+    // m_addr.sin_port = htons(atoi(port));
+    // int status = 0;
 
-    //if ( (status = ::connect(socket,reinterpret_cast<sockaddr *>(&m_addr),sizeof(m_addr))) < 0) {
-    //CommandInterpretor->conoutf("Couldn't Connect\n");
-    //return;
+    // if ( (status = ::connect(socket,reinterpret_cast<sockaddr *>(&m_addr),sizeof(m_addr))) < 0) {
+    // CommandInterpretor->conoutf("Couldn't Connect\n");
+    // return;
     //}
     std::string hellomsg;
     hellomsg.append("Vegastrike-user");
@@ -103,7 +105,7 @@ void mmoc::connectTo(const char *address_in, const char *port_in)
 bool mmoc::getStatus(int in)
 {
     //{{{
-    //if in = 0, return status, else toggle status.
+    // if in = 0, return status, else toggle status.
     SDL_mutex *m = SDL_CreateMutex();
     SDL_mutexP(m);
     if (in != 0)
@@ -116,13 +118,13 @@ bool mmoc::getStatus(int in)
 void mmoc::ParseRemoteInput(char *buf)
 {
     //{{{ Main parser
-    //add  binary modes here.
+    // add  binary modes here.
     if (buf != nullptr)
         start.append(buf);
     size_t teststart;
     if ((teststart = start.find("\n")) < std::string::npos)
     {
-        //we have a full string and are ready to process
+        // we have a full string and are ready to process
         if (teststart < start.size() - 2)
         {
             for (unsigned int soda = teststart + 1; soda < start.size(); soda++)
@@ -131,20 +133,20 @@ void mmoc::ParseRemoteInput(char *buf)
             {
                 std::string::iterator iter = start.end();
                 iter--;
-                start.erase(iter); //pop goes the weasle
+                start.erase(iter); // pop goes the weasle
             }
         }
     }
     else
     {
-        //return;
+        // return;
     }
     unsigned int end = start.size();
     std::string hackedup;
     bool open = false, ignore2close = false;
     unsigned int fopend = 0;
     unsigned int counter;
-    //parse commands to be executed <FOO=BAR>
+    // parse commands to be executed <FOO=BAR>
     for (counter = 0; counter < end; counter++)
     {
         if (open)
@@ -175,16 +177,16 @@ void mmoc::ParseRemoteInput(char *buf)
             hackedup.append("\"");
         }
     }
-    //optimize by moving this above.
+    // optimize by moving this above.
     unsigned int ender = start.size();
-    for (counter = 0; counter < ender; counter++) //remove \r's
+    for (counter = 0; counter < ender; counter++) // remove \r's
         if (start[counter] == '\r')
         {
             start.replace(counter, 1, "");
             counter = counter - 2;
             ender = start.size();
         }
-    CommandInterpretor->conoutf(start); //print what's left to the console
+    CommandInterpretor->conoutf(start); // print what's left to the console
 
     start.erase();
     if (tempstr.size() > 0)
@@ -196,17 +198,17 @@ void mmoc::ParseRemoteInput(char *buf)
         size_t asdf;
         while ((asdf = start.find("\n")) < std::string::npos)
             ParseRemoteInput(nullptr);
-        //if(start.size() > 0 ) {
-        //start.append("\n\r");
-        //ParseRemoteInput(nullptr);
+        // if(start.size() > 0 ) {
+        // start.append("\n\r");
+        // ParseRemoteInput(nullptr);
         //}
     }
 } //}}}
 class POSpack
 {
-public:
-    int playernum;  //who's position is this
-    double x, y, z; //the position
+  public:
+    int playernum;  // who's position is this
+    double x, y, z; // the position
 };
 bool mmoc::listenThread()
 {
@@ -221,7 +223,7 @@ bool mmoc::listenThread()
         {
             if (::INET_Recv(socket, buffer, sizeof(buffer) - 1) <= 0)
             {
-                getStatus(1); //1 toggles status, 0 reads status
+                getStatus(1); // 1 toggles status, 0 reads status
                 return false;
             }
             else
@@ -233,19 +235,19 @@ bool mmoc::listenThread()
         {
             if (POSmode)
             {
-                //if Position mode
+                // if Position mode
                 POSpack position;
                 if (::INET_Read(socket, reinterpret_cast<char *>(&position), sizeof(POSpack)) <= 0)
                 {
-                    //I believe INET_Read will keep looping until size is filled
-                    getStatus(1); //toggle status
+                    // I believe INET_Read will keep looping until size is filled
+                    getStatus(1); // toggle status
                     return false;
                 }
                 ParseMovement(position);
                 POSmode = false;
             }
-            //other bin modes
-            binmode = false; //done
+            // other bin modes
+            binmode = false; // done
         }
     }
     /*---Clean up---*/
@@ -259,7 +261,7 @@ void mmoc::createThread()
 void mmoc::send(char *buffer, int size)
 {
     //{{{
-    ::INET_Write(socket, size, buffer); //or write(socket, buffer, size) for windwos?
+    ::INET_Write(socket, size, buffer); // or write(socket, buffer, size) for windwos?
 } //}}}
 void mmoc::send(std::string &instring)
 {
@@ -275,16 +277,16 @@ void mmoc::negotiate(std::vector<std::string *> *d)
     std::vector<std::string *>::iterator iter = d->begin();
     iter++;
     if (iter >= d->end())
-        return; //nothing to negotiate
+        return; // nothing to negotiate
     if ((*(iter))->compare("P"))
     {
         binarysize = sizeof(POSpack);
-        //check the next iterator for a number (X), if there is one
-        //set it up to loop in the listenThread() to read X Position packets
+        // check the next iterator for a number (X), if there is one
+        // set it up to loop in the listenThread() to read X Position packets
         binmode = true;
         POSmode = true;
         std::string ack;
-        ack.append("ap"); //ack position, tell the server to send it
+        ack.append("ap"); // ack position, tell the server to send it
         send(ack);
     }
 }

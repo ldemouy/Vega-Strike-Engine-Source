@@ -1,12 +1,12 @@
-#include "gfx/vec.h"
-#include "gldrv/gfxlib_struct.h"
 #include "gfx/matrix.h"
 #include "gfx/mesh.h"
+#include "gfx/vec.h"
+#include "gldrv/gfxlib_struct.h"
 #include <vector>
 
 class Atmosphere
 {
-public:
+  public:
     struct Parameters
     {
         /* High level parameters */
@@ -26,13 +26,15 @@ public:
          *                                        how much the low_color spreads around */
     };
 
-private:
+  private:
     Parameters user_params;
 
     class SunBox
     {
-    public:
-        SunBox(Mesh *m) : sunbox(m) {}
+      public:
+        SunBox(Mesh *m) : sunbox(m)
+        {
+        }
         ~SunBox();
         Mesh *sunbox;
     };
@@ -51,15 +53,15 @@ private:
     int32_t l0, l1, l2;
     int32_t divisions;
 
-public:
+  public:
     Atmosphere(const Parameters &params);
     ~Atmosphere();
     const Parameters &parameters();
     void SetParameters(const Parameters &params);
 
     /* Update the precomputed mesh to the new parameters. This is
- *  expensive, so let the upper layers decide when to do this
- */
+     *  expensive, so let the upper layers decide when to do this
+     */
 
     /* ugh, make update just change the lighting state */
     void Update(const QVector &position, const Matrix &tmatrix);
@@ -67,6 +69,6 @@ public:
     static void ProcessDrawQueue();
     void SetMatricesAndDraw(const QVector &position, const Matrix tmatrix);
     /* inherit the orientation of
- *                                                                                the transformation matrix  */
+     *                                                                                the transformation matrix  */
     static void DrawAtmospheres();
 };

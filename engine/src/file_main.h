@@ -26,7 +26,7 @@
 #include "endianness.h"
 #include "vsfilesystem.h"
 using VSFileSystem::VSFile;
-//using namespace VSFileSystem;
+// using namespace VSFileSystem;
 extern VSFile fpread;
 
 /*File utility functions*/

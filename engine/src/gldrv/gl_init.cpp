@@ -24,13 +24,13 @@
 #define GL_INIT_CPP
 #include "gl_globals.h"
 #undef GL_INIT_CPP
-#include "gl_include.h"
-#include "vs_globals.h"
-#include "xml_support.h"
 #include "config_xml.h"
-#include "winsys.h"
+#include "gl_include.h"
 #include "gldrv/gfxlib.h"
 #include "options.h"
+#include "vs_globals.h"
+#include "winsys.h"
+#include "xml_support.h"
 
 #if !defined(_WIN32) && !defined(__CYGWIN__)
 
@@ -49,7 +49,7 @@
 #else
 #ifndef NOMINMAX
 #define NOMINMAX
-#endif                                          //tells VCC not to generate min/max macros
+#endif                                          // tells VCC not to generate min/max macros
 #define GL_TEXTURE_CUBE_MAP_SEAMLESS_ARB 0x884F // FIXME May need to actually include the GLEW package for this to work.
 #include <windows.h>
 #endif
@@ -67,19 +67,19 @@
 #endif
 #endif
 #if !defined(IRIX)
-//typedef void (APIENTRY * PFNGLLOCKARRAYSEXTPROC) (GLint first, GLsizei count);
-//typedef void (APIENTRY * PFNGLUNLOCKARRAYSEXTPROC) (void);
+// typedef void (APIENTRY * PFNGLLOCKARRAYSEXTPROC) (GLint first, GLsizei count);
+// typedef void (APIENTRY * PFNGLUNLOCKARRAYSEXTPROC) (void);
 
 #if !defined(__APPLE__) && !defined(MACOSX) && !defined(WIN32) && !defined(__HAIKU__)
 #define GLX_GLXEXT_PROTOTYPES 1
 #define GLX_GLXEXT_LEGACY 1
-#include <GL/glx.h>
 #include <GL/glext.h>
+#include <GL/glx.h>
 #endif
 #endif
 
-#include <stdio.h>
 #include "gl_init.h"
+#include <stdio.h>
 #define WINDOW_TITLE "Vega Strike " VERSION
 
 #if defined(CG_SUPPORT)
@@ -259,10 +259,8 @@ void init_opengl_extensions()
 #endif
 #endif /*__APPLE_PANTHER_GCC33_CLI__*/
 #else
-        glLockArraysEXT_p = (PFNGLLOCKARRAYSEXTPROC)
-            GET_GL_PROC((GET_GL_PTR_TYP) "glLockArraysEXT");
-        glUnlockArraysEXT_p = (PFNGLUNLOCKARRAYSEXTPROC)
-            GET_GL_PROC((GET_GL_PTR_TYP) "glUnlockArraysEXT");
+        glLockArraysEXT_p = (PFNGLLOCKARRAYSEXTPROC)GET_GL_PROC((GET_GL_PTR_TYP) "glLockArraysEXT");
+        glUnlockArraysEXT_p = (PFNGLUNLOCKARRAYSEXTPROC)GET_GL_PROC((GET_GL_PTR_TYP) "glUnlockArraysEXT");
 #endif
         BOOST_LOG_TRIVIAL(trace) << "OpenGL::GL_EXT_compiled_vertex_array supported";
     }
@@ -280,10 +278,8 @@ void init_opengl_extensions()
 #ifndef __APPLE__
     if (vsExtensionSupported("GL_EXT_multi_draw_arrays"))
     {
-        glMultiDrawArrays_p = (PFNGLMULTIDRAWARRAYSEXTPROC)
-            GET_GL_PROC((GET_GL_PTR_TYP) "glMultiDrawArraysEXT");
-        glMultiDrawElements_p = (PFNGLMULTIDRAWELEMENTSEXTPROC)
-            GET_GL_PROC((GET_GL_PTR_TYP) "glMultiDrawElementsEXT");
+        glMultiDrawArrays_p = (PFNGLMULTIDRAWARRAYSEXTPROC)GET_GL_PROC((GET_GL_PTR_TYP) "glMultiDrawArraysEXT");
+        glMultiDrawElements_p = (PFNGLMULTIDRAWELEMENTSEXTPROC)GET_GL_PROC((GET_GL_PTR_TYP) "glMultiDrawElementsEXT");
         BOOST_LOG_TRIVIAL(trace) << "OpenGL::GL_EXT_multi_draw_arrays supported";
     }
     else
@@ -315,18 +311,21 @@ void init_opengl_extensions()
     glColorTable_p = (PFNGLCOLORTABLEEXTPROC)GET_GL_PROC((GET_GL_PTR_TYP) "glColorTableEXT");
     glMultiTexCoord2fARB_p = (PFNGLMULTITEXCOORD2FARBPROC)GET_GL_PROC((GET_GL_PTR_TYP) "glMultiTexCoord2fARB");
     glMultiTexCoord4fARB_p = (PFNGLMULTITEXCOORD4FARBPROC)GET_GL_PROC((GET_GL_PTR_TYP) "glMultiTexCoord4fARB");
-    glClientActiveTextureARB_p = (PFNGLCLIENTACTIVETEXTUREARBPROC)GET_GL_PROC((GET_GL_PTR_TYP) "glClientActiveTextureARB");
+    glClientActiveTextureARB_p =
+        (PFNGLCLIENTACTIVETEXTUREARBPROC)GET_GL_PROC((GET_GL_PTR_TYP) "glClientActiveTextureARB");
     glActiveTextureARB_p = (PFNGLCLIENTACTIVETEXTUREARBPROC)GET_GL_PROC((GET_GL_PTR_TYP) "glActiveTextureARB");
     if (!glMultiTexCoord2fARB_p)
         glMultiTexCoord2fARB_p = (PFNGLMULTITEXCOORD2FARBPROC)GET_GL_PROC((GET_GL_PTR_TYP) "glMultiTexCoord2fEXT");
     if (!glMultiTexCoord4fARB_p)
         glMultiTexCoord4fARB_p = (PFNGLMULTITEXCOORD4FARBPROC)GET_GL_PROC((GET_GL_PTR_TYP) "glMultiTexCoord4fEXT");
     if (!glClientActiveTextureARB_p)
-        glClientActiveTextureARB_p = (PFNGLCLIENTACTIVETEXTUREARBPROC)GET_GL_PROC((GET_GL_PTR_TYP) "glClientActiveTextureEXT");
+        glClientActiveTextureARB_p =
+            (PFNGLCLIENTACTIVETEXTUREARBPROC)GET_GL_PROC((GET_GL_PTR_TYP) "glClientActiveTextureEXT");
     if (!glActiveTextureARB_p)
         glActiveTextureARB_p = (PFNGLCLIENTACTIVETEXTUREARBPROC)GET_GL_PROC((GET_GL_PTR_TYP) "glActiveTextureEXT");
     if (!glCompressedTexImage2D_p)
-        glCompressedTexImage2D_p = (PFNGLCOMPRESSEDTEXIMAGE2DPROC)GET_GL_PROC((GET_GL_PTR_TYP) "glCompressedTexImage2D");
+        glCompressedTexImage2D_p =
+            (PFNGLCOMPRESSEDTEXIMAGE2DPROC)GET_GL_PROC((GET_GL_PTR_TYP) "glCompressedTexImage2D");
     if (!glGetShaderiv_p)
         glGetShaderiv_p = (PFNGLGETSHADERIVPROC)GET_GL_PROC((GET_GL_PTR_TYP) "glGetShaderiv");
     if (!glGetProgramiv_p)
@@ -387,7 +386,7 @@ void init_opengl_extensions()
         glDeleteShader_p = (PFNGLDELETESHADERPROC)GET_GL_PROC((GET_GL_PTR_TYP) "glDeleteShader");
     if (!glDeleteProgram_p)
         glDeleteProgram_p = (PFNGLDELETEPROGRAMPROC)GET_GL_PROC((GET_GL_PTR_TYP) "glDeleteProgram");
-        //fixme
+        // fixme
 #endif
 
 #ifdef GL_FOG_DISTANCE_MODE_NV
@@ -426,14 +425,15 @@ void init_opengl_extensions()
     if (vsExtensionSupported("GL_EXT_texture_compression_s3tc"))
     {
         BOOST_LOG_TRIVIAL(trace) << "OpenGL::S3TC Texture Compression supported";
-        //should be true;
+        // should be true;
     }
     else
     {
         gl_options.s3tc = false;
         BOOST_LOG_TRIVIAL(info) << "OpenGL::S3TC Texture Compression unsupported";
     }
-    if ((glMultiTexCoord2fARB_p && glMultiTexCoord4fARB_p && glClientActiveTextureARB_p && glActiveTextureARB_p) && (vsExtensionSupported("GL_ARB_multitexture") || vsExtensionSupported("GL_EXT_multitexture")))
+    if ((glMultiTexCoord2fARB_p && glMultiTexCoord4fARB_p && glClientActiveTextureARB_p && glActiveTextureARB_p) &&
+        (vsExtensionSupported("GL_ARB_multitexture") || vsExtensionSupported("GL_EXT_multitexture")))
     {
         GLint multitex = gl_options.Multitexture;
         glGetIntegerv(GL_MAX_TEXTURE_UNITS, &multitex);
@@ -442,10 +442,11 @@ void init_opengl_extensions()
 
         else
             gl_options.Multitexture = 0;
-        //gl_options.Multitexture = 1*gl_options.Multitexture;//might be zero by input
+        // gl_options.Multitexture = 1*gl_options.Multitexture;//might be zero by input
         if (gl_options.Multitexture)
         {
-            BOOST_LOG_TRIVIAL(trace) << boost::format("OpenGL::Multitexture supported (%1% units)") % gl_options.Multitexture;
+            BOOST_LOG_TRIVIAL(trace) << boost::format("OpenGL::Multitexture supported (%1% units)") %
+                                            gl_options.Multitexture;
         }
     }
     else
@@ -526,7 +527,7 @@ void init_opengl_extensions()
     if (GFXDefaultShaderSupported())
         if (gl_options.Multitexture < 16)
             gl_options.Multitexture = 16;
-    //only support shaders on ps_2_0 cards
+    // only support shaders on ps_2_0 cards
 
     // some useful generic limits
     GLint max_vertices = -1, max_indices = -1;
@@ -589,7 +590,11 @@ void GFXInit(int argc, char **argv)
     gl_options.wireframe = game_options.use_wireframe;
     gl_options.max_texture_dimension = game_options.max_texture_dimension;
     gl_options.max_movie_dimension = game_options.max_movie_dimension;
-    bool textsupported = (vsExtensionSupported("GL_ARB_texture_non_power_of_two") || vsExtensionSupported("GL_ARB_texture_rectangle") || vsExtensionSupported("GL_NV_texture_rectangle")) ? "true" : "false";
+    bool textsupported =
+        (vsExtensionSupported("GL_ARB_texture_non_power_of_two") || vsExtensionSupported("GL_ARB_texture_rectangle") ||
+         vsExtensionSupported("GL_NV_texture_rectangle"))
+            ? "true"
+            : "false";
 
     gl_options.rect_textures = game_options.rect_textures ? true : textsupported;
 
@@ -599,15 +604,14 @@ void GFXInit(int argc, char **argv)
 
         // Fetch max rect textue dimension
         GLint max_rect_dimension = 65535;
-        glGetIntegerv(
-            GL_MAX_RECTANGLE_TEXTURE_SIZE_ARB,
-            &max_rect_dimension);
+        glGetIntegerv(GL_MAX_RECTANGLE_TEXTURE_SIZE_ARB, &max_rect_dimension);
 
         gl_options.max_rect_dimension = max_rect_dimension;
         BOOST_LOG_TRIVIAL(trace) << boost::format("RECT max texture dimension: %1%") % max_rect_dimension;
     }
 
-    bool vidsupported = (gl_options.rect_textures || (vsExtensionSupported("GL_ARB_texture_non_power_of_two") && vsVendorMatch("nvidia")));
+    bool vidsupported = (gl_options.rect_textures ||
+                         (vsExtensionSupported("GL_ARB_texture_non_power_of_two") && vsVendorMatch("nvidia")));
 
     gl_options.pot_video_textures = game_options.pot_video_textures ? true : vidsupported;
 
@@ -656,7 +660,7 @@ void GFXInit(int argc, char **argv)
     GFXInitTextureManager();
     if (gl_options.Multitexture)
         GFXActiveTexture(0);
-    glEnable(GL_TEXTURE_2D); //use two-dimensional texturing
+    glEnable(GL_TEXTURE_2D); // use two-dimensional texturing
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
@@ -714,7 +718,7 @@ void GFXInit(int argc, char **argv)
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glMatrixMode(GL_TEXTURE);
-    glLoadIdentity(); //set all matricies to identity
+    glLoadIdentity(); // set all matricies to identity
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 
@@ -727,7 +731,7 @@ void GFXInit(int argc, char **argv)
 
     int con;
     GFXCreateLightContext(con);
-    //glutSetCursor(GLUT_CURSOR_NONE);
+    // glutSetCursor(GLUT_CURSOR_NONE);
     /* Avoid scrambled screen on startup - Twice, for triple buffering */
     if (game_options.ClearOnStartup)
     {
@@ -769,7 +773,7 @@ void GFXLoop(void (*main_loop)(void))
     glutDisplayFunc(main_loop);
     glutVisibilityFunc(visible);
     static bool are_we_looping = false;
-    ///so we can call this function multiple times
+    /// so we can call this function multiple times
     if (!are_we_looping)
     {
         are_we_looping = true;
@@ -783,8 +787,8 @@ void GFXLoop(void main_loop())
     winsys_set_display_func(main_loop);
     winsys_set_idle_func(main_loop);
 
-    //glutDisplayFunc(main_loop);
-    //glutIdleFunc (main_loop);
+    // glutDisplayFunc(main_loop);
+    // glutIdleFunc (main_loop);
     static bool are_we_looping = false;
     /// so we can call this function multiple times to change the display and idle functions
     if (!are_we_looping)

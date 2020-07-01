@@ -1,18 +1,18 @@
-#include "vegastrike.h"
-#include "star_system.h"
-#include "cmd/planet.h"
-#include "lin_time.h"
-#include "hashtable.h"
-#include "gfx/animation.h"
-#include "vs_globals.h"
-#include "config_xml.h"
+#include "aldrv/audiolib.h"
 #include "cmd/container.h"
+#include "cmd/images.h"
+#include "cmd/planet.h"
+#include "cmd/script/flightgroup.h"
+#include "config_xml.h"
+#include "gfx/animation.h"
+#include "gfx/cockpit.h"
+#include "hashtable.h"
+#include "lin_time.h"
+#include "star_system.h"
+#include "vegastrike.h"
+#include "vs_globals.h"
 #include "xml_support.h"
 #include <assert.h>
-#include "gfx/cockpit.h"
-#include "aldrv/audiolib.h"
-#include "cmd/images.h"
-#include "cmd/script/flightgroup.h"
 #include <string>
 #include <vector>
 
@@ -29,7 +29,7 @@ extern std::vector<unorigdest *> pendingjump;
 static std::vector<unsigned int> AnimationNulls;
 class ResizeAni
 {
-public:
+  public:
     Animation *a;
     float percent;
     ResizeAni(Animation *ani, float percent)
@@ -47,7 +47,8 @@ Animation *GetVolatileAni(unsigned int which)
     return nullptr;
 }
 
-unsigned int AddAnimation(const QVector &pos, const float size, bool mvolatile, const std::string &name, float percentgrow)
+unsigned int AddAnimation(const QVector &pos, const float size, bool mvolatile, const std::string &name,
+                          float percentgrow)
 {
     std::vector<ResizeAni> *ja = mvolatile ? &VolatileJumpAnimations : &JumpAnimations;
 
@@ -98,9 +99,11 @@ void GameStarSystem::DrawJumpStars()
                 Vector p, q, r;
                 un->GetOrientation(p, q, r);
 
-                JumpAnimations[k].a->SetPosition(un->Position() + r.Cast() * un->rSize() * (pendingjump[kk]->delay + .25));
+                JumpAnimations[k].a->SetPosition(un->Position() +
+                                                 r.Cast() * un->rSize() * (pendingjump[kk]->delay + .25));
                 JumpAnimations[k].a->SetOrientation(p, q, r);
-                float dd = un->rSize() * game_options.jumpgatesize * (un->GetJumpStatus().delay - pendingjump[kk]->delay) / (float)un->GetJumpStatus().delay;
+                float dd = un->rSize() * game_options.jumpgatesize *
+                           (un->GetJumpStatus().delay - pendingjump[kk]->delay) / (float)un->GetJumpStatus().delay;
                 JumpAnimations[k].a->SetDimensions(dd, dd);
             }
         }
@@ -142,7 +145,8 @@ int GameStarSystem::DoJumpingLeaveSightAndSound(Unit *un)
     int ani;
     Vector p, q, r;
     un->GetOrientation(p, q, r);
-    ani = AddJumpAnimation(un->Position() + r.Cast() * un->rSize() * (un->GetJumpStatus().delay + .25), 10 * un->rSize());
+    ani =
+        AddJumpAnimation(un->Position() + r.Cast() * un->rSize() * (un->GetJumpStatus().delay + .25), 10 * un->rSize());
     static int jumpleave = AUDCreateSound(game_options.jumpleave, false);
     AUDPlay(jumpleave, un->LocalPosition(), un->GetVelocity(), 1);
     return ani;

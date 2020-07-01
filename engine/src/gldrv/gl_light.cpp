@@ -20,12 +20,12 @@
  */
 #include <stack>
 using std::stack;
-#include <assert.h>
-#include "vs_globals.h"
-#include "gldrv/gfxlib.h"
-#include "gl_light.h"
 #include "config_xml.h"
+#include "gl_light.h"
+#include "gldrv/gfxlib.h"
 #include "options.h"
+#include "vs_globals.h"
+#include <assert.h>
 
 GLint GFX_MAX_LIGHTS = 8;
 GLint GFX_OPTIMAL_LIGHTS = 4;
@@ -36,7 +36,7 @@ vector<vector<gfx_light>> _local_lights_dat;
 vector<GFXColor> _ambient_light;
 vector<gfx_light> *_llights = nullptr;
 
-//currently stored GL lights!
+// currently stored GL lights!
 OpenGLLights *GLLights = nullptr; //{-1,-1,-1,-1,-1,-1,-1,-1};
 static stack<bool *> GlobalEffects;
 static stack<bool *> GlobalEffectsFreelist;
@@ -55,14 +55,14 @@ void /*GFXDRVAPI*/ GFXPushGlobalEffects()
         GlobalEffectsFreelist.pop();
     }
 
-    unpicklights(); //costly but necessary to get rid of pesky local enables that shoudln't be tagged to get reenabled
+    unpicklights(); // costly but necessary to get rid of pesky local enables that shoudln't be tagged to get reenabled
     for (int i = 0; i < GFX_MAX_LIGHTS; i++)
     {
         tmp[i] = (0 != (GLLights[i].options & OpenGLL::GL_ENABLED));
         if (GLLights[i].options & OpenGLL::GL_ENABLED)
             glDisable(GL_LIGHT0 + i);
     }
-    //VSFileSystem::Fprintf (stderr,"PUSH %d",GlobalEffects.size());
+    // VSFileSystem::Fprintf (stderr,"PUSH %d",GlobalEffects.size());
     GlobalEffects.push(tmp);
     GlobalEffectsAmbient.push(_ambient_light[_currentContext]);
     GFXLightContextAmbient(GFXColor(0, 0, 0, 1));
@@ -72,7 +72,7 @@ GFXBOOL /*GFXDRVAPI*/ GFXPopGlobalEffects()
 {
     if (GlobalEffects.empty())
         return false;
-    //VSFileSystem::Fprintf (stderr,"GES %d",GlobalEffects.size());
+    // VSFileSystem::Fprintf (stderr,"GES %d",GlobalEffects.size());
     for (int i = 0; i < GFX_MAX_LIGHTS; i++)
         if (GlobalEffects.top()[i])
             glEnable(GL_LIGHT0 + i);
@@ -88,16 +88,9 @@ GFXBOOL /*GFXDRVAPI*/ GFXPopGlobalEffects()
     return true;
 }
 
-GFXLight::GFXLight(const bool enabled,
-                   const GFXColor &vect,
-                   const GFXColor &diffuse,
-                   const GFXColor &specular,
-                   const GFXColor &ambient,
-                   const GFXColor &attenuate,
-                   const GFXColor &direction,
-                   float exp,
-                   float cutoff,
-                   float size)
+GFXLight::GFXLight(const bool enabled, const GFXColor &vect, const GFXColor &diffuse, const GFXColor &specular,
+                   const GFXColor &ambient, const GFXColor &attenuate, const GFXColor &direction, float exp,
+                   float cutoff, float size)
 {
     target = -1;
     options = 0;
@@ -134,9 +127,7 @@ bool GFXLight::attenuated() const
 
 void GFXLight::apply_attenuate(bool attenuated)
 {
-    options = attenuated
-                  ? (options | GFX_ATTENUATED)
-                  : (options & (~GFX_ATTENUATED));
+    options = attenuated ? (options | GFX_ATTENUATED) : (options & (~GFX_ATTENUATED));
 }
 
 void /*GFXDRVAPI*/ GFXLight::SetProperties(enum LIGHT_TARGET lighttarg, const GFXColor &color)
@@ -183,35 +174,21 @@ GFXColor /*GFXDRVAPI*/ GFXLight::GetProperties(enum LIGHT_TARGET lighttarg) cons
     switch (lighttarg)
     {
     case SPECULAR:
-        return GFXColor(specular[0],
-                        specular[1],
-                        specular[2],
-                        specular[3]);
+        return GFXColor(specular[0], specular[1], specular[2], specular[3]);
 
     case AMBIENT:
-        return GFXColor(ambient[0],
-                        ambient[1],
-                        ambient[2],
-                        ambient[3]);
+        return GFXColor(ambient[0], ambient[1], ambient[2], ambient[3]);
 
     case POSITION:
-        return GFXColor(vect[0],
-                        vect[1],
-                        vect[2]);
+        return GFXColor(vect[0], vect[1], vect[2]);
 
         break;
     case ATTENUATE:
-        return GFXColor(
-            attenuate[0],
-            attenuate[1],
-            attenuate[2]);
+        return GFXColor(attenuate[0], attenuate[1], attenuate[2]);
 
     case DIFFUSE:
-    default: //just for kicks
-        return GFXColor(diffuse[0],
-                        diffuse[1],
-                        diffuse[2],
-                        diffuse[3]);
+    default: // just for kicks
+        return GFXColor(diffuse[0], diffuse[1], diffuse[2], diffuse[3]);
     }
 }
 
@@ -308,7 +285,7 @@ const GFXLight & /*GFXDRVAPI*/ GFXGetLight(const int light)
 GFXBOOL /*GFXDRVAPI*/ GFXEnableLight(int light)
 {
     assert(light >= 0 && light <= static_cast<int>(_llights->size()));
-    //return FALSE;
+    // return FALSE;
     if ((*_llights)[light].Target() == -2)
         return GFXFALSE;
     (*_llights)[light].Enable();
@@ -355,7 +332,7 @@ void /*GFXDRVAPI*/ GFXSetLightContext(const int con_number)
     _currentContext = con_number;
     _llights = &_local_lights_dat[con_number];
     glLightModelfv(GL_LIGHT_MODEL_AMBIENT, (GLfloat *)&(_ambient_light[con_number]));
-    //reset all lights so they arean't in GLLights
+    // reset all lights so they arean't in GLLights
     for (i = 0; i < _llights->size(); i++)
         (*_llights)[i].Target() = -1;
     for (i = 0; i < _llights->size() && GLLindex < GFX_MAX_LIGHTS; i++)
@@ -367,7 +344,7 @@ void /*GFXDRVAPI*/ GFXSetLightContext(const int con_number)
             }
             else
             {
-                GLLights[GLLindex].index = -1; //make it clobber completley! no trace of old light.
+                GLLights[GLLindex].index = -1; // make it clobber completley! no trace of old light.
                 (*_llights)[i].ClobberGLLight(GLLindex);
                 GLLindex++;
             }
@@ -389,7 +366,9 @@ void GFXDestroyAllLights()
 
 static void SetupGLLightGlobals()
 {
-    glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, 1); //don't want lighting coming from infinity....we have to take the hit due to sphere mapping matrix tweaking
+    glLightModeli(
+        GL_LIGHT_MODEL_LOCAL_VIEWER,
+        1); // don't want lighting coming from infinity....we have to take the hit due to sphere mapping matrix tweaking
     glGetIntegerv(GL_MAX_LIGHTS, &GFX_MAX_LIGHTS);
     if (!GLLights)
     {

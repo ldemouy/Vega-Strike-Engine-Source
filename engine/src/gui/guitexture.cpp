@@ -26,16 +26,16 @@
 
 #include <gnuhash.h>
 
-#include <string>
-#include <png.h>
-#include "vsfilesystem.h"
+#include "gfx/aux_texture.h"
 #include "gfx/vsimage.h"
 #include "gldrv/gl_globals.h"
-#include "gfx/aux_texture.h"
+#include "vsfilesystem.h"
+#include <png.h>
+#include <string>
 
 using namespace VSFileSystem;
 
-//Read a texture from a file and bind it.
+// Read a texture from a file and bind it.
 bool GuiTexture::read(const std::string &fileName)
 {
     Texture *oldTexture(m_texture);
@@ -52,40 +52,22 @@ bool GuiTexture::read(const std::string &fileName)
     return m_texture->LoadSuccess();
 }
 
-//Draw this texture, stretching to fit the rect.
+// Draw this texture, stretching to fit the rect.
 void GuiTexture::draw(const Rect &rect) const
 {
-    //Don't draw unless there is something usable.
+    // Don't draw unless there is something usable.
     if (m_texture == nullptr || !m_texture->LoadSuccess())
         return;
     m_texture->MakeActive();
     GFXColor4f(1, 1, 1, 1);
     const float verts[4 * (3 + 2)] = {
-        rect.left(),
-        rect.top(),
-        0,
-        0,
-        1,
-        rect.left(),
-        rect.bottom(),
-        0,
-        0,
-        0,
-        rect.right(),
-        rect.bottom(),
-        0,
-        1,
-        0,
-        rect.right(),
-        rect.top(),
-        0,
-        1,
-        1,
+        rect.left(),  rect.top(),    0, 0, 1, rect.left(),  rect.bottom(), 0, 0, 0,
+        rect.right(), rect.bottom(), 0, 1, 0, rect.right(), rect.top(),    0, 1, 1,
     };
     GFXDraw(GFXQUAD, verts, 4, 3, 0, 2);
 }
 
-//CONSTRUCTION
+// CONSTRUCTION
 GuiTexture::GuiTexture(void) : m_texture(nullptr)
 {
 }

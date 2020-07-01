@@ -28,13 +28,13 @@
 #ifndef _FORCE_FEEDBACK_H_
 #define _FORCE_FEEDBACK_H_
 #ifndef _WIN32
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <fcntl.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
-#include <unistd.h>
 #include <string.h>
 #include <sys/ioctl.h>
+#include <unistd.h>
 #endif
 #include <stdio.h>
 
@@ -50,29 +50,29 @@
 
 #define _is(x) ((int)(3.2768 * ((float)x)))
 
-#endif //have_force_feedback
+#endif // have_force_feedback
 
 #define ALL_EFFECTS 1
 
 enum vseffects
 {
-    eff_speed_damper = 0, //the higher the speed, the more damped
+    eff_speed_damper = 0, // the higher the speed, the more damped
     eff_ab_wiggle_x,
     eff_ab_wiggle_y,
-    eff_ab_jerk, //afterburner on
+    eff_ab_jerk, // afterburner on
     eff_ab_off_x,
-    eff_ab_off_y, //afterburner off
+    eff_ab_off_y, // afterburner off
     eff_laser_jerk,
-    eff_laser_vibrate, //laser fired
+    eff_laser_vibrate, // laser fired
 #if ALL_EFFECTS
     eff_beam_on,
-    eff_beam_off, //beam
+    eff_beam_off, // beam
     eff_missile_jerk,
-    eff_missile_vibrate, //missile
+    eff_missile_vibrate, // missile
     eff_hit_jerk,
-    eff_hit_vibrate, //shield hits
+    eff_hit_vibrate, // shield hits
 #endif
-    eff_force //additional force
+    eff_force // additional force
 };
 
 #if ALL_EFFECTS
@@ -83,7 +83,7 @@ enum vseffects
 
 class ForceFeedback
 {
-public:
+  public:
     ForceFeedback();
     ~ForceFeedback();
 
@@ -98,11 +98,11 @@ public:
     void playAfterburner(bool activate);
     void playLaser();
 
-private:
+  private:
     bool have_ff;
 
 #if HAVE_FORCE_FEEDBACK
-private:
+  private:
     void init();
 
     void init_bogus(int32_t i);
@@ -122,7 +122,7 @@ private:
     double min_effect_time;
 
     bool is_played[N_EFFECTS];
-#endif //have_force_feedback
+#endif // have_force_feedback
 };
 
 #endif //_FORCE_FEEDBACK_H_

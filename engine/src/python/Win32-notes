@@ -24,4 +24,3 @@ and Vegastrike. If compiling Vegastrike in debug, make sure that
 
 is in STDOPTS in boost/libs/python/build/vc60.mak
 If compiling in release, specify /MD
-

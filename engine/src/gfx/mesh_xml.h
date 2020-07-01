@@ -1,11 +1,16 @@
 #ifndef __MESH_XML_H__INCLUDED_
 #define __MESH_XML_H__INCLUDED_
+#include "gfx/mesh.h"
+#include "gfx/tvector.h"
+#include "gldrv/gfxlib_struct.h"
+#include <string>
+#include <vector>
 
 struct MeshXML
 {
     enum Names
     {
-        //elements
+        // elements
         UNKNOWN,
         MATERIAL,
         AMBIENT,
@@ -30,7 +35,7 @@ struct MeshXML
         VERTEX,
         LOGO,
         REF,
-        //attributes
+        // attributes
         POWER,
         REFLECT,
         CULLFACE,
@@ -71,7 +76,7 @@ struct MeshXML
         STARTFRAME,
         ALPHATEST
     };
-    ///Saves which attributes of vertex have been set in XML file
+    /// Saves which attributes of vertex have been set in XML file
     enum PointState
     {
         P_X = 0x1,
@@ -81,14 +86,14 @@ struct MeshXML
         P_J = 0x10,
         P_K = 0x20
     };
-    ///Saves which attributes of vertex have been set in Polygon for XML file
+    /// Saves which attributes of vertex have been set in Polygon for XML file
     enum VertexState
     {
         V_POINT = 0x1,
         V_S = 0x2,
         V_T = 0x4
     };
-    ///Save if various logo values have been set
+    /// Save if various logo values have been set
     enum LogoState
     {
         V_TYPE = 0x1,
@@ -97,27 +102,27 @@ struct MeshXML
         V_OFFSET = 0x8,
         V_REF = 0x10
     };
-    ///To save the constructing of a logo
+    /// To save the constructing of a logo
     struct ZeLogo
     {
-        ///Which type the logo is (0 = faction 1 = squad >2 = internal use
+        /// Which type the logo is (0 = faction 1 = squad >2 = internal use
         unsigned int type;
-        ///how many degrees logo is rotated
+        /// how many degrees logo is rotated
         float rotate;
-        ///Size of the logo
+        /// Size of the logo
         float size;
-        ///offset of polygon of logo
+        /// offset of polygon of logo
         float offset;
-        ///the reference points that the logo is weighted against
-        vector<int> refpnt;
-        ///the weight of the points in weighted average of refpnts
-        vector<float> refweight;
+        /// the reference points that the logo is weighted against
+        std::vector<int> refpnt;
+        /// the weight of the points in weighted average of refpnts
+        std::vector<float> refweight;
     };
     struct ZeTexture
     {
-        string decal_name;
-        string alpha_name;
-        string animated_name;
+        std::string decal_name;
+        std::string alpha_name;
+        std::string animated_name;
     };
     class Flightgroup *fg;
     static const EnumMap::Pair element_names[];
@@ -126,28 +131,15 @@ struct MeshXML
     static const EnumMap attribute_map;
 
     MeshXML()
-        : sharevert(false),
-          usenormals(false),
-          usetangents(false),
-          reverse(false),
-          force_texture(false),
-          load_stage(0),
-          point_state(0),
-          vertex_state(0),
-          recalc_norm(false),
-          num_vertices(0),
-          tstrcnt(0),
-          tfancnt(0),
-          qstrcnt(0),
-          lstrcnt(0),
-          faction(0),
-          mesh(0)
+        : sharevert(false), usenormals(false), usetangents(false), reverse(false), force_texture(false), load_stage(0),
+          point_state(0), vertex_state(0), recalc_norm(false), num_vertices(0), tstrcnt(0), tfancnt(0), qstrcnt(0),
+          lstrcnt(0), faction(0), mesh(0)
     {
     }
 
-    ///All logos on this unit
-    vector<ZeLogo> logos;
-    vector<Names> state_stack;
+    /// All logos on this unit
+    std::vector<ZeLogo> logos;
+    std::vector<Names> state_stack;
     bool sharevert;
     bool usenormals;
     bool usetangents;
@@ -158,43 +150,43 @@ struct MeshXML
     int vertex_state;
     Vector scale;
     Vector lodscale;
-    vector<ZeTexture> decals;
-    string technique;
+    std::vector<ZeTexture> decals;
+    std::string technique;
     bool recalc_norm;
     int num_vertices;
-    vector<GFXVertex> vertices;
-    ///keep count to make averaging easy
-    vector<int> vertexcount;
-    vector<GFXVertex> lines;
-    vector<GFXVertex> tris;
-    vector<GFXVertex> quads;
-    vector<vector<GFXVertex>> linestrips;
-    vector<vector<GFXVertex>> tristrips;
-    vector<vector<GFXVertex>> trifans;
-    vector<vector<GFXVertex>> quadstrips;
+    std::vector<GFXVertex> vertices;
+    /// keep count to make averaging easy
+    std::vector<int> vertexcount;
+    std::vector<GFXVertex> lines;
+    std::vector<GFXVertex> tris;
+    std::vector<GFXVertex> quads;
+    std::vector<std::vector<GFXVertex>> linestrips;
+    std::vector<std::vector<GFXVertex>> tristrips;
+    std::vector<std::vector<GFXVertex>> trifans;
+    std::vector<std::vector<GFXVertex>> quadstrips;
     int tstrcnt;
     int tfancnt;
     int qstrcnt;
     int lstrcnt;
-    vector<int> lineind;
-    vector<int> nrmllinstrip;
-    vector<int> linestripind;
-    ///for possible normal computation
-    vector<int> triind;
-    vector<int> nrmltristrip;
-    vector<int> tristripind;
-    vector<int> nrmltrifan;
-    vector<int> trifanind;
-    vector<int> nrmlquadstrip;
-    vector<int> quadstripind;
-    vector<int> quadind;
-    vector<int> trishade;
-    vector<int> quadshade;
-    vector<int> *active_shade;
-    vector<GFXVertex> *active_list;
-    vector<int> *active_ind;
-    vector<Mesh *> lod;
-    vector<float> lodsize;
+    std::vector<int> lineind;
+    std::vector<int> nrmllinstrip;
+    std::vector<int> linestripind;
+    /// for possible normal computation
+    std::vector<int> triind;
+    std::vector<int> nrmltristrip;
+    std::vector<int> tristripind;
+    std::vector<int> nrmltrifan;
+    std::vector<int> trifanind;
+    std::vector<int> nrmlquadstrip;
+    std::vector<int> quadstripind;
+    std::vector<int> quadind;
+    std::vector<int> trishade;
+    std::vector<int> quadshade;
+    std::vector<int> *active_shade;
+    std::vector<GFXVertex> *active_list;
+    std::vector<int> *active_ind;
+    std::vector<Mesh *> lod;
+    std::vector<float> lodsize;
     GFXVertex vertex;
     GFXMaterial material;
     int faction;

@@ -1,20 +1,20 @@
 #include <vector>
 
-#include <string>
 #include <algorithm>
+#include <string>
 
-#include "bolt.h"
-#include "gldrv/gfxlib.h"
-#include "gfx/mesh.h"
-#include "gldrv/gfxlib_struct.h"
-#include "gfx/aux_texture.h"
-#include "gfx/animation.h"
-#include "gfx/decalqueue.h"
-#include "unit.h"
 #include "aldrv/audiolib.h"
+#include "bolt.h"
 #include "config_xml.h"
+#include "gfx/animation.h"
+#include "gfx/aux_texture.h"
 #include "gfx/camera.h"
+#include "gfx/decalqueue.h"
+#include "gfx/mesh.h"
+#include "gldrv/gfxlib.h"
+#include "gldrv/gfxlib_struct.h"
 #include "options.h"
+#include "unit.h"
 
 using std::string;
 using std::vector;
@@ -53,15 +53,14 @@ bolt_draw::bolt_draw()
     if (!boltmesh)
     {
         GFXVertex vtx[12];
-#define V(ii, xx, yy, zz, ss,                         \
-          tt)                                         \
-    vtx[ii].x = xx;                                   \
-    vtx[ii].y = yy;                                   \
-    vtx[ii].z = zz + game_options.bolt_offset + .875; \
-    vtx[ii].i = 0;                                    \
-    vtx[ii].j = 0;                                    \
-    vtx[ii].k = 1;                                    \
-    vtx[ii].s = ss;                                   \
+#define V(ii, xx, yy, zz, ss, tt)                                                                                      \
+    vtx[ii].x = xx;                                                                                                    \
+    vtx[ii].y = yy;                                                                                                    \
+    vtx[ii].z = zz + game_options.bolt_offset + .875;                                                                  \
+    vtx[ii].i = 0;                                                                                                     \
+    vtx[ii].j = 0;                                                                                                     \
+    vtx[ii].k = 1;                                                                                                     \
+    vtx[ii].s = ss;                                                                                                    \
     vtx[ii].t = tt;
         V(0, 0, 0, -.875, 0, .5);
         V(1, 0, -1, 0, .875, 1);
@@ -75,7 +74,7 @@ bolt_draw::bolt_draw()
         V(9, 0, 1, 0, .375, .1875);
         V(10, -1, 0, 0, .1875, .375);
         V(11, 0, -1, 0, 0, .1875);
-        boltmesh = new GFXVertexList(GFXQUAD, 12, vtx, 12, false); //not mutable;
+        boltmesh = new GFXVertexList(GFXQUAD, 12, vtx, 12, false); // not mutable;
     }
 }
 
@@ -114,7 +113,8 @@ int Bolt::AddAnimation(bolt_draw *q, std::string file, QVector cur_position)
     {
         decal = q->animations.size();
         q->animationname.push_back(file);
-        q->animations.push_back(new Animation(file.c_str(), true, .1, MIPMAP, false)); //balls have their own orientation
+        q->animations.push_back(
+            new Animation(file.c_str(), true, .1, MIPMAP, false)); // balls have their own orientation
         q->animations.back()->SetPosition(cur_position);
         q->balls.push_back(vector<Bolt>());
     }
@@ -135,7 +135,10 @@ void Bolt::Draw()
     vector<Bolt>::iterator j;
     vector<Animation *>::iterator k = qq->animations.begin();
     float etime = GetElapsedTime();
-    float pixel_angle = 2 * sin(g_game.fov * M_PI / 180.0 / (g_game.y_resolution > g_game.x_resolution ? g_game.y_resolution : g_game.x_resolution)) * game_options.bolt_pixel_size;
+    float pixel_angle = 2 *
+                        sin(g_game.fov * M_PI / 180.0 /
+                            (g_game.y_resolution > g_game.x_resolution ? g_game.y_resolution : g_game.x_resolution)) *
+                        game_options.bolt_pixel_size;
     pixel_angle *= pixel_angle;
     Vector p, q, r;
     _Universe->AccessCamera()->GetOrientation(p, q, r);
@@ -147,11 +150,11 @@ void Bolt::Draw()
         {
             float bolt_size = 2 * i->begin()->type->Radius * 2;
             bolt_size *= bolt_size;
-            //Matrix result;
-            //FIXME::MuST USE DRAWNO	TRANSFORMNOW cur->CalculateOrientation (result);
+            // Matrix result;
+            // FIXME::MuST USE DRAWNO	TRANSFORMNOW cur->CalculateOrientation (result);
             for (j = i->begin(); j != i->end(); j++)
             {
-                //don't update time more than once
+                // don't update time more than once
                 Bolt *bolt = &*j;
                 float distance = (bolt->cur_position - campos).MagnitudeSquared();
                 if (distance * pixel_angle < bolt_size)
@@ -216,7 +219,9 @@ void Bolt::Draw()
                                 Matrix drawmat(bolt.drawmat);
                                 if (game_options.StretchBolts > 0)
                                 {
-                                    ScaleMatrix(drawmat, Vector(1, 1, bolt.type->Speed * etime * game_options.StretchBolts / bolt.type->Length));
+                                    ScaleMatrix(drawmat, Vector(1, 1,
+                                                                bolt.type->Speed * etime * game_options.StretchBolts /
+                                                                    bolt.type->Length));
                                 }
                                 GFXLoadMatrixModel(drawmat);
                                 GFXColor4f(wt->r, wt->g, wt->b, wt->a);

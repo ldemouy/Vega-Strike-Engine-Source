@@ -1,15 +1,15 @@
 //
-//C++ Implementation: vid_file
+// C++ Implementation: vid_file
 //
 
 #include "vid_file.h"
 #include "vsfilesystem.h"
 
-#include <string.h>
 #include <math.h>
+#include <string.h>
 #include <utility>
 
-//define a 128k buffer for video streamers
+// define a 128k buffer for video streamers
 #define BUFFER_SIZE (128 * (1 << 10))
 
 #ifndef ENOENT
@@ -19,11 +19,13 @@
 
 class VidFileImpl
 {
-private:
-    VidFileImpl(size_t, bool) {}
+  private:
+    VidFileImpl(size_t, bool)
+    {
+    }
 
-public:
-    //Avoid having to put ifdef's everywhere.
+  public:
+    // Avoid having to put ifdef's everywhere.
     float frameRate, duration;
     int width, height;
     void *frameBuffer;

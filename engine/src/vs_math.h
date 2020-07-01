@@ -24,9 +24,9 @@
 #include <config.h>
 
 #include "macosx_math.h"
-#include <math.h>
-#include <float.h>
 #include <cmath>
+#include <float.h>
+#include <math.h>
 
 #ifdef HAVE_IEEEFP_H
 #include <ieeefp.h>

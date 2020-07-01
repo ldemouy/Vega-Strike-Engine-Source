@@ -1,24 +1,22 @@
-#include <algorithm>
 #include "bolt.h"
-#include "gldrv/gfxlib.h"
 #include "gfx/mesh.h"
+#include "gldrv/gfxlib.h"
 #include "gldrv/gfxlib_struct.h"
+#include <algorithm>
 #include <vector>
 
-#include <string>
-#include <algorithm>
-#include "unit_generic.h"
 #include "aldrv/audiolib.h"
 #include "config_xml.h"
+#include "unit_generic.h"
+#include <algorithm>
+#include <string>
 
 using std::string;
 using std::vector;
 
-Bolt::Bolt(const weapon_info *typ,
-           const Matrix &orientationpos,
-           const Vector &shipspeed,
-           void *owner,
-           CollideMap::iterator hint) : cur_position(orientationpos.p), ShipSpeed(shipspeed)
+Bolt::Bolt(const weapon_info *typ, const Matrix &orientationpos, const Vector &shipspeed, void *owner,
+           CollideMap::iterator hint)
+    : cur_position(orientationpos.p), ShipSpeed(shipspeed)
 {
     VSCONSTRUCT2('t')
     bolt_draw *q = _Universe->activeStarSystem()->bolts;
@@ -32,14 +30,11 @@ Bolt::Bolt(const weapon_info *typ,
     {
         ScaleMatrix(drawmat, Vector(typ->Radius, typ->Radius, typ->Length));
         decal = Bolt::AddTexture(q, typ->file);
-        this->location =
-            _Universe->activeStarSystem()->collidemap[Unit::UNIT_BOLT]->insert(Collidable(Bolt::BoltIndex(q->bolts[decal].size(),
-                                                                                                          decal,
-                                                                                                          false)
-                                                                                              .bolt_index,
-                                                                                          (shipspeed + orientationpos.getR() * typ->Speed).Magnitude() * .5,
-                                                                                          cur_position + vel * SIMULATION_ATOM * .5),
-                                                                               hint);
+        this->location = _Universe->activeStarSystem()->collidemap[Unit::UNIT_BOLT]->insert(
+            Collidable(Bolt::BoltIndex(q->bolts[decal].size(), decal, false).bolt_index,
+                       (shipspeed + orientationpos.getR() * typ->Speed).Magnitude() * .5,
+                       cur_position + vel * SIMULATION_ATOM * .5),
+            hint);
         q->bolts[decal].push_back(*this);
     }
     else
@@ -47,14 +42,11 @@ Bolt::Bolt(const weapon_info *typ,
         ScaleMatrix(drawmat, Vector(typ->Radius, typ->Radius, typ->Radius));
         decal = Bolt::AddAnimation(q, typ->file, cur_position);
 
-        this->location =
-            _Universe->activeStarSystem()->collidemap[Unit::UNIT_BOLT]->insert(Collidable(Bolt::BoltIndex(q->balls[decal].size(),
-                                                                                                          decal,
-                                                                                                          true)
-                                                                                              .bolt_index,
-                                                                                          (shipspeed + orientationpos.getR() * typ->Speed).Magnitude() * .5,
-                                                                                          cur_position + vel * SIMULATION_ATOM * .5),
-                                                                               hint);
+        this->location = _Universe->activeStarSystem()->collidemap[Unit::UNIT_BOLT]->insert(
+            Collidable(Bolt::BoltIndex(q->balls[decal].size(), decal, true).bolt_index,
+                       (shipspeed + orientationpos.getR() * typ->Speed).Magnitude() * .5,
+                       cur_position + vel * SIMULATION_ATOM * .5),
+            hint);
         q->balls[decal].push_back(*this);
     }
 }
@@ -70,11 +62,14 @@ bool Bolt::Update(Collidable::CollideRef index)
     float speed = type->Speed;
     curdist += speed * SIMULATION_ATOM;
     prev_position = cur_position;
-    cur_position +=
-        ((ShipSpeed + drawmat.getR() * speed / ((type->type == weapon_info::BALL) * type->Radius + (type->type != weapon_info::BALL) * type->Length)).Cast() * SIMULATION_ATOM);
+    cur_position += ((ShipSpeed + drawmat.getR() * speed /
+                                      ((type->type == weapon_info::BALL) * type->Radius +
+                                       (type->type != weapon_info::BALL) * type->Length))
+                         .Cast() *
+                     SIMULATION_ATOM);
     if (curdist > type->Range)
     {
-        this->Destroy(nondecal_index(index)); //risky
+        this->Destroy(nondecal_index(index)); // risky
         return false;
     }
     Collidable updated(**location);
@@ -88,7 +83,7 @@ class UpdateBolt
     CollideMap *collidemap;
     StarSystem *starSystem;
 
-public:
+  public:
     UpdateBolt(StarSystem *ss, CollideMap *collidemap)
     {
         this->starSystem = ss;
@@ -111,10 +106,11 @@ class UpdateBolts
 {
     UpdateBolt sub;
 
-public:
-    UpdateBolts(StarSystem *ss, CollideMap *collidemap) : sub(ss, collidemap) {}
-    template <class T>
-    void operator()(T &collidableList)
+  public:
+    UpdateBolts(StarSystem *ss, CollideMap *collidemap) : sub(ss, collidemap)
+    {
+    }
+    template <class T> void operator()(T &collidableList)
     {
         std::for_each(collidableList.begin(), collidableList.end(), sub);
     }
@@ -134,7 +130,7 @@ bool Bolt::Collide(Unit *target)
     Unit *affectedSubUnit;
     if ((affectedSubUnit = target->rayCollide(prev_position, cur_position, normal, distance)))
     {
-        //ignore return
+        // ignore return
         if (target == owner)
         {
             return false;
@@ -149,7 +145,8 @@ bool Bolt::Collide(Unit *target)
                 return false;
             }
         }
-        static bool collidejump = XMLSupport::parse_bool(vs_config->getVariable("physics", "JumpWeaponCollision", "false"));
+        static bool collidejump =
+            XMLSupport::parse_bool(vs_config->getVariable("physics", "JumpWeaponCollision", "false"));
         if (type == PLANETPTR && (!collidejump) && !target->GetDestinations().empty())
         {
             return false;
@@ -158,12 +155,9 @@ bool Bolt::Collide(Unit *target)
         tmp = tmp.Scale(distance);
         distance = curdist / this->type->Range;
         GFXColor coltmp(this->type->r, this->type->g, this->type->b, this->type->a);
-        target->ApplyDamage((prev_position + tmp).Cast(),
-                            normal,
-                            this->type->Damage * ((1 - distance) + distance * this->type->Longrange),
-                            affectedSubUnit,
-                            coltmp,
-                            owner,
+        target->ApplyDamage((prev_position + tmp).Cast(), normal,
+                            this->type->Damage * ((1 - distance) + distance * this->type->Longrange), affectedSubUnit,
+                            coltmp, owner,
                             this->type->PhaseDamage * ((1 - distance) + distance * this->type->Longrange));
         return true;
     }
@@ -228,9 +222,9 @@ void BoltDestroyGeneric(Bolt *whichbolt, uint32_t index, int32_t decal, bool isB
         cm->erase((*vec)[index].location);
         if (index + 1 != vec->size())
         {
-            (*vec)[index] = vec->back(); //just a memcopy, yo
+            (*vec)[index] = vec->back(); // just a memcopy, yo
         }
-        vec->pop_back(); //pop that back up
+        vec->pop_back(); // pop that back up
     }
     else
     {

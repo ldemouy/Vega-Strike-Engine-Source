@@ -1,11 +1,11 @@
 #ifndef __PARTICLE_H
 #define __PARTICLE_H
 
-#include <vector>
-#include <memory>
 #include "aligned.h"
-#include "vec.h"
 #include "gldrv/gfxlib_struct.h"
+#include "vec.h"
+#include <memory>
+#include <vector>
 
 class Texture;
 
@@ -18,8 +18,8 @@ struct ParticlePoint
 
 /**
  * Particle system class, contains regularly updated geometry for all active
- * particles of the same kind. 
- * 
+ * particles of the same kind.
+ *
  * Can be instantiated statically.
  */
 class ParticleTrail
@@ -58,8 +58,9 @@ class ParticleTrail
         void init();
     } config;
 
-public:
-    ParticleTrail(const std::string &configPrefix, unsigned int max, BLENDFUNC blendsrc = ONE, BLENDFUNC blenddst = ONE, float alphaMask = 0, bool writeDepth = false, bool fadeColor = false)
+  public:
+    ParticleTrail(const std::string &configPrefix, unsigned int max, BLENDFUNC blendsrc = ONE, BLENDFUNC blenddst = ONE,
+                  float alphaMask = 0, bool writeDepth = false, bool fadeColor = false)
         : config(configPrefix)
     {
         ChangeMax(max);
@@ -83,7 +84,7 @@ class ParticleEmitter
 {
     ParticleTrail *particles;
 
-public:
+  public:
     struct Config
     {
         bool fixedSize;
@@ -98,7 +99,9 @@ public:
         void init(const std::string &prefix);
     } config;
 
-    explicit ParticleEmitter(ParticleTrail *particleType) : particles(particleType) {}
+    explicit ParticleEmitter(ParticleTrail *particleType) : particles(particleType)
+    {
+    }
     explicit ParticleEmitter(ParticleTrail *particleType, const std::string &prefix) : particles(particleType)
     {
         config.init(prefix);
@@ -106,17 +109,18 @@ public:
 
     /**
      * Launches (maybe) a particle, according to:
-     * 
+     *
      * @param pos Emitter center
      * @param rSize Emitter radial size
-     * @param percent Emitter rate relative to configured rate (inverse rate, effective_rate = rate/percent) 
+     * @param percent Emitter rate relative to configured rate (inverse rate, effective_rate = rate/percent)
      * @param basevelocity Emitter velocity directly translated to particle velocity
      * @param velocity Particle velocity relative to emitter velocity
      * @param pSize Particle size - ignored if emitter configured with fixed particle size
      * @param color Particle color
-     * 
+     *
      */
-    void doParticles(const QVector &pos, float rSize, float percent, const Vector &basevelocity, const Vector &velocity, float pSize, const GFXColor &color);
+    void doParticles(const QVector &pos, float rSize, float percent, const Vector &basevelocity, const Vector &velocity,
+                     float pSize, const GFXColor &color);
 };
 
 extern ParticleTrail particleTrail;

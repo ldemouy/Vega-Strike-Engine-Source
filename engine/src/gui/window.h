@@ -27,7 +27,7 @@
 
 #include <vector>
 
-//Forward reference.
+// Forward reference.
 class Control;
 class WindowController;
 class GroupControl;
@@ -37,31 +37,31 @@ class GroupControl;
  */
 class Window : public EventResponder
 {
-public:
-    //The outside boundaries of the window.
+  public:
+    // The outside boundaries of the window.
     virtual void setRect(const Rect &r);
     void setFullScreen(void);
     void setSizeAndCenter(const Size &size);
 
-    //Initially display the window.
-    //Call this when all the properties and controls of the window are set.
+    // Initially display the window.
+    // Call this when all the properties and controls of the window are set.
     virtual void open(void);
 
-    //Done with the window.  This will normally delete the window object.
+    // Done with the window.  This will normally delete the window object.
     virtual void close(void);
 
-    //Manage controls.
+    // Manage controls.
     virtual void addControl(Control *c);
     virtual void deleteControl(Control *c);
 
-    //Take a control away from this window and save it elsewhere.
+    // Take a control away from this window and save it elsewhere.
     virtual Control *removeControlFromWindow(Control *c);
 
-    //Find a control using its id.  nullptr returned if none found.
-    //Note that the control may be hidden.
+    // Find a control using its id.  nullptr returned if none found.
+    // Note that the control may be hidden.
     virtual Control *findControlById(const std::string &id);
 
-    //The background color of the window.
+    // The background color of the window.
     virtual GFXColor color(void)
     {
         return m_color;
@@ -71,7 +71,7 @@ public:
         m_color = c;
     }
 
-    //The background texture for the window.
+    // The background texture for the window.
     virtual GuiTexture &texture(void)
     {
         return m_texture;
@@ -81,7 +81,7 @@ public:
         m_texture.read(textureName);
     }
 
-    //The color of the outline around the window.
+    // The color of the outline around the window.
     virtual GFXColor outlineColor(void)
     {
         return m_outlineColor;
@@ -91,7 +91,7 @@ public:
         m_outlineColor = c;
     }
 
-    //The width of the outline around the window (in pixels).
+    // The width of the outline around the window (in pixels).
     virtual float outlineWidth(void)
     {
         return m_outlineWidth;
@@ -101,7 +101,7 @@ public:
         m_outlineWidth = width;
     }
 
-    //Set up a controller object.
+    // Set up a controller object.
     virtual WindowController *controller(void)
     {
         return m_controller;
@@ -111,13 +111,13 @@ public:
         m_controller = controller;
     }
 
-    //Draw the window.
+    // Draw the window.
     virtual void draw(void);
 
-    //Read window properties and controls from an XML file.
+    // Read window properties and controls from an XML file.
     virtual void readFromXml(const std::string &fileName);
 
-    //Set whether to delete this object when it closes.
+    // Set whether to delete this object when it closes.
     virtual bool deleteOnClose(void)
     {
         return m_deleteOnClose;
@@ -127,58 +127,58 @@ public:
         m_deleteOnClose = del;
     }
 
-    //OVERRIDES
+    // OVERRIDES
     virtual bool processMouseDown(const InputEvent &event);
     virtual bool processMouseUp(const InputEvent &event);
     virtual bool processMouseMove(const InputEvent &event);
     virtual bool processMouseDrag(const InputEvent &event);
     virtual bool processCommand(const EventCommandId &command, Control *control);
 
-    //CONSTRUCTION
-public:
+    // CONSTRUCTION
+  public:
     virtual ~Window();
     Window();
 
-    //INTERNAL IMPLEMENTATION
-protected:
-    //Draw window background.
+    // INTERNAL IMPLEMENTATION
+  protected:
+    // Draw window background.
     void drawBackground(void);
 
-    //VARIABLES
-protected:
-    Rect m_rect;                    //Rectangle representing window.
-    GFXColor m_color;               //Background color of window.
-    GFXColor m_outlineColor;        //Color of outline around control.
-    float m_outlineWidth;           //Width of outline (in pixels).
-    GuiTexture m_texture;           //Background texture.
-    bool m_deleteOnClose;           //True = delete window object when closed.
-    GroupControl *m_controls;       //List of controls that are in this window.
-    WindowController *m_controller; //Object that controls this window.
+    // VARIABLES
+  protected:
+    Rect m_rect;                    // Rectangle representing window.
+    GFXColor m_color;               // Background color of window.
+    GFXColor m_outlineColor;        // Color of outline around control.
+    float m_outlineWidth;           // Width of outline (in pixels).
+    GuiTexture m_texture;           // Background texture.
+    bool m_deleteOnClose;           // True = delete window object when closed.
+    GroupControl *m_controls;       // List of controls that are in this window.
+    WindowController *m_controller; // Object that controls this window.
 };
 
-//This class keeps track of windows, maintaining z-order and rendering them.
+// This class keeps track of windows, maintaining z-order and rendering them.
 class WindowManager
 {
-public:
-    friend class Window; //Most operations here are done only by windows.
+  public:
+    friend class Window; // Most operations here are done only by windows.
 
-    //Draw all visible windows.
+    // Draw all visible windows.
     void draw();
 
-    //Shut down all windows.
+    // Shut down all windows.
     void shutDown(void);
 
-protected:
-    //A new window has been created and is ready to be drawn.
+  protected:
+    // A new window has been created and is ready to be drawn.
     void openWindow(Window *w);
-    //A window has been closed.
+    // A window has been closed.
     void closeWindow(Window *w, bool deleteWindow = true);
 
-    //VARIABLES
-    std::vector<Window *> m_windows; //Array of windows.  Last entry is top window.
+    // VARIABLES
+    std::vector<Window *> m_windows; // Array of windows.  Last entry is top window.
 };
 
-//Get the one window manager.
+// Get the one window manager.
 WindowManager &globalWindowManager(void);
 
 #endif //__WINDOW_H__

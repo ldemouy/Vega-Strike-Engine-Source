@@ -1,31 +1,31 @@
-#include <expat.h>
-#include "xml_support.h"
-#include "star_system_generic.h"
-#include "cmd/planet_generic.h"
-#include "cmd/unit_factory.h"
-#include "vs_globals.h"
-#include "vsfilesystem.h"
-#include "configxml.h"
-#include "vegastrike.h"
-#include <assert.h> /// needed for assert() calls.
-#include "gfx/mesh.h"
-#include "cmd/building_generic.h"
 #include "cmd/ai/aggressive.h"
 #include "cmd/ai/fire.h"
-#include "cmd/nebula_generic.h"
 #include "cmd/asteroid_generic.h"
-#include "cmd/enhancement_generic.h"
-#include "cmd/script/flightgroup.h"
-#include "universe_util.h"
 #include "cmd/atmosphere.h"
+#include "cmd/building_generic.h"
+#include "cmd/enhancement_generic.h"
+#include "cmd/nebula_generic.h"
+#include "cmd/planet_generic.h"
+#include "cmd/script/flightgroup.h"
+#include "cmd/unit_factory.h"
+#include "configxml.h"
+#include "gfx/mesh.h"
+#include "star_system_generic.h"
+#include "universe_util.h"
+#include "vegastrike.h"
+#include "vs_globals.h"
+#include "vsfilesystem.h"
+#include "xml_support.h"
+#include <assert.h> /// needed for assert() calls.
+#include <expat.h>
 
 #include "options.h"
 
 #include <stdlib.h>
 
+#include <map>
 #include <string>
 #include <vector>
-#include <map>
 
 using std::map;
 using std::string;
@@ -51,212 +51,211 @@ AtmosphericFogMesh::AtmosphericFogMesh()
 }
 namespace StarXML
 {
-    enum Names
-    {
-        UNKNOWN,
-        XFILE,
-        X,
-        Y,
-        Z,
-        RI,
-        RJ,
-        RK,
-        SI,
-        SJ,
-        SK,
-        QI,
-        QJ,
-        QK,
-        NAME,
-        DIRECTION,
-        RADIUS,
-        GRAVITY,
-        YEAR,
-        DAY,
-        PPOSITION,
-        SYSTEM,
-        PLANET,
-        UNIT,
-        EMRED,
-        EMGREEN,
-        EMBLUE,
-        EMALPHA,
-        SRED,
-        SGREEN,
-        SBLUE,
-        SALPHA,
-        SPOWER,
-        BACKGROUND,
-        BACKGROUND_COLOR,
-        BACKGROUND_DEGAMMA,
-        STARS,
-        STARSPREAD,
-        NEARSTARS,
-        FADESTARS,
-        REFLECTIVITY,
-        ALPHA,
-        DESTINATION,
-        JUMP,
-        FACTION,
-        LIGHT,
-        COLL,
-        ATTEN,
-        DIFF,
-        SPEC,
-        AMB,
-        TERRAIN,
-        CONTTERRAIN,
-        MASS,
-        BUILDING,
-        VEHICLE,
-        ATMOSPHERE,
-        NEBULA,
-        NEBFILE,
-        ASTEROID,
-        SCALEX,
-        NUMWRAPS,
-        DIFFICULTY,
-        REFLECTNOLIGHT,
-        ENHANCEMENT,
-        SCALEATMOS,
-        SCALESYSTEM,
-        CITYLIGHTS,
-        INSIDEOUT,
-        INNERRADIUS,
-        OUTERRADIUS,
-        NUMSLICES,
-        RING,
-        SPACEELEVATOR,
-        WRAPX,
-        WRAPY,
-        FOG,
-        FOGELEMENT,
-        FOCUS,
-        CONCAVITY,
-        MINALPHA,
-        MAXALPHA,
-        DIRED,
-        DIGREEN,
-        DIBLUE,
-        DIALPHA,
-        TAILMODESTART,
-        TAILMODEEND,
-        OPTICALILLUSION,
-        SERIAL,
-        VARNAME,
-        VARVALUE,
-        CONDITION,
-        EXPRESSION,
-        TECHNIQUE,
-        OVERRIDE
-    };
+enum Names
+{
+    UNKNOWN,
+    XFILE,
+    X,
+    Y,
+    Z,
+    RI,
+    RJ,
+    RK,
+    SI,
+    SJ,
+    SK,
+    QI,
+    QJ,
+    QK,
+    NAME,
+    DIRECTION,
+    RADIUS,
+    GRAVITY,
+    YEAR,
+    DAY,
+    PPOSITION,
+    SYSTEM,
+    PLANET,
+    UNIT,
+    EMRED,
+    EMGREEN,
+    EMBLUE,
+    EMALPHA,
+    SRED,
+    SGREEN,
+    SBLUE,
+    SALPHA,
+    SPOWER,
+    BACKGROUND,
+    BACKGROUND_COLOR,
+    BACKGROUND_DEGAMMA,
+    STARS,
+    STARSPREAD,
+    NEARSTARS,
+    FADESTARS,
+    REFLECTIVITY,
+    ALPHA,
+    DESTINATION,
+    JUMP,
+    FACTION,
+    LIGHT,
+    COLL,
+    ATTEN,
+    DIFF,
+    SPEC,
+    AMB,
+    TERRAIN,
+    CONTTERRAIN,
+    MASS,
+    BUILDING,
+    VEHICLE,
+    ATMOSPHERE,
+    NEBULA,
+    NEBFILE,
+    ASTEROID,
+    SCALEX,
+    NUMWRAPS,
+    DIFFICULTY,
+    REFLECTNOLIGHT,
+    ENHANCEMENT,
+    SCALEATMOS,
+    SCALESYSTEM,
+    CITYLIGHTS,
+    INSIDEOUT,
+    INNERRADIUS,
+    OUTERRADIUS,
+    NUMSLICES,
+    RING,
+    SPACEELEVATOR,
+    WRAPX,
+    WRAPY,
+    FOG,
+    FOGELEMENT,
+    FOCUS,
+    CONCAVITY,
+    MINALPHA,
+    MAXALPHA,
+    DIRED,
+    DIGREEN,
+    DIBLUE,
+    DIALPHA,
+    TAILMODESTART,
+    TAILMODEEND,
+    OPTICALILLUSION,
+    SERIAL,
+    VARNAME,
+    VARVALUE,
+    CONDITION,
+    EXPRESSION,
+    TECHNIQUE,
+    OVERRIDE
+};
 
-    const EnumMap::Pair element_names[] = {
-        EnumMap::Pair("UNKNOWN", UNKNOWN),
-        EnumMap::Pair("Planet", PLANET),
-        EnumMap::Pair("System", SYSTEM),
-        EnumMap::Pair("Unit", UNIT),
-        EnumMap::Pair("Enhancement", ENHANCEMENT),
-        EnumMap::Pair("Jump", JUMP),
-        EnumMap::Pair("Light", LIGHT),
-        EnumMap::Pair("Attenuated", ATTEN),
-        EnumMap::Pair("Diffuse", DIFF),
-        EnumMap::Pair("Specular", SPEC),
-        EnumMap::Pair("Ambient", AMB),
-        EnumMap::Pair("Terrain", TERRAIN),
-        EnumMap::Pair("ContinuousTerrain", CONTTERRAIN),
-        EnumMap::Pair("Building", BUILDING),
-        EnumMap::Pair("Vehicle", VEHICLE),
-        EnumMap::Pair("Atmosphere", ATMOSPHERE),
-        EnumMap::Pair("Nebula", NEBULA),
-        EnumMap::Pair("Asteroid", ASTEROID),
-        EnumMap::Pair("RING", RING),
-        EnumMap::Pair("citylights", CITYLIGHTS),
-        EnumMap::Pair("SpaceElevator", SPACEELEVATOR),
-        EnumMap::Pair("Fog", FOG),
-        EnumMap::Pair("FogElement", FOGELEMENT),
-        EnumMap::Pair("Condition", CONDITION),
-    };
-    const EnumMap::Pair attribute_names[] = {
-        EnumMap::Pair("UNKNOWN", UNKNOWN),
-        EnumMap::Pair("background", BACKGROUND),
-        EnumMap::Pair("backgroundColor", BACKGROUND_COLOR),
-        EnumMap::Pair("backgroundDegamma", BACKGROUND_DEGAMMA),
-        EnumMap::Pair("stars", STARS),
-        EnumMap::Pair("nearstars", NEARSTARS),
-        EnumMap::Pair("fadestars", FADESTARS),
-        EnumMap::Pair("starspread", STARSPREAD),
-        EnumMap::Pair("reflectivity", REFLECTIVITY),
-        EnumMap::Pair("file", XFILE),
-        EnumMap::Pair("alpha", ALPHA),
-        EnumMap::Pair("destination", DESTINATION),
-        EnumMap::Pair("direction", DIRECTION),
-        EnumMap::Pair("x", X),
-        EnumMap::Pair("y", Y),
-        EnumMap::Pair("z", Z),
-        EnumMap::Pair("ri", RI),
-        EnumMap::Pair("rj", RJ),
-        EnumMap::Pair("rk", RK),
-        EnumMap::Pair("si", SI),
-        EnumMap::Pair("sj", SJ),
-        EnumMap::Pair("sk", SK),
-        EnumMap::Pair("qi", QI),
-        EnumMap::Pair("qj", QJ),
-        EnumMap::Pair("qk", QK),
-        EnumMap::Pair("name", NAME),
-        EnumMap::Pair("radius", RADIUS),
-        EnumMap::Pair("gravity", GRAVITY),
-        EnumMap::Pair("year", YEAR),
-        EnumMap::Pair("day", DAY),
-        EnumMap::Pair("position", PPOSITION),
-        EnumMap::Pair("MaxAlpha", MAXALPHA),
-        EnumMap::Pair("MinAlpha", MINALPHA),
-        EnumMap::Pair("DRed", DIRED),
-        EnumMap::Pair("DGreen", DIGREEN),
-        EnumMap::Pair("DBlue", DIBLUE),
-        EnumMap::Pair("DAlpha", DIALPHA),
-        EnumMap::Pair("Red", EMRED),
-        EnumMap::Pair("Green", EMGREEN),
-        EnumMap::Pair("Blue", EMBLUE),
-        EnumMap::Pair("Alfa", EMALPHA),
-        EnumMap::Pair("SRed", SRED),
-        EnumMap::Pair("SGreen", SGREEN),
-        EnumMap::Pair("SBlue", SBLUE),
-        EnumMap::Pair("SAlfa", SALPHA),
-        EnumMap::Pair("SPower", SPOWER),
-        EnumMap::Pair("ReflectNoLight", REFLECTNOLIGHT),
-        EnumMap::Pair("faction", FACTION),
-        EnumMap::Pair("Light", LIGHT),
-        EnumMap::Pair("Mass", MASS),
-        EnumMap::Pair("ScaleX", SCALEX),
-        EnumMap::Pair("NumWraps", NUMWRAPS),
-        EnumMap::Pair("NumSlices", NUMSLICES),
-        EnumMap::Pair("Difficulty", DIFFICULTY),
-        EnumMap::Pair("ScaleAtmosphereHeight", SCALEATMOS),
-        EnumMap::Pair("ScaleSystem", SCALESYSTEM),
-        EnumMap::Pair("InsideOut", INSIDEOUT),
-        EnumMap::Pair("InnerRadius", INNERRADIUS),
-        EnumMap::Pair("OuterRadius", OUTERRADIUS),
-        EnumMap::Pair("WrapX", WRAPX),
-        EnumMap::Pair("WrapY", WRAPY),
-        EnumMap::Pair("Focus", FOCUS),
-        EnumMap::Pair("Concavity", CONCAVITY),
-        EnumMap::Pair("TailModeStart", TAILMODESTART),
-        EnumMap::Pair("TailModeEnd", TAILMODEEND),
-        EnumMap::Pair("OpticalIllusion", OPTICALILLUSION),
-        EnumMap::Pair("serial", SERIAL),
-        EnumMap::Pair("VarName", VARNAME),
-        EnumMap::Pair("VarValue", VARVALUE),
-        EnumMap::Pair("Condition", CONDITION),
-        EnumMap::Pair("expression", EXPRESSION),
-        EnumMap::Pair("technique", TECHNIQUE),
-        EnumMap::Pair("unit", UNIT),
-        EnumMap::Pair("override", OVERRIDE)};
+const EnumMap::Pair element_names[] = {
+    EnumMap::Pair("UNKNOWN", UNKNOWN),
+    EnumMap::Pair("Planet", PLANET),
+    EnumMap::Pair("System", SYSTEM),
+    EnumMap::Pair("Unit", UNIT),
+    EnumMap::Pair("Enhancement", ENHANCEMENT),
+    EnumMap::Pair("Jump", JUMP),
+    EnumMap::Pair("Light", LIGHT),
+    EnumMap::Pair("Attenuated", ATTEN),
+    EnumMap::Pair("Diffuse", DIFF),
+    EnumMap::Pair("Specular", SPEC),
+    EnumMap::Pair("Ambient", AMB),
+    EnumMap::Pair("Terrain", TERRAIN),
+    EnumMap::Pair("ContinuousTerrain", CONTTERRAIN),
+    EnumMap::Pair("Building", BUILDING),
+    EnumMap::Pair("Vehicle", VEHICLE),
+    EnumMap::Pair("Atmosphere", ATMOSPHERE),
+    EnumMap::Pair("Nebula", NEBULA),
+    EnumMap::Pair("Asteroid", ASTEROID),
+    EnumMap::Pair("RING", RING),
+    EnumMap::Pair("citylights", CITYLIGHTS),
+    EnumMap::Pair("SpaceElevator", SPACEELEVATOR),
+    EnumMap::Pair("Fog", FOG),
+    EnumMap::Pair("FogElement", FOGELEMENT),
+    EnumMap::Pair("Condition", CONDITION),
+};
+const EnumMap::Pair attribute_names[] = {EnumMap::Pair("UNKNOWN", UNKNOWN),
+                                         EnumMap::Pair("background", BACKGROUND),
+                                         EnumMap::Pair("backgroundColor", BACKGROUND_COLOR),
+                                         EnumMap::Pair("backgroundDegamma", BACKGROUND_DEGAMMA),
+                                         EnumMap::Pair("stars", STARS),
+                                         EnumMap::Pair("nearstars", NEARSTARS),
+                                         EnumMap::Pair("fadestars", FADESTARS),
+                                         EnumMap::Pair("starspread", STARSPREAD),
+                                         EnumMap::Pair("reflectivity", REFLECTIVITY),
+                                         EnumMap::Pair("file", XFILE),
+                                         EnumMap::Pair("alpha", ALPHA),
+                                         EnumMap::Pair("destination", DESTINATION),
+                                         EnumMap::Pair("direction", DIRECTION),
+                                         EnumMap::Pair("x", X),
+                                         EnumMap::Pair("y", Y),
+                                         EnumMap::Pair("z", Z),
+                                         EnumMap::Pair("ri", RI),
+                                         EnumMap::Pair("rj", RJ),
+                                         EnumMap::Pair("rk", RK),
+                                         EnumMap::Pair("si", SI),
+                                         EnumMap::Pair("sj", SJ),
+                                         EnumMap::Pair("sk", SK),
+                                         EnumMap::Pair("qi", QI),
+                                         EnumMap::Pair("qj", QJ),
+                                         EnumMap::Pair("qk", QK),
+                                         EnumMap::Pair("name", NAME),
+                                         EnumMap::Pair("radius", RADIUS),
+                                         EnumMap::Pair("gravity", GRAVITY),
+                                         EnumMap::Pair("year", YEAR),
+                                         EnumMap::Pair("day", DAY),
+                                         EnumMap::Pair("position", PPOSITION),
+                                         EnumMap::Pair("MaxAlpha", MAXALPHA),
+                                         EnumMap::Pair("MinAlpha", MINALPHA),
+                                         EnumMap::Pair("DRed", DIRED),
+                                         EnumMap::Pair("DGreen", DIGREEN),
+                                         EnumMap::Pair("DBlue", DIBLUE),
+                                         EnumMap::Pair("DAlpha", DIALPHA),
+                                         EnumMap::Pair("Red", EMRED),
+                                         EnumMap::Pair("Green", EMGREEN),
+                                         EnumMap::Pair("Blue", EMBLUE),
+                                         EnumMap::Pair("Alfa", EMALPHA),
+                                         EnumMap::Pair("SRed", SRED),
+                                         EnumMap::Pair("SGreen", SGREEN),
+                                         EnumMap::Pair("SBlue", SBLUE),
+                                         EnumMap::Pair("SAlfa", SALPHA),
+                                         EnumMap::Pair("SPower", SPOWER),
+                                         EnumMap::Pair("ReflectNoLight", REFLECTNOLIGHT),
+                                         EnumMap::Pair("faction", FACTION),
+                                         EnumMap::Pair("Light", LIGHT),
+                                         EnumMap::Pair("Mass", MASS),
+                                         EnumMap::Pair("ScaleX", SCALEX),
+                                         EnumMap::Pair("NumWraps", NUMWRAPS),
+                                         EnumMap::Pair("NumSlices", NUMSLICES),
+                                         EnumMap::Pair("Difficulty", DIFFICULTY),
+                                         EnumMap::Pair("ScaleAtmosphereHeight", SCALEATMOS),
+                                         EnumMap::Pair("ScaleSystem", SCALESYSTEM),
+                                         EnumMap::Pair("InsideOut", INSIDEOUT),
+                                         EnumMap::Pair("InnerRadius", INNERRADIUS),
+                                         EnumMap::Pair("OuterRadius", OUTERRADIUS),
+                                         EnumMap::Pair("WrapX", WRAPX),
+                                         EnumMap::Pair("WrapY", WRAPY),
+                                         EnumMap::Pair("Focus", FOCUS),
+                                         EnumMap::Pair("Concavity", CONCAVITY),
+                                         EnumMap::Pair("TailModeStart", TAILMODESTART),
+                                         EnumMap::Pair("TailModeEnd", TAILMODEEND),
+                                         EnumMap::Pair("OpticalIllusion", OPTICALILLUSION),
+                                         EnumMap::Pair("serial", SERIAL),
+                                         EnumMap::Pair("VarName", VARNAME),
+                                         EnumMap::Pair("VarValue", VARVALUE),
+                                         EnumMap::Pair("Condition", CONDITION),
+                                         EnumMap::Pair("expression", EXPRESSION),
+                                         EnumMap::Pair("technique", TECHNIQUE),
+                                         EnumMap::Pair("unit", UNIT),
+                                         EnumMap::Pair("override", OVERRIDE)};
 
-    //By Klauss - more flexible this way
-    const EnumMap element_map(element_names, sizeof(element_names) / sizeof(element_names[0]));
-    //By Klauss - more flexible this way
-    const EnumMap attribute_map(attribute_names, sizeof(attribute_names) / sizeof(attribute_names[0]));
+// By Klauss - more flexible this way
+const EnumMap element_map(element_names, sizeof(element_names) / sizeof(element_names[0]));
+// By Klauss - more flexible this way
+const EnumMap attribute_map(attribute_names, sizeof(attribute_names) / sizeof(attribute_names[0]));
 } // namespace StarXML
 
 using XMLSupport::Attribute;
@@ -267,8 +266,7 @@ extern Flightgroup *getStaticBaseFlightgroup(int faction);
 extern Flightgroup *getStaticNebulaFlightgroup(int faction);
 extern Flightgroup *getStaticAsteroidFlightgroup(int faction);
 
-template <typename T>
-static bool EvalCondition(const char *op, const T &left, const T &right)
+template <typename T> static bool EvalCondition(const char *op, const T &left, const T &right)
 {
     switch (op[0])
     {
@@ -327,17 +325,14 @@ static bool ConfigCondition(const string &cond)
     char varname[64];
     char op[3];
     char varval[64];
-    bool ok = 3 == sscanf(cond.c_str(), "%63[-a-zA-Z_0-9] %2[<>=!] %63[-0-9.Ee]",
-                          varname,
-                          op,
-                          varval);
+    bool ok = 3 == sscanf(cond.c_str(), "%63[-a-zA-Z_0-9] %2[<>=!] %63[-0-9.Ee]", varname, op, varval);
     if (!ok)
         return false;
-    //finalize character strings, for security
+    // finalize character strings, for security
     varname[sizeof(varname) / sizeof(*varname) - 1] = 0;
     op[sizeof(op) / sizeof(*op) - 1] = 0;
     varval[sizeof(varval) / sizeof(*varval) - 1] = 0;
-    //try to parse varval - if not parseable as float, assume it's a string
+    // try to parse varval - if not parseable as float, assume it's a string
     char *endptr = 0;
     bool rv;
     if (endptr == varval)
@@ -385,7 +380,8 @@ static Vector ComputeRotVel(float rotvel, const QVector &r, const QVector &s)
     }
 }
 
-static void GetLights(const vector<GFXLight> &origlights, vector<GFXLightLocal> &curlights, const char *str, float lightSize)
+static void GetLights(const vector<GFXLight> &origlights, vector<GFXLightLocal> &curlights, const char *str,
+                      float lightSize)
 {
     int tint;
     char isloc;
@@ -507,14 +503,14 @@ void StarSystem::beginElement(const string &name, const AttributeList &attribute
     bool isdest = false;
 
     xml->cursun.k = 0;
-    static GFXColor planet_mat_ambient = vs_config->getColor("default", "planet_mat_ambient",
-                                                             GFXColor(1.0, 1.0, 1.0, 1.0));
-    static GFXColor planet_mat_diffuse = vs_config->getColor("default", "planet_mat_diffuse",
-                                                             GFXColor(1.0, 1.0, 1.0, 1.0));
-    static GFXColor planet_mat_specular = vs_config->getColor("default", "planet_mat_specular",
-                                                              GFXColor(0.0, 0.0, 0.0, 1.0));
-    static GFXColor planet_mat_emissive = vs_config->getColor("default", "planet_mat_emmissive",
-                                                              GFXColor(0.0, 0.0, 0.0, 1.0));
+    static GFXColor planet_mat_ambient =
+        vs_config->getColor("default", "planet_mat_ambient", GFXColor(1.0, 1.0, 1.0, 1.0));
+    static GFXColor planet_mat_diffuse =
+        vs_config->getColor("default", "planet_mat_diffuse", GFXColor(1.0, 1.0, 1.0, 1.0));
+    static GFXColor planet_mat_specular =
+        vs_config->getColor("default", "planet_mat_specular", GFXColor(0.0, 0.0, 0.0, 1.0));
+    static GFXColor planet_mat_emissive =
+        vs_config->getColor("default", "planet_mat_emmissive", GFXColor(0.0, 0.0, 0.0, 1.0));
     GFXMaterial ourmat;
     GFXGetMaterial(0, ourmat);
     setMaterialAmbient(ourmat, planet_mat_ambient);
@@ -563,11 +559,8 @@ void StarSystem::beginElement(const string &name, const AttributeList &attribute
                 xml->backgroundname = (*iter).value;
                 break;
             case BACKGROUND_COLOR:
-                parse_floatfv((*iter).value, 4,
-                              &xml->backgroundColor.r,
-                              &xml->backgroundColor.g,
-                              &xml->backgroundColor.b,
-                              &xml->backgroundColor.a);
+                parse_floatfv((*iter).value, 4, &xml->backgroundColor.r, &xml->backgroundColor.g,
+                              &xml->backgroundColor.b, &xml->backgroundColor.a);
                 break;
             case BACKGROUND_DEGAMMA:
                 xml->backgroundDegamma = XMLSupport::parse_bool((*iter).value);
@@ -593,8 +586,7 @@ void StarSystem::beginElement(const string &name, const AttributeList &attribute
             }
         }
         break;
-    case RING:
-    {
+    case RING: {
         ++xml->unitlevel;
         string myfile("planets/ring.png");
 
@@ -670,8 +662,7 @@ void StarSystem::beginElement(const string &name, const AttributeList &attribute
         break;
     }
 
-    case SPACEELEVATOR:
-    {
+    case SPACEELEVATOR: {
         ++xml->unitlevel;
         string myfile("elevator");
 
@@ -804,8 +795,7 @@ void StarSystem::beginElement(const string &name, const AttributeList &attribute
             }
         }
         break;
-    case CITYLIGHTS:
-    {
+    case CITYLIGHTS: {
         string myfile("planets/Dirt_light.png");
         ++xml->unitlevel;
         blendSrc = SRCALPHA;
@@ -856,8 +846,7 @@ void StarSystem::beginElement(const string &name, const AttributeList &attribute
         }
         break;
     }
-    case ATMOSPHERE:
-    {
+    case ATMOSPHERE: {
         ++xml->unitlevel;
         if (!game_options.usePlanetAtmosphere)
             break;
@@ -998,7 +987,8 @@ void StarSystem::beginElement(const string &name, const AttributeList &attribute
                 }
                 else
                 {
-                    contterrains.push_back(UnitFactory::createContinuousTerrain(myfile.c_str(), TerrainScale, position, t));
+                    contterrains.push_back(
+                        UnitFactory::createContinuousTerrain(myfile.c_str(), TerrainScale, position, t));
                     xml->ct = contterrains.back();
                     if (xml->unitlevel > 2)
                     {
@@ -1101,8 +1091,7 @@ void StarSystem::beginElement(const string &name, const AttributeList &attribute
             case LIGHT:
                 GetLights(xml->lights, curlights, (*iter).value.c_str(), radius);
                 break;
-            case FACTION:
-            {
+            case FACTION: {
                 int originalowner =
                     FactionUtil::GetFactionIndex(UniverseUtil::GetGalaxyProperty(truncatedfilename, "faction"));
                 faction = FactionUtil::GetFactionIndex((*iter).value);
@@ -1153,8 +1142,8 @@ void StarSystem::beginElement(const string &name, const AttributeList &attribute
                 ourmat.power = parse_float((*iter).value);
                 break;
             case REFLECTNOLIGHT:
-                ourmat.sr = ourmat.sg = ourmat.sb = ourmat.dr = ourmat.dg = ourmat.db =
-                    ourmat.ar = ourmat.ag = ourmat.ab = 0;
+                ourmat.sr = ourmat.sg = ourmat.sb = ourmat.dr = ourmat.dg = ourmat.db = ourmat.ar = ourmat.ag =
+                    ourmat.ab = 0;
                 break;
             case RI:
                 R.i = parse_float((*iter).value) * xml->scale * ScaleOrbitDist(xml->fade);
@@ -1204,8 +1193,7 @@ void StarSystem::beginElement(const string &name, const AttributeList &attribute
                 gravity = parse_float((*iter).value);
                 break;
 
-            case OVERRIDE:
-            {
+            case OVERRIDE: {
                 string::size_type eqpos = (*iter).value.find_first_of('=');
                 if (eqpos != string::npos)
                 {
@@ -1217,19 +1205,20 @@ void StarSystem::beginElement(const string &name, const AttributeList &attribute
             }
         }
         if (isdest == true)
-            if (xml->fade) //xml->fade saves if it's autogenerated system
+            if (xml->fade) // xml->fade saves if it's autogenerated system
                 radius = ScaleJumpRadius(radius);
         radius *= xml->scale;
         if (xml->unitlevel > 2)
         {
             assert(xml->moons.size() != 0);
-            fprintf(stderr, "Creating planet %s with texture %s and technique %s - unitlevel > 2\n", fullname.c_str(), filename.c_str(), technique.c_str());
-            Unit *un = xml->moons[xml->moons.size() - 1]->beginElement(R, S, velocity, ComputeRotVel(rotvel, R, S),
-                                                                       position, gravity, radius,
-                                                                       filename, technique, unitname, blendSrc, blendDst, dest,
-                                                                       xml->unitlevel - 1, ourmat, curlights, false,
-                                                                       faction != 0 ? faction : FactionUtil::GetFactionIndex(UniverseUtil::GetGalaxyFaction(truncatedfilename)),
-                                                                       fullname, insideout);
+            fprintf(stderr, "Creating planet %s with texture %s and technique %s - unitlevel > 2\n", fullname.c_str(),
+                    filename.c_str(), technique.c_str());
+            Unit *un = xml->moons[xml->moons.size() - 1]->beginElement(
+                R, S, velocity, ComputeRotVel(rotvel, R, S), position, gravity, radius, filename, technique, unitname,
+                blendSrc, blendDst, dest, xml->unitlevel - 1, ourmat, curlights, false,
+                faction != 0 ? faction
+                             : FactionUtil::GetFactionIndex(UniverseUtil::GetGalaxyFaction(truncatedfilename)),
+                fullname, insideout);
             if (un)
             {
                 un->SetOwner(getTopLevelOwner());
@@ -1239,16 +1228,16 @@ void StarSystem::beginElement(const string &name, const AttributeList &attribute
         else
         {
             Planet *planet;
-            fprintf(stderr, "Creating planet %s with texture %s and technique %s - unitlevel <= 2\n", fullname.c_str(), filename.c_str(), technique.c_str());
-            xml->moons.push_back((planet =
-                                      UnitFactory::createPlanet(R, S, velocity,
-                                                                ComputeRotVel(rotvel, R, S),
-                                                                position, gravity, radius,
-                                                                filename, technique, unitname,
-                                                                blendSrc, blendDst, dest, xml->cursun.Cast() + xml->systemcentroid.Cast(),
-                                                                nullptr, ourmat, curlights, faction != 0 ? faction : FactionUtil::GetFactionIndex(UniverseUtil::GetGalaxyFaction(truncatedfilename)),
-                                                                fullname,
-                                                                insideout)));
+            fprintf(stderr, "Creating planet %s with texture %s and technique %s - unitlevel <= 2\n", fullname.c_str(),
+                    filename.c_str(), technique.c_str());
+            xml->moons.push_back(
+                (planet = UnitFactory::createPlanet(
+                     R, S, velocity, ComputeRotVel(rotvel, R, S), position, gravity, radius, filename, technique,
+                     unitname, blendSrc, blendDst, dest, xml->cursun.Cast() + xml->systemcentroid.Cast(), nullptr,
+                     ourmat, curlights,
+                     faction != 0 ? faction
+                                  : FactionUtil::GetFactionIndex(UniverseUtil::GetGalaxyFaction(truncatedfilename)),
+                     fullname, insideout)));
 
             xml->moons[xml->moons.size() - 1]->SetPosAndCumPos(R + S + xml->cursun.Cast() + xml->systemcentroid.Cast());
             xml->moons.back()->SetOwner(getTopLevelOwner());
@@ -1267,8 +1256,8 @@ void StarSystem::beginElement(const string &name, const AttributeList &attribute
                 break;
             }
         }
-        xml->conditionStack.push_back(
-            (!xml->conditionStack.size() || xml->conditionStack.back()) && ConfigCondition(condition));
+        xml->conditionStack.push_back((!xml->conditionStack.size() || xml->conditionStack.back()) &&
+                                      ConfigCondition(condition));
         break;
     case UNIT:
     case BUILDING:
@@ -1313,7 +1302,8 @@ void StarSystem::beginElement(const string &name, const AttributeList &attribute
                         FactionUtil::GetFactionIndex(UniverseUtil::GetGalaxyProperty(truncatedfilename, "faction"));
                     if (faction == originalowner)
                     {
-                        int ownerfaction = FactionUtil::GetFactionIndex(UniverseUtil::GetGalaxyFaction(truncatedfilename));
+                        int ownerfaction =
+                            FactionUtil::GetFactionIndex(UniverseUtil::GetGalaxyFaction(truncatedfilename));
                         faction = ownerfaction;
                     }
                 }
@@ -1367,29 +1357,35 @@ void StarSystem::beginElement(const string &name, const AttributeList &attribute
                 break;
             }
         }
-        if ((!xml->conditionStack.size() || xml->conditionStack.back()) && ConfigAllows(varname, varvalue) && ConfigCondition(condition))
+        if ((!xml->conditionStack.size() || xml->conditionStack.back()) && ConfigAllows(varname, varvalue) &&
+            ConfigCondition(condition))
         {
-            if (((elem == UNIT || elem == NEBULA || elem == ENHANCEMENT || elem == ASTEROID) || (xml->ct == nullptr && xml->parentterrain == nullptr)) && (xml->unitlevel > 2))
+            if (((elem == UNIT || elem == NEBULA || elem == ENHANCEMENT || elem == ASTEROID) ||
+                 (xml->ct == nullptr && xml->parentterrain == nullptr)) &&
+                (xml->unitlevel > 2))
             {
                 assert(xml->moons.size() != 0);
-                Unit *un = nullptr; //FIXME !!! un appears to never be allocated memory !!! "= nullptr" added by chuck_starchaser
+                Unit *un = nullptr; // FIXME !!! un appears to never be allocated memory !!! "= nullptr" added by
+                                    // chuck_starchaser
                 Planet *plan = xml->moons.back()->GetTopPlanet(xml->unitlevel - 1);
                 if (elem == UNIT)
                 {
                     Flightgroup *fg = getStaticBaseFlightgroup(faction);
-                    plan->AddSatellite(un = UnitFactory::createUnit(filename.c_str(), false, faction, "", fg, fg->nr_ships - 1));
-                    un->setFullname(fullname); //FIXME un de-referenced before allocation
+                    plan->AddSatellite(
+                        un = UnitFactory::createUnit(filename.c_str(), false, faction, "", fg, fg->nr_ships - 1));
+                    un->setFullname(fullname); // FIXME un de-referenced before allocation
                 }
                 else if (elem == NEBULA)
                 {
                     Flightgroup *fg = getStaticNebulaFlightgroup(faction);
-                    plan->AddSatellite(un = UnitFactory::createNebula(filename.c_str(), false, faction, fg, fg->nr_ships - 1));
+                    plan->AddSatellite(
+                        un = UnitFactory::createNebula(filename.c_str(), false, faction, fg, fg->nr_ships - 1));
                 }
                 else if (elem == ASTEROID)
                 {
                     Flightgroup *fg = getStaticAsteroidFlightgroup(faction);
-                    plan->AddSatellite(un =
-                                           UnitFactory::createAsteroid(filename.c_str(), faction, fg, fg->nr_ships - 1, scalex < 0 ? -scalex : scalex));
+                    plan->AddSatellite(un = UnitFactory::createAsteroid(filename.c_str(), faction, fg, fg->nr_ships - 1,
+                                                                        scalex < 0 ? -scalex : scalex));
                 }
                 else if (elem == ENHANCEMENT)
                 {
@@ -1397,27 +1393,27 @@ void StarSystem::beginElement(const string &name, const AttributeList &attribute
                 }
                 {
                     for (unsigned int i = 0; i < dest.size(); ++i)
-                        un->AddDestination(dest[i]); //FIXME un de-referenced before allocation
+                        un->AddDestination(dest[i]); // FIXME un de-referenced before allocation
                     dest.clear();
                 }
                 un->SetAI(new PlanetaryOrbit(un, velocity, position, R, S, QVector(0, 0, 0), plan));
                 if (elem == UNIT && un->faction != neutralfaction)
                 {
-                    un->SetTurretAI();                     //FIXME un de-referenced before allocation
-                    un->EnqueueAI(new Orders::FireAt(15)); //FIXME un de-referenced before allocation
+                    un->SetTurretAI();                     // FIXME un de-referenced before allocation
+                    un->EnqueueAI(new Orders::FireAt(15)); // FIXME un de-referenced before allocation
                 }
                 if (scalex < 0 && elem != ASTEROID)
-                    SetSubunitRotation(un, -scalex); //FIXME un de-referenced before allocation
-                //cheating so nothing collides at top lev
-                un->SetOwner(getTopLevelOwner());                    //FIXME un de-referenced before allocation
-                un->SetAngularVelocity(ComputeRotVel(rotvel, R, S)); //FIXME un de-referenced before allocation
+                    SetSubunitRotation(un, -scalex); // FIXME un de-referenced before allocation
+                // cheating so nothing collides at top lev
+                un->SetOwner(getTopLevelOwner());                    // FIXME un de-referenced before allocation
+                un->SetAngularVelocity(ComputeRotVel(rotvel, R, S)); // FIXME un de-referenced before allocation
             }
             else
             {
                 if ((elem == BUILDING || elem == VEHICLE) && xml->ct == nullptr && xml->parentterrain != nullptr)
                 {
-                    Unit *b = UnitFactory::createBuilding(
-                        xml->parentterrain, elem == VEHICLE, filename.c_str(), false, faction, string(""));
+                    Unit *b = UnitFactory::createBuilding(xml->parentterrain, elem == VEHICLE, filename.c_str(), false,
+                                                          faction, string(""));
                     b->SetPosAndCumPos(xml->cursun.Cast() + xml->systemcentroid.Cast());
                     b->EnqueueAI(new Orders::AggressiveAI("default.agg.xml"));
                     AddUnit(b);
@@ -1429,8 +1425,7 @@ void StarSystem::beginElement(const string &name, const AttributeList &attribute
                 }
                 else if ((elem == BUILDING || elem == VEHICLE) && xml->ct != nullptr)
                 {
-                    Unit *b = UnitFactory::createBuilding(
-                        xml->ct, elem == VEHICLE, filename.c_str(), false, faction);
+                    Unit *b = UnitFactory::createBuilding(xml->ct, elem == VEHICLE, filename.c_str(), false, faction);
                     b->SetPosAndCumPos(xml->cursun.Cast() + xml->systemcentroid.Cast());
                     b->EnqueueAI(new Orders::AggressiveAI("default.agg.xml"));
                     b->SetTurretAI();
@@ -1447,27 +1442,29 @@ void StarSystem::beginElement(const string &name, const AttributeList &attribute
                     if (elem == UNIT)
                     {
                         Flightgroup *fg = getStaticBaseFlightgroup(faction);
-                        Unit *moon_unit = UnitFactory::createUnit(filename.c_str(), false, faction, "", fg, fg->nr_ships - 1);
+                        Unit *moon_unit =
+                            UnitFactory::createUnit(filename.c_str(), false, faction, "", fg, fg->nr_ships - 1);
                         moon_unit->setFullname(fullname);
                         xml->moons.push_back((Planet *)moon_unit);
                     }
                     else if (elem == NEBULA)
                     {
                         Flightgroup *fg = getStaticNebulaFlightgroup(faction);
-                        xml->moons.push_back((Planet *)UnitFactory::createNebula(filename.c_str(), false, faction, fg, fg->nr_ships - 1));
+                        xml->moons.push_back((Planet *)UnitFactory::createNebula(filename.c_str(), false, faction, fg,
+                                                                                 fg->nr_ships - 1));
                     }
                     else if (elem == ASTEROID)
                     {
                         Flightgroup *fg = getStaticAsteroidFlightgroup(faction);
                         Planet *ast;
-                        xml->moons.push_back(ast =
-                                                 (Planet *)UnitFactory::createAsteroid(filename.c_str(), faction, fg, fg->nr_ships - 1,
-                                                                                       scalex));
+                        xml->moons.push_back(ast = (Planet *)UnitFactory::createAsteroid(filename.c_str(), faction, fg,
+                                                                                         fg->nr_ships - 1, scalex));
                     }
                     else if (elem == ENHANCEMENT)
                     {
                         Planet *enh;
-                        xml->moons.push_back(enh = (Planet *)UnitFactory::createEnhancement(filename.c_str(), faction, string("")));
+                        xml->moons.push_back(
+                            enh = (Planet *)UnitFactory::createEnhancement(filename.c_str(), faction, string("")));
                     }
                     {
                         Unit *un = xml->moons.back();
@@ -1475,8 +1472,9 @@ void StarSystem::beginElement(const string &name, const AttributeList &attribute
                             un->AddDestination(dest[i]);
                         dest.clear();
                     }
-                    xml->moons.back()->SetAI(new PlanetaryOrbit(xml->moons[xml->moons.size() - 1], velocity, position, R, S,
-                                                                xml->cursun.Cast() + xml->systemcentroid.Cast(), nullptr));
+                    xml->moons.back()->SetAI(new PlanetaryOrbit(xml->moons[xml->moons.size() - 1], velocity, position,
+                                                                R, S, xml->cursun.Cast() + xml->systemcentroid.Cast(),
+                                                                nullptr));
 
                     xml->moons.back()->SetPosAndCumPos(R + S + xml->cursun.Cast() + xml->systemcentroid.Cast());
                     xml->moons.back()->SetOwner(getTopLevelOwner());
@@ -1505,8 +1503,7 @@ void StarSystem::endElement(const string &name)
     Names elem = (Names)element_map.lookup(name);
     switch (elem)
     {
-    case FOG:
-    {
+    case FOG: {
         --xml->unitlevel;
         break;
     }
@@ -1552,7 +1549,7 @@ void StarSystem::LoadXML(const char *filename, const Vector &centroid, const flo
     }
     VSFile f;
     VSError err;
-    //if (file.length()) {
+    // if (file.length()) {
     err = f.OpenReadOnly(file, SystemFile);
     if (err > Ok)
     {

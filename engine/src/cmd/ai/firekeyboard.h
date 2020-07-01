@@ -1,10 +1,10 @@
 #ifndef _CMD_KEYBOARD_AI_H_
 #define _CMD_KEYBOARD_AI_H_
+#include "communication.h"
+#include "event_xml.h"
 #include "in.h"
 #include "order.h"
-#include "event_xml.h"
-#include "communication.h"
-//all unified AI's should inherit from FireAt, so they can choose targets together.
+// all unified AI's should inherit from FireAt, so they can choose targets together.
 #define NUMSAVEDTARGETS 10
 class FireKeyboard : public Order
 {
@@ -19,7 +19,7 @@ class FireKeyboard : public Order
     bool ShouldFire(Unit *targ);
     std::list<CommunicationMessage> resp;
 
-public:
+  public:
     virtual void SetParent(Unit *parent1);
     static void SetShieldsOff(const KBData &, KBSTATE);
     static void SetShieldsOneThird(const KBData &, KBSTATE);
@@ -110,15 +110,15 @@ public:
     static void FormUp(const KBData &, KBSTATE);
     static void DockWithMe(const KBData &, KBSTATE);
     static void DefendTarget(const KBData &, KBSTATE);
-    //IAmDave - new flightgroup commands...
+    // IAmDave - new flightgroup commands...
     static void DockTarget(const KBData &, KBSTATE k);
     static void HoldPosition(const KBData &, KBSTATE k);
-    //IAmDave - ...new flightgroup commands end.
+    // IAmDave - ...new flightgroup commands end.
     static void AttackTarget(const KBData &, KBSTATE);
     static void TurretAIOn(const KBData &, KBSTATE);
     static void TurretAIOff(const KBData &, KBSTATE);
     static void TurretFireAtWill(const KBData &, KBSTATE);
-    //Added for targeting nearest units. --ch
+    // Added for targeting nearest units. --ch
     static void NearestHostileTargetKey(const KBData &, KBSTATE k);
     static void NearestDangerousHostileKey(const KBData &, KBSTATE k);
     static void NearestFriendlyKey(const KBData &, KBSTATE k);
@@ -127,7 +127,7 @@ public:
     static void NearestJumpKey(const KBData &, KBSTATE k);
     static void TogglePause(const KBData &, KBSTATE);
 
-protected:
+  protected:
     void *savedTargets[NUMSAVEDTARGETS];
     float distance;
     unsigned int whichplayer;
@@ -136,9 +136,9 @@ protected:
     struct FIREKEYBOARDTYPE &j();
     unsigned int DoSpeechAndAni(Unit *un, Unit *parent, class CommunicationMessage &c);
 
-public:
+  public:
     virtual void ProcessCommMessage(class CommunicationMessage &c);
-    FireKeyboard(unsigned int whichjoystick, unsigned int whichplayer); //weapon prefs?
+    FireKeyboard(unsigned int whichjoystick, unsigned int whichplayer); // weapon prefs?
     virtual void Execute();
     virtual ~FireKeyboard();
 };

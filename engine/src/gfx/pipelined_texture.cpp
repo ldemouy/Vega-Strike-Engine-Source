@@ -1,6 +1,8 @@
 #include "pipelined_texture.h"
 
-PipelinedTexture::PipelinedTexture() : Texture() {}
+PipelinedTexture::PipelinedTexture() : Texture()
+{
+}
 unsigned char *PipelinedTexture::beginMutate()
 {
     return data;
@@ -8,8 +10,8 @@ unsigned char *PipelinedTexture::beginMutate()
 
 Texture *PipelinedTexture::Original()
 {
-    //Had to duplicate the Texture::Original() function otherwise VC++ 6 would not compile anymore
-    //reporting an undefined reference to Texture::Original()
+    // Had to duplicate the Texture::Original() function otherwise VC++ 6 would not compile anymore
+    // reporting an undefined reference to Texture::Original()
     if (original)
         return original->Original();
     else
@@ -21,8 +23,8 @@ void PipelinedTexture::endMutate(int xoffset, int yoffset, int width, int height
     GFXTransferSubTexture(data, name, xoffset, yoffset, width, height, TEXTURE_2D);
 }
 
-PipelinedTexture::PipelinedTexture(unsigned int width, unsigned int height, unsigned char *current,
-                                   unsigned char *last) : Texture()
+PipelinedTexture::PipelinedTexture(unsigned int width, unsigned int height, unsigned char *current, unsigned char *last)
+    : Texture()
 {
     this->sizeX = width;
     this->sizeY = height;
@@ -37,18 +39,10 @@ PipelinedTexture::PipelinedTexture(unsigned int width, unsigned int height, unsi
     image_target = TEXTURE_2D;
     GFXCreateTexture(sizeX, sizeY, (mode == _24BITRGBA) ? RGBA32 : ((mode == _8BIT) ? PALETTE8 : RGB32), &name, nullptr,
                      (stage == 1) ? 0 : 1);
-    GFXCreateTexture(sizeX,
-                     sizeY,
-                     (mode == _24BITRGBA) ? RGBA32 : ((mode == _8BIT) ? PALETTE8 : RGB32),
-                     &this->current,
-                     nullptr,
-                     (stage == 1) ? 0 : 1);
-    GFXCreateTexture(sizeX,
-                     sizeY,
-                     (mode == _24BITRGBA) ? RGBA32 : ((mode == _8BIT) ? PALETTE8 : RGB32),
-                     &this->last,
-                     nullptr,
-                     (stage == 1) ? 0 : 1);
+    GFXCreateTexture(sizeX, sizeY, (mode == _24BITRGBA) ? RGBA32 : ((mode == _8BIT) ? PALETTE8 : RGB32), &this->current,
+                     nullptr, (stage == 1) ? 0 : 1);
+    GFXCreateTexture(sizeX, sizeY, (mode == _24BITRGBA) ? RGBA32 : ((mode == _8BIT) ? PALETTE8 : RGB32), &this->last,
+                     nullptr, (stage == 1) ? 0 : 1);
     if (current)
         GFXTransferTexture(current, this->current, sizeX, sizeY,
                            (mode == _24BITRGBA) ? RGBA32 : ((mode == _8BIT) ? PALETTE8 : RGB32), TEXTURE_2D);
@@ -80,8 +74,8 @@ void PipelinedTexture::Swap()
     if (clone)
     {
         clone--;
-        GFXCreateTexture(sizeX, sizeY, (mode == _24BITRGBA) ? RGBA32 : ((mode == _8BIT) ? PALETTE8 : RGB32), &name, nullptr,
-                         (stage == 1) ? 0 : 1);
+        GFXCreateTexture(sizeX, sizeY, (mode == _24BITRGBA) ? RGBA32 : ((mode == _8BIT) ? PALETTE8 : RGB32), &name,
+                         nullptr, (stage == 1) ? 0 : 1);
     }
 }
 
@@ -97,12 +91,8 @@ Texture *PipelinedTexture::Clone()
     memcpy(retval->data, data, bpp * sizeof(unsigned char) * sizeX * sizeY);
     GFXCreateTexture(sizeX, sizeY, (mode == _24BITRGBA) ? RGBA32 : ((mode == _8BIT) ? PALETTE8 : RGB32), &name, nullptr,
                      (stage == 1) ? 0 : 1, BILINEAR, TEXTURE2D);
-    GFXTransferTexture(retval->data,
-                       name,
-                       sizeX,
-                       sizeY,
-                       (mode == _24BITRGBA) ? RGBA32 : ((mode == _8BIT) ? PALETTE8 : RGB32),
-                       TEXTURE_2D);
+    GFXTransferTexture(retval->data, name, sizeX, sizeY,
+                       (mode == _24BITRGBA) ? RGBA32 : ((mode == _8BIT) ? PALETTE8 : RGB32), TEXTURE_2D);
     return retval;
 }
 

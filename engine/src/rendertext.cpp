@@ -1,9 +1,9 @@
-//rendertext.cpp: based on Don's gl_text.cpp
-//Based on Aardarples rendertext
+// rendertext.cpp: based on Don's gl_text.cpp
+// Based on Aardarples rendertext
 #include "command.h"
 
-#include "vegastrike.h"
 #include "cg_global.h"
+#include "vegastrike.h"
 #ifdef HAVE_SDL
 #include "SDL/SDL.h"
 #endif
@@ -20,8 +20,8 @@ using std::string;
 using std::vector;
 
 //****************
-//Console Rendering System by Rogue
-//2005-08-a-few-days
+// Console Rendering System by Rogue
+// 2005-08-a-few-days
 //
 //****************
 
@@ -33,11 +33,11 @@ static SDL_mutex *_rtextSDLMutex()
 }
 #endif
 
-//Render Text (Console) Constructor {{{
+// Render Text (Console) Constructor {{{
 RText::RText()
 {
 #ifdef HAVE_SDL
-    //Initialize shared mutex
+    // Initialize shared mutex
     //(creation is always single-threaded, since no aliases are possible yet)
     _rtextSDLMutex();
 #endif
@@ -47,18 +47,20 @@ RText::RText()
     conskip = 0;
     saycommand("");
 }
-RText::~RText() {}
-//Set the text width, not used  .. yet{{{
+RText::~RText()
+{
+}
+// Set the text width, not used  .. yet{{{
 int RText::text_width(char *str)
 {
     return 0;
 }
-//Should be unused defines {{{
+// Should be unused defines {{{
 #define VIRTW 2400
 #define VIRTH 1800
 #define PIXELTAB (VIRTW / 12)
 #define FONTH 64
-//Draw text, used by the console, should be private, use conoutf to print to the console {{{
+// Draw text, used by the console, should be private, use conoutf to print to the console {{{
 void RText::draw_text(std::string &str, float left, float top, int gl_num)
 {
     int x = float_to_int(left);
@@ -72,8 +74,8 @@ void RText::draw_text(std::string &str, float left, float top, int gl_num)
     newTextPlane.SetCharSize(.8, .12);
     newTextPlane.Draw(str);
 }
-//render the console, only call if bool console == true {{{
-void RText::renderconsole() //render buffer
+// render the console, only call if bool console == true {{{
+void RText::renderconsole() // render buffer
 {
     int nd = 0;
     vector<string> refs;
@@ -107,17 +109,17 @@ void RText::renderconsole() //render buffer
     shorter.append(getcurcommand());
     while (shorter.size() > 80)
         shorter.erase(shorter.begin());
-    //erase the front of the current command while it's larger than 80
-    //charactors, as to not draw off the screen
+    // erase the front of the current command while it's larger than 80
+    // charactors, as to not draw off the screen
     drawCommand << workIt << "#FF1100> "
                 << "#FF1100" << shorter << "#00000";
-    string Acdraw; //passing .str() straight to draw_text produces an
-                   //error with gcc 4, because it's constant I believe
+    string Acdraw; // passing .str() straight to draw_text produces an
+                   // error with gcc 4, because it's constant I believe
     Acdraw.append(drawCommand.str());
     draw_text(Acdraw, x, y, 2);
 }
-//append a line to the console, optional "highlight" method , untested {{{
-void RText::conline(string &sf, bool highlight) //add a line to the console buffer
+// append a line to the console, optional "highlight" method , untested {{{
+void RText::conline(string &sf, bool highlight) // add a line to the console buffer
 {
     {
         size_t search = 0;
@@ -130,10 +132,10 @@ void RText::conline(string &sf, bool highlight) //add a line to the console buff
     }
     cline cl;
     int lastmillis = 0;
-    cl.outtime = lastmillis; //for how long to keep line on screen
+    cl.outtime = lastmillis; // for how long to keep line on screen
     if (highlight)
     {
-        //show line in a different colour, for chat etc.
+        // show line in a different colour, for chat etc.
         cl.cref.append("\f");
         cl.cref.append(sf);
     }
@@ -143,7 +145,7 @@ void RText::conline(string &sf, bool highlight) //add a line to the console buff
     }
     conlines.insert(conlines.begin(), cl);
 }
-//print a line to the console, broken at \n's {{{
+// print a line to the console, broken at \n's {{{
 void RText::conoutf(char *in)
 {
     string foobar(in);
@@ -153,7 +155,7 @@ void RText::conoutf(char *in)
 void RText::conoutf(string &s, int a, int b, int c)
 {
 #ifdef HAVE_SDL
-    //NOTE: first call must be single-threaded!
+    // NOTE: first call must be single-threaded!
     SDL_mutex *mymutex = _rtextSDLMutex();
     SDL_LockMutex(mymutex);
 #endif
@@ -194,14 +196,14 @@ void RText::conoutf(string &s, int a, int b, int c)
         }
         else if (s[burger] != '\r')
         {
-            customer += s[burger]; //get fat
+            customer += s[burger]; // get fat
         }
     }
 #ifdef HAVE_SDL
     SDL_UnlockMutex(mymutex);
 #endif
 }
-//same as above, but I think it works better {{{
+// same as above, but I think it works better {{{
 void RText::conoutn(string &s, int a, int b, int c)
 {
     size_t x = s.find("\n");
@@ -225,21 +227,20 @@ void RText::conoutn(string &s, int a, int b, int c)
         conoutf(part, a, b, c);
     }
 }
-//saycommand(char *), should "say" something, will be useful only with network enabled {{{
-//does nothing now
+// saycommand(char *), should "say" something, will be useful only with network enabled {{{
+// does nothing now
 void RText::saycommand(const char *init) // DELETE unused
 {
 }
-//Console Keyboard Input {{{
+// Console Keyboard Input {{{
 void RText::ConsoleKeyboardI(int code, bool isdown)
 {
     if (isdown)
     {
         switch (code)
         {
-            //pop teh back of commandbuf
-        case WSK_BACKSPACE:
-        {
+            // pop teh back of commandbuf
+        case WSK_BACKSPACE: {
             string::iterator iter = commandbuf.begin();
             if (iter < commandbuf.end())
             {
@@ -250,8 +251,8 @@ void RText::ConsoleKeyboardI(int code, bool isdown)
             break;
         }
         case WSK_LEFT:
-            //this should move a put pointer for commandbuf
-            //right should move it the other way.
+            // this should move a put pointer for commandbuf
+            // right should move it the other way.
             break;
 
         case WSK_RETURN:
@@ -266,28 +267,28 @@ void RText::ConsoleKeyboardI(int code, bool isdown)
                     iter--;
                     if (commandbuf.compare((*(iter))) != 0 && !noSize)
                     {
-                        //store what was typed into a vector for a command history
-                        //to scroll up and down through what was typed
-                        //This "feature" isn't finished
-                        vhistory.push_back(commandbuf); //cap this?
+                        // store what was typed into a vector for a command history
+                        // to scroll up and down through what was typed
+                        // This "feature" isn't finished
+                        vhistory.push_back(commandbuf); // cap this?
                     }
                 }
                 else if (noSize)
                 {
                     vhistory.push_back(commandbuf);
                 }
-                //commands beginning with / are executed
-                //in localPlayer.cpp just before this is called
+                // commands beginning with / are executed
+                // in localPlayer.cpp just before this is called
             }
             if (commandbuf.size() > 0)
             {
-                //print what was typed - Now done in the command processor
-                //clear the buffer
+                // print what was typed - Now done in the command processor
+                // clear the buffer
                 commandbuf.erase();
             }
             break;
         default:
-            //add it to the command buffer
+            // add it to the command buffer
             if (code > 0 && code < 256)
             {
                 unsigned char k = (unsigned char)code;
@@ -298,12 +299,12 @@ void RText::ConsoleKeyboardI(int code, bool isdown)
     }
 }
 //}}}
-//get the current command buffer, to execute at enter {{{
+// get the current command buffer, to execute at enter {{{
 string RText::getcurcommand()
 {
     return commandbuf;
 }
-//footer, leave at bottom
+// footer, leave at bottom
 /*
  * Local variables:
  * tab-width: 4

@@ -1,10 +1,10 @@
-#include <vector>
-#include <string>
-#include <expat.h>
-#include "vegastrike.h"
 #include "communication.h"
-#include <assert.h>
+#include "vegastrike.h"
 #include "vsfilesystem.h"
+#include <assert.h>
+#include <expat.h>
+#include <string>
+#include <vector>
 static int unitlevel;
 using namespace XMLSupport;
 using XMLSupport::Attribute;
@@ -12,36 +12,29 @@ using XMLSupport::AttributeList;
 using XMLSupport::EnumMap;
 namespace CommXML
 {
-    enum Names
-    {
-        UNKNOWN,
-        NODE,
-        EDGE,
-        NAME,
-        INDEX,
-        VALUE,
-        SOUND,
-        SEXE,
-        FILENAME,
-        GAIN
-    };
+enum Names
+{
+    UNKNOWN,
+    NODE,
+    EDGE,
+    NAME,
+    INDEX,
+    VALUE,
+    SOUND,
+    SEXE,
+    FILENAME,
+    GAIN
+};
 
-    const EnumMap::Pair element_names[] = {
-        EnumMap::Pair("UNKNOWN", UNKNOWN),
-        EnumMap::Pair("Node", NODE),
-        EnumMap::Pair("Edge", EDGE),
-        EnumMap::Pair("Sound", SOUND)};
-    const EnumMap::Pair attribute_names[] = {
-        EnumMap::Pair("UNKNOWN", UNKNOWN),
-        EnumMap::Pair("Text", NAME),
-        EnumMap::Pair("Index", INDEX),
-        EnumMap::Pair("Relationship", VALUE),
-        EnumMap::Pair("file", FILENAME),
-        EnumMap::Pair("sex", SEXE),
-        EnumMap::Pair("gain", GAIN)};
+const EnumMap::Pair element_names[] = {EnumMap::Pair("UNKNOWN", UNKNOWN), EnumMap::Pair("Node", NODE),
+                                       EnumMap::Pair("Edge", EDGE), EnumMap::Pair("Sound", SOUND)};
+const EnumMap::Pair attribute_names[] = {EnumMap::Pair("UNKNOWN", UNKNOWN), EnumMap::Pair("Text", NAME),
+                                         EnumMap::Pair("Index", INDEX),     EnumMap::Pair("Relationship", VALUE),
+                                         EnumMap::Pair("file", FILENAME),   EnumMap::Pair("sex", SEXE),
+                                         EnumMap::Pair("gain", GAIN)};
 
-    const EnumMap element_map(element_names, sizeof(element_names) / sizeof(element_names[0]));
-    const EnumMap attribute_map(attribute_names, sizeof(attribute_names) / sizeof(attribute_names[0]));
+const EnumMap element_map(element_names, sizeof(element_names) / sizeof(element_names[0]));
+const EnumMap attribute_map(attribute_names, sizeof(attribute_names) / sizeof(attribute_names[0]));
 } // namespace CommXML
 
 void FSM::beginElement(void *userData, const XML_Char *names, const XML_Char **atts)
@@ -56,8 +49,8 @@ void FSM::beginElement(const string &name, const AttributeList attributes)
     Names elem = (Names)element_map.lookup(name);
     string nam;
     string filename;
-    float val = 0.0f;       //FIXME "= 0.0f" added by chuck_starchaser without knowing what value to use
-    unsigned char sexe = 0; //FIXME "= 0" added by chuck_starchaser without knowing what value to use
+    float val = 0.0f;       // FIXME "= 0.0f" added by chuck_starchaser without knowing what value to use
+    unsigned char sexe = 0; // FIXME "= 0" added by chuck_starchaser without knowing what value to use
     switch (elem)
     {
     case SOUND:
@@ -78,14 +71,14 @@ void FSM::beginElement(const string &name, const AttributeList attributes)
             }
         }
         if (!filename.empty())
-            nodes.back().AddSound(filename, sexe, val); //FIXME sexe was used uninitialized until I added = 0 --chuck_starchaser
+            nodes.back().AddSound(filename, sexe,
+                                  val); // FIXME sexe was used uninitialized until I added = 0 --chuck_starchaser
         break;
     case UNKNOWN:
         unitlevel++;
         return;
 
-    case NODE:
-    {
+    case NODE: {
         unitlevel++;
         vector<string> messages;
         for (iter = attributes.begin(); iter != attributes.end(); iter++)
@@ -116,7 +109,7 @@ void FSM::beginElement(const string &name, const AttributeList attributes)
                 }
             }
         }
-        nodes.push_back(Node(messages, val)); //FIXME val was used uninitialized until I added = 0 --chuck_starchaser
+        nodes.push_back(Node(messages, val)); // FIXME val was used uninitialized until I added = 0 --chuck_starchaser
         break;
     }
     case EDGE:

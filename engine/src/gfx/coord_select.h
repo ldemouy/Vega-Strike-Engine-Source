@@ -1,19 +1,21 @@
-#include "vec.h"
 #include "animation.h"
 #include "in_mouse.h"
+#include "vec.h"
 
 class CoordinateSelect
 {
-protected:
+  protected:
     float CrosshairSize;
     Animation LocSelAni;
     QVector LocalPosition;
     void UpdateMouse();
 
-public:
+  public:
     static void MouseMoveHandle(KBSTATE, int, int, int, int, int);
-    CoordinateSelect(QVector); //wish I could warp mouse pointer there
-    ~CoordinateSelect() {}
+    CoordinateSelect(QVector); // wish I could warp mouse pointer there
+    ~CoordinateSelect()
+    {
+    }
     inline QVector GetVector()
     {
         return LocalPosition;

@@ -1,21 +1,21 @@
-#include "unit_generic.h"
-#include "missile_generic.h"
+#include "ai/aggressive.h"
+#include "ai/fireall.h"
+#include "ai/flybywire.h"
+#include "ai/navigation.h"
+#include "ai/order.h"
+#include "ai/script.h"
+#include "aldrv/audiolib.h"
 #include "beam.h"
 #include "bolt.h"
-#include "weapon_xml.h"
-#include "aldrv/audiolib.h"
-#include "unit_factory.h"
-#include "ai/order.h"
-#include "ai/fireall.h"
-#include "ai/script.h"
-#include "ai/navigation.h"
-#include "ai/flybywire.h"
 #include "configxml.h"
-#include "gfx/cockpit_generic.h"
 #include "force_feedback.h"
-#include "ai/aggressive.h"
+#include "gfx/cockpit_generic.h"
 #include "lin_time.h"
+#include "missile_generic.h"
+#include "unit_factory.h"
+#include "unit_generic.h"
 #include "vsfilesystem.h"
+#include "weapon_xml.h"
 
 extern char SERVER;
 Mount::Mount()
@@ -51,7 +51,8 @@ float Mount::ComputeAnimatedFrame(Mesh *gun)
         if (ref.gun)
         {
             if (ref.gun->Ready())
-                return getNewTime() + type->Refire() - ref.gun->refireTime() - interpolation_blend_factor * SIMULATION_ATOM;
+                return getNewTime() + type->Refire() - ref.gun->refireTime() -
+                       interpolation_blend_factor * SIMULATION_ATOM;
             else
                 return getNewTime() * gun->getFramesPerSecond();
         }
@@ -69,9 +70,10 @@ float Mount::ComputeAnimatedFrame(Mesh *gun)
     }
 }
 Mount::Mount(const string &filename, int am, int vol, float xyscale, float zscale, float func, float maxfunc,
-             bool banked) : bank(banked)
+             bool banked)
+    : bank(banked)
 {
-    //short fix
+    // short fix
     functionality = func;
     maxfunctionality = maxfunc;
     static weapon_info wi(weapon_info::BEAM);
@@ -124,8 +126,8 @@ void Mount::UnFire()
 
 void Mount::ReplaceMounts(Unit *un, const Mount *other)
 {
-    int thisvol = volume; //short fix
-    int thissize = size;  //short fix
+    int thisvol = volume; // short fix
+    int thissize = size;  // short fix
     float xyscale = this->xyscale;
     float zscale = this->zscale;
     bool thisbank = this->bank;
@@ -146,7 +148,7 @@ void Mount::ReplaceMounts(Unit *un, const Mount *other)
     if (other->ammo == -1)
         ammo = -1;
     else if (other->ammo != -1 && ammo == -1)
-        ammo = 0; //zero ammo if other was not zero earlier.
+        ammo = 0; // zero ammo if other was not zero earlier.
     un->setAverageGunSpeed();
 }
 double Mount::Percentage(const Mount *newammo) const
@@ -163,7 +165,8 @@ double Mount::Percentage(const Mount *newammo) const
         }
         else
         {
-            if (newammo->type->Range == type->Range && newammo->type->Damage == type->Damage && newammo->type->PhaseDamage == type->PhaseDamage)
+            if (newammo->type->Range == type->Range && newammo->type->Damage == type->Damage &&
+                newammo->type->PhaseDamage == type->PhaseDamage)
                 return 1;
             if (newammo->type->weapon_name == type->weapon_name)
                 return 1;
@@ -175,7 +178,8 @@ double Mount::Percentage(const Mount *newammo) const
         thingstocompare++;
         if (ammo > 0)
         {
-            if (newammo->type->Range == type->Range && newammo->type->Damage == type->Damage && newammo->type->PhaseDamage == type->PhaseDamage)
+            if (newammo->type->Range == type->Range && newammo->type->Damage == type->Damage &&
+                newammo->type->PhaseDamage == type->PhaseDamage)
                 return 1;
             if (newammo->type->weapon_name == type->weapon_name)
                 return 1;
@@ -200,15 +204,9 @@ double Mount::Percentage(const Mount *newammo) const
 }
 extern void GetMadAt(Unit *un, Unit *parent, int numhits = 0);
 
-//bool returns whether to refund the cost of firing
-bool Mount::PhysicsAlignedFire(Unit *caller,
-                               const Transformation &Cumulative,
-                               const Matrix &m,
-                               const Vector &velocity,
-                               void *owner,
-                               Unit *target,
-                               signed char autotrack,
-                               float trackingcone,
+// bool returns whether to refund the cost of firing
+bool Mount::PhysicsAlignedFire(Unit *caller, const Transformation &Cumulative, const Matrix &m, const Vector &velocity,
+                               void *owner, Unit *target, signed char autotrack, float trackingcone,
                                CollideMap::iterator hint[])
 {
     using namespace VSFileSystem;
@@ -221,11 +219,11 @@ bool Mount::PhysicsAlignedFire(Unit *caller,
     if (processed == FIRED)
     {
         if (type->type == weapon_info::BEAM || type->isMissile())
-            //Missiles and beams set to processed.
+            // Missiles and beams set to processed.
             processed = PROCESSED;
         else if (ref.refire < type->Refire() || type->EnergyRate > caller->energy)
-            //Wait until refire has expired and reactor has produced enough energy for the next bolt.
-            return true; //Not ready to refire yet.  But don't stop firing.
+            // Wait until refire has expired and reactor has produced enough energy for the next bolt.
+            return true; // Not ready to refire yet.  But don't stop firing.
 
         Unit *temp;
         Transformation tmp(orient, pos.Cast());
@@ -254,7 +252,8 @@ bool Mount::PhysicsAlignedFire(Unit *caller,
         }
         else
         {
-            static bool reduce_beam_ammo = XMLSupport::parse_bool(vs_config->getVariable("physics", "reduce_beam_ammo", "0"));
+            static bool reduce_beam_ammo =
+                XMLSupport::parse_bool(vs_config->getVariable("physics", "reduce_beam_ammo", "0"));
             if (ammo > 0 && reduce_beam_ammo)
                 ammo--;
         }
@@ -270,7 +269,8 @@ bool Mount::PhysicsAlignedFire(Unit *caller,
         case weapon_info::BOLT:
         case weapon_info::BALL:
             caller->energy -= type->EnergyRate;
-            hint[Unit::UNIT_BOLT] = Bolt(type, mat, velocity, owner, hint[Unit::UNIT_BOLT]).location; //FIXME turrets won't work! Velocity
+            hint[Unit::UNIT_BOLT] =
+                Bolt(type, mat, velocity, owner, hint[Unit::UNIT_BOLT]).location; // FIXME turrets won't work! Velocity
 
             break;
         case weapon_info::PROJECTILE:
@@ -280,9 +280,9 @@ bool Mount::PhysicsAlignedFire(Unit *caller,
             VSError err = LookForFile(skript, AiFile);
             if (err <= Ok)
             {
-                temp = UnitFactory::createMissile(
-                    type->file.c_str(), caller->faction, "", type->Damage, type->PhaseDamage, type->Range / type->Speed,
-                    type->Radius, type->RadialSpeed, type->PulseSpeed /*detonation_radius*/);
+                temp = UnitFactory::createMissile(type->file.c_str(), caller->faction, "", type->Damage,
+                                                  type->PhaseDamage, type->Range / type->Speed, type->Radius,
+                                                  type->RadialSpeed, type->PulseSpeed /*detonation_radius*/);
                 if (!match_speed_with_target)
                 {
                     temp->GetComputerData().max_combat_speed = type->Speed + velocity.Magnitude();
@@ -301,27 +301,22 @@ bool Mount::PhysicsAlignedFire(Unit *caller,
                 if (testfg->name == "Base")
                 {
                     int fgsnumber = 0;
-                    Flightgroup *fg = Flightgroup::newFlightgroup("Base_Patrol",
-                                                                  type->file,
+                    Flightgroup *fg = Flightgroup::newFlightgroup("Base_Patrol", type->file,
                                                                   FactionUtil::GetFactionName(caller->faction),
-                                                                  "deafult",
-                                                                  1,
-                                                                  1,
-                                                                  "",
-                                                                  "",
-                                                                  mission);
+                                                                  "deafult", 1, 1, "", "", mission);
                     if (fg != nullptr)
                     {
                         fg->target.SetUnit(caller->Target());
                         fg->directive = "a";
-                        fg->name = "Base_Patrol"; //this fixes base-spawned fighters becoming navpoints, which happens sometimes
+                        fg->name = "Base_Patrol"; // this fixes base-spawned fighters becoming navpoints, which happens
+                                                  // sometimes
 
                         fgsnumber = fg->nr_ships;
                         fg->nr_ships = 1;
                         fg->nr_ships_left = 1;
                     }
-                    temp = UnitFactory::createUnit(
-                        type->file.c_str(), false, caller->faction, "", fg, fgsnumber, nullptr);
+                    temp =
+                        UnitFactory::createUnit(type->file.c_str(), false, caller->faction, "", fg, fgsnumber, nullptr);
                 }
                 else
                 {
@@ -333,8 +328,8 @@ bool Mount::PhysicsAlignedFire(Unit *caller,
                         fg->nr_ships++;
                         fg->nr_ships_left++;
                     }
-                    temp = UnitFactory::createUnit(
-                        type->file.c_str(), false, caller->faction, "", fg, fgsnumber, nullptr);
+                    temp =
+                        UnitFactory::createUnit(type->file.c_str(), false, caller->faction, "", fg, fgsnumber, nullptr);
                 }
             }
             Vector adder = Vector(mat.r[6], mat.r[7], mat.r[8]) * type->Speed;
@@ -355,8 +350,8 @@ bool Mount::PhysicsAlignedFire(Unit *caller,
                 {
                     temp->EnqueueAI(new Orders::AggressiveAI("default.agg.xml"));
                     temp->SetTurretAI();
-                    temp->TurretFAW();    //turrets are for DEFENSE damnit!
-                    temp->owner = caller; //spawned wingmen act as cargo (owned) wingmen, not as hired wingmen
+                    temp->TurretFAW();    // turrets are for DEFENSE damnit!
+                    temp->owner = caller; // spawned wingmen act as cargo (owned) wingmen, not as hired wingmen
                     float relat;
                     relat = caller->getRelation(target);
                     if (caller->isSubUnit() && relat >= 0)
@@ -370,7 +365,7 @@ bool Mount::PhysicsAlignedFire(Unit *caller,
                         while (relat < temp->getRelation(target) && i++ < 100)
                             GetMadAt(target, temp, 2);
                     }
-                    //pissed off					getMadAt(target, 10); // how do I cause an attack here?
+                    // pissed off					getMadAt(target, 10); // how do I cause an attack here?
                 }
             }
             else
@@ -399,11 +394,9 @@ bool Mount::PhysicsAlignedFire(Unit *caller,
         bool ips = ((cp = _Universe->isPlayerStarshipVoid(owner)) != nullptr);
         double distancesqr = (tmp.position - AUDListenerLocation()).MagnitudeSquared();
         static double maxdistancesqr =
-            XMLSupport::parse_float(vs_config->getVariable("audio", "max_range_to_hear_weapon_fire",
-                                                           "100000")) *
+            XMLSupport::parse_float(vs_config->getVariable("audio", "max_range_to_hear_weapon_fire", "100000")) *
             XMLSupport::parse_float(vs_config->getVariable("audio", "max_range_to_hear_weapon_fire", "100000"));
-        static float weapon_gain =
-            XMLSupport::parse_float(vs_config->getVariable("audio", "weapon_gain", ".25"));
+        static float weapon_gain = XMLSupport::parse_float(vs_config->getVariable("audio", "weapon_gain", ".25"));
         static float exterior_weapon_gain =
             XMLSupport::parse_float(vs_config->getVariable("audio", "exterior_weapon_gain", ".35"));
         static float min_weapon_sound_refire =
@@ -431,7 +424,8 @@ bool Mount::PhysicsAlignedFire(Unit *caller,
                 sound_gain = exterior_weapon_gain;
             }
 
-            if ((((!use_separate_sound) || type->type == weapon_info::BEAM) || ((!ai_use_separate_sound) && !ips)) && !type->isMissile())
+            if ((((!use_separate_sound) || type->type == weapon_info::BEAM) || ((!ai_use_separate_sound) && !ips)) &&
+                !type->isMissile())
             {
                 if (ai_sound || (ips && type->type == weapon_info::BEAM))
                 {
@@ -526,7 +520,7 @@ bool Mount::Fire(Unit *firer, void *owner, bool Missile, bool listen_to_owner)
 }
 void Mount::PhysicsAlignedUnfire()
 {
-    //Stop Playing SOund?? No, that's done in the beam, must not be aligned
+    // Stop Playing SOund?? No, that's done in the beam, must not be aligned
     if (processed == UNFIRED)
         if (AUDIsPlaying(sound))
             AUDStopPlaying(sound);
@@ -534,5 +528,5 @@ void Mount::PhysicsAlignedUnfire()
 
 void Mount::ReplaceSound()
 {
-    sound = AUDCreateSound(sound, false); //copy constructor basically
+    sound = AUDCreateSound(sound, false); // copy constructor basically
 }

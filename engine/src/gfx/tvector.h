@@ -9,21 +9,18 @@ class Matrix;
 
 /*
  * XVector = Vector, QFLOAT = float, YVector = QVector
-*/
+ */
 
 // Moved to start to prevent 'specialization ... after instantiation' error
-template <typename T>
-T _netswap(T);
+template <typename T> T _netswap(T);
 
-template <typename T>
-T _sqrt(T);
+template <typename T> T _sqrt(T);
 
 // Note that S is QFLOAT and the main typename. T is used for defining YVector.
-template <typename S, typename T>
-class TVector
+template <typename S, typename T> class TVector
 {
     // Fields
-public:
+  public:
     union {
         S i;
         S x;
@@ -38,13 +35,15 @@ public:
     };
 
     // Constructors
-    TVector() : i(0), j(0), k(0) {}
+    TVector() : i(0), j(0), k(0)
+    {
+    }
     TVector(const TVector<T, S> &a);
     TVector(S i, S j, S k);
     TVector(struct _object *);
 
     // Operators
-public:
+  public:
     TVector operator+(const TVector &obj) const;
     TVector operator-(const TVector &obj) const;
     S operator*(const TVector &b) const;
@@ -57,18 +56,18 @@ public:
     TVector &operator-=(const TVector &obj);
     TVector &operator*=(const T &obj);
 
-private:
+  private:
     const TVector<T, S> &operator=(const TVector<T, S> &a);
 
     // Methods
-private:
+  private:
     friend class Quadsquare;
     friend class QuadTree;
     friend class CoordinateSelect;
     friend class AIScript;
     friend class SphericalTransform;
 
-public:
+  public:
     TVector<T, S> Cast() const;
     TVector Cross(const TVector &v) const;
     S Dot(const TVector &b) const;
@@ -84,7 +83,7 @@ public:
     TVector Min(const TVector &other) const;
     TVector Max(const TVector &other) const;
 
-    void Yaw(S rad); //only works with unit vector
+    void Yaw(S rad); // only works with unit vector
     void Roll(S rad);
     void Pitch(S rad);
 
@@ -97,72 +96,52 @@ public:
     TVector Transform(const Matrix &t, const TVector &v);
 };
 
-template <typename S, typename T>
-TVector<S, T> operator*(TVector<S, T> vector, const float obj);
+template <typename S, typename T> TVector<S, T> operator*(TVector<S, T> vector, const float obj);
 
-template <typename S, typename T>
-TVector<S, T> operator*(const float obj, TVector<S, T> vector);
+template <typename S, typename T> TVector<S, T> operator*(const float obj, TVector<S, T> vector);
 
-template <typename S, typename T>
-TVector<S, T> operator*(TVector<S, T> vector, const double obj);
+template <typename S, typename T> TVector<S, T> operator*(TVector<S, T> vector, const double obj);
 
-template <typename S, typename T>
-TVector<S, T> operator*(const double obj, TVector<S, T> vector);
+template <typename S, typename T> TVector<S, T> operator*(const double obj, TVector<S, T> vector);
 
-template <typename S, typename T>
-TVector<S, T> operator*(TVector<S, T> vector, const int obj);
+template <typename S, typename T> TVector<S, T> operator*(TVector<S, T> vector, const int obj);
 
-template <typename S, typename T>
-TVector<S, T> operator*(const int obj, TVector<S, T> vector);
+template <typename S, typename T> TVector<S, T> operator*(const int obj, TVector<S, T> vector);
 
-template <typename S, typename T>
-TVector<S, T> operator/(const TVector<S, T> &lval, const S obj);
+template <typename S, typename T> TVector<S, T> operator/(const TVector<S, T> &lval, const S obj);
 
-template <typename S, typename T>
-TVector<S, T> CrossProduct(const TVector<S, T> &v1, const TVector<S, T> &v2);
+template <typename S, typename T> TVector<S, T> CrossProduct(const TVector<S, T> &v1, const TVector<S, T> &v2);
 
-template <typename S, typename T>
-void CrossProduct(const TVector<S, T> &a, const TVector<S, T> &b, TVector<S, T> &RES);
+template <typename S, typename T> void CrossProduct(const TVector<S, T> &a, const TVector<S, T> &b, TVector<S, T> &RES);
 
 template <typename S, typename T>
 void ScaledCrossProduct(const TVector<S, T> &a, const TVector<S, T> &b, TVector<S, T> &r);
 
-template <typename S, typename T>
-S DotProduct(const TVector<S, T> &a, const TVector<S, T> &b);
+template <typename S, typename T> S DotProduct(const TVector<S, T> &a, const TVector<S, T> &b);
 
-template <typename S, typename T>
-void Normalize(TVector<S, T> &r);
+template <typename S, typename T> void Normalize(TVector<S, T> &r);
 
-template <typename S, typename T>
-bool IsShorterThan(const TVector<S, T> &a, float delta);
+template <typename S, typename T> bool IsShorterThan(const TVector<S, T> &a, float delta);
 
-template <typename S, typename T>
-TVector<S, T> PolygonNormal(TVector<S, T> v1, TVector<S, T> v2, TVector<S, T> v3);
+template <typename S, typename T> TVector<S, T> PolygonNormal(TVector<S, T> v1, TVector<S, T> v2, TVector<S, T> v3);
 
-template <typename S, typename T>
-void ResetVectors(TVector<S, T> &p, TVector<S, T> &q, TVector<S, T> &r);
+template <typename S, typename T> void ResetVectors(TVector<S, T> &p, TVector<S, T> &q, TVector<S, T> &r);
 
-template <typename S, typename T>
-void MakeRVector(TVector<S, T> &p, TVector<S, T> &q, TVector<S, T> &r);
+template <typename S, typename T> void MakeRVector(TVector<S, T> &p, TVector<S, T> &q, TVector<S, T> &r);
 
-//Makes a non-colinear vector q to given r. assumes magnitude of r is nonzero, does not check
-template <typename S, typename T>
-TVector<S, T> MakeNonColinearVector(const TVector<S, T> &p);
+// Makes a non-colinear vector q to given r. assumes magnitude of r is nonzero, does not check
+template <typename S, typename T> TVector<S, T> MakeNonColinearVector(const TVector<S, T> &p);
 
-template <typename S, typename T>
-void Orthogonize(TVector<S, T> &p, TVector<S, T> &q, TVector<S, T> &r);
+template <typename S, typename T> void Orthogonize(TVector<S, T> &p, TVector<S, T> &q, TVector<S, T> &r);
 
 template <typename S, typename T>
 TVector<S, T> Transform(TVector<S, T> p, TVector<S, T> q, TVector<S, T> r, TVector<S, T> v);
 
-template <typename S, typename T>
-void Yaw(float rad, TVector<S, T> &p, TVector<S, T> &q, TVector<S, T> &r);
+template <typename S, typename T> void Yaw(float rad, TVector<S, T> &p, TVector<S, T> &q, TVector<S, T> &r);
 
-template <typename S, typename T>
-void Pitch(float rad, TVector<S, T> &p, TVector<S, T> &q, TVector<S, T> &r);
+template <typename S, typename T> void Pitch(float rad, TVector<S, T> &p, TVector<S, T> &q, TVector<S, T> &r);
 
-template <typename S, typename T>
-void Roll(float rad, TVector<S, T> &p, TVector<S, T> &q, TVector<S, T> &r);
+template <typename S, typename T> void Roll(float rad, TVector<S, T> &p, TVector<S, T> &q, TVector<S, T> &r);
 
 typedef TVector<float, double> Vector;
 typedef TVector<double, float> QVector;

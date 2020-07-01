@@ -107,15 +107,18 @@ static const char *s_testFloatingPoint(void)
 
     fTmp = POSH_FloatFromLittleBits(POSH_LittleFloatBits(fRef));
     if (fTmp != fRef)
-        return "*ERROR: POSH little endian floating point conversion failed.  Please report this to poshlib@poshlib.org!\n";
+        return "*ERROR: POSH little endian floating point conversion failed.  Please report this to "
+               "poshlib@poshlib.org!\n";
     fTmp = POSH_FloatFromBigBits(POSH_BigFloatBits(fRef));
     if (fTmp != fRef)
-        return "*ERROR: POSH big endian floating point conversion failed.  Please report this to poshlib@poshlib.org!\n";
+        return "*ERROR: POSH big endian floating point conversion failed.  Please report this to "
+               "poshlib@poshlib.org!\n";
     POSH_DoubleBits(dRef, dbuf);
 
     dTmp = POSH_DoubleFromBits(dbuf);
     if (dTmp != dRef)
-        return "*ERROR: POSH double precision floating point serialization failed.  Please report this to poshlib@poshlib.org!\n";
+        return "*ERROR: POSH double precision floating point serialization failed.  Please report this to "
+               "poshlib@poshlib.org!\n";
     return 0;
 }
 #endif /* !defined POSH_NO_FLOAT */
@@ -124,9 +127,11 @@ static const char *s_testEndianess(void)
 {
     /* check endianess */
     if (s_testBigEndian() != IS_BIG_ENDIAN)
-        return "*ERROR: POSH compile time endianess does not match run-time endianess verification.  Please report this to poshlib@poshlib.org!\n";
+        return "*ERROR: POSH compile time endianess does not match run-time endianess verification.  Please report "
+               "this to poshlib@poshlib.org!\n";
     /* make sure our endian swap routines work */
-    if ((NATIVE32(0x11223344L) != 0x11223344L) || (FOREIGN32(0x11223344L) != 0x44332211L) || (NATIVE16(0x1234) != 0x1234) || (FOREIGN16(0x1234) != 0x3412))
+    if ((NATIVE32(0x11223344L) != 0x11223344L) || (FOREIGN32(0x11223344L) != 0x44332211L) ||
+        (NATIVE16(0x1234) != 0x1234) || (FOREIGN16(0x1234) != 0x3412))
         return "*ERROR: POSH endianess macro selection failed.  Please report this to poshlib@poshlib.org!\n";
     /* test serialization routines */
 

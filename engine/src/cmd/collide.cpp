@@ -1,23 +1,23 @@
 #include "cmd/collide.h"
-#include "vegastrike.h"
-#include "unit_generic.h"
 #include "beam.h"
 #include "bolt.h"
 #include "gfx/mesh.h"
-#include "unit_collide.h"
 #include "physics.h"
+#include "unit_collide.h"
+#include "unit_generic.h"
+#include "vegastrike.h"
 
 #include "collide2/CSopcodecollider.h"
-#include "collide2/csgeom2/optransfrm.h"
 #include "collide2/basecollider.h"
+#include "collide2/csgeom2/optransfrm.h"
 
-#include "hashtable.h"
-#include <string>
-#include "vs_globals.h"
 #include "configxml.h"
+#include "hashtable.h"
+#include "vs_globals.h"
+#include <string>
 static Hashtable<std::string, collideTrees, 127> unitColliders;
-collideTrees::collideTrees(const std::string &hk, csOPCODECollider *cT,
-                           csOPCODECollider *cS) : hash_key(hk), colShield(cS)
+collideTrees::collideTrees(const std::string &hk, csOPCODECollider *cT, csOPCODECollider *cS)
+    : hash_key(hk), colShield(cS)
 {
     for (unsigned int i = 0; i < collideTreesMaxTrees; ++i)
     {
@@ -36,7 +36,8 @@ csOPCODECollider *collideTrees::colTree(Unit *un, const Vector &othervelocity)
     float magsqr = un->GetVelocity().MagnitudeSquared();
     float newmagsqr = (un->GetVelocity() - othervelocity).MagnitudeSquared();
     float speedsquared = const_factor * const_factor * (magsqr > newmagsqr ? newmagsqr : magsqr);
-    static uint32_t max_collide_trees = static_cast<uint32_t>(XMLSupport::parse_int(vs_config->getVariable("physics", "max_collide_trees", "16384")));
+    static uint32_t max_collide_trees =
+        static_cast<uint32_t>(XMLSupport::parse_int(vs_config->getVariable("physics", "max_collide_trees", "16384")));
     if (un->rSize() * un->rSize() > SIMULATION_ATOM * SIMULATION_ATOM * speedsquared || max_collide_trees == 1)
     {
         return rapidColliders[0];
@@ -45,11 +46,11 @@ csOPCODECollider *collideTrees::colTree(Unit *un, const Vector &othervelocity)
     {
         return nullptr;
     }
-    if (un->rSize() <= 0.) //Shouldn't happen bug I've seen this for asteroid fields...
+    if (un->rSize() <= 0.) // Shouldn't happen bug I've seen this for asteroid fields...
     {
         return nullptr;
     }
-    //Force pow to 0 in order to avoid nan problems...
+    // Force pow to 0 in order to avoid nan problems...
     uint32_t pow = 0;
     if (pow >= collideTreesMaxTrees || pow >= max_collide_trees)
     {
@@ -92,7 +93,12 @@ void collideTrees::Dec()
 
 bool TableLocationChanged(const QVector &Mini, const QVector &minz)
 {
-    return _Universe->activeStarSystem()->collidetable->c.hash_int(Mini.i) != _Universe->activeStarSystem()->collidetable->c.hash_int(minz.i) || _Universe->activeStarSystem()->collidetable->c.hash_int(Mini.j) != _Universe->activeStarSystem()->collidetable->c.hash_int(minz.j) || _Universe->activeStarSystem()->collidetable->c.hash_int(Mini.k) != _Universe->activeStarSystem()->collidetable->c.hash_int(minz.k);
+    return _Universe->activeStarSystem()->collidetable->c.hash_int(Mini.i) !=
+               _Universe->activeStarSystem()->collidetable->c.hash_int(minz.i) ||
+           _Universe->activeStarSystem()->collidetable->c.hash_int(Mini.j) !=
+               _Universe->activeStarSystem()->collidetable->c.hash_int(minz.j) ||
+           _Universe->activeStarSystem()->collidetable->c.hash_int(Mini.k) !=
+               _Universe->activeStarSystem()->collidetable->c.hash_int(minz.k);
 }
 
 bool TableLocationChanged(const LineCollide &lc, const QVector &minx, const QVector &maxx)
@@ -139,7 +145,8 @@ void AddCollideQueue(LineCollide &tmp, StarSystem *ss)
 
 bool lcwithin(const LineCollide &lc, const LineCollide &tmp)
 {
-    return lc.Mini.i < tmp.Maxi.i && lc.Mini.j < tmp.Maxi.j && lc.Mini.k < tmp.Maxi.k && lc.Maxi.i > tmp.Mini.i && lc.Maxi.j > tmp.Mini.j && lc.Maxi.k > tmp.Mini.k;
+    return lc.Mini.i < tmp.Maxi.i && lc.Mini.j < tmp.Maxi.j && lc.Mini.k < tmp.Maxi.k && lc.Maxi.i > tmp.Mini.i &&
+           lc.Maxi.j > tmp.Mini.j && lc.Maxi.k > tmp.Mini.k;
 }
 
 // TODO: This feels like an RNG, Investigate closer
@@ -188,7 +195,7 @@ void Beam::CollideHuge(const LineCollide &lc, Unit *targetToCollideWith, Unit *f
             {
                 tmploc--;
             }
-            tmore = superloc = tmploc; //don't decrease tless
+            tmore = superloc = tmploc; // don't decrease tless
         }
         else
         {
@@ -199,12 +206,12 @@ void Beam::CollideHuge(const LineCollide &lc, Unit *targetToCollideWith, Unit *f
         double minlook = r0 < r1 ? r0 : r1;
         double maxlook = r0 < r1 ? r1 : r0;
         bool targcheck = false;
-        maxlook += (maxlook - (*superunit->location[Unit::UNIT_ONLY])->getKey()) + 2 * curlength; //double damage, yo
+        maxlook += (maxlook - (*superunit->location[Unit::UNIT_ONLY])->getKey()) + 2 * curlength; // double damage, yo
         minlook += (minlook - (*superunit->location[Unit::UNIT_ONLY])->getKey()) - 2 * curlength * curlength;
         //(a+2*b)^2-(a+b)^2 = 3b^2+2ab = 2b^2+(a+b)^2-a^2
         if (superloc != cm->begin() && minlook < (*superunit->location[Unit::UNIT_ONLY])->getKey())
         {
-            //less traversal
+            // less traversal
             CollideMap::iterator tless = superloc;
             --tless;
             while ((*tless)->getKey() >= minlook)
@@ -236,7 +243,7 @@ void Beam::CollideHuge(const LineCollide &lc, Unit *targetToCollideWith, Unit *f
         }
         if (maxlook > (*superunit->location[Unit::UNIT_ONLY])->getKey())
         {
-            //greater traversal
+            // greater traversal
             while (tmore != cm->end() && (*tmore)->getKey() <= maxlook)
             {
                 if ((*tmore)->radius > 0)

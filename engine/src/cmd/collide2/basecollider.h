@@ -11,8 +11,8 @@
  */
 struct csCollisionPair
 {
-  Point a1, b1, c1; // First triangle
-  Point a2, b2, c2; // Second triangle
+    Point a1, b1, c1; // First triangle
+    Point a2, b2, c2; // Second triangle
 };
 
 #endif

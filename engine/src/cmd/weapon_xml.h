@@ -1,11 +1,11 @@
 #ifndef _CMD_WEAPON_XML_H_
 #define _CMD_WEAPON_XML_H_
-#include <string>
 #include "gfx/vec.h"
+#include <string>
 
 namespace BeamXML
 {
-    void beginElement(void *userData, const char *name, const char **atts);
+void beginElement(void *userData, const char *name, const char **atts);
 }
 
 struct weapon_info
@@ -48,8 +48,8 @@ struct weapon_info
     float TextureStretch;
     std::string file;
     std::string weapon_name;
-    mutable class Mesh *gun;  //requres nonconst to add to orig drawing queue when drawing
-    mutable class Mesh *gun1; //requres nonconst to add to orig drawing queue when drawing
+    mutable class Mesh *gun;  // requres nonconst to add to orig drawing queue when drawing
+    mutable class Mesh *gun1; // requres nonconst to add to orig drawing queue when drawing
     void init()
     {
         gun = gun1 = nullptr;
@@ -110,11 +110,12 @@ struct weapon_info
     }
     void netswap();
 
-private:
+  private:
     float RefireRate;
 };
 weapon_info getWeaponInfoFromBuffer(char *netbuf, int &size);
-void setWeaponInfoToBuffer(weapon_info wi, char *netbuf, int &bufsize); //WARNING : ALLOCATES A CHAR * BUFFER SO IT MUST BE DELETED AFTER THAT CALL
+void setWeaponInfoToBuffer(weapon_info wi, char *netbuf,
+                           int &bufsize); // WARNING : ALLOCATES A CHAR * BUFFER SO IT MUST BE DELETED AFTER THAT CALL
 
 enum weapon_info::MOUNT_SIZE lookupMountSize(const char *str);
 std::string lookupMountSize(int size);

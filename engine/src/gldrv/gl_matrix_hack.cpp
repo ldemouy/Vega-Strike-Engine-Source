@@ -18,17 +18,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-#include "gldrv/gfxlib.h"
 #include "gfx/vec.h"
+#include "gldrv/gfxlib.h"
 #include <stdio.h>
-//typedef float GLdouble;
+// typedef float GLdouble;
+#include <assert.h>
 #include <math.h>
 #include <string.h>
-#include <assert.h>
 #ifdef WIN32
 #ifndef NOMINMAX
 #define NOMINMAX
-#endif //tells VCC not to generate min/max macros
+#endif // tells VCC not to generate min/max macros
 #include <windows.h>
 #ifndef M_PI
 #define M_PI 3.14159265358979323846 /* pi */
@@ -149,34 +149,34 @@ inline void CopyMatrix(Matrix dest, const Matrix source)
     dest[13] = source[13];
     dest[14] = source[14];
     dest[15] = source[15];
-    //memcpy(dest, source, sizeof(Matrix));
+    // memcpy(dest, source, sizeof(Matrix));
 
     /*	for(int matindex = 0; matindex<16; matindex++)
      *             dest[matindex] = source[matindex];
      */
 }
 
-using namespace GFXMatrices; //causes problems with g_game
+using namespace GFXMatrices; // causes problems with g_game
 
 float centerx, centery, centerz;
 void evaluateViews()
 {
-    //Identity(transview);
+    // Identity(transview);
     Identity(rotview);
 #define M(row, col) rotview[col * 4 + row]
     rotview[0] = view[0];
     rotview[1] = view[1];
     rotview[2] = view[2];
-    //transview[3]=view[3];
+    // transview[3]=view[3];
     rotview[4] = view[4];
     rotview[5] = view[5];
     rotview[6] = view[6];
-    //transview[7]=view[7];
+    // transview[7]=view[7];
     rotview[8] = view[8];
     rotview[9] = view[9];
     rotview[10] = view[10];
-    //transview[11]=view[11];
-    //VSFileSystem::Fprintf (stderr,"trans %f,%f,%f",transview[3],transview[7],transview[11]);
+    // transview[11]=view[11];
+    // VSFileSystem::Fprintf (stderr,"trans %f,%f,%f",transview[3],transview[7],transview[11]);
 #undef M
 }
 
@@ -207,22 +207,22 @@ float GFXGetZPerspective(const float z)
     float xs = 2 * nearval / (right - left);
     float a = (right + left) / (right - left);
 
-    //Compute homogeneus x,w for (1,0,z,0)
+    // Compute homogeneus x,w for (1,0,z,0)
     float hx = xs + z * a;
     float hw = -z;
 
-    //Translate into euclidean coordinates and return euclidean x
+    // Translate into euclidean coordinates and return euclidean x
     return hx / hw;
 }
 
 float GFXGetXInvPerspective()
 {
-    return /*invprojection[11]*  */ invprojection[0]; //invprojection[15];//should be??  c/d == invproj[15]
+    return /*invprojection[11]*  */ invprojection[0]; // invprojection[15];//should be??  c/d == invproj[15]
 }
 
 float GFXGetYInvPerspective()
 {
-    return /*invprojection[11]*  */ invprojection[5]; //invprojection[15];//should be??  c/d == invproj[15]
+    return /*invprojection[11]*  */ invprojection[5]; // invprojection[15];//should be??  c/d == invproj[15]
 }
 
 void /*GFXDRVAPI*/ GFXTranslate(const MATRIXMODE mode, const Vector &a)
@@ -270,8 +270,8 @@ void /*GFXDRVAPI*/ GFXMultMatrix(const MATRIXMODE mode, const Matrix matrix)
         MultMatrix(t, model, matrix);
         CopyMatrix(model, t);
         glMatrixMode(GL_MODELVIEW);
-        //glPopMatrix();
-        //glPushMatrix();
+        // glPopMatrix();
+        // glPushMatrix();
         glMultMatrixf(matrix);
         break;
     case VIEW:
@@ -311,8 +311,8 @@ void /*GFXDRVAPI*/ GFXLoadMatrix(const MATRIXMODE mode, const Matrix matrix)
         model[13] -= centery;
         model[14] -= centerz;
         glMatrixMode(GL_MODELVIEW);
-        //glPopMatrix();
-        //glPushMatrix();
+        // glPopMatrix();
+        // glPushMatrix();
         glLoadMatrixf(model);
         model[12] = matrix[12];
         model[13] = matrix[13];
@@ -322,7 +322,7 @@ void /*GFXDRVAPI*/ GFXLoadMatrix(const MATRIXMODE mode, const Matrix matrix)
     case VIEW:
         CopyMatrix(view, matrix);
         evaluateViews();
-        //MultMatrix(t, transview, model);
+        // MultMatrix(t, transview, model);
         /* FIXME1233
          *  glMatrixMode(GL_MODELVIEW);
          *  glPopMatrix();
@@ -377,14 +377,14 @@ void /*GFXDRVAPI*/ GFXLoadIdentity(const MATRIXMODE mode)
     case MODEL:
         Identity(model);
         glMatrixMode(GL_MODELVIEW);
-        //glLoadMatrixf(transview);
+        // glLoadMatrixf(transview);
         glPopMatrix();
         glPushMatrix();
         break;
     case VIEW:
         Identity(view);
         Identity(rotview);
-        //Identity (transview);
+        // Identity (transview);
         glMatrixMode(GL_MODELVIEW);
         glPopMatrix();
         glLoadMatrixf(model);
@@ -414,7 +414,7 @@ void /*GFXDRVAPI*/ GFXGetMatrix(const MATRIXMODE mode, Matrix matrix)
         translation[13] = -centery;
         translation[14] = -centerz;
         MultMatrix(matrix, rotview, translation);
-        //CopyMatrix(matrix, view);
+        // CopyMatrix(matrix, view);
         break;
     case PROJECTION:
         CopyMatrix(matrix, projection);
@@ -430,7 +430,7 @@ static void gl_Frustum(float left, float right, float bottom, float top, float n
 
 void GFXGetFrustumVars(bool retr, float *l, float *r, float *b, float *t, float *n, float *f)
 {
-    static float nnear, ffar, left, right, bot, top; //Visual C++ reserves near and far
+    static float nnear, ffar, left, right, bot, top; // Visual C++ reserves near and far
     if (!retr)
     {
         nnear = *n;
@@ -449,7 +449,7 @@ void GFXGetFrustumVars(bool retr, float *l, float *r, float *b, float *t, float 
         *n = nnear;
         *f = ffar;
     }
-    //VSFileSystem::Fprintf (stderr,"<FUN%f,%f,%f,%f,%f,%f>>",near,far,left,right,bot,top);
+    // VSFileSystem::Fprintf (stderr,"<FUN%f,%f,%f,%f,%f,%f>>",near,far,left,right,bot,top);
 }
 
 void GFXFrustum(float *m, float *i, float left, float right, float bottom, float top, float nearval, float farval)
@@ -459,7 +459,7 @@ void GFXFrustum(float *m, float *i, float left, float right, float bottom, float
     y = (((float)2.0) * nearval) / (top - bottom);
     a = (right + left) / (right - left);
     b = (top + bottom) / (top - bottom);
-    //If farval == 0, we'll build an infinite-farplane projection matrix.
+    // If farval == 0, we'll build an infinite-farplane projection matrix.
     if (farval == 0)
     {
         c = -1.0;
@@ -510,12 +510,12 @@ void GFXFrustum(float *m, float *i, float left, float right, float bottom, float
 
 void /*GFXDRVAPI*/ GFXPerspective(float fov, float aspect, float znear, float zfar, float cockpit_offset)
 {
-    //gluPerspective (fov,aspect,znear,zfar);
+    // gluPerspective (fov,aspect,znear,zfar);
     float xmin, xmax, ymin, ymax;
-    ymax = znear * tanf(fov * M_PI / ((float)360.0)); //78.0 --> 4.7046
+    ymax = znear * tanf(fov * M_PI / ((float)360.0)); // 78.0 --> 4.7046
     ymin = -ymax;                                     //-4.7046
     xmin = (ymin - cockpit_offset / 2) * aspect;      //-6.2571
-    xmax = (ymax + cockpit_offset / 2) * aspect;      //6.2571
+    xmax = (ymax + cockpit_offset / 2) * aspect;      // 6.2571
     ymin -= cockpit_offset;
     gl_Frustum(xmin, xmax, ymin, ymax, znear, zfar);
     glMatrixMode(GL_PROJECTION);
@@ -553,15 +553,8 @@ void /*GFXDRVAPI*/ GFXParallel(float left, float right, float bottom, float top,
     GFXGetFrustumVars(false, &left, &right, &bottom, &top, &nearval, &farval);
 }
 
-static void LookAtHelper(float eyex,
-                         float eyey,
-                         float eyez,
-                         float centerx,
-                         float centery,
-                         float centerz,
-                         float upx,
-                         float upy,
-                         float upz)
+static void LookAtHelper(float eyex, float eyey, float eyez, float centerx, float centery, float centerz, float upx,
+                         float upy, float upz)
 {
     float m[16];
     float x[3], y[3], z[3];
@@ -584,16 +577,16 @@ static void LookAtHelper(float eyex,
     y[1] = upy;
     y[2] = upz;
     /* X vector = Y cross Z */
-    //x[0] =  z[1]*y[2] - z[2]*y[1];
-    //x[1] = -z[0]*y[2] + z[2]*y[0];
-    //x[2] =  z[0]*y[1] - z[1]*y[0];
+    // x[0] =  z[1]*y[2] - z[2]*y[1];
+    // x[1] = -z[0]*y[2] + z[2]*y[0];
+    // x[2] =  z[0]*y[1] - z[1]*y[0];
     x[0] = y[1] * z[2] - y[2] * z[1];
     x[1] = -y[0] * z[2] + y[2] * z[0];
     x[2] = y[0] * z[1] - y[1] * z[0];
     /* Recompute Y = Z cross X */
-    //y[0] =  x[1]*z[2] - x[2]*z[1];
-    //y[1] = -x[0]*z[2] + x[2]*z[0];
-    //y[2] =  x[0]*z[1] - x[1]*z[0];
+    // y[0] =  x[1]*z[2] - x[2]*z[1];
+    // y[1] = -x[0]*z[2] + x[2]*z[0];
+    // y[2] =  x[0]*z[1] - x[1]*z[0];
     y[0] = z[1] * x[2] - z[2] * x[1];
     y[1] = -z[0] * x[2] + z[2] * x[0];
     y[2] = z[0] * x[1] - z[1] * x[0];
@@ -664,29 +657,31 @@ static void LookAtHelper(float eyex,
  *  M(3,3) = 1.0;
  * #undef M
  ***/
-//old hack to twiddle the texture in the xy plane
+// old hack to twiddle the texture in the xy plane
 #ifdef NV_CUBE_MAP
-    //FIXME--ADD CAMERA MATRICES
-    //the texture matrix must be used to rotate the texgen-computed
-    //reflection or normal vector texture coordinates to match the orinetation
-    //of the cube map.  Teh rotation can be computed based on two vectors
-    //1) the direction vector from the cube map center to the eye position
-    //and 2 the cube map orientation in world coordinates.
-    //the axis is the cross product of these two vectors...teh angle is arcsin
-    //of the dot of these two vectors
+    // FIXME--ADD CAMERA MATRICES
+    // the texture matrix must be used to rotate the texgen-computed
+    // reflection or normal vector texture coordinates to match the orinetation
+    // of the cube map.  Teh rotation can be computed based on two vectors
+    // 1) the direction vector from the cube map center to the eye position
+    // and 2 the cube map orientation in world coordinates.
+    // the axis is the cross product of these two vectors...teh angle is arcsin
+    // of the dot of these two vectors
     GFXActiveTexture(1);
     glMatrixMode(GL_TEXTURE);
     glLoadIdentity();
-    //Vector (centerx,centery,centerz).Cross (Vector (1,0,0));  DID NOT TRANSFORM THE ORIENTATION VECTOR TO REVERSE CAMERASPACE
+    // Vector (centerx,centery,centerz).Cross (Vector (1,0,0));  DID NOT TRANSFORM THE ORIENTATION VECTOR TO REVERSE
+    // CAMERASPACE
     Vector axis(centerx, centery, centerz);
     Vector cubemapincamspace(eyex, eyey, eyez);
     cubemapincamspace.Normalize();
     axis.Normalize();
-    //float theta = arcsinf (Vector (centerx,centery,centerz).Normalize().Dot (Vector (1,0,0)));  DID NOT TRANSFORM THE ORIENTATION VECTOR TO REVERSE CAMERASPACE
+    // float theta = arcsinf (Vector (centerx,centery,centerz).Normalize().Dot (Vector (1,0,0)));  DID NOT TRANSFORM THE
+    // ORIENTATION VECTOR TO REVERSE CAMERASPACE
     float theta = asinf(axis.Dot(cubemapincamspace));
     axis = axis.Cross(axis.Cross(cubemapincamspace));
     glRotatef(theta, axis.i, axis.j, axis.k);
-    //ok do matrix math to rotate by theta on axis  those ..
+    // ok do matrix math to rotate by theta on axis  those ..
     GFXActiveTexture(0);
 #else
     /*	glTranslatef(.5f,.5f,.4994f);
@@ -700,10 +695,10 @@ void /*GFXDRVAPI*/ GFXLookAt(Vector eye, Vector center, Vector up)
 {
     LookAtHelper(eye.i, eye.j, eye.k, center.i, center.j, center.k, up.i, up.j, up.k);
 
-    //Identity(transview);
-    //transview[3]=center.i;
-    //transview[7]=center.j;
-    //transview[11]=center.k;
+    // Identity(transview);
+    // transview[3]=center.i;
+    // transview[7]=center.j;
+    // transview[11]=center.k;
     centerx = center.i;
     centery = center.j;
     centerz = center.k;
@@ -723,7 +718,7 @@ float /*GFXDRVAPI*/ GFXSphereInFrustum(float f[6][4], const Vector &Cnt, float r
     float d;
     for (p = 0; p < 5; p++)
     {
-        //does not evaluate for yon
+        // does not evaluate for yon
         d = f[p][0] * Cnt.i + f[p][1] * Cnt.j + f[p][2] * Cnt.k + f[p][3];
         if (d <= -radius)
             return 0;
@@ -749,10 +744,10 @@ void /*GFXDRVAPI*/ GFXCalculateFrustum(float frustum[6][4], float *modl, float *
     float t;
 
     /* Get the current PROJECTION matrix from OpenGL */
-    //glGetFloatv( GL_PROJECTION_MATRIX, proj );
+    // glGetFloatv( GL_PROJECTION_MATRIX, proj );
 
     /* Get the current MODELVIEW matrix from OpenGL */
-    //glGetFloatv( GL_MODELVIEW_MATRIX, modl );
+    // glGetFloatv( GL_MODELVIEW_MATRIX, modl );
 
     /* Combine the two matrices (multiply projection by modelview) */
     clip[0] = modl[0] * proj[0] + modl[1] * proj[4] + modl[2] * proj[8] + modl[3] * proj[12];

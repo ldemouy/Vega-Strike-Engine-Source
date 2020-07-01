@@ -17,17 +17,10 @@
 
 #include "gfx/camera.h"
 
-inline bool CalculateOrientation(QVector &Pos,
-                                 Vector &p,
-                                 Vector &q,
-                                 Vector &r,
-                                 float &wid,
-                                 float &hei,
-                                 float OffsetByThisPercent,
-                                 bool moveiftoofar,
-                                 Matrix *local_transformation = nullptr)
+inline bool CalculateOrientation(QVector &Pos, Vector &p, Vector &q, Vector &r, float &wid, float &hei,
+                                 float OffsetByThisPercent, bool moveiftoofar, Matrix *local_transformation = nullptr)
 {
-    const float kkkk = 3; //this seems to work for no good reason
+    const float kkkk = 3; // this seems to work for no good reason
     _Universe->AccessCamera()->GetPQR(p, q, r);
     QVector OLDR(r.i, r.j, r.k);
     QVector offset(_Universe->AccessCamera()->GetPosition() - Pos);
@@ -46,11 +39,11 @@ inline bool CalculateOrientation(QVector &Pos,
         else
         {
             offset *= (offmag / offz) * (offz - 2 * g_game.znear); //-rad-.4*g_game.zfar);
-            wid /= ((offz) / (kkkk * g_game.znear));               //it's 1 time away from znear
+            wid /= ((offz) / (kkkk * g_game.znear));               // it's 1 time away from znear
             hei /= ((offz) / (kkkk * g_game.znear));
         }
         Pos += offset;
-        offz += OLDR.Dot(offset); //coming closer so this means that offz is less
+        offz += OLDR.Dot(offset); // coming closer so this means that offz is less
     }
     if (local_transformation)
     {
@@ -67,7 +60,7 @@ inline bool CalculateOrientation(QVector &Pos,
         r.k = posit.k;
         ScaledCrossProduct(q, r, p);
         ScaledCrossProduct(r, p, q);
-        //if the vectors are linearly dependant we're phucked :) fun fun fun
+        // if the vectors are linearly dependant we're phucked :) fun fun fun
     }
     return offz < .4 * g_game.zfar;
 }

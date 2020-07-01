@@ -41,38 +41,7 @@
 #endif
 
 GLenum bTex[32] = {
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 };
 
 GLenum GetGLTextureTarget(enum TEXTURE_TARGET texture_target)
@@ -105,7 +74,8 @@ GLenum GetGLTextureTarget(enum TEXTURE_TARGET texture_target)
     return tt;
 }
 
-int activeTextureStage = -1; //FIXME Shouldn't this be a member of a class?, or at least be an official global variable?
+int activeTextureStage = -1; // FIXME Shouldn't this be a member of a class?, or at least be an official global
+                             // variable?
 
 static inline bool _GFXActiveTextureValid()
 {
@@ -125,7 +95,7 @@ void /*GFXDRVAPI*/ GFXEnable(const STATE state)
     case DEPTHTEST:
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL);
-        //glDepthFunc (GL_ALWAYS);
+        // glDepthFunc (GL_ALWAYS);
         break;
     case DEPTHWRITE:
         glDepthMask(GL_TRUE);
@@ -139,9 +109,9 @@ void /*GFXDRVAPI*/ GFXEnable(const STATE state)
          *   if (bTex[0]) glDisable(bTex[0]);
          *       glEnable (bTex[0]=GL_TEXTURE_2D);
          *  }*/
-        //NOTE: The above code should be used, but since not all parts of VS use the GFX,
-        //we will use GFXEnable() / GFXDisable() as syncrhonization methods (they will
-        //assure correct settings of texture units 1 & 2, used during GUI rendering.
+        // NOTE: The above code should be used, but since not all parts of VS use the GFX,
+        // we will use GFXEnable() / GFXDisable() as syncrhonization methods (they will
+        // assure correct settings of texture units 1 & 2, used during GUI rendering.
         GFXActiveTexture(0);
 #ifdef NV_CUBE_MAP
         if (bTex[0] != GL_TEXTURE_CUBE_MAP_EXT)
@@ -166,10 +136,10 @@ void /*GFXDRVAPI*/ GFXEnable(const STATE state)
          *  }
          * #endif
          *  }*/
-        //NOTE: The above code should be used, but since not all parts of VS use the GFX,
-        //we will use GFXEnable() / GFXDisable() as syncrhonization methods (they will
-        //assure correct settings of texture units 1 & 2, both in the GL and their proxy
-        //states in the GFX. Those two units are used during GUI rendering bypassing the GFX.
+        // NOTE: The above code should be used, but since not all parts of VS use the GFX,
+        // we will use GFXEnable() / GFXDisable() as syncrhonization methods (they will
+        // assure correct settings of texture units 1 & 2, both in the GL and their proxy
+        // states in the GFX. Those two units are used during GUI rendering bypassing the GFX.
         if (gl_options.Multitexture)
         {
             GFXActiveTexture(1);
@@ -242,10 +212,10 @@ void /*GFXDRVAPI*/ GFXDisable(const STATE state)
          *       glDisable (bTex[0]);
          *       bTex[0] = 0;
          *  }*/
-        //NOTE: The above code should be used, but since not all parts of VS use the GFX,
-        //we will use GFXEnable() / GFXDisable() as syncrhonization methods (they will
-        //assure correct settings of texture units 1 & 2, both in the GL and their proxy
-        //states in the GFX. Those two units are used during GUI rendering bypassing the GFX.
+        // NOTE: The above code should be used, but since not all parts of VS use the GFX,
+        // we will use GFXEnable() / GFXDisable() as syncrhonization methods (they will
+        // assure correct settings of texture units 1 & 2, both in the GL and their proxy
+        // states in the GFX. Those two units are used during GUI rendering bypassing the GFX.
         GFXActiveTexture(0);
 #ifdef NV_CUBE_MAP
         glDisable(GL_TEXTURE_CUBE_MAP_EXT);
@@ -263,10 +233,10 @@ void /*GFXDRVAPI*/ GFXDisable(const STATE state)
          *   glDisable(bTex[1]);
          *   bTex[1] = 0;
          *  }*/
-        //NOTE: The above code should be used, but since not all parts of VS use the GFX,
-        //we will use GFXEnable() / GFXDisable() as syncrhonization methods (they will
-        //assure correct settings of texture units 1 & 2, both in the GL and their proxy
-        //states in the GFX. Those two units are used during GUI rendering bypassing the GFX.
+        // NOTE: The above code should be used, but since not all parts of VS use the GFX,
+        // we will use GFXEnable() / GFXDisable() as syncrhonization methods (they will
+        // assure correct settings of texture units 1 & 2, both in the GL and their proxy
+        // states in the GFX. Those two units are used during GUI rendering bypassing the GFX.
         if (gl_options.Multitexture)
         {
             GFXActiveTexture(1);
@@ -306,7 +276,7 @@ void GFXTextureAddressMode(const ADDRESSMODE mode, enum TEXTURE_TARGET target)
     if (!_GFXActiveTextureValid())
         return;
     GLenum tt = GetGLTextureTarget(target);
-    float BColor[4] = {0, 0, 0, 0}; //set border color to clear... dunno if we wanna change?
+    float BColor[4] = {0, 0, 0, 0}; // set border color to clear... dunno if we wanna change?
     GLenum wm1, wm2;
     switch (mode)
     {
@@ -319,14 +289,14 @@ void GFXTextureAddressMode(const ADDRESSMODE mode, enum TEXTURE_TARGET target)
         wm1 = GL_CLAMP;
         wm2 = GL_CLAMP_TO_BORDER_ARB;
         glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, BColor);
-        //nobreak
+        // nobreak
     case CLAMP:
         wm1 = GL_CLAMP;
         wm2 = GL_CLAMP_TO_EDGE_EXT;
         break;
-    case MIRROR: //nope not goin here I hope nVidia extension?
+    case MIRROR: // nope not goin here I hope nVidia extension?
     default:
-        return; //won't work
+        return; // won't work
     }
     glTexParameteri(tt, GL_TEXTURE_WRAP_S, wm1);
     if (target != TEXTURE1D)
@@ -673,7 +643,7 @@ void GFXActiveTexture(const int stage)
     }
     else
     {
-        activeTextureStage = stage; //This ensures consistent behavior - they shouldn't even call us
+        activeTextureStage = stage; // This ensures consistent behavior - they shouldn't even call us
     }
 #endif
 }

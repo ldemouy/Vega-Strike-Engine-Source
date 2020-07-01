@@ -23,8 +23,8 @@
 #define INKB_H
 //#ifdef HAVE_SDL
 //#include <SDL/SDL_keysym.h>
-//const int KEYMAP_SIZE =SDLK_LAST;
-//const int KEY_SPECIAL_OFFSET=0;
+// const int KEYMAP_SIZE =SDLK_LAST;
+// const int KEY_SPECIAL_OFFSET=0;
 //#else
 
 enum KB_MODIFIER_ENUM

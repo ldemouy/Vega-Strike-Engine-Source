@@ -18,14 +18,14 @@
  *  Vegastrike Network Server Main - written by Stephane Vaxelaire <svax@free.fr>
  */
 
-#include <iostream>
-#include <stdlib.h>
-#include "vs_globals.h"
-#include "networking/netserver.h"
 #include "cmd/script/mission.h"
+#include "cmd/unit_factory.h"
 #include "force_feedback.h"
 #include "lin_time.h"
-#include "cmd/unit_factory.h"
+#include "networking/netserver.h"
+#include "vs_globals.h"
+#include <iostream>
+#include <stdlib.h>
 
 #include "options.h"
 //#ifndef _WIN32
@@ -53,16 +53,16 @@ int main(int argc, char **argv)
 {
 
     //#ifndef _WIN32
-    //feenableexcept(FE_DIVBYZERO|FE_INVALID);//|FE_OVERFLOW|FE_UNDERFLOW)
+    // feenableexcept(FE_DIVBYZERO|FE_INVALID);//|FE_OVERFLOW|FE_UNDERFLOW)
     //#endif
     VSFileSystem::ChangeToProgramDirectory(argv[0]);
 
-    //Stupid static variable somewhere, so need to initialize it twice.
+    // Stupid static variable somewhere, so need to initialize it twice.
     InitTime();
     setNewTime(0);
     setNewTime(((double)time(nullptr)) - VEGA_EPOCH);
     VSServer = new NetServer;
-    //Fake forcefeedback
+    // Fake forcefeedback
     forcefeedback = new ForceFeedback();
     VSServer->start(argc, argv);
 

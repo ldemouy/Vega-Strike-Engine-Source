@@ -1,13 +1,13 @@
-#include <vector>
-#include <string>
 #include "vs_globals.h"
+#include <string>
+#include <vector>
 class DecalQueue
 {
     int nullity;
     std::vector<int> decalref;
     std::vector<Texture *> decal;
 
-public:
+  public:
     DecalQueue()
     {
         nullity = -1;
@@ -43,7 +43,7 @@ public:
         }
         if (!tmpDecal || i == decal.size())
         {
-            //make sure we have our own to delete upon refcount =0
+            // make sure we have our own to delete upon refcount =0
             Texture *tex = new Texture(texname, 0, mipmap, TEXTURE2D, TEXTURE_2D, GFXTRUE);
             if ((nullity == -1) || tex->LoadSuccess())
             {

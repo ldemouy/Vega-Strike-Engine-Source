@@ -23,15 +23,17 @@
  *  easyDom - easy DOM for expat - written by Alexander Rawass <alexannika@users.sourceforge.net>
  */
 
-#include <expat.h>
 #include "easydom.h"
+#include <expat.h>
 
 #include <assert.h> /// needed for assert() calls.
 
 using std::cerr;
 using std::cout;
 using std::endl;
-easyDomNode::easyDomNode() {}
+easyDomNode::easyDomNode()
+{
+}
 
 void easyDomNode::set(easyDomNode *_parent, string _name, const XML_Char **atts)
 {

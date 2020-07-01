@@ -1,5 +1,5 @@
-#include <Python.h>
 #include "fire.h"
+#include <Python.h>
 #include <assert.h>
 
 using Orders::FireAt;
@@ -12,10 +12,10 @@ class PythonAI : public FireAt
     }
     static PythonAI *last_ai;
 
-protected:
+  protected:
     virtual void Destruct();
 
-public:
+  public:
     PythonAI(PyObject *self, float reaction_time, float agressivity);
     virtual void Execute();
     static void default_Execute(FireAt &pay);

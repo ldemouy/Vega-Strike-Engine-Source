@@ -1,18 +1,18 @@
-#include "cmd/unit_generic.h"
 #include "ani_texture.h"
+#include "../gldrv/gl_globals.h"
 #include "aldrv/audiolib.h"
-#include <algorithm>
-#include <vector>
-#include <stdio.h>
-#include <stdlib.h>
+#include "cmd/unit_generic.h"
 #include "lin_time.h"
 #include "vegastrike.h"
-#include "vsfilesystem.h"
 #include "vs_globals.h"
 #include "vs_random.h"
-#include "../gldrv/gl_globals.h"
-#include <set>
+#include "vsfilesystem.h"
+#include <algorithm>
 #include <math.h>
+#include <set>
+#include <stdio.h>
+#include <stdlib.h>
+#include <vector>
 
 using std::set;
 static set<AnimatedTexture *> anis;
@@ -81,8 +81,10 @@ void AnimatedTexture::MakeActive(int32_t stage, int32_t pass)
             {
                 if (Decal && Decal[active] && Decal[nextactive])
                 {
-                    this->maxtcoord = (1 - fraction) * Decal[active]->maxtcoord + fraction * Decal[nextactive]->maxtcoord;
-                    this->mintcoord = (1 - fraction) * Decal[active]->mintcoord + fraction * Decal[nextactive]->mintcoord;
+                    this->maxtcoord =
+                        (1 - fraction) * Decal[active]->maxtcoord + fraction * Decal[nextactive]->maxtcoord;
+                    this->mintcoord =
+                        (1 - fraction) * Decal[active]->mintcoord + fraction * Decal[nextactive]->mintcoord;
                 }
             }
             else if (Decal && Decal[active])
@@ -139,7 +141,7 @@ void AnimatedTexture::MakeActive(int32_t stage, int32_t pass)
                     {
                         ActivateWhite(stage);
                     }
-                    //GFXTextureEnv(stage,GFXMODULATETEXTURE);
+                    // GFXTextureEnv(stage,GFXMODULATETEXTURE);
                 }
                 else
                 {
@@ -158,7 +160,7 @@ void AnimatedTexture::MakeActive(int32_t stage, int32_t pass)
                     color.g *= (1.0 - active_fraction);
                     color.b *= (1.0 - active_fraction);
                     GFXColorf(color);
-                    //GFXTextureEnv(stage,GFXMODULATETEXTURE);
+                    // GFXTextureEnv(stage,GFXMODULATETEXTURE);
                 }
             }
             else
@@ -176,7 +178,7 @@ void AnimatedTexture::MakeActive(int32_t stage, int32_t pass)
         }
         else if (!vidSource)
         {
-            //No frame interpolation anything supported
+            // No frame interpolation anything supported
             if (Decal && *Decal)
             {
                 if (active != activebound)
@@ -190,13 +192,13 @@ void AnimatedTexture::MakeActive(int32_t stage, int32_t pass)
         {
             try
             {
-                //vidSource leaves frame data in its framebuffer, and our image data is initialized
-                //to point to that framebuffer, so all we need to do is transfer it to the GL.
+                // vidSource leaves frame data in its framebuffer, and our image data is initialized
+                // to point to that framebuffer, so all we need to do is transfer it to the GL.
                 if (vidSource->seek(curtime))
                 {
-                    //Override compression options temporarily
-                    //NOTE: This is ugly, but otherwise we would have to hack Texture way too much,
-                    //or double the code. Let's use this then.
+                    // Override compression options temporarily
+                    // NOTE: This is ugly, but otherwise we would have to hack Texture way too much,
+                    // or double the code. Let's use this then.
                     int32_t ocompression = gl_options.compression;
                     gl_options.compression = 0;
 
@@ -227,7 +229,8 @@ void AnimatedTexture::MakeActive(int32_t stage, int32_t pass)
         }
         break;
     case 1:
-        if (!vidMode && GetInterpolateFrames() && (active != nextactive) && !(gl_options.Multitexture && ((stage + 1) < static_cast<int>(gl_options.Multitexture))))
+        if (!vidMode && GetInterpolateFrames() && (active != nextactive) &&
+            !(gl_options.Multitexture && ((stage + 1) < static_cast<int>(gl_options.Multitexture))))
         {
             if (Decal && Decal[nextactive % numframes])
             {
@@ -243,7 +246,7 @@ void AnimatedTexture::MakeActive(int32_t stage, int32_t pass)
             color.g *= active_fraction;
             color.b *= active_fraction;
             GFXColorf(color);
-            //GFXTextureEnv(stage,GFXMODULATETEXTURE);
+            // GFXTextureEnv(stage,GFXMODULATETEXTURE);
         }
         else
         {
@@ -262,18 +265,18 @@ bool AnimatedTexture::SetupPass(int32_t pass, int32_t stage, const enum BLENDFUN
         {
             if (!(gl_options.Multitexture && ((stage + 1) < static_cast<int32_t>(gl_options.Multitexture))))
             {
-                GFXColorf(multipass_interp_basecolor); //Restore old color
+                GFXColorf(multipass_interp_basecolor); // Restore old color
             }
             else
-            //GFXTextureEnv(texstage,GFXMODULATETEXTURE); //Most expect this
+            // GFXTextureEnv(texstage,GFXMODULATETEXTURE); //Most expect this
             {
-                GFXTextureEnv(stage + 1, GFXADDTEXTURE); //Most expect this
+                GFXTextureEnv(stage + 1, GFXADDTEXTURE); // Most expect this
             }
         }
         return true;
 
     default:
-        //Hey! Nothing to do! Yippie!
+        // Hey! Nothing to do! Yippie!
         return true;
     }
 }
@@ -328,11 +331,11 @@ void AnimatedTexture::UpdateAllFrame()
 
 bool AnimatedTexture::Done() const
 {
-    //return physicsactive<0;
-    //Explosions aren't working right, and this would fix them.
-    //I don't see the reason for using physics frames as reference, all AnimatedTextures
-    //I've seen are gaphic-only entities (bolts use their own time-keeping system, for instance)
-    //If I'm wrong, and the above line is crucial, well... feel free to fix it.
+    // return physicsactive<0;
+    // Explosions aren't working right, and this would fix them.
+    // I don't see the reason for using physics frames as reference, all AnimatedTextures
+    // I've seen are gaphic-only entities (bolts use their own time-keeping system, for instance)
+    // If I'm wrong, and the above line is crucial, well... feel free to fix it.
     return vidSource ? done : curtime >= numframes * timeperframe;
 }
 
@@ -348,12 +351,12 @@ AnimatedTexture::AnimatedTexture(const char *file, int32_t stage, enum FILTER im
     AniInit();
     VSFile f;
     VSError err = f.OpenReadOnly(file, AnimFile);
-    //bool setdir=false;
+    // bool setdir=false;
     if (err <= Ok)
     {
         float width, height;
-        f.Fscanf("%f %f", &width, &height); //it's actually an animation in global animation shares
-        //setdir=true;
+        f.Fscanf("%f %f", &width, &height); // it's actually an animation in global animation shares
+        // setdir=true;
     }
     if (err <= Ok)
     {
@@ -398,10 +401,10 @@ void AnimatedTexture::AniInit()
     constframerate = true;
     done = false;
 }
-//AnimatedTexture::AnimatedTexture (FILE * fp, int stage, enum FILTER imm, bool detailtex){
-//AniInit();
-//if (fp)
-//Load (fp,stage,imm,detailtex);
+// AnimatedTexture::AnimatedTexture (FILE * fp, int stage, enum FILTER imm, bool detailtex){
+// AniInit();
+// if (fp)
+// Load (fp,stage,imm,detailtex);
 //}
 
 AnimatedTexture::AnimatedTexture(VSFileSystem::VSFile &fp, int32_t stage, enum FILTER imm, bool detailtex)
@@ -452,7 +455,7 @@ Texture *AnimatedTexture::Clone()
     }
     else if (Decal)
     {
-        //LoadVideoSource adds to anis, otherwise we'll have to add ourselves
+        // LoadVideoSource adds to anis, otherwise we'll have to add ourselves
         anis.insert(retval);
     }
     return retval;
@@ -592,9 +595,7 @@ void AnimatedTexture::LoadVideoSource(VSFileSystem::VSFile &f)
     }
 }
 
-AnimatedTexture *AnimatedTexture::CreateVideoTexture(const std::string &fname,
-                                                     int32_t stage,
-                                                     enum FILTER ismipmapped,
+AnimatedTexture *AnimatedTexture::CreateVideoTexture(const std::string &fname, int32_t stage, enum FILTER ismipmapped,
                                                      bool detailtex)
 {
     AnimatedTexture *rv = new AnimatedTexture(stage, ismipmapped, detailtex);
@@ -659,8 +660,8 @@ void AnimatedTexture::LoadAni(VSFileSystem::VSFile &f, int32_t stage, enum FILTE
     string defMt = XMLSupport::parse_option_value(options, "maxt", "1");
     string defMr = XMLSupport::parse_option_value(options, "maxr", "1");
 
-    int32_t midframe; //FIXME midframe not initialized by all paths below
-    midframe = 0;     //FIXME this line temporarily added by chuck_starchaser
+    int32_t midframe; // FIXME midframe not initialized by all paths below
+    midframe = 0;     // FIXME this line temporarily added by chuck_starchaser
     bool loadall;
     if (!vidMode)
     {
@@ -676,7 +677,7 @@ void AnimatedTexture::LoadAni(VSFileSystem::VSFile &f, int32_t stage, enum FILTE
         timeperframe *= numframes;
         midframe = numframes / 2;
         numframes = 1;
-    } //Added by Klauss
+    } // Added by Klauss
 
     active = 0;
     int32_t nf = (vidMode ? 1 : numframes);
@@ -693,8 +694,8 @@ void AnimatedTexture::LoadAni(VSFileSystem::VSFile &f, int32_t stage, enum FILTE
     for (int32_t i = 0; i < static_cast<int32_t>(numframes); i++)
     {
         if (loadall || (i == midframe))
-        { //FIXME midframe used without guaranteed initialization
-            //if() added by Klauss
+        { // FIXME midframe used without guaranteed initialization
+            // if() added by Klauss
             int32_t numgets = 0;
             while (numgets <= 0 && !f.Eof())
             {
@@ -704,7 +705,7 @@ void AnimatedTexture::LoadAni(VSFileSystem::VSFile &f, int32_t stage, enum FILTE
                     file[0] = 'z';
                     file[1] = '\0';
                     alp[0] = 'z';
-                    alp[1] = '\0'; //windows crashes on null
+                    alp[1] = '\0'; // windows crashes on null
                     opt[0] = 'z';
                     opt[1] = '\0';
 
@@ -723,61 +724,41 @@ void AnimatedTexture::LoadAni(VSFileSystem::VSFile &f, int32_t stage, enum FILTE
             if (vidMode)
             {
                 frames.push_back(StringPool::Reference(string(temp)));
-                frames_mintc.push_back(Vector(
-                    XMLSupport::parse_float(XMLSupport::parse_option_value(opt, "mins", defms)),
-                    XMLSupport::parse_float(XMLSupport::parse_option_value(opt, "mint", defmt)),
-                    XMLSupport::parse_float(XMLSupport::parse_option_value(opt, "minr", defmr))));
-                frames_maxtc.push_back(Vector(
-                    XMLSupport::parse_float(XMLSupport::parse_option_value(opt, "maxs", defMs)),
-                    XMLSupport::parse_float(XMLSupport::parse_option_value(opt, "maxt", defMt)),
-                    XMLSupport::parse_float(XMLSupport::parse_option_value(opt, "maxr", defMr))));
+                frames_mintc.push_back(
+                    Vector(XMLSupport::parse_float(XMLSupport::parse_option_value(opt, "mins", defms)),
+                           XMLSupport::parse_float(XMLSupport::parse_option_value(opt, "mint", defmt)),
+                           XMLSupport::parse_float(XMLSupport::parse_option_value(opt, "minr", defmr))));
+                frames_maxtc.push_back(
+                    Vector(XMLSupport::parse_float(XMLSupport::parse_option_value(opt, "maxs", defMs)),
+                           XMLSupport::parse_float(XMLSupport::parse_option_value(opt, "maxt", defMt)),
+                           XMLSupport::parse_float(XMLSupport::parse_option_value(opt, "maxr", defMr))));
             }
             else
             {
-                enum ADDRESSMODE addrmode = parseAddressMode(XMLSupport::parse_option_value(opt,
-                                                                                            "addressMode",
-                                                                                            ""),
-                                                             defaultAddressMode);
+                enum ADDRESSMODE addrmode =
+                    parseAddressMode(XMLSupport::parse_option_value(opt, "addressMode", ""), defaultAddressMode);
                 if (alp[0] != '\0')
                 {
-                    Decal[j++] =
-                        new Texture(file,
-                                    alp,
-                                    stage,
-                                    ismipmapped,
-                                    TEXTURE2D,
-                                    TEXTURE_2D,
-                                    1,
-                                    0,
-                                    (g_game.use_animations) ? GFXTRUE : GFXFALSE,
-                                    65536,
-                                    (detailtex ? GFXTRUE : GFXFALSE),
-                                    GFXFALSE,
-                                    addrmode);
+                    Decal[j++] = new Texture(file, alp, stage, ismipmapped, TEXTURE2D, TEXTURE_2D, 1, 0,
+                                             (g_game.use_animations) ? GFXTRUE : GFXFALSE, 65536,
+                                             (detailtex ? GFXTRUE : GFXFALSE), GFXFALSE, addrmode);
                 }
                 else
                 {
-                    Decal[j++] = new Texture(file,
-                                             stage,
-                                             ismipmapped,
-                                             TEXTURE2D,
-                                             TEXTURE_2D,
-                                             (g_game.use_animations) ? GFXTRUE : GFXFALSE,
-                                             65536,
-                                             (detailtex ? GFXTRUE : GFXFALSE),
-                                             GFXFALSE,
-                                             addrmode);
+                    Decal[j++] = new Texture(file, stage, ismipmapped, TEXTURE2D, TEXTURE_2D,
+                                             (g_game.use_animations) ? GFXTRUE : GFXFALSE, 65536,
+                                             (detailtex ? GFXTRUE : GFXFALSE), GFXFALSE, addrmode);
                 }
                 if (Decal[j - 1])
                 {
-                    Decal[j - 1]->mintcoord = Vector(
-                        XMLSupport::parse_float(XMLSupport::parse_option_value(opt, "mins", defms)),
-                        XMLSupport::parse_float(XMLSupport::parse_option_value(opt, "mint", defmt)),
-                        XMLSupport::parse_float(XMLSupport::parse_option_value(opt, "minr", defmr)));
-                    Decal[j - 1]->maxtcoord = Vector(
-                        XMLSupport::parse_float(XMLSupport::parse_option_value(opt, "maxs", defMs)),
-                        XMLSupport::parse_float(XMLSupport::parse_option_value(opt, "maxt", defMt)),
-                        XMLSupport::parse_float(XMLSupport::parse_option_value(opt, "maxr", defMr)));
+                    Decal[j - 1]->mintcoord =
+                        Vector(XMLSupport::parse_float(XMLSupport::parse_option_value(opt, "mins", defms)),
+                               XMLSupport::parse_float(XMLSupport::parse_option_value(opt, "mint", defmt)),
+                               XMLSupport::parse_float(XMLSupport::parse_option_value(opt, "minr", defmr)));
+                    Decal[j - 1]->maxtcoord =
+                        Vector(XMLSupport::parse_float(XMLSupport::parse_option_value(opt, "maxs", defMs)),
+                               XMLSupport::parse_float(XMLSupport::parse_option_value(opt, "maxt", defMt)),
+                               XMLSupport::parse_float(XMLSupport::parse_option_value(opt, "maxr", defMr)));
                 }
             }
         }
@@ -795,7 +776,7 @@ void AnimatedTexture::LoadAni(VSFileSystem::VSFile &f, int32_t stage, enum FILTE
 
     anis.insert(this);
 
-    //Needed - must do housekeeping, tcoord stuff and the like.
+    // Needed - must do housekeeping, tcoord stuff and the like.
     setTime(curtime);
 }
 
@@ -826,34 +807,24 @@ void AnimatedTexture::LoadFrame(int32_t frame)
     string addrmodestr = XMLSupport::parse_option_value(opt, "addressMode", "");
     enum ADDRESSMODE addrmode = parseAddressMode(addrmodestr, defaultAddressMode);
 
-    //Override compression options temporarily
-    //NOTE: This is ugly, but otherwise we would have to hack Texture way too much,
-    //or double the code. Let's use this then.
+    // Override compression options temporarily
+    // NOTE: This is ugly, but otherwise we would have to hack Texture way too much,
+    // or double the code. Let's use this then.
     int32_t ocompression = gl_options.compression;
     gl_options.compression = 0;
 
-    //Without this, VSFileSystem won't find the file -- ugly, but it's how it is.
+    // Without this, VSFileSystem won't find the file -- ugly, but it's how it is.
     VSFile f;
     VSError err = f.OpenReadOnly(wrapper_file_path, wrapper_file_type);
 
-    //Override mipmaping for video mode - too much overhead in generating the mipmamps.
+    // Override mipmaping for video mode - too much overhead in generating the mipmamps.
     enum FILTER ismip2 =
         ((ismipmapped == BILINEAR) || (ismipmapped == TRILINEAR) || (ismipmapped == MIPMAP)) ? BILINEAR : NEAREST;
     loadSuccess = true;
     if (alp[0] != '\0')
     {
-        (*Decal)->Load(file,
-                       alp,
-                       texstage,
-                       ismip2,
-                       TEXTURE2D,
-                       TEXTURE_2D,
-                       1,
-                       0,
-                       (g_game.use_videos) ? GFXTRUE : GFXFALSE,
-                       65536,
-                       (detailTex ? GFXTRUE : GFXFALSE),
-                       GFXTRUE,
+        (*Decal)->Load(file, alp, texstage, ismip2, TEXTURE2D, TEXTURE_2D, 1, 0,
+                       (g_game.use_videos) ? GFXTRUE : GFXFALSE, 65536, (detailTex ? GFXTRUE : GFXFALSE), GFXTRUE,
                        addrmode);
     }
     else if (numgets == 1)
@@ -886,7 +857,8 @@ bool AnimatedTexture::LoadSuccess()
 
 uint32_t AnimatedTexture::numLayers() const
 {
-    if (GetInterpolateFrames() && (active != nextactive) && gl_options.Multitexture && ((texstage + 1) < static_cast<int32_t>(gl_options.Multitexture)))
+    if (GetInterpolateFrames() && (active != nextactive) && gl_options.Multitexture &&
+        ((texstage + 1) < static_cast<int32_t>(gl_options.Multitexture)))
     {
         return 2;
     }

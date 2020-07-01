@@ -24,7 +24,8 @@
 #include "in.h"
 
 extern int32_t mousex, mousey;
-int32_t getMouseButtonStatus(); //returns button status that are bitwise anded (i.e. 1,3 down  the number looks like 0x1|(0x1<<2)
+int32_t getMouseButtonStatus(); // returns button status that are bitwise anded (i.e. 1,3 down  the number looks like
+                                // 0x1|(0x1<<2)
 void InitMouse();
 void RestoreMouse();
 void ProcessMouse();
@@ -32,5 +33,5 @@ void BindKey(int32_t key, MouseHandler handler);
 void UnbindMouse(int32_t key);
 int32_t getMouseDrawFunc();
 void GetMouseDelta(int32_t &dx, int32_t &dy);
-int32_t lookupMouseButton(int32_t winsys_button); //returns 0 for left click, 1 for middle, 2 for right. ....
+int32_t lookupMouseButton(int32_t winsys_button); // returns 0 for left click, 1 for middle, 2 for right. ....
 #endif

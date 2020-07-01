@@ -1,8 +1,8 @@
+#include "collide_map.h"
+#include "bolt.h"
+#include "unit_generic.h"
 #include <algorithm>
 #include <assert.h>
-#include "collide_map.h"
-#include "unit_generic.h"
-#include "bolt.h"
 
 volatile bool apart_return = true;
 void CollideArray::erase(iterator target)
@@ -15,7 +15,7 @@ void CollideArray::erase(iterator target)
         size_t diff = (target - this->begin());
         if (this->unsorted.size() > diff)
         {
-            //for secondary collide arrays that have no unsorted array
+            // for secondary collide arrays that have no unsorted array
             iterator tmp = &*(this->unsorted.begin() + diff);
             tmp->radius = 0;
             tmp->ref.unit = nullptr;
@@ -43,7 +43,7 @@ void CollideArray::UpdateBoltInfo(CollideArray::iterator iter, Collidable::Colli
 {
     if (iter >= this->begin() && iter < this->end())
     {
-        (*(unsorted.begin() + (iter - this->begin()))).ref = ref; //update both unsorted and sorted
+        (*(unsorted.begin() + (iter - this->begin()))).ref = ref; // update both unsorted and sorted
         (*iter).ref = ref;
     }
     else if (!is_null(iter))
@@ -65,15 +65,12 @@ CollideArray::iterator CollideArray::changeKey(CollideArray::iterator iter, cons
     return iter;
 }
 float CollideArray::max_bolt_radius = 0;
-CollideArray::iterator CollideArray::changeKey(CollideArray::iterator iter,
-                                               const Collidable &newKey,
-                                               CollideArray::iterator tless,
-                                               CollideArray::iterator tmore)
+CollideArray::iterator CollideArray::changeKey(CollideArray::iterator iter, const Collidable &newKey,
+                                               CollideArray::iterator tless, CollideArray::iterator tmore)
 {
     return this->changeKey(iter, newKey);
 }
-template <int direction, bool always_replace>
-class RadiusUpdate
+template <int direction, bool always_replace> class RadiusUpdate
 {
     float last_radius;
     double last_radius_key;
@@ -82,7 +79,7 @@ class RadiusUpdate
     double last_big_radius_key;
     CollideArray *cm;
 
-public:
+  public:
     RadiusUpdate(CollideArray *cm)
     {
         last_radius = 0;
@@ -124,10 +121,9 @@ public:
     }
 };
 
-template <int location_index>
-class UpdateBackpointers
+template <int location_index> class UpdateBackpointers
 {
-public:
+  public:
     void updateBackpointer(Collidable &collidable)
     {
         StarSystem *ss = _Universe->activeStarSystem();
@@ -160,9 +156,7 @@ void CollideArray::flatten()
         }
 
         std::list<CollidableBackref>::iterator listend = toflattenhints[i].end();
-        for (std::list<CollidableBackref>::iterator j = toflattenhints[i].begin();
-             j != listend;
-             ++j)
+        for (std::list<CollidableBackref>::iterator j = toflattenhints[i].begin(); j != listend; ++j)
             if (j->radius != 0)
             {
                 sorted[--index] = *j;
@@ -194,16 +188,16 @@ void CollideArray::flatten()
     }
     else
     {
-        assert(0 && "Only Support arrays of units_only and mixed units bolts"); //right now only support 2 array types;
+        assert(0 && "Only Support arrays of units_only and mixed units bolts"); // right now only support 2 array types;
     }
 }
 class CopyExample : public UpdateBackpointers<Unit::UNIT_ONLY>
 {
-public:
+  public:
     CollideArray::ResizableArray::iterator examplebegin;
     CollideArray::ResizableArray::iterator exampleend;
 
-public:
+  public:
     CopyExample(CollideArray::ResizableArray::iterator beg, CollideArray::ResizableArray::iterator end)
     {
         examplebegin = beg;
@@ -224,9 +218,8 @@ public:
 
 class resizezero
 {
-public:
-    template <class T>
-    void operator()(T &toclear)
+  public:
+    template <class T> void operator()(T &toclear)
     {
         toclear.resize(0);
     }
@@ -269,7 +262,7 @@ CollideArray::iterator CollideArray::insert(const Collidable &newKey, iterator h
     }
     else
     {
-        return this->insert(newKey); //don't use hint;
+        return this->insert(newKey); // don't use hint;
     }
 }
 
@@ -302,49 +295,41 @@ bool CollideArray::Iterable(CollideArray::iterator a)
 {
     return a >= begin() && a < end();
 }
-template <class T>
-class CheckBackref
+template <class T> class CheckBackref
 {
-public:
+  public:
     CollideMap::iterator operator()(T *input, unsigned int location_index)
     {
         return input->location[location_index];
     }
 };
-template <>
-class CheckBackref<Bolt>
+template <> class CheckBackref<Bolt>
 {
-public:
+  public:
     CollideMap::iterator operator()(Bolt *input, unsigned int location_index)
     {
         return input->location;
     }
 };
 extern size_t nondecal_index(Collidable::CollideRef b);
-template <class T, bool canbebolt>
-class CollideChecker
+template <class T, bool canbebolt> class CollideChecker
 {
-public:
+  public:
     static void FixMinLookMaxLook(CollideMap *tmpcm, CollideMap::iterator tmptmore, double &minlook, double &maxlook)
     {
         double mid = (minlook + maxlook) * .5;
         minlook = (minlook + mid) * .5 - tmptmore->radius;
         maxlook = (maxlook + mid) * .5 + tmptmore->radius;
     }
-    static bool CheckCollisionsInner(CollideMap::iterator cmbegin,
-                                     CollideMap::iterator cmend,
-                                     T *un,
-                                     const Collidable &collider,
-                                     unsigned int location_index,
-                                     CollideMap::iterator tless,
-                                     CollideMap::iterator tmore,
-                                     double minlook,
+    static bool CheckCollisionsInner(CollideMap::iterator cmbegin, CollideMap::iterator cmend, T *un,
+                                     const Collidable &collider, unsigned int location_index,
+                                     CollideMap::iterator tless, CollideMap::iterator tmore, double minlook,
                                      double maxlook)
     {
         CheckBackref<T> backref_obtain;
         if (backref_obtain(un, location_index) != cmbegin)
         {
-            //if will happen in case of !Iterable
+            // if will happen in case of !Iterable
             while ((*tless)->getKey() >= minlook)
             {
                 float rad = (*tless)->radius;
@@ -375,10 +360,9 @@ public:
                             CollideMap::iterator tmptless = tmptmore;
                             ++tmptmore;
                             CollideMap *tmpcm = _Universe->activeStarSystem()->collidemap[Unit::UNIT_ONLY];
-                            return CollideChecker<T, false>::CheckCollisionsInner(tmpcm->begin(), tmpcm->end(),
-                                                                                  un, collider, Unit::UNIT_ONLY,
-                                                                                  tmptless, tmptmore,
-                                                                                  minlook, maxlook);
+                            return CollideChecker<T, false>::CheckCollisionsInner(tmpcm->begin(), tmpcm->end(), un,
+                                                                                  collider, Unit::UNIT_ONLY, tmptless,
+                                                                                  tmptmore, minlook, maxlook);
                         }
                         if (CheckCollision(un, collider, ref.unit, **tless))
                         {
@@ -413,10 +397,9 @@ public:
                             CollideMap::iterator tmptless = tmptmore;
                             ++tmptmore;
                             CollideMap *tmpcm = _Universe->activeStarSystem()->collidemap[Unit::UNIT_ONLY];
-                            return CollideChecker<T, false>::CheckCollisionsInner(tmpcm->begin(), tmpcm->end(),
-                                                                                  un, collider, Unit::UNIT_ONLY,
-                                                                                  tmptless, tmptmore,
-                                                                                  minlook, maxlook);
+                            return CollideChecker<T, false>::CheckCollisionsInner(tmpcm->begin(), tmpcm->end(), un,
+                                                                                  collider, Unit::UNIT_ONLY, tmptless,
+                                                                                  tmptmore, minlook, maxlook);
                         }
                         if (CheckCollision(un, collider, ref.unit, **tless--))
                             if (endAfterCollide(un, location_index))
@@ -442,17 +425,16 @@ public:
             }
             else if (rad != 0)
             {
-                //not null unit
+                // not null unit
                 if (canbebolt == true && BoltType(un))
                 {
                     CollideMap::iterator tmptmore = ref.unit->location[Unit::UNIT_ONLY];
                     CollideMap::iterator tmptless = tmptmore;
                     ++tmptmore;
                     CollideMap *tmpcm = _Universe->activeStarSystem()->collidemap[Unit::UNIT_ONLY];
-                    return CollideChecker<T, false>::CheckCollisionsInner(tmpcm->begin(), tmpcm->end(),
-                                                                          un, collider, Unit::UNIT_ONLY,
-                                                                          tmptless, tmptmore,
-                                                                          minlook, maxlook);
+                    return CollideChecker<T, false>::CheckCollisionsInner(tmpcm->begin(), tmpcm->end(), un, collider,
+                                                                          Unit::UNIT_ONLY, tmptless, tmptmore, minlook,
+                                                                          maxlook);
                 }
                 if (CheckCollision(un, collider, ref.unit, **tmore++))
                     if (endAfterCollide(un, location_index))
@@ -465,29 +447,17 @@ public:
         }
         return false;
     }
-    static bool ComputeMaxLookMinLook(Unit *un,
-                                      CollideMap *cm,
-                                      CollideMap::iterator collider,
-                                      CollideMap::iterator begin,
-                                      CollideMap::iterator end,
-                                      double sortedloc,
-                                      float radius,
-                                      double &minlook,
-                                      double &maxlook)
+    static bool ComputeMaxLookMinLook(Unit *un, CollideMap *cm, CollideMap::iterator collider,
+                                      CollideMap::iterator begin, CollideMap::iterator end, double sortedloc,
+                                      float radius, double &minlook, double &maxlook)
     {
         maxlook = sortedloc + 2.0625 * radius;
         minlook = sortedloc - 2.0625 * radius;
         return false;
     }
-    static bool ComputeMaxLookMinLook(Bolt *un,
-                                      CollideMap *cm,
-                                      CollideMap::iterator collider,
-                                      CollideMap::iterator cmbegin,
-                                      CollideMap::iterator cmend,
-                                      double sortedloc,
-                                      float rad,
-                                      double &minlook,
-                                      double &maxlook)
+    static bool ComputeMaxLookMinLook(Bolt *un, CollideMap *cm, CollideMap::iterator collider,
+                                      CollideMap::iterator cmbegin, CollideMap::iterator cmend, double sortedloc,
+                                      float rad, double &minlook, double &maxlook)
     {
         float dboltdist = -2.0625 * rad;
         float boltdist = -1.0625 * rad;
@@ -520,14 +490,14 @@ public:
         double minlook, maxlook;
         CollideMap::iterator startIter = CheckBackref<T>()(un, location_index);
         if (ComputeMaxLookMinLook(un, cm, startIter, cmbegin, cmend, sortedloc, rad, minlook, maxlook))
-            return false; //no units in area
+            return false; // no units in area
         if (!cm->Iterable(startIter))
         {
             CollideArray::CollidableBackref *br = static_cast<CollideArray::CollidableBackref *>(startIter);
             CollideMap::iterator tmploc = cmbegin + br->toflattenhints_offset;
             if (tmploc == cmend)
                 tmploc--;
-            tless = tmore = tmploc; //don't decrease tless
+            tless = tmore = tmploc; // don't decrease tless
         }
         else
         {
@@ -536,10 +506,7 @@ public:
                 --tless;
         }
         ++tmore;
-        return CheckCollisionsInner(cmbegin, cmend,
-                                    un, collider, location_index,
-                                    tless, tmore,
-                                    minlook, maxlook);
+        return CheckCollisionsInner(cmbegin, cmend, un, collider, location_index, tless, tmore, minlook, maxlook);
     }
     static bool doUpdateKey(Bolt *b)
     {
@@ -561,14 +528,15 @@ public:
     {
         float aradius = a.radius;
         float bradius = b.radius;
-        return (a.GetPosition() - b.GetPosition()).MagnitudeSquared() > aradius * aradius + aradius * bradius * 2 + bradius * bradius;
+        return (a.GetPosition() - b.GetPosition()).MagnitudeSquared() >
+               aradius * aradius + aradius * bradius * 2 + bradius * bradius;
     }
     static bool ApartNeg(const Collidable &a, const Collidable &b)
     {
-        //return apart_return;
+        // return apart_return;
         double tempy = a.position.j - b.position.j;
         double tempz = a.position.k - b.position.k;
-        float radiussum = b.radius - a.radius; //a is negative
+        float radiussum = b.radius - a.radius; // a is negative
         if (fabs(tempy) > radiussum || fabs(tempz) > radiussum)
             return true;
         double tempx = (a.position.i - b.position.i);
@@ -627,7 +595,7 @@ bool CollideMap::CheckUnitCollisions(Bolt *bol, const Collidable &updated)
 }
 bool CollideMap::CheckCollisions(Unit *un, const Collidable &updated)
 {
-    //need to check beams
+    // need to check beams
     if (un->activeStarSystem == nullptr)
         un->activeStarSystem = _Universe->activeStarSystem();
     else
@@ -637,7 +605,7 @@ bool CollideMap::CheckCollisions(Unit *un, const Collidable &updated)
 
 bool CollideMap::CheckUnitCollisions(Unit *un, const Collidable &updated)
 {
-    //need to check beams
+    // need to check beams
     if (un->activeStarSystem == nullptr)
         un->activeStarSystem = _Universe->activeStarSystem();
     else

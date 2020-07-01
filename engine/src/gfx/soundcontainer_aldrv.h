@@ -7,15 +7,15 @@
 
 /**
  * A reference to a soundfile that can be lazily loaded.
- * 
+ *
  * This class implements the operations on sounds using aldrv
  */
 class AldrvSoundContainer : public GameSoundContainer
 {
-private:
+  private:
     int sound;
 
-public:
+  public:
     /**
      * Create a refernece to an optionally-looping sound file.
      */
@@ -23,7 +23,7 @@ public:
 
     virtual ~AldrvSoundContainer();
 
-protected:
+  protected:
     virtual void loadImpl();
     virtual void unloadImpl();
     virtual void playImpl();

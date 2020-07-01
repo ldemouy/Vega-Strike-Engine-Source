@@ -1,21 +1,22 @@
+#include <gnuhash.h>
 #include <string>
 #include <vector>
-#include <gnuhash.h>
 
 #include "hashtable.h"
 #include "vsfilesystem.h"
 
-// delim should be read as separator and not to be confused with text delimiter see http://creativyst.com/Doc/Articles/CSV/CSV01.htm
-// separator values , and ; while delimiter is listed as quote or "
+// delim should be read as separator and not to be confused with text delimiter see
+// http://creativyst.com/Doc/Articles/CSV/CSV01.htm separator values , and ; while delimiter is listed as quote or "
 std::vector<std::string> readCSV(const std::string &line, std::string delim = ",;");
-std::string writeCSV(const std::vector<std::string> &key, const std::vector<std::string> &table, std::string delim = ",;");
+std::string writeCSV(const std::vector<std::string> &key, const std::vector<std::string> &table,
+                     std::string delim = ",;");
 
 class CSVTable
 {
-private:
+  private:
     void Init(const std::string &data);
 
-public:
+  public:
     std::string rootdir;
     vsUMap<std::string, int> columns;
     vsUMap<std::string, int> rows;
@@ -29,15 +30,15 @@ public:
     bool ColumnExists(const std::string &name, unsigned int &where);
     void Merge(const CSVTable &other);
 
-public:
-    //Optimizer toolbox
+  public:
+    // Optimizer toolbox
     enum optimizer_enum
     {
         optimizer_undefined = 0x7fffffff
     };
     void SetupOptimizer(const std::vector<std::string> &keys, unsigned int type);
 
-    //Opaque Optimizers - use the optimizer toolbox to set them up
+    // Opaque Optimizers - use the optimizer toolbox to set them up
     bool optimizer_setup;
     unsigned int optimizer_type;
     std::vector<std::string> optimizer_keys;
@@ -49,7 +50,7 @@ class CSVRow
     std::string::size_type iter;
     CSVTable *parent;
 
-public:
+  public:
     std::string getRoot();
     size_t size() const
     {
@@ -81,7 +82,7 @@ public:
 /**
  * Load a space-separated list of CSV files and return a merged
  * representation of it.
- * 
+ *
  * @param csvfiles Space-separated list of CSV files
  * @param critical If true, any error reading any file will result
  *      in a fatal error and an exit() call.

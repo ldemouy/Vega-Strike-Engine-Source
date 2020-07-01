@@ -1,22 +1,21 @@
-#include "star_system_generic.h"
 #include "cmd/script/mission.h"
-#include "universe_generic.h"
-#include "galaxy_xml.h"
-#include "galaxy_gen.h"
-#include "vsfilesystem.h"
 #include "configxml.h"
-#include "vs_globals.h"
-#include "xml_support.h"
+#include "galaxy_gen.h"
+#include "galaxy_xml.h"
 #include "lin_time.h"
 #include "star_system_generic.h"
+#include "universe_generic.h"
+#include "vs_globals.h"
+#include "vsfilesystem.h"
+#include "xml_support.h"
 
 #include "options.h"
 
-#include <vector>
-#include <string>
-#include <map>
-#include <deque>
 #include <algorithm>
+#include <deque>
+#include <map>
+#include <string>
+#include <vector>
 
 using namespace XMLSupport;
 using namespace GalaxyXML;
@@ -66,15 +65,15 @@ string getUniversePath()
 
 string getVarEitherSectionOrSub(Galaxy *galaxy, string section, string subsection, string variable, string defaultst)
 {
-    string d3fault = galaxy->getVariable(section, subsection, variable,
-                                         galaxy->getVariable(section, variable, defaultst));
+    string d3fault =
+        galaxy->getVariable(section, subsection, variable, galaxy->getVariable(section, variable, defaultst));
     if (d3fault.length() == 0)
     {
         d3fault = galaxy->getVariable(section, variable, defaultst);
     }
     if (d3fault.length() == 0)
         return defaultst;
-    return d3fault; //this code will prevent the empty planet lists from interfering
+    return d3fault; // this code will prevent the empty planet lists from interfering
 }
 
 void ClampIt(float &prop, float min, float max)
@@ -179,7 +178,7 @@ static int32_t isqav(int32_t in1, int32_t in2)
 
 void AvgSystems(const SystemInfo &a, const SystemInfo &b, SystemInfo &si)
 {
-    si = a; //copy all stuff that cna't be averaged
+    si = a; // copy all stuff that cna't be averaged
     si.sunradius = fsqav(a.sunradius, b.sunradius);
     si.compactness = fsqav(a.compactness, b.compactness);
     si.numstars = isqav(a.numstars, b.numstars);
@@ -212,16 +211,18 @@ void MakeStarSystem(string file, Galaxy *galaxy, string origin, int32_t forceran
     SystemInfo Ave;
     SystemInfo si;
     AvgSystems(GetSystemMin(galaxy), GetSystemMax(galaxy), Ave);
-    //Do we really need this duplicate code... or can we use GetSystemXProp()
+    // Do we really need this duplicate code... or can we use GetSystemXProp()
     si.sector = getStarSystemSector(file);
     si.name = RemoveDotSystem(getStarSystemName(file).c_str());
     si.filename = file;
-    si.sunradius = parse_float(getVarEitherSectionOrSub(galaxy, si.sector, si.name, "sun_radius", tostring(Ave.sunradius)));
+    si.sunradius =
+        parse_float(getVarEitherSectionOrSub(galaxy, si.sector, si.name, "sun_radius", tostring(Ave.sunradius)));
     si.compactness =
         parse_float(getVarEitherSectionOrSub(galaxy, si.sector, si.name, "compactness", tostring(Ave.compactness)));
     si.numstars = parse_int(getVarEitherSectionOrSub(galaxy, si.sector, si.name, "num_stars", tostring(Ave.numstars)));
     si.nebulae = parse_bool(getVarEitherSectionOrSub(galaxy, si.sector, si.name, "nebulae", tostring(Ave.nebulae)));
-    si.asteroids = parse_bool(getVarEitherSectionOrSub(galaxy, si.sector, si.name, "asteroids", tostring(Ave.asteroids)));
+    si.asteroids =
+        parse_bool(getVarEitherSectionOrSub(galaxy, si.sector, si.name, "asteroids", tostring(Ave.asteroids)));
     si.numun1 =
         parse_int(getVarEitherSectionOrSub(galaxy, si.sector, si.name, "num_natural_phenomena", tostring(Ave.numun1)));
     si.numun2 = parse_int(getVarEitherSectionOrSub(galaxy, si.sector, si.name, "num_starbases", tostring(Ave.numun2)));
@@ -272,8 +273,8 @@ std::string Universe::getGalaxyProperty(const std::string &sys, const std::strin
 {
     string sector = getStarSystemSector(sys);
     string name = RemoveDotSystem(getStarSystemName(sys).c_str());
-    return galaxy->getVariable(sector, name, prop,
-                               galaxy->getVariable(sector, prop, galaxy->getVariable("unknown_sector", "min", prop, "")));
+    return galaxy->getVariable(
+        sector, name, prop, galaxy->getVariable(sector, prop, galaxy->getVariable("unknown_sector", "min", prop, "")));
 }
 
 std::string Universe::getGalaxyPropertyDefault(const std::string &sys, const std::string &prop, const std::string def)

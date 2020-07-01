@@ -1,25 +1,25 @@
 #ifndef _NAVSCREEN_H_
 #define _NAVSCREEN_H_
 
-#include "gui/glut_support.h"
-#include "navscreenoccupied.h"
 #include "drawlist.h"
-#include "navitemtypes.h"
-#include "gfx/masks.h"
-#include "navcomputer.h"
-#include "navpath.h"
 #include "gfx/hud.h"
+#include "gfx/masks.h"
 #include "gnuhash.h"
+#include "gui/glut_support.h"
+#include "navcomputer.h"
+#include "navitemtypes.h"
+#include "navpath.h"
+#include "navscreenoccupied.h"
 
 #include <map>
 
-#define NAVTOTALMESHCOUNT 8 //same as the button count, 1 mesh for screen and 1 per button(1+7)
+#define NAVTOTALMESHCOUNT 8 // same as the button count, 1 mesh for screen and 1 per button(1+7)
 #define MAXZOOM 10
 
 void Beautify(string systemfile, string &sector, string &system);
 class NavigationSystem
 {
-public:
+  public:
     class SystemIterator
     {
         vector<string> vstack;
@@ -28,7 +28,7 @@ public:
         unsigned int maxcount;
         vsUMap<string, bool> visited;
 
-    public:
+      public:
         SystemIterator(string current_system, unsigned int max = 2);
         bool done() const;
         QVector Position();
@@ -39,8 +39,8 @@ public:
 
     class CachedSystemIterator
     {
-    public:
-        //typedef std::pair<string, QVector> SystemInfo;
+      public:
+        // typedef std::pair<string, QVector> SystemInfo;
         struct SystemInfo
         {
             string name;
@@ -59,21 +59,19 @@ public:
             unsigned GetDestinationSize() const;
             GFXColor GetColor();
             SystemInfo(const string &name);
-            SystemInfo(const string &name,
-                       const QVector &position,
-                       const std::vector<std::string> &destinations,
+            SystemInfo(const string &name, const QVector &position, const std::vector<std::string> &destinations,
                        CachedSystemIterator *csi);
             void loadData(std::map<string, unsigned> *index_table);
         };
 
-    private:
-        friend struct SystemInfo; //inner class needs to be friend in gcc-295
+      private:
+        friend struct SystemInfo; // inner class needs to be friend in gcc-295
         vector<SystemInfo> systems;
         unsigned currentPosition;
-        CachedSystemIterator(const CachedSystemIterator &other); //May be really slow. Don't try this at home.
-        CachedSystemIterator operator++(int);                    //Also really slow because it has to use the copy constructor.
+        CachedSystemIterator(const CachedSystemIterator &other); // May be really slow. Don't try this at home.
+        CachedSystemIterator operator++(int); // Also really slow because it has to use the copy constructor.
 
-    public:
+      public:
         CachedSystemIterator();
         CachedSystemIterator(string current_system, unsigned max_systems = 2);
         void init(string current_system, unsigned max_systems = 2);
@@ -93,10 +91,10 @@ public:
 
     class CachedSectorIterator
     {
-    public:
+      public:
         class SectorInfo
         {
-        public:
+          public:
             string name;
             std::vector<unsigned> subsystems;
             string &GetName();
@@ -107,14 +105,14 @@ public:
             void AddSystem(unsigned index);
         };
 
-    private:
-        friend class SectorInfo; //inner class needs to be friend in gcc-295
+      private:
+        friend class SectorInfo; // inner class needs to be friend in gcc-295
         vector<SectorInfo> sectors;
         unsigned currentPosition;
-        CachedSectorIterator(const CachedSectorIterator &other); //May be really slow. Don't try this at home.
-        CachedSectorIterator operator++(int);                    //Also really slow because it has to use the copy constructor.
+        CachedSectorIterator(const CachedSectorIterator &other); // May be really slow. Don't try this at home.
+        CachedSectorIterator operator++(int); // Also really slow because it has to use the copy constructor.
 
-    public:
+      public:
         CachedSectorIterator();
         CachedSectorIterator(CachedSystemIterator &systemIter);
         void init(CachedSystemIterator &systemIter);
@@ -134,7 +132,7 @@ public:
 
     PathManager *pathman;
 
-private:
+  private:
     friend class NavComputer;
     friend class CurrentPathNode;
     friend class TargetPathNode;
@@ -155,16 +153,16 @@ private:
     class navscreenoccupied *screenoccupation;
     class Mesh *mesh[NAVTOTALMESHCOUNT];
     int reverse;
-    int rotations; //tried to change to unsigned but gazillions of comparisons to int crop up --chuck_starchaser
+    int rotations; // tried to change to unsigned but gazillions of comparisons to int crop up --chuck_starchaser
     int axis;
     int configmode;
 
-    float rx; //galaxy
+    float rx; // galaxy
     float ry;
     float rz;
     float zoom;
 
-    float rx_s; //system
+    float rx_s; // system
     float ry_s;
     float rz_s;
     float zoom_s;
@@ -219,19 +217,19 @@ private:
     GFXColor selectcol;
     GFXColor pathcol;
 
-    //DrawSectorList's scroll control variables
+    // DrawSectorList's scroll control variables
     unsigned sectorOffset;
     unsigned systemOffset;
 
     int whattodraw;
-    //bit 0 = undefined
-    //bit	1 = draw system screen / mission screen
-    //bit 2 = draw galaxy/system ship/mission screen
-    //bit 3 = draw sector list screen in mission mode
+    // bit 0 = undefined
+    // bit	1 = draw system screen / mission screen
+    // bit 2 = draw galaxy/system ship/mission screen
+    // bit 3 = draw sector list screen in mission mode
 
-    //coordinates done 'over left->right' by 'up bottom->top'
-    //values are 1/100 of the screen width and height
-    float screenskipby4[4]; //0 = x-small	1 = x-large	2 = y-small	3 = y-large
+    // coordinates done 'over left->right' by 'up bottom->top'
+    // values are 1/100 of the screen width and height
+    float screenskipby4[4]; // 0 = x-small	1 = x-large	2 = y-small	3 = y-large
     float buttonskipby4_1[4];
     float buttonskipby4_2[4];
     float buttonskipby4_3[4];
@@ -245,55 +243,28 @@ private:
     float meshcoordinate_z[NAVTOTALMESHCOUNT];
     float meshcoordinate_z_delta[NAVTOTALMESHCOUNT];
 
-    int buttonstates; //bit0 = button1, bit1 = button2, etc
+    int buttonstates; // bit0 = button1, bit1 = button2, etc
     float system_item_scale;
     float unselectedalpha;
 
-    //Drawing helper functions
+    // Drawing helper functions
     //*************************
     void Adjust3dTransformation(bool three_d, bool is_system_not_galaxy);
     void ReplaceAxes(QVector &pos);
-    void RecordMinAndMax(const QVector &pos,
-                         float &min_x,
-                         float &max_x,
-                         float &min_y,
-                         float &max_y,
-                         float &min_z,
-                         float &max_z,
-                         float &max_all);
+    void RecordMinAndMax(const QVector &pos, float &min_x, float &max_x, float &min_y, float &max_y, float &min_z,
+                         float &max_z, float &max_all);
     void DrawOriginOrientationTri(float center_nav_x, float center_nav_y, bool system_not_galaxy);
 
-    float CalculatePerspectiveAdjustment(float &zscale,
-                                         float &zdistance,
-                                         QVector &pos,
-                                         QVector &pos_flat,
-                                         float &system_item_scale_temp,
-                                         bool system_not_galaxy);
+    float CalculatePerspectiveAdjustment(float &zscale, float &zdistance, QVector &pos, QVector &pos_flat,
+                                         float &system_item_scale_temp, bool system_not_galaxy);
 
-    void TranslateCoordinates(QVector &pos,
-                              QVector &pos_flat,
-                              float center_nav_x,
-                              float center_nav_y,
-                              float themaxvalue,
-                              float &zscale,
-                              float &zdistance,
-                              float &the_x,
-                              float &the_y,
-                              float &the_x_flat,
-                              float &the_y_flat,
-                              float &system_item_scale_temp,
+    void TranslateCoordinates(QVector &pos, QVector &pos_flat, float center_nav_x, float center_nav_y,
+                              float themaxvalue, float &zscale, float &zdistance, float &the_x, float &the_y,
+                              float &the_x_flat, float &the_y_flat, float &system_item_scale_temp,
                               bool system_not_galaxy);
 
-    void TranslateAndDisplay(QVector &pos,
-                             QVector &pos_flat,
-                             float center_nav_x,
-                             float center_nav_y,
-                             float themaxvalue,
-                             float &zscale,
-                             float &zdistance,
-                             float &the_x,
-                             float &the_y,
-                             float &system_item_scale_temp,
+    void TranslateAndDisplay(QVector &pos, QVector &pos_flat, float center_nav_x, float center_nav_y, float themaxvalue,
+                             float &zscale, float &zdistance, float &the_x, float &the_y, float &system_item_scale_temp,
                              bool system_not_galaxy);
 
     void DisplayOrientationLines(float the_x, float the_y, float the_x_flat, float the_y_flat, bool system_not_galaxy);
@@ -307,7 +278,7 @@ private:
     bool DoubleRootedBFS(unsigned originIndex, unsigned destIndex);
     //*************************
 
-public:
+  public:
     NavigationSystem();
     ~NavigationSystem();
     static void DrawCircle(float x, float y, float size, const GFXColor &col);
@@ -367,7 +338,7 @@ public:
     }
     static QVector dxyz(QVector, double x_, double y_, double z_);
 
-    //float Delta(float a, float b);
+    // float Delta(float a, float b);
 };
 
 #endif

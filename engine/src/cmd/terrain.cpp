@@ -1,22 +1,20 @@
 #include "terrain.h"
+#include "building.h"
+#include "collection.h"
 #include "config_xml.h"
-#include "vs_globals.h"
-#include "xml_support.h"
+#include "gfx/vec.h"
 #include "star_system.h"
 #include "unit_generic.h"
-#include "gfx/vec.h"
-#include "vegastrike.h"
 #include "universe.h"
+#include "vegastrike.h"
+#include "vs_globals.h"
+#include "xml_support.h"
 #include <vector>
-#include "collection.h"
-#include "building.h"
 static std::vector<Terrain *> allterrains;
 
-Terrain::Terrain(const char *filename,
-                 const Vector &scales,
-                 const float mass,
-                 const float radius,
-                 updateparity *updatetransform) : QuadTree(filename, scales, radius), TotalSizeX(0), TotalSizeZ(0), mass(mass), whichstage(0)
+Terrain::Terrain(const char *filename, const Vector &scales, const float mass, const float radius,
+                 updateparity *updatetransform)
+    : QuadTree(filename, scales, radius), TotalSizeX(0), TotalSizeZ(0), mass(mass), whichstage(0)
 {
     this->updatetransform = updatetransform;
     allterrains.push_back(this);
@@ -40,9 +38,11 @@ void Terrain::SetTransformation(const Matrix &Mat)
 
 void Terrain::ApplyForce(Unit *un, const Vector &normal, float dist)
 {
-    un->ApplyForce(normal * .4 * un->GetMass() * fabs(normal.Dot((un->GetVelocity() / SIMULATION_ATOM)) + fabs(dist) / (SIMULATION_ATOM)));
-    un->ApplyDamage(un->Position().Cast() - normal * un->rSize(), -normal, .5 * fabs(normal.Dot(un->GetVelocity())) * mass * SIMULATION_ATOM,
-                    un, GFXColor(1, 1, 1, 1), nullptr);
+    un->ApplyForce(normal * .4 * un->GetMass() *
+                   fabs(normal.Dot((un->GetVelocity() / SIMULATION_ATOM)) + fabs(dist) / (SIMULATION_ATOM)));
+    un->ApplyDamage(un->Position().Cast() - normal * un->rSize(), -normal,
+                    .5 * fabs(normal.Dot(un->GetVelocity())) * mass * SIMULATION_ATOM, un, GFXColor(1, 1, 1, 1),
+                    nullptr);
 }
 void Terrain::Collide(Unit *un, const Matrix &t)
 {

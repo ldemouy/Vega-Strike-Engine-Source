@@ -1,5 +1,5 @@
-#include "gfx/vec.h"
 #include "al_globals.h"
+#include "gfx/vec.h"
 #include "hashtable.h"
 #ifdef HAVE_AL
 Hashtable<std::string, ALuint, 127> soundHash;

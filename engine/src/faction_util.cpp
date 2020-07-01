@@ -1,14 +1,12 @@
 #include <assert.h>
 
-#include "vs_globals.h"
-#include "cmd/unit_generic.h"
-#include "faction_generic.h"
-#include "gfx/aux_texture.h"
-#include "cmd/unit_util.h"
-#include "cmd/unit_generic.h"
-#include "gfx/aux_texture.h"
-#include "gfx/animation.h"
 #include "cmd/music.h"
+#include "cmd/unit_generic.h"
+#include "cmd/unit_util.h"
+#include "faction_generic.h"
+#include "gfx/animation.h"
+#include "gfx/aux_texture.h"
+#include "vs_globals.h"
 
 // DO NOT PUT INCLUDES AFTER using namespace
 
@@ -44,7 +42,7 @@ Texture *FactionUtil::getForceLogo(int faction)
     }
     return factions[faction]->logo;
 }
-//fixme--add squads in here
+// fixme--add squads in here
 Texture *FactionUtil::getSquadLogo(int faction)
 {
     std::shared_ptr<Faction> fac = factions[faction];
@@ -53,8 +51,8 @@ Texture *FactionUtil::getSquadLogo(int faction)
         if (!fac->secondaryLogoName.empty())
         {
             if (!fac->secondaryLogoAlphaName.empty())
-                fac->secondaryLogo = FactionUtil::createTexture(
-                    fac->secondaryLogoName.c_str(), fac->secondaryLogoAlphaName.c_str(), true);
+                fac->secondaryLogo = FactionUtil::createTexture(fac->secondaryLogoName.c_str(),
+                                                                fac->secondaryLogoAlphaName.c_str(), true);
 
             else
                 fac->secondaryLogo = FactionUtil::createTexture(fac->secondaryLogoName.c_str(), true);
@@ -72,7 +70,7 @@ int32_t FactionUtil::GetNumAnimation(int faction)
     return factions[faction]->comm_faces.size();
 }
 
-//COMES FROM FACTION_XML.CPP
+// COMES FROM FACTION_XML.CPP
 
 std::vector<Animation *> *FactionUtil::GetAnimation(int32_t faction, int32_t n, uint8_t &sex)
 {
@@ -91,22 +89,22 @@ std::vector<Animation *> *FactionUtil::GetRandCommAnimation(int32_t faction, Uni
         {
             int32_t ind = i < 8 ? rand() % size : i - 8;
             Faction::comm_face_t *tmp = &factions[faction]->comm_faces[ind];
-            if (tmp->dockable == Faction::comm_face_t::CEITHER || (tmp->dockable == Faction::comm_face_t::CYES && dockable) || (tmp->dockable == Faction::comm_face_t::CNO && !dockable))
+            if (tmp->dockable == Faction::comm_face_t::CEITHER ||
+                (tmp->dockable == Faction::comm_face_t::CYES && dockable) ||
+                (tmp->dockable == Faction::comm_face_t::CNO && !dockable))
             {
-                if (tmp->base == Faction::comm_face_t::CEITHER || (tmp->base == Faction::comm_face_t::CYES && base) || (tmp->base == Faction::comm_face_t::CNO && !base))
+                if (tmp->base == Faction::comm_face_t::CEITHER || (tmp->base == Faction::comm_face_t::CYES && base) ||
+                    (tmp->base == Faction::comm_face_t::CNO && !base))
                 {
                     return GetAnimation(faction, ind, sex);
                 }
             }
             if (tmp->base == Faction::comm_face_t::CYES && base)
             {
-                return GetAnimation(faction, ind, sex); //bases may be dockable but we have set dockable_only to no
+                return GetAnimation(faction, ind, sex); // bases may be dockable but we have set dockable_only to no
             }
         }
-        fprintf(stderr,
-                "Error picking comm animation for %d faction with bas:%d dock:%d\n",
-                faction,
-                (int32_t)base,
+        fprintf(stderr, "Error picking comm animation for %d faction with bas:%d dock:%d\n", faction, (int32_t)base,
                 (int32_t)dockable);
         return GetAnimation(faction, rand() % size, sex);
     }

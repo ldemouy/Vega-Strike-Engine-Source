@@ -19,29 +19,28 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-//TODO: Review this and gnuhash.h to see if it can be removed in favour of std functionality
+// TODO: Review this and gnuhash.h to see if it can be removed in favour of std functionality
 
 #ifndef _HASHTABLE_H_
 #define _HASHTABLE_H_
 #include "gnuhash.h"
+#include <algorithm>
 #include <math.h>
 #include <string>
-#include <vector>
-#include <algorithm>
 #include <utility>
+#include <vector>
 #define HASH_INTSIZE (sizeof(int) * 8)
 #define HASH_SALT_0 0x7EF92C3B
 #define HASH_SALT_1 0x9B
 class Unit;
-//const int hashsize = 1001;
-//Hashtable doesn't grow
-template <class KEY, class VALUE, int SIZ>
-class Hashtable : public vsUMap<KEY, VALUE *>
+// const int hashsize = 1001;
+// Hashtable doesn't grow
+template <class KEY, class VALUE, int SIZ> class Hashtable : public vsUMap<KEY, VALUE *>
 {
     typedef std::pair<KEY, VALUE *> HashElement;
     typedef vsUMap<KEY, VALUE *> supertype;
 
-public:
+  public:
     static int hash(const int key)
     {
         unsigned int k = key;
@@ -103,7 +102,7 @@ public:
     {
         typename supertype::iterator iter = this->find(key);
         if (iter == this->end())
-            //fprintf(stderr,"failed to remove item in hash_map\n");
+            // fprintf(stderr,"failed to remove item in hash_map\n");
             return;
         this->erase(iter);
     }

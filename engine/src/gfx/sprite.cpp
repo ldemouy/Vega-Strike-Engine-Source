@@ -18,21 +18,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-#include <stdlib.h>
-#include <iostream>
-#include "vsfilesystem.h"
-#include "cmd/unit_generic.h"
-#include "aux_texture.h"
-#include "ani_texture.h"
 #include "sprite.h"
-#include "matrix.h"
+#include "../gldrv/gl_globals.h"
+#include "ani_texture.h"
+#include "aux_texture.h"
+#include "cmd/unit_generic.h"
 #include "gldrv/gfxlib.h"
+#include "gnuhash.h"
+#include "matrix.h"
 #include "vegastrike.h"
 #include "vs_globals.h"
-#include "../gldrv/gl_globals.h"
+#include "vsfilesystem.h"
 #include <assert.h>
+#include <iostream>
 #include <math.h>
-#include "gnuhash.h"
+#include <stdlib.h>
 
 #ifdef _WIN32
 #include <direct.h>
@@ -42,8 +42,8 @@
 #define M_PI_2 (1.57079632679489661923)
 #endif
 
-#include "audio/Types.h"
 #include "audio/Source.h"
+#include "audio/Types.h"
 
 using namespace VSFileSystem;
 
@@ -70,7 +70,10 @@ static void cacheInsert(const char *file, VSSprite *spr)
     sprite_cache.insert(std::pair<std::string, VSSprite *>(hashName, spr));
 }
 
-VSSprite::VSSprite(Texture *_surface, float _xcenter, float _ycenter, float _width, float _height, float _s, float _t, bool _isAnimation) : xcenter(_xcenter), ycenter(_ycenter), widtho2(_width / 2), heighto2(_height / 2), maxs(_s), maxt(_t), rotation(0), isAnimation(_isAnimation)
+VSSprite::VSSprite(Texture *_surface, float _xcenter, float _ycenter, float _width, float _height, float _s, float _t,
+                   bool _isAnimation)
+    : xcenter(_xcenter), ycenter(_ycenter), widtho2(_width / 2), heighto2(_height / 2), maxs(_s), maxt(_t), rotation(0),
+      isAnimation(_isAnimation)
 {
     surface = _surface;
 }
@@ -94,7 +97,7 @@ VSSprite::VSSprite(const char *file, enum FILTER texturefilter, GFXBOOL force)
     maxs = maxt = 0;
     isAnimation = false;
 
-    //Check cache
+    // Check cache
     {
         std::pair<bool, VSSprite *> lkup = cacheLookup(file);
         if (lkup.first)
@@ -134,7 +137,8 @@ VSSprite::VSSprite(const char *file, enum FILTER texturefilter, GFXBOOL force)
         if (g_game.use_sprites || force == GFXTRUE)
         {
             int32_t len = strlen(texture);
-            if (len > 4 && texture[len - 1] == 'i' && texture[len - 2] == 'n' && texture[len - 3] == 'a' && texture[len - 4] == '.')
+            if (len > 4 && texture[len - 1] == 'i' && texture[len - 2] == 'n' && texture[len - 3] == 'a' &&
+                texture[len - 4] == '.')
             {
                 surface = new AnimatedTexture(f, 0, texturefilter, GFXFALSE);
                 isAnimation = true;
@@ -146,16 +150,7 @@ VSSprite::VSSprite(const char *file, enum FILTER texturefilter, GFXBOOL force)
             }
             else
             {
-                surface = new Texture(texture,
-                                      texturea,
-                                      0,
-                                      texturefilter,
-                                      TEXTURE2D,
-                                      TEXTURE_2D,
-                                      1,
-                                      0,
-                                      GFXTRUE,
-                                      65536,
+                surface = new Texture(texture, texturea, 0, texturefilter, TEXTURE2D, TEXTURE_2D, 1, 0, GFXTRUE, 65536,
                                       GFXFALSE);
                 isAnimation = false;
             }
@@ -170,19 +165,19 @@ VSSprite::VSSprite(const char *file, enum FILTER texturefilter, GFXBOOL force)
             }
             else
             {
-                //Update cache
+                // Update cache
                 VSSprite *newspr = new VSSprite();
                 *newspr = *this;
                 newspr->surface = this->surface->Clone();
                 cacheInsert(file, newspr);
             }
         }
-        //Finally close file
+        // Finally close file
         f.Close();
     }
     else
     {
-        cacheInsert(file, 0); //Mark bad file
+        cacheInsert(file, 0); // Mark bad file
         widtho2 = heighto2 = 0;
         xcenter = ycenter = 0;
     }
@@ -257,7 +252,7 @@ void VSSprite::Draw()
 {
     if (surface)
     {
-        //don't do anything if no surface
+        // don't do anything if no surface
         size_t numlayers = surface->numLayers();
         bool multitex = (numlayers > 1);
         int32_t numpasses = surface->numPasses();
@@ -290,20 +285,15 @@ void VSSprite::Draw()
                 GFXTextureEnv(0, GFXMODULATETEXTURE);
                 if (!multitex)
                 {
-                    const float vert[4 * (3 + 2)] = {
-                        ll.i, ll.j, ll.k, ms, Mt,
-                        lr.i, lr.j, lr.k, Ms, Mt,
-                        ur.i, ur.j, ur.k, Ms, mt,
-                        ul.i, ul.j, ul.k, ms, mt};
+                    const float vert[4 * (3 + 2)] = {ll.i, ll.j, ll.k, ms, Mt, lr.i, lr.j, lr.k, Ms, Mt,
+                                                     ur.i, ur.j, ur.k, Ms, mt, ul.i, ul.j, ul.k, ms, mt};
                     GFXDraw(GFXQUAD, vert, 4, 3, 0, 2);
                 }
                 else
                 {
-                    const float vert[4 * (3 + 4)] = {
-                        ll.i, ll.j, ll.k, ms, Mt, ms, Mt,
-                        lr.i, lr.j, lr.k, Ms, Mt, Ms, Mt,
-                        ur.i, ur.j, ur.k, Ms, mt, Ms, mt,
-                        ul.i, ul.j, ul.k, ms, mt, ms, mt};
+                    const float vert[4 * (3 + 4)] = {ll.i, ll.j, ll.k, ms,   Mt,   ms,   Mt,   lr.i, lr.j, lr.k,
+                                                     Ms,   Mt,   Ms,   Mt,   ur.i, ur.j, ur.k, Ms,   mt,   Ms,
+                                                     mt,   ul.i, ul.j, ul.k, ms,   mt,   ms,   mt};
                     GFXDraw(GFXQUAD, vert, 4, 3, 0, 2, 2);
                 }
             }

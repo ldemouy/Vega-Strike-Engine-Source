@@ -27,14 +27,14 @@
 
 #include "window.h"
 
-//Add a new control to this collection.
+// Add a new control to this collection.
 void GroupControl::addChild(Control *child)
 {
     m_controls.push_back(child);
 }
 
-//Delete a control that is in this collection.
-//Returns true if successful.
+// Delete a control that is in this collection.
+// Returns true if successful.
 bool GroupControl::deleteControl(Control *c)
 {
     std::vector<Control *>::iterator iter;
@@ -43,14 +43,14 @@ bool GroupControl::deleteControl(Control *c)
         Control *currentControl = *iter;
         if (c == currentControl)
         {
-            //Found it in this group.
+            // Found it in this group.
             m_controls.erase(iter);
             EventManager::addToDeleteQueue(currentControl);
             return true;
         }
         if (currentControl->hasGroupChildren())
         {
-            //Check the children.
+            // Check the children.
             GroupControl *group = static_cast<GroupControl *>(currentControl);
             if (group->deleteControl(c))
                 return true;
@@ -59,7 +59,7 @@ bool GroupControl::deleteControl(Control *c)
     return false;
 }
 
-//Take a control away from this collection and save it elsewhere.
+// Take a control away from this collection and save it elsewhere.
 Control *GroupControl::removeControlFromGroup(Control *c)
 {
     std::vector<Control *>::iterator iter;
@@ -68,13 +68,13 @@ Control *GroupControl::removeControlFromGroup(Control *c)
         Control *currentControl = *iter;
         if (c == currentControl)
         {
-            //Found it in this group.
+            // Found it in this group.
             m_controls.erase(iter);
             return currentControl;
         }
         if (currentControl->hasGroupChildren())
         {
-            //Check the children.
+            // Check the children.
             GroupControl *group = static_cast<GroupControl *>(currentControl);
             Control *ret = group->removeControlFromGroup(c);
             if (ret)
@@ -84,8 +84,8 @@ Control *GroupControl::removeControlFromGroup(Control *c)
     return nullptr;
 }
 
-//Find a control using its id.  nullptr returned if none found.
-//Note that the control may be hidden.
+// Find a control using its id.  nullptr returned if none found.
+// Note that the control may be hidden.
 Control *GroupControl::findControlById(const std::string &id)
 {
     std::vector<Control *>::iterator iter;
@@ -93,11 +93,11 @@ Control *GroupControl::findControlById(const std::string &id)
     {
         Control *currentControl = *iter;
         if (currentControl->id() == id)
-            //Found it in this group.
+            // Found it in this group.
             return currentControl;
         if (currentControl->hasGroupChildren())
         {
-            //Check the children.
+            // Check the children.
             GroupControl *group = static_cast<GroupControl *>(currentControl);
             Control *ret = group->findControlById(id);
             if (ret)
@@ -107,8 +107,8 @@ Control *GroupControl::findControlById(const std::string &id)
     return nullptr;
 }
 
-//Draw the control.
-//This should not draw outside its rectangle!
+// Draw the control.
+// This should not draw outside its rectangle!
 void GroupControl::draw(void)
 {
     std::vector<Control *>::iterator iter;
@@ -116,17 +116,17 @@ void GroupControl::draw(void)
     {
         Control *currentControl = *iter;
         if (!currentControl->hidden())
-            //If it's not hidden, draw it.
+            // If it's not hidden, draw it.
             currentControl->draw();
     }
 }
 
-//OVERRIDES
+// OVERRIDES
 bool GroupControl::processMouseDown(const InputEvent &event)
 {
     std::vector<Control *>::reverse_iterator iter;
     bool retval = false;
-    //Give this to the appropriate control.
+    // Give this to the appropriate control.
     for (iter = m_controls.rbegin(); iter != m_controls.rend(); iter++)
     {
         Control &control = **iter;
@@ -134,7 +134,7 @@ bool GroupControl::processMouseDown(const InputEvent &event)
         {
             if (control.hasGroupChildren() && !retval)
             {
-                //Do children first.
+                // Do children first.
                 GroupControl &group = static_cast<GroupControl &>(control);
                 retval = group.processMouseDown(event);
             }
@@ -150,7 +150,7 @@ bool GroupControl::processMouseDown(const InputEvent &event)
 bool GroupControl::processMouseUp(const InputEvent &event)
 {
     std::vector<Control *>::reverse_iterator iter;
-    //Give this to the appropriate control.
+    // Give this to the appropriate control.
     for (iter = m_controls.rbegin(); iter != m_controls.rend(); iter++)
     {
         Control &control = **iter;
@@ -158,7 +158,7 @@ bool GroupControl::processMouseUp(const InputEvent &event)
         {
             if (control.hasGroupChildren())
             {
-                //Do children first.
+                // Do children first.
                 GroupControl &group = static_cast<GroupControl &>(control);
                 if (group.processMouseUp(event))
                     return true;
@@ -173,7 +173,7 @@ bool GroupControl::processMouseUp(const InputEvent &event)
 bool GroupControl::processMouseMove(const InputEvent &event)
 {
     std::vector<Control *>::reverse_iterator iter;
-    //Give this to the appropriate control.
+    // Give this to the appropriate control.
     for (iter = m_controls.rbegin(); iter != m_controls.rend(); iter++)
     {
         Control &control = **iter;
@@ -181,7 +181,7 @@ bool GroupControl::processMouseMove(const InputEvent &event)
         {
             if (control.hasGroupChildren())
             {
-                //Do children first.
+                // Do children first.
                 GroupControl &group = static_cast<GroupControl &>(control);
                 if (group.processMouseMove(event))
                     return true;
@@ -196,7 +196,7 @@ bool GroupControl::processMouseMove(const InputEvent &event)
 bool GroupControl::processMouseDrag(const InputEvent &event)
 {
     std::vector<Control *>::reverse_iterator iter;
-    //Give this to the appropriate control.
+    // Give this to the appropriate control.
     for (iter = m_controls.rbegin(); iter != m_controls.rend(); iter++)
     {
         Control &control = **iter;
@@ -204,7 +204,7 @@ bool GroupControl::processMouseDrag(const InputEvent &event)
         {
             if (control.hasGroupChildren())
             {
-                //Do children first.
+                // Do children first.
                 GroupControl &group = static_cast<GroupControl &>(control);
                 if (group.processMouseDrag(event))
                     return true;

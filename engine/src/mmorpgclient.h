@@ -1,21 +1,21 @@
 #ifdef MMORPGC_INC
 #else
 #define MMORPGC_INC 1
-//linux version is int
-//extern commandI CommandInterpretor;
+// linux version is int
+// extern commandI CommandInterpretor;
 class POSpack;
 class mmoc : public commandI
 {
-    //sockaddr_in m_addr;
+    // sockaddr_in m_addr;
     int socket;
-    std::string start;   //holds strings waiting to be processed
-    std::string tempstr; //holds temporary strings
+    std::string start;   // holds strings waiting to be processed
+    std::string tempstr; // holds temporary strings
     bool status;
     int binarysize;
-    bool binmode; //bypass string processing
-    bool POSmode; //expect position packet
-public:
-    bool getStatus(int); //also sets it, mutex'd
+    bool binmode; // bypass string processing
+    bool POSmode; // expect position packet
+  public:
+    bool getStatus(int); // also sets it, mutex'd
     mmoc();
     int getSocket()
     {
@@ -33,7 +33,7 @@ public:
     virtual void conoutf(std::string &, int x = 0, int y = 0, int z = 0);
     void close();
     Functor<mmoc> *cmd;
-    Functor<mmoc> *cl; //disconnect/close
+    Functor<mmoc> *cl; // disconnect/close
     Functor<mmoc> *csay;
 };
 

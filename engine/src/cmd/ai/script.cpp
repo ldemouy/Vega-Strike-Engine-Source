@@ -1,17 +1,17 @@
 #include "script.h"
-#include "navigation.h"
-#include "xml_support.h"
+#include "cmd/unit_generic.h"
+#include "configxml.h"
 #include "flybywire.h"
+#include "hard_coded_scripts.h"
+#include "navigation.h"
+#include "tactics.h"
+#include "universe_util.h"
+#include "vsfilesystem.h"
+#include "xml_support.h"
+#include <assert.h>
+#include <stack>
 #include <stdio.h>
 #include <vector>
-#include <stack>
-#include "vsfilesystem.h"
-#include "tactics.h"
-#include "cmd/unit_generic.h"
-#include "hard_coded_scripts.h"
-#include "universe_util.h"
-#include "configxml.h"
-#include <assert.h>
 
 using namespace XMLSupport;
 
@@ -127,11 +127,8 @@ QVector &AIScript::topv()
     if (!xml->vectors.size())
     {
         xml->vectors.push(xml->defaultvec);
-        VSFileSystem::vs_fprintf(stderr,
-                                 "\nERROR: Vector stack is empty... Will return <%f, %f, %f>\n",
-                                 xml->defaultvec.i,
-                                 xml->defaultvec.j,
-                                 xml->defaultvec.k);
+        VSFileSystem::vs_fprintf(stderr, "\nERROR: Vector stack is empty... Will return <%f, %f, %f>\n",
+                                 xml->defaultvec.i, xml->defaultvec.j, xml->defaultvec.k);
     }
     return xml->vectors.top();
 }
@@ -157,116 +154,114 @@ void AIScript::endElement(void *userData, const XML_Char *name)
 
 namespace AiXml
 {
-    enum Names
-    {
-        SCRIPT,
-        MOVETO,
-        VECTOR,
-        FFLOAT,
-        X,
-        Y,
-        Z,
-        ACCURACY,
-        UNKNOWN,
-        EXECUTEFOR,
-        TIME,
-        AFTERBURN,
-        CHANGEHEAD,
-        MATCHLIN,
-        MATCHANG,
-        MATCHVEL,
-        ANGULAR,
-        LINEAR,
-        LOCAL,
-        TERMINATE,
-        VALUE,
-        ADD,
-        SUB,
-        NEG,
-        NORMALIZE,
-        SCALE,
-        CROSS,
-        DOT,
-        MULTF,
-        ADDF,
-        FROMF,
-        TOF,
-        FACETARGET,
-        ITTTS,
-        TARGETPOS,
-        THREATPOS,
-        YOURPOS,
-        TARGETV,
-        THREATV,
-        YOURV,
-        TARGETWORLD,
-        THREATWORLD,
-        TARGETLOCAL,
-        THREATLOCAL,
-        YOURLOCAL,
-        YOURWORLD,
-        SIMATOM,
-        DUPLIC,
-        CLOAKFOR,
-        DEFAULT
-    };
+enum Names
+{
+    SCRIPT,
+    MOVETO,
+    VECTOR,
+    FFLOAT,
+    X,
+    Y,
+    Z,
+    ACCURACY,
+    UNKNOWN,
+    EXECUTEFOR,
+    TIME,
+    AFTERBURN,
+    CHANGEHEAD,
+    MATCHLIN,
+    MATCHANG,
+    MATCHVEL,
+    ANGULAR,
+    LINEAR,
+    LOCAL,
+    TERMINATE,
+    VALUE,
+    ADD,
+    SUB,
+    NEG,
+    NORMALIZE,
+    SCALE,
+    CROSS,
+    DOT,
+    MULTF,
+    ADDF,
+    FROMF,
+    TOF,
+    FACETARGET,
+    ITTTS,
+    TARGETPOS,
+    THREATPOS,
+    YOURPOS,
+    TARGETV,
+    THREATV,
+    YOURV,
+    TARGETWORLD,
+    THREATWORLD,
+    TARGETLOCAL,
+    THREATLOCAL,
+    YOURLOCAL,
+    YOURWORLD,
+    SIMATOM,
+    DUPLIC,
+    CLOAKFOR,
+    DEFAULT
+};
 
-    const EnumMap::Pair element_names[] = {
-        EnumMap::Pair("UNKNOWN", UNKNOWN),
-        EnumMap::Pair("Float", FFLOAT),
-        EnumMap::Pair("Script", SCRIPT),
-        EnumMap::Pair("Vector", VECTOR),
-        EnumMap::Pair("Moveto", MOVETO),
-        EnumMap::Pair("Default", DEFAULT),
-        EnumMap::Pair("Targetworld", TARGETWORLD),
-        EnumMap::Pair("Yourworld", YOURWORLD),
-        EnumMap::Pair("Targetlocal", TARGETLOCAL),
-        EnumMap::Pair("Yourlocal", YOURLOCAL),
-        EnumMap::Pair("FaceTarget", FACETARGET),
-        EnumMap::Pair("CloakFor", CLOAKFOR),
-        EnumMap::Pair("ExecuteFor", EXECUTEFOR),
-        EnumMap::Pair("ChangeHead", CHANGEHEAD),
-        EnumMap::Pair("MatchLin", MATCHLIN),
-        EnumMap::Pair("MatchAng", MATCHANG),
-        EnumMap::Pair("MatchVel", MATCHVEL),
-        EnumMap::Pair("Angular", ANGULAR),
-        EnumMap::Pair("Add", ADD),
-        EnumMap::Pair("Neg", NEG),
-        EnumMap::Pair("Sub", SUB),
-        EnumMap::Pair("Normalize", NORMALIZE),
-        EnumMap::Pair("Scale", SCALE),
-        EnumMap::Pair("Cross", CROSS),
-        EnumMap::Pair("Dot", DOT),
-        EnumMap::Pair("Multf", MULTF),
-        EnumMap::Pair("Addf", ADDF),
-        EnumMap::Pair("Fromf", FROMF),
-        EnumMap::Pair("Tof", TOF),
-        EnumMap::Pair("Linear", LINEAR),
-        EnumMap::Pair("Threatworld", THREATWORLD),
-        EnumMap::Pair("Threatlocal", THREATLOCAL)};
-    const EnumMap::Pair attribute_names[] = {
-        EnumMap::Pair("UNKNOWN", UNKNOWN),
-        EnumMap::Pair("accuracy", ACCURACY),
-        EnumMap::Pair("x", X),
-        EnumMap::Pair("y", Y),
-        EnumMap::Pair("z", Z),
-        EnumMap::Pair("Time", TIME),
-        EnumMap::Pair("Terminate", TERMINATE),
-        EnumMap::Pair("Local", LOCAL),
-        EnumMap::Pair("Value", VALUE),
-        EnumMap::Pair("ITTS", ITTTS),
-        EnumMap::Pair("Afterburn", AFTERBURN),
-        EnumMap::Pair("Position", YOURPOS),
-        EnumMap::Pair("TargetPos", TARGETPOS),
-        EnumMap::Pair("ThreatPos", THREATPOS),
-        EnumMap::Pair("Velocity", YOURV),
-        EnumMap::Pair("TargetV", TARGETV),
-        EnumMap::Pair("ThreatV", THREATV),
-        EnumMap::Pair("SimlationAtom", SIMATOM),
-        EnumMap::Pair("Dup", DUPLIC)};
+const EnumMap::Pair element_names[] = {EnumMap::Pair("UNKNOWN", UNKNOWN),
+                                       EnumMap::Pair("Float", FFLOAT),
+                                       EnumMap::Pair("Script", SCRIPT),
+                                       EnumMap::Pair("Vector", VECTOR),
+                                       EnumMap::Pair("Moveto", MOVETO),
+                                       EnumMap::Pair("Default", DEFAULT),
+                                       EnumMap::Pair("Targetworld", TARGETWORLD),
+                                       EnumMap::Pair("Yourworld", YOURWORLD),
+                                       EnumMap::Pair("Targetlocal", TARGETLOCAL),
+                                       EnumMap::Pair("Yourlocal", YOURLOCAL),
+                                       EnumMap::Pair("FaceTarget", FACETARGET),
+                                       EnumMap::Pair("CloakFor", CLOAKFOR),
+                                       EnumMap::Pair("ExecuteFor", EXECUTEFOR),
+                                       EnumMap::Pair("ChangeHead", CHANGEHEAD),
+                                       EnumMap::Pair("MatchLin", MATCHLIN),
+                                       EnumMap::Pair("MatchAng", MATCHANG),
+                                       EnumMap::Pair("MatchVel", MATCHVEL),
+                                       EnumMap::Pair("Angular", ANGULAR),
+                                       EnumMap::Pair("Add", ADD),
+                                       EnumMap::Pair("Neg", NEG),
+                                       EnumMap::Pair("Sub", SUB),
+                                       EnumMap::Pair("Normalize", NORMALIZE),
+                                       EnumMap::Pair("Scale", SCALE),
+                                       EnumMap::Pair("Cross", CROSS),
+                                       EnumMap::Pair("Dot", DOT),
+                                       EnumMap::Pair("Multf", MULTF),
+                                       EnumMap::Pair("Addf", ADDF),
+                                       EnumMap::Pair("Fromf", FROMF),
+                                       EnumMap::Pair("Tof", TOF),
+                                       EnumMap::Pair("Linear", LINEAR),
+                                       EnumMap::Pair("Threatworld", THREATWORLD),
+                                       EnumMap::Pair("Threatlocal", THREATLOCAL)};
+const EnumMap::Pair attribute_names[] = {EnumMap::Pair("UNKNOWN", UNKNOWN),
+                                         EnumMap::Pair("accuracy", ACCURACY),
+                                         EnumMap::Pair("x", X),
+                                         EnumMap::Pair("y", Y),
+                                         EnumMap::Pair("z", Z),
+                                         EnumMap::Pair("Time", TIME),
+                                         EnumMap::Pair("Terminate", TERMINATE),
+                                         EnumMap::Pair("Local", LOCAL),
+                                         EnumMap::Pair("Value", VALUE),
+                                         EnumMap::Pair("ITTS", ITTTS),
+                                         EnumMap::Pair("Afterburn", AFTERBURN),
+                                         EnumMap::Pair("Position", YOURPOS),
+                                         EnumMap::Pair("TargetPos", TARGETPOS),
+                                         EnumMap::Pair("ThreatPos", THREATPOS),
+                                         EnumMap::Pair("Velocity", YOURV),
+                                         EnumMap::Pair("TargetV", TARGETV),
+                                         EnumMap::Pair("ThreatV", THREATV),
+                                         EnumMap::Pair("SimlationAtom", SIMATOM),
+                                         EnumMap::Pair("Dup", DUPLIC)};
 
-    const EnumMap element_map(element_names, 32);
-    const EnumMap attribute_map(attribute_names, 19);
+const EnumMap element_map(element_names, 32);
+const EnumMap attribute_map(attribute_names, 19);
 } // namespace AiXml
 
 void AIScript::beginElement(const string &name, const AttributeList &attributes)
@@ -285,7 +280,7 @@ void AIScript::beginElement(const string &name, const AttributeList &attributes)
     switch (elem)
     {
     case DEFAULT:
-        xml->unitlevel += 2; //pretend it's at a reasonable level
+        xml->unitlevel += 2; // pretend it's at a reasonable level
         break;
     case UNKNOWN:
         xml->unitlevel++;
@@ -316,7 +311,7 @@ void AIScript::beginElement(const string &name, const AttributeList &attributes)
 #ifdef AIDBG
                 VSFileSystem::vs_fprintf(stderr, "1%x ", &elem);
 #endif
-                xml->vectors.pop(); //get rid of dummy vector pushed on above
+                xml->vectors.pop(); // get rid of dummy vector pushed on above
                 xml->vectors.push(xml->vectors.top());
                 break;
             case THREATPOS:
@@ -500,7 +495,7 @@ void AIScript::beginElement(const string &name, const AttributeList &attributes)
             case SIMATOM:
                 topf() = SIMULATION_ATOM;
             case DUPLIC:
-                xml->floats.pop(); //get rid of dummy vector pushed on above
+                xml->floats.pop(); // get rid of dummy vector pushed on above
                 xml->floats.push(xml->floats.top());
                 break;
             }
@@ -585,7 +580,7 @@ void AIScript::endElement(const string &name)
     case UNKNOWN:
         xml->unitlevel--;
         break;
-    //Vector
+    // Vector
     case THREATWORLD:
         xml->unitlevel++;
         if ((tmp = parent->Threat()))
@@ -737,29 +732,25 @@ void AIScript::endElement(const string &name)
         break;
     case MATCHANG:
         xml->unitlevel--;
-        xml->orders.push_back(new Orders::MatchAngularVelocity(parent->ClampAngVel(topv()), ((bool)xml->acc),
-                                                               xml->terminate));
+        xml->orders.push_back(
+            new Orders::MatchAngularVelocity(parent->ClampAngVel(topv()), ((bool)xml->acc), xml->terminate));
         popv();
         break;
     case FACETARGET:
         xml->unitlevel--;
         if (xml->itts || parent->GetComputerData().itts)
         {
-            xml->orders.push_back(new Orders::FaceTargetITTS(xml->terminate,
-                                                             (bool)xml->acc));
+            xml->orders.push_back(new Orders::FaceTargetITTS(xml->terminate, (bool)xml->acc));
         }
         else
         {
-            xml->orders.push_back(new Orders::FaceTarget(xml->terminate,
-                                                         (bool)xml->acc));
+            xml->orders.push_back(new Orders::FaceTarget(xml->terminate, (bool)xml->acc));
         }
         break;
     case MATCHLIN:
         xml->unitlevel--;
-        xml->orders.push_back(new Orders::MatchLinearVelocity(parent->ClampVelocity(topv(),
-                                                                                    xml->afterburn),
-                                                              ((bool)xml->acc),
-                                                              xml->afterburn, xml->terminate));
+        xml->orders.push_back(new Orders::MatchLinearVelocity(parent->ClampVelocity(topv(), xml->afterburn),
+                                                              ((bool)xml->acc), xml->afterburn, xml->terminate));
         popv();
         break;
     case MATCHVEL:
@@ -768,15 +759,13 @@ void AIScript::endElement(const string &name)
         popv();
         if (xml->lin == 1)
         {
-            xml->orders.push_back(new Orders::MatchVelocity(parent->ClampVelocity(topv(),
-                                                                                  xml->afterburn),
+            xml->orders.push_back(new Orders::MatchVelocity(parent->ClampVelocity(topv(), xml->afterburn),
                                                             parent->ClampAngVel(temp), ((bool)xml->acc), xml->afterburn,
                                                             xml->terminate));
         }
         else
         {
-            xml->orders.push_back(new Orders::MatchVelocity(parent->ClampVelocity(temp,
-                                                                                  xml->afterburn),
+            xml->orders.push_back(new Orders::MatchVelocity(parent->ClampVelocity(temp, xml->afterburn),
                                                             parent->ClampAngVel(topv()), ((bool)xml->acc),
                                                             xml->afterburn, xml->terminate));
         }
@@ -789,7 +778,8 @@ void AIScript::endElement(const string &name)
         {
             if (xml->executefor.back() > 0)
             {
-                xml->orders[xml->orders.size() - 1] = new Orders::ExecuteFor(xml->orders[xml->orders.size() - 1], xml->executefor.back());
+                xml->orders[xml->orders.size() - 1] =
+                    new Orders::ExecuteFor(xml->orders[xml->orders.size() - 1], xml->executefor.back());
                 xml->executefor.pop_back();
             }
         }
@@ -823,7 +813,8 @@ void AIScript::LoadXML()
     string full_filename = filename;
     bool doroll = false;
     HardCodedMap::const_iterator iter = hard_coded_scripts.find(full_filename);
-    if (iter == hard_coded_scripts.end() && full_filename.length() > 5 && full_filename[0] == 'r' && full_filename[1] == 'o' && full_filename[2] == 'l' && full_filename[3] == 'l' && full_filename[4] == ' ')
+    if (iter == hard_coded_scripts.end() && full_filename.length() > 5 && full_filename[0] == 'r' &&
+        full_filename[1] == 'o' && full_filename[2] == 'l' && full_filename[3] == 'l' && full_filename[4] == ' ')
     {
         doroll = true;
         full_filename = full_filename.substr(5);
@@ -851,9 +842,8 @@ void AIScript::LoadXML()
         }
         if (aidebug > 1)
         {
-            VSFileSystem::vs_fprintf(stderr, "%f using hcs %s for %s threat %f\n",
-                                     mission->getGametime(), filename, parent->name.get().c_str(),
-                                     parent->GetComputerData().threatlevel);
+            VSFileSystem::vs_fprintf(stderr, "%f using hcs %s for %s threat %f\n", mission->getGametime(), filename,
+                                     parent->name.get().c_str(), parent->GetComputerData().threatlevel);
         }
         if (_Universe->isPlayerStarship(parent->Target()))
         {
@@ -867,7 +857,8 @@ void AIScript::LoadXML()
                     Vector PosDifference = (targ->Position() - parent->Position()).Cast();
                     float pdmag = PosDifference.Magnitude();
                     value = (pdmag - parent->rSize() - targ->rSize());
-                    float myvel = pdmag > 0 ? PosDifference.Dot(parent->GetVelocity() - targ->GetVelocity()) / pdmag : 0;
+                    float myvel =
+                        pdmag > 0 ? PosDifference.Dot(parent->GetVelocity() - targ->GetVelocity()) / pdmag : 0;
                     if (myvel > 0)
                     {
                         value -= myvel * myvel / (2 * (parent->Limits().retro / parent->GetMass()));
@@ -881,7 +872,10 @@ void AIScript::LoadXML()
             }
             if (aidebug > 0)
             {
-                UniverseUtil::IOmessage(0, parent->name, "all", string("using script ") + string(filename) + " threat " + XMLSupport::tostring(parent->GetComputerData().threatlevel) + " dis " + XMLSupport::tostring(value));
+                UniverseUtil::IOmessage(0, parent->name, "all",
+                                        string("using script ") + string(filename) + " threat " +
+                                            XMLSupport::tostring(parent->GetComputerData().threatlevel) + " dis " +
+                                            XMLSupport::tostring(value));
             }
         }
         return;
@@ -894,7 +888,9 @@ void AIScript::LoadXML()
         }
         if (aidebug > 0)
         {
-            UniverseUtil::IOmessage(0, parent->name, "all", string("FAILED(or missile) script ") + string(filename) + " threat " + XMLSupport::tostring(parent->GetComputerData().threatlevel));
+            UniverseUtil::IOmessage(0, parent->name, "all",
+                                    string("FAILED(or missile) script ") + string(filename) + " threat " +
+                                        XMLSupport::tostring(parent->GetComputerData().threatlevel));
         }
     }
 #ifdef AIDBG

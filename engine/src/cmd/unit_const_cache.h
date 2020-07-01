@@ -1,8 +1,8 @@
 #ifndef __UNIT_CONST_CACHE_H
 #define __UNIT_CONST_CACHE_H
 #include "hashtable.h"
-#include <string>
 #include <gnuhash.h>
+#include <string>
 
 class Mesh;
 class ConstHasher;
@@ -13,7 +13,7 @@ class StringIntKey
     std::string key;
     int fac;
 
-public:
+  public:
     StringIntKey(std::string k, int f)
     {
         key = k;
@@ -38,9 +38,8 @@ public:
 #if HAVE_TR1_UNORDERED_MAP || (!defined(_WIN32) && __GNUC__ != 2)
 class ConstHasher
 {
-public:
-    template <class T>
-    size_t operator()(const T &key) const
+  public:
+    template <class T> size_t operator()(const T &key) const
     {
         return vsHash<T>()(key);
     }
@@ -51,8 +50,7 @@ public:
 };
 #endif
 
-template <class Typ, class Key>
-class ClassCache
+template <class Typ, class Key> class ClassCache
 {
 #if HAVE_TR1_UNORDERED_MAP || (!defined(_WIN32) && __GNUC__ != 2)
     typedef vsUMap<Key, Typ *, ConstHasher> cache_map;
@@ -61,7 +59,7 @@ class ClassCache
 #endif
     static cache_map unit_cache;
 
-public:
+  public:
     static const Typ *getCachedConst(Key k)
     {
         return getCachedMutable(k);

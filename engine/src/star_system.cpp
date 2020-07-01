@@ -1,51 +1,50 @@
-#include <assert.h>
 #include "star_system.h"
+#include "aldrv/audiolib.h"
+#include "cmd/atmosphere.h"
+#include "cmd/beam.h"
+#include "cmd/bolt.h"
+#include "cmd/click_list.h"
+#include "cmd/collection.h"
+#include "cmd/cont_terrain.h"
+#include "cmd/music.h"
+#include "cmd/nebula.h"
 #include "cmd/planet.h"
+#include "cmd/script/flightgroup.h"
+#include "cmd/script/mission.h"
 #include "cmd/unit.h"
 #include "cmd/unit_collide.h"
-#include "cmd/collection.h"
-#include "cmd/click_list.h"
-#include "lin_time.h"
-#include "cmd/beam.h"
-#include "gfx/sphere.h"
-#include "cmd/unit_collide.h"
-#include "gfx/halo.h"
-#include "gfx/background.h"
+#include "cmd/unit_find.h"
+#include "config_xml.h"
+#include "galaxy_gen.h"
 #include "gfx/animation.h"
 #include "gfx/aux_texture.h"
-#include "gfx/star.h"
-#include "cmd/bolt.h"
-#include <expat.h>
+#include "gfx/background.h"
 #include "gfx/cockpit.h"
-#include "aldrv/audiolib.h"
-#include "cmd/music.h"
-#include "config_xml.h"
-#include "vs_globals.h"
-#include "cmd/cont_terrain.h"
-#include "vegastrike.h"
-#include "universe.h"
-#include "cmd/atmosphere.h"
-#include "hashtable.h"
-#include "cmd/nebula.h"
-#include "galaxy_gen.h"
-#include "cmd/script/mission.h"
-#include "in_kb.h"
-#include "cmd/script/flightgroup.h"
-#include "load_mission.h"
-#include "gfx/particle.h"
-#include "gfx/lerp.h"
-#include "gfx/warptrail.h"
 #include "gfx/env_map_gent.h"
-#include "vsfilesystem.h"
-#include "cmd/unit_find.h"
+#include "gfx/halo.h"
+#include "gfx/lerp.h"
 #include "gfx/occlusion.h"
+#include "gfx/particle.h"
+#include "gfx/sphere.h"
+#include "gfx/star.h"
+#include "gfx/warptrail.h"
+#include "hashtable.h"
+#include "in_kb.h"
+#include "lin_time.h"
+#include "load_mission.h"
+#include "universe.h"
+#include "vegastrike.h"
+#include "vs_globals.h"
+#include "vsfilesystem.h"
+#include <assert.h>
+#include <expat.h>
 
 #include "options.h"
 
 GameStarSystem::GameStarSystem(const char *filename, const Vector &centr, const float timeofyear)
 {
     no_collision_time = 0; //(int)(1+2.000/SIMULATION_ATOM);
-    ///adds to jumping table;
+    /// adds to jumping table;
     name = nullptr;
     _Universe->pushActiveStarSystem(this);
     GFXCreateLightContext(lightcontext);
@@ -126,9 +125,9 @@ GameStarSystem::~GameStarSystem()
 #endif
     delete bg;
     delete stars;
-    //delete [] name;
+    // delete [] name;
     delete bolts;
-    //delete collidetable;//BAD BAD BAD we need this to happen later!
+    // delete collidetable;//BAD BAD BAD we need this to happen later!
 
     _Universe->popActiveStarSystem();
     RemoveStarsystemFromUniverse();
@@ -158,8 +157,8 @@ extern double saved_interpolation_blend_factor;
 extern double interpolation_blend_factor;
 extern bool cam_setup_phase;
 
-//Class for use of UnitWithinRangeLocator template
-//Used to do distance based pre-culling for draw function based on sorted search structure
+// Class for use of UnitWithinRangeLocator template
+// Used to do distance based pre-culling for draw function based on sorted search structure
 class UnitDrawer
 {
     struct empty
@@ -167,7 +166,7 @@ class UnitDrawer
     };
     vsUMap<void *, struct empty> gravunits;
 
-public:
+  public:
     Unit *parent;
     Unit *parenttarget;
     UnitDrawer()
@@ -203,10 +202,8 @@ public:
             parenttarget = nullptr;
         float backup = SIMULATION_ATOM;
         unsigned int cur_sim_frame = _Universe->activeStarSystem()->getCurrentSimFrame();
-        interpolation_blend_factor = calc_blend_factor(saved_interpolation_blend_factor,
-                                                       unit->sim_atom_multiplier,
-                                                       unit->cur_sim_queue_slot,
-                                                       cur_sim_frame);
+        interpolation_blend_factor = calc_blend_factor(saved_interpolation_blend_factor, unit->sim_atom_multiplier,
+                                                       unit->cur_sim_queue_slot, cur_sim_frame);
         SIMULATION_ATOM = backup * unit->sim_atom_multiplier;
         (/*(GameUnit< Unit >*)*/ unit)->Draw();
         interpolation_blend_factor = saved_interpolation_blend_factor;
@@ -239,16 +236,14 @@ void GameStarSystem::Draw(bool DrawCockpit)
     }
     else if (!par->isSubUnit())
     {
-        //now we can assume world is topps
-        par->cumulative_transformation = linear_interpolate(par->prev_physical_state,
-                                                            par->curr_physical_state,
-                                                            interpolation_blend_factor);
+        // now we can assume world is topps
+        par->cumulative_transformation =
+            linear_interpolate(par->prev_physical_state, par->curr_physical_state, interpolation_blend_factor);
         Unit *targ = par->Target();
         if (targ && !targ->isSubUnit())
         {
-            targ->cumulative_transformation = linear_interpolate(targ->prev_physical_state,
-                                                                 targ->curr_physical_state,
-                                                                 interpolation_blend_factor);
+            targ->cumulative_transformation =
+                linear_interpolate(targ->prev_physical_state, targ->curr_physical_state, interpolation_blend_factor);
         }
         _Universe->AccessCockpit()->SetupViewPort(true);
     }
@@ -260,20 +255,19 @@ void GameStarSystem::Draw(bool DrawCockpit)
         Unit *targ = nullptr;
         if (saveparent)
             targ = saveparent->Target();
-        //Array containing the two interesting units, so as not to have to copy-paste code
+        // Array containing the two interesting units, so as not to have to copy-paste code
         Unit *camunits[2] = {saveparent, targ};
         float backup = SIMULATION_ATOM;
         unsigned int cur_sim_frame = _Universe->activeStarSystem()->getCurrentSimFrame();
         for (int i = 0; i < 2; ++i)
         {
             Unit *unit = camunits[i];
-            //Make sure unit is not null;
+            // Make sure unit is not null;
             if (unit && !unit->isSubUnit())
             {
-                interpolation_blend_factor = calc_blend_factor(saved_interpolation_blend_factor,
-                                                               unit->sim_atom_multiplier,
-                                                               unit->cur_sim_queue_slot,
-                                                               cur_sim_frame);
+                interpolation_blend_factor =
+                    calc_blend_factor(saved_interpolation_blend_factor, unit->sim_atom_multiplier,
+                                      unit->cur_sim_queue_slot, cur_sim_frame);
                 SIMULATION_ATOM = backup * unit->sim_atom_multiplier;
                 ((GameUnit<Unit> *)unit)->GameUnit<Unit>::Draw();
             }
@@ -281,7 +275,7 @@ void GameStarSystem::Draw(bool DrawCockpit)
         interpolation_blend_factor = saved_interpolation_blend_factor;
         SIMULATION_ATOM = backup;
 
-        ///this is the final, smoothly calculated cam
+        /// this is the final, smoothly calculated cam
         _Universe->AccessCockpit()->SetupViewPort(true);
 
         cam_setup_phase = false;
@@ -294,13 +288,14 @@ void GameStarSystem::Draw(bool DrawCockpit)
     // Initialize occluder system (we'll populate it during unit render)
     Occlusion::start();
 
-    //Ballpark estimate of when an object of configurable size first becomes one pixel
+    // Ballpark estimate of when an object of configurable size first becomes one pixel
 
     QVector drawstartpos = _Universe->AccessCamera()->GetPosition();
 
     Collidable key_iterator(0, 1, drawstartpos);
     UnitWithinRangeOfPosition<UnitDrawer> drawer(game_options.precull_dist, 0, key_iterator);
-    //Need to draw really big stuff (i.e. planets, deathstars, and other mind-bogglingly big things that shouldn't be culled despited extreme distance
+    // Need to draw really big stuff (i.e. planets, deathstars, and other mind-bogglingly big things that shouldn't be
+    // culled despited extreme distance
     Unit *unit;
     if ((drawer.action.parent = _Universe->AccessCockpit()->GetParent()) != nullptr)
         drawer.action.parenttarget = drawer.action.parent->Target();
@@ -312,11 +307,11 @@ void GameStarSystem::Draw(bool DrawCockpit)
         else
             drawer.action.draw(unit);
     }
-    //Need to get iterator to approx camera position
+    // Need to get iterator to approx camera position
     CollideMap::iterator parent = collidemap[Unit::UNIT_ONLY]->lower_bound(key_iterator);
     findObjectsFromPosition(this->collidemap[Unit::UNIT_ONLY], parent, &drawer, drawstartpos, 0, true);
-    drawer.action.drawParents(); //draw units targeted by camera
-    //FIXME  maybe we could do bolts & units instead of unit only--and avoid bolt drawing step
+    drawer.action.drawParents(); // draw units targeted by camera
+    // FIXME  maybe we could do bolts & units instead of unit only--and avoid bolt drawing step
 
 #if 0
     for (unsigned int sim_counter = 0; sim_counter <= SIM_QUEUE_SIZE; ++sim_counter) {
@@ -360,7 +355,7 @@ void GameStarSystem::Draw(bool DrawCockpit)
         stars->Draw();
     GFXEnable(DEPTHTEST);
     GFXEnable(DEPTHWRITE);
-    //need to wait for lights to finish
+    // need to wait for lights to finish
     GamePlanet::ProcessTerrains();
     Terrain::RenderAll();
     Mesh::ProcessUndrawnMeshes(true);
@@ -421,7 +416,7 @@ void NebulaUpdate(StarSystem *ss)
         if ((neb = _Universe->AccessCamera()->GetNebula()))
         {
             if (neb->getFade() <= 0)
-                //Update physics should set this
+                // Update physics should set this
                 _Universe->AccessCamera()->SetNebula(nullptr);
         }
     }
@@ -440,23 +435,23 @@ void GameStarSystem::createBackground(StarSystem::StarXML *xml)
     else
     {
         delete LightMap[0];
-        LightMap[0] = new Texture((xml->backgroundname + "_right.image").c_str(), 1, TRILINEAR, CUBEMAP, CUBEMAP_POSITIVE_X,
-                                  GFXFALSE, game_options.max_cubemap_size);
-        LightMap[1] = new Texture((xml->backgroundname + "_left.image").c_str(), 1, TRILINEAR, CUBEMAP, CUBEMAP_NEGATIVE_X,
-                                  GFXFALSE, game_options.max_cubemap_size, GFXFALSE, GFXFALSE, DEFAULT_ADDRESS_MODE,
-                                  LightMap[0]);
-        LightMap[2] = new Texture((xml->backgroundname + "_up.image").c_str(), 1, TRILINEAR, CUBEMAP, CUBEMAP_POSITIVE_Y,
-                                  GFXFALSE, game_options.max_cubemap_size, GFXFALSE, GFXFALSE, DEFAULT_ADDRESS_MODE,
-                                  LightMap[0]);
-        LightMap[3] = new Texture((xml->backgroundname + "_down.image").c_str(), 1, TRILINEAR, CUBEMAP, CUBEMAP_NEGATIVE_Y,
-                                  GFXFALSE, game_options.max_cubemap_size, GFXFALSE, GFXFALSE, DEFAULT_ADDRESS_MODE,
-                                  LightMap[0]);
-        LightMap[4] = new Texture((xml->backgroundname + "_front.image").c_str(), 1, TRILINEAR, CUBEMAP, CUBEMAP_POSITIVE_Z,
-                                  GFXFALSE, game_options.max_cubemap_size, GFXFALSE, GFXFALSE, DEFAULT_ADDRESS_MODE,
-                                  LightMap[0]);
-        LightMap[5] = new Texture((xml->backgroundname + "_back.image").c_str(), 1, TRILINEAR, CUBEMAP, CUBEMAP_NEGATIVE_Z,
-                                  GFXFALSE, game_options.max_cubemap_size, GFXFALSE, GFXFALSE, DEFAULT_ADDRESS_MODE,
-                                  LightMap[0]);
+        LightMap[0] = new Texture((xml->backgroundname + "_right.image").c_str(), 1, TRILINEAR, CUBEMAP,
+                                  CUBEMAP_POSITIVE_X, GFXFALSE, game_options.max_cubemap_size);
+        LightMap[1] =
+            new Texture((xml->backgroundname + "_left.image").c_str(), 1, TRILINEAR, CUBEMAP, CUBEMAP_NEGATIVE_X,
+                        GFXFALSE, game_options.max_cubemap_size, GFXFALSE, GFXFALSE, DEFAULT_ADDRESS_MODE, LightMap[0]);
+        LightMap[2] =
+            new Texture((xml->backgroundname + "_up.image").c_str(), 1, TRILINEAR, CUBEMAP, CUBEMAP_POSITIVE_Y,
+                        GFXFALSE, game_options.max_cubemap_size, GFXFALSE, GFXFALSE, DEFAULT_ADDRESS_MODE, LightMap[0]);
+        LightMap[3] =
+            new Texture((xml->backgroundname + "_down.image").c_str(), 1, TRILINEAR, CUBEMAP, CUBEMAP_NEGATIVE_Y,
+                        GFXFALSE, game_options.max_cubemap_size, GFXFALSE, GFXFALSE, DEFAULT_ADDRESS_MODE, LightMap[0]);
+        LightMap[4] =
+            new Texture((xml->backgroundname + "_front.image").c_str(), 1, TRILINEAR, CUBEMAP, CUBEMAP_POSITIVE_Z,
+                        GFXFALSE, game_options.max_cubemap_size, GFXFALSE, GFXFALSE, DEFAULT_ADDRESS_MODE, LightMap[0]);
+        LightMap[5] =
+            new Texture((xml->backgroundname + "_back.image").c_str(), 1, TRILINEAR, CUBEMAP, CUBEMAP_NEGATIVE_Z,
+                        GFXFALSE, game_options.max_cubemap_size, GFXFALSE, GFXFALSE, DEFAULT_ADDRESS_MODE, LightMap[0]);
     }
 #else
     string bglight = xml->backgroundname + "_light.image";
@@ -470,13 +465,8 @@ void GameStarSystem::createBackground(StarSystem::StarXML *xml)
     LightMap[0] = new Texture(bgfile.c_str(), 1, MIPMAP, TEXTURE2D, TEXTURE_2D, GFXTRUE);
 #endif
 
-    bg = new Background(
-        xml->backgroundname.c_str(),
-        xml->numstars,
-        g_game.zfar * .9,
-        filename,
-        xml->backgroundColor,
-        xml->backgroundDegamma);
+    bg = new Background(xml->backgroundname.c_str(), xml->numstars, g_game.zfar * .9, filename, xml->backgroundColor,
+                        xml->backgroundDegamma);
     stars = new Stars(xml->numnearstars, xml->starsp);
     stars->SetBlend(game_options.starblend, game_options.starblend);
 }

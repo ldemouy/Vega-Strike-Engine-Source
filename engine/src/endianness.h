@@ -3,7 +3,7 @@
 #define _ENDIANNESS_H
 double DONTUSE__NXSwapBigDoubleToLittleEndian(double x);
 
-#if defined(__HAIKU__) //For unknow reasons, Haiku don't fit into any case below
+#if defined(__HAIKU__) // For unknow reasons, Haiku don't fit into any case below
 #include <endian.h>
 #elif defined(__APPLE__) || defined(MACOSX) || defined(BSD) || defined(__FreeBSD__)
 #include <machine/endian.h>
@@ -36,7 +36,7 @@ double DONTUSE__NXSwapBigDoubleToLittleEndian(double x);
 #if defined(IRIX) || (defined(__SVR4) && defined(__sun))
 #include <sys/types.h>
 #if BYTE_ORDER == BIG_ENDIAN /* depends on MIPSEB or MIPSEL and SGIAPI */
-#define le32_to_cpu(x) \
+#define le32_to_cpu(x)                                                                                                 \
     (((x) << 24) | (((x) << 8) & 0x00FF0000) | (((uint32_t)(x) >> 8) & 0x0000FF00) | ((uint32_t)(x) >> 24))
 #define le16_to_cpu(x) (((x & 0xFF) << 8) | ((uint16_t)(x) >> 8))
 #define le64_to_cpu(x) (DONTUSE__NXSwapBigDoubleToLittleEndian(x))

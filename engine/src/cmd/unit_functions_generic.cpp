@@ -1,30 +1,30 @@
-#include "unit_generic.h"
-#include "gfx/vec.h"
-#include "gfx/cockpit_generic.h"
-#include "faction_generic.h"
 #include "ai/communication.h"
+#include "faction_generic.h"
+#include "gfx/cockpit_generic.h"
+#include "gfx/vec.h"
+#include "pilot.h"
 #include "savegame.h"
-#include "xml_support.h"
+#include "unit_const_cache.h"
 #include "unit_factory.h"
+#include "unit_generic.h"
 #include "unit_util.h"
 #include "universe_util.h"
-#include "unit_const_cache.h"
-#include "pilot.h"
-//Various functions that were used in .cpp files that are now included because of
-//the temple GameUnit class
-//If not separated from those files functions would be defined in multiple places
-//Those functions are generic ones
+#include "xml_support.h"
+// Various functions that were used in .cpp files that are now included because of
+// the temple GameUnit class
+// If not separated from those files functions would be defined in multiple places
+// Those functions are generic ones
 
-//From unit.cpp
+// From unit.cpp
 double saved_interpolation_blend_factor;
 double interpolation_blend_factor;
 bool cam_setup_phase = false;
 
 int cloakVal(int cloak, int cloakmin, int cloakrate, bool cloakglass)
 {
-    //Short fix ?
+    // Short fix ?
     if (cloak < 0 && cloakrate < 0)
-        cloak = -2147483647 - 1; //intended warning should be max neg :-) leave it be
+        cloak = -2147483647 - 1; // intended warning should be max neg :-) leave it be
     if (cloak < cloakmin && cloakrate > 0)
         cloak = cloakmin;
     if ((cloak & 0x1) && !cloakglass)
@@ -40,9 +40,9 @@ const Unit *getUnitFromUpgradeName(const string &upgradeName, int myUnitFaction 
     const Unit *partUnit = UnitConstCache::getCachedConst(StringIntKey(name, FactionUtil::GetUpgradeFaction()));
     if (!partUnit)
     {
-        partUnit = UnitConstCache::setCachedConst(StringIntKey(name,
-                                                               FactionUtil::GetUpgradeFaction()),
-                                                  UnitFactory::createUnit(name, true, FactionUtil::GetUpgradeFaction()));
+        partUnit =
+            UnitConstCache::setCachedConst(StringIntKey(name, FactionUtil::GetUpgradeFaction()),
+                                           UnitFactory::createUnit(name, true, FactionUtil::GetUpgradeFaction()));
     }
     if (partUnit->name == "LOAD_FAILED")
     {
@@ -73,7 +73,7 @@ int32_t SelectDockPort(Unit *utdw, Unit *parent)
     return num;
 }
 
-//From unit_customize.cpp
+// From unit_customize.cpp
 Unit *CreateGameTurret(std::string tur, int faction)
 {
     return UnitFactory::createUnit(tur.c_str(), true, faction);
@@ -85,20 +85,13 @@ void SetShieldZero(Unit *un)
     {
     case 8:
 
-        un->shield.shield8.frontlefttop =
-            un->shield.shield8.frontrighttop =
-                un->shield.shield8.backlefttop =
-                    un->shield.shield8.backrighttop =
-                        un->shield.shield8.frontleftbottom =
-                            un->shield.shield8.frontrightbottom =
-                                un->shield.shield8.backleftbottom =
-                                    un->shield.shield8.backrightbottom = 0;
+        un->shield.shield8.frontlefttop = un->shield.shield8.frontrighttop = un->shield.shield8.backlefttop =
+            un->shield.shield8.backrighttop = un->shield.shield8.frontleftbottom = un->shield.shield8.frontrightbottom =
+                un->shield.shield8.backleftbottom = un->shield.shield8.backrightbottom = 0;
         break;
     case 4:
-        un->shield.shield4fbrl.front =
-            un->shield.shield4fbrl.back =
-                un->shield.shield4fbrl.left =
-                    un->shield.shield4fbrl.right = 0;
+        un->shield.shield4fbrl.front = un->shield.shield4fbrl.back = un->shield.shield4fbrl.left =
+            un->shield.shield4fbrl.right = 0;
         break;
     case 2:
         un->shield.shield2fb.front = un->shield.shield2fb.back = 0;
@@ -106,7 +99,7 @@ void SetShieldZero(Unit *un)
     }
 }
 
-//un scored a faction kill
+// un scored a faction kill
 void ScoreKill(Cockpit *cp, Unit *un, Unit *killedUnit)
 {
     if (un->isUnit() != UNITPTR || killedUnit->isUnit() != UNITPTR)
@@ -171,7 +164,7 @@ void ScoreKill(Cockpit *cp, Unit *un, Unit *killedUnit)
     }
 }
 
-//From unit_physics.cpp
+// From unit_physics.cpp
 signed char ComputeAutoGuarantee(Unit *un)
 {
     Cockpit *cp;
@@ -209,7 +202,7 @@ float getAutoRSize(Unit *orig, Unit *un, bool ignore_friend = false)
         return minasteroiddistance;
     }
     if (un->isUnit() == PLANETPTR || (un->getFlightgroup() == orig->getFlightgroup() && orig->getFlightgroup()))
-        //same flihgtgroup
+        // same flihgtgroup
         return orig->rSize();
     if (un->faction == upgradefaction)
         return ignore_friend ? -FLT_MAX : (-orig->rSize() - un->rSize());
@@ -219,14 +212,14 @@ float getAutoRSize(Unit *orig, Unit *un, bool ignore_friend = false)
     if (un->faction == neutral)
         return neutral_autodist;
     else if (rel > .1)
-        return ignore_friend ? -FLT_MAX : friendly_autodist; //min distance apart
+        return ignore_friend ? -FLT_MAX : friendly_autodist; // min distance apart
     else if (rel < 0)
         return hostile_autodist;
     else
         return ignore_friend ? -FLT_MAX : neutral_autodist;
 }
 
-//From unit_weapon.cpp
+// From unit_weapon.cpp
 bool AdjustMatrix(Matrix &mat, const Vector &vel, Unit *target, float speed, bool lead, float cone)
 {
     if (target)
@@ -294,21 +287,8 @@ int parseMountSizes(const char *str)
 {
     char tmp[13][50];
     int ans = weapon_info::NOWEAP;
-    int num = sscanf(str,
-                     "%s %s %s %s %s %s %s %s %s %s %s %s %s",
-                     tmp[0],
-                     tmp[1],
-                     tmp[2],
-                     tmp[3],
-                     tmp[4],
-                     tmp[5],
-                     tmp[6],
-                     tmp[7],
-                     tmp[8],
-                     tmp[9],
-                     tmp[10],
-                     tmp[11],
-                     tmp[12]);
+    int num = sscanf(str, "%s %s %s %s %s %s %s %s %s %s %s %s %s", tmp[0], tmp[1], tmp[2], tmp[3], tmp[4], tmp[5],
+                     tmp[6], tmp[7], tmp[8], tmp[9], tmp[10], tmp[11], tmp[12]);
     for (int i = 0; i < num && i < 13; i++)
         ans |= lookupMountSize(tmp[i]);
     return ans;
@@ -325,14 +305,10 @@ void DealPossibleJumpDamage(Unit *un)
         dam = maxd;
     if (dam > 1)
     {
-        un->ApplyDamage((un->Position() + un->GetVelocity().Cast()),
-                        un->GetVelocity(),
-                        dam,
-                        un,
-                        GFXColor(((float)(rand() % 100)) / 100,
-                                 ((float)(rand() % 100)) / 100,
-                                 ((float)(rand() % 100)) / 100),
-                        nullptr);
+        un->ApplyDamage(
+            (un->Position() + un->GetVelocity().Cast()), un->GetVelocity(), dam, un,
+            GFXColor(((float)(rand() % 100)) / 100, ((float)(rand() % 100)) / 100, ((float)(rand() % 100)) / 100),
+            nullptr);
         un->SetCurPosition(un->LocalPosition() + (((float)rand()) / RAND_MAX) * dam * un->GetVelocity().Cast());
     }
 }

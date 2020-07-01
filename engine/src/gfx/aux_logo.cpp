@@ -18,26 +18,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-#include "gfx/vec.h"
-#include "cmd/unit_generic.h"
-#include "vertex.h"
 #include "aux_logo.h"
 #include "aux_texture.h"
-#include <assert.h>
-#include "gldrv/gfxlib.h"
-#include "vs_globals.h"
+#include "cmd/unit_generic.h"
 #include "config_xml.h"
+#include "gfx/vec.h"
+#include "gldrv/gfxlib.h"
+#include "vertex.h"
+#include "vs_globals.h"
 #include "xml_support.h"
+#include <assert.h>
 vector<Logo *> undrawn_logos;
 Hashtable<int, Logo, 257> Logo::decalHash;
 
-Logo::Logo(int numberlogos,
-           Vector *center,
-           Vector *normal,
-           float *size,
-           float *rotation,
-           float offset,
-           Texture *Dec,
+Logo::Logo(int numberlogos, Vector *center, Vector *normal, float *size, float *rotation, float offset, Texture *Dec,
            Vector *Ref)
 {
     offset = 0;
@@ -47,8 +41,8 @@ Logo::Logo(int numberlogos,
     numlogos = numberlogos;
     GFXVertex *vertices = new GFXVertex[numlogos * 4];
     GFXVertex *LogoCorner = vertices;
-    //LogoCorner = new glVertex* [numlogos]; //hope to hell we have enough mem
-    Vector p, q, r, v1, v2, v3, v4; //temps
+    // LogoCorner = new glVertex* [numlogos]; //hope to hell we have enough mem
+    Vector p, q, r, v1, v2, v3, v4; // temps
     will_be_drawn = false;
     for (int i = 0; i < numlogos; i++, LogoCorner += 4)
     {
@@ -70,7 +64,7 @@ Logo::Logo(int numberlogos,
         }
         else
         {
-            ///backwards compatibility shit
+            /// backwards compatibility shit
             Vector y;
             if ((r.i == 1 || r.i == -1) && !r.j && !r.k)
                 y = Vector(0, 1, 0);
@@ -90,8 +84,8 @@ Logo::Logo(int numberlogos,
         LogoCorner[1].SetVertex(v2).SetNormal(r).SetTexCoord(0, 1);
         LogoCorner[2].SetVertex(v3).SetNormal(r).SetTexCoord(1, 1);
         LogoCorner[3].SetVertex(v4).SetNormal(r).SetTexCoord(1, 0);
-        //LogoCorner[4] = LogoCorner[2];
-        //LogoCorner[5] = LogoCorner[1];
+        // LogoCorner[4] = LogoCorner[2];
+        // LogoCorner[5] = LogoCorner[1];
     }
     vlist = new GFXVertexList(GFXQUAD, 4 * numlogos, vertices, 4 * numlogos);
     delete[] vertices;
@@ -101,7 +95,7 @@ Logo::Logo(int numberlogos,
 void Logo::SetDecal(Texture *decal)
 {
     Decal = decal;
-    //Check which draw_queue to use:
+    // Check which draw_queue to use:
     Logo *l;
     if ((l = decalHash.Get(decal->name)) != nullptr)
     {
@@ -112,7 +106,7 @@ void Logo::SetDecal(Texture *decal)
     else
     {
         l = new Logo(*this); //(Logo*)malloc (sizeof (Logo));
-        //memcpy (l,this,sizeof(Logo));
+        // memcpy (l,this,sizeof(Logo));
         decalHash.Put(decal->name, l);
         draw_queue = l->draw_queue = new vector<DrawContext>();
         owner_of_draw_queue = l->owner_of_draw_queue = l;
@@ -120,7 +114,8 @@ void Logo::SetDecal(Texture *decal)
     }
 }
 
-/*Logo::Logo(int numberlogos,  Vector* center,Vector* normal, float* size, float* rotation, float* offset,char *tex, char *alp)
+/*Logo::Logo(int numberlogos,  Vector* center,Vector* normal, float* size, float* rotation, float* offset,char *tex,
+ * char *alp)
  *  {
  *       Decal = nullptr;
  *       Decal = new Texture (tex,alp);
@@ -141,8 +136,8 @@ void Logo::Draw(const Matrix &m)
 {
     if (!numlogos)
         return;
-    //Matrix m;
-    //GFXGetMatrix(MODEL, m);
+    // Matrix m;
+    // GFXGetMatrix(MODEL, m);
     draw_queue->push_back(DrawContext(m, vlist));
     if (!owner_of_draw_queue->will_be_drawn)
     {
@@ -166,7 +161,7 @@ void Logo::ProcessDrawQueue()
     GFXColor4f(1, 1, 1, 1);
     GFXPolygonOffset(offs, scl);
     GFXBlendMode(SRCALPHA, INVSRCALPHA);
-    //GFXBlendMode(ONE,ZERO);
+    // GFXBlendMode(ONE,ZERO);
     DrawContext c = draw_queue->back();
     c.vlist->LoadDrawState();
     while (draw_queue->size())
@@ -186,8 +181,8 @@ Logo::~Logo()
 {
     if (owner_of_draw_queue != this)
         delete vlist;
-    //if(LogoCorner!=nullptr)
-    //delete [] LogoCorner;
+    // if(LogoCorner!=nullptr)
+    // delete [] LogoCorner;
     if (owner_of_draw_queue != nullptr)
     {
         if (owner_of_draw_queue != this)
