@@ -327,5 +327,8 @@ dmypy.json
 ### Code ###
 .vscode/*
 
+### Clangd ###
+.clangd/*
+
 # End of https://www.toptal.com/developers/gitignore/api/cmake,c++,c,rust,kdevelop4,intellij+all
 
