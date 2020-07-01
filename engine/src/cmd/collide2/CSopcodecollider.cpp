@@ -294,7 +294,10 @@ void csOPCODECollider::CopyCollisionPairs(csOPCODECollider *col1,
 	Point *vertholder1 = col2->vertholder;
 	int32_t j;
 	size_t oldlen = pairs.size();
-
+	if (oldlen == 0)
+	{
+		return;
+	}
 	for (uint32_t i = 0; i < N_pairs; ++i)
 	{
 		j = 3 * colPairs[i].id0;
