@@ -1,20 +1,10 @@
 #include <Python.h>
-
-#include <boost/version.hpp>
-#if BOOST_VERSION != 102800
 #include <boost/python.hpp>
+#include <boost/version.hpp>
 typedef boost::python::dict BoostPythonDictionary;
-#else
-#include <boost/python/objects.hpp>
-typedef boost::python::dictionary BoostPythonDictionary;
-#endif
 
-#if BOOST_VERSION != 102800
 #include <boost/python/dict.hpp>
 #include <boost/python/object.hpp>
-#else
-#include <boost/python/objects.hpp>
-#endif
 
 #include "aldrv/audiolib.h"
 #include "base.h"
