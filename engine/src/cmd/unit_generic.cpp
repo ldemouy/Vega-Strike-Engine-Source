@@ -2421,7 +2421,7 @@ void Unit::UpdatePhysics(const Transformation &trans, const Matrix &transmat, co
     bool touched = false;
     for (int i = 0; (int)i < GetNumMounts(); ++i)
     {
-        // TODO: simplify this if
+        /// FIXMEME: simplify this if
         if (((false && mounts[i].status == Mount::INACTIVE) || mounts[i].status == Mount::ACTIVE) && cloaking < 0 &&
             mounts[i].ammo != 0)
         {
@@ -3648,8 +3648,8 @@ Vector Unit::ClampThrust(const Vector &amt1, bool afterburn)
     if (3 == afterburntype || afterburntype == 1)
     {
         // fuel-burning overdrive - uses afterburner efficiency. In NO_AFTERBURNER case, "afterburn" will always be
-        // false, so can reuse code. HACK this forces the reaction to be Li-6+Li-6 fusion with efficiency governed by the
-        // getFuelUsage function
+        // false, so can reuse code. HACK this forces the reaction to be Li-6+Li-6 fusion with efficiency governed by
+        // the getFuelUsage function
         fuel -= ((afterburn && finegrainedFuelEfficiency) ? afterburnenergy : GetFuelUsage(afterburn)) *
                 SIMULATION_ATOM * Res.Magnitude() * FMEC_exit_vel_inverse / Lithium6constant;
 #ifndef __APPLE__
@@ -5769,7 +5769,7 @@ void Mount::DeActive(bool Missile)
             status = INACTIVE;
 }
 
-// TODO: candidate for deletion
+/// FIXMEME: candidate for deletion
 void Unit::UnFire()
 {
     if (this->GetNumMounts() == 0)

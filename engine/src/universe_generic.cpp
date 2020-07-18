@@ -146,7 +146,7 @@ void Universe::SetActiveCockpit(Cockpit *cp)
         }
 }
 
-// TODO: candidate for deletion
+/// FIXME: candidate for deletion
 void Universe::SetupCockpits(std::vector<std::string> players)
 {
     cockpit.push_back(new Cockpit("", nullptr, players[0]));

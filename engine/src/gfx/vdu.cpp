@@ -751,7 +751,7 @@ void VDU::DrawVDUShield(Unit *parent)
                   invert_friendly_sprite);
 }
 
-// TODO: make into function
+/// FIXME: make into function
 #define RETURN_STATIC_SPRITE(name)                                                                                     \
     do                                                                                                                 \
     {                                                                                                                  \
@@ -1614,7 +1614,7 @@ void VDU::DrawDamage(Unit *parent)
     static bool print_percent_working =
         XMLSupport::parse_bool(vs_config->getVariable("graphics", "hud", "print_damage_percent", "true"));
 
-// TODO: make into function
+/// FIXME: make into function
 #define REPORTITEM(percent_working, max_functionality, print_percent_working, component_string)                        \
     do                                                                                                                 \
     {                                                                                                                  \
@@ -1633,7 +1633,7 @@ void VDU::DrawDamage(Unit *parent)
         retval += trailer + std::string("\n");                                                                         \
     } while (0)
 
-// TODO: make into function
+/// FIXME: make into function
 #define REPORTINTEGRATED(which, which_key, which_name_default)                                                         \
     do                                                                                                                 \
     {                                                                                                                  \
@@ -1645,7 +1645,7 @@ void VDU::DrawDamage(Unit *parent)
         }                                                                                                              \
     } while (0)
 
-// TODO: make into function
+/// FIXME: make into function
 #define REPORTINTEGRATEDFLAG(which, which_key, which_name_default)                                                     \
     do                                                                                                                 \
     {                                                                                                                  \

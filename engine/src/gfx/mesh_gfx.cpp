@@ -204,7 +204,7 @@ class OrigMeshContainer
 
     bool operator==(const OrigMeshContainer &b) const
     {
-        // TODO: Specialize operator==
+        /// FIXME: Specialize operator==
         return !(*this < b) && !(b < *this);
     }
 };
@@ -1445,7 +1445,7 @@ void Mesh::ProcessShaderDrawQueue(size_t whichpass, int whichdrawqueue, bool zso
     for (tui = 0; tui < gl_options.Multitexture; ++tui)
         GFXToggleTexture(((tuimask & (1 << tui)) != 0), tui, TEXTURE2D);
     // Render all instances, no specific order if not necessary
-    // TODO: right now only meshes of same kind get drawn in correct order - should fix this.
+    /// FIXME: right now only meshes of same kind get drawn in correct order - should fix this.
     static std::vector<int> indices;
     if (zsort)
     {
@@ -1804,7 +1804,7 @@ void Mesh::ProcessFixedDrawQueue(size_t techpass, int whichdrawqueue, bool zsort
                 break;
             }
             // Render all instances, no specific order if not necessary
-            // TODO: right now only meshes of same kind get drawn in correct order - should fix this.
+            /// FIXME: right now only meshes of same kind get drawn in correct order - should fix this.
             static std::vector<int> indices;
             if (zsort)
             {

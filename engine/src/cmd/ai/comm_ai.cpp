@@ -481,7 +481,7 @@ void CommunicatingAI::RandomInitiateCommunication(float playerprob, float targpr
 
 int32_t CommunicatingAI::selectCommunicationMessage(CommunicationMessage &message, Unit *unit)
 {
-    // TODO: Investigate because currently this does nothing
+    /// FIXME: Investigate because currently this does nothing
     if (0 && mood == 0)
     {
         FSM::Node *node = message.getCurrentState();

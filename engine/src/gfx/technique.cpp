@@ -635,7 +635,7 @@ Technique::Technique(const string &nam) : name(nam), compiled(false), programVer
                         }
                         else
                         {
-                            // TODO: Warn about unrecognized (hence ignored) tag
+                            /// FIXME: Warn about unrecognized (hence ignored) tag
                         }
                     }
                 }
@@ -650,7 +650,7 @@ Technique::Technique(const string &nam) : name(nam), compiled(false), programVer
             }
             else
             {
-                // TODO: Warn about unrecognized (hence ignored) tag
+                /// FIXME: Warn about unrecognized (hence ignored) tag
             }
         }
     }

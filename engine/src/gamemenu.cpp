@@ -590,7 +590,7 @@ bool NetActionConfirm::processWindowCommand(const EventCommandId &command, Contr
     return true;
 }
 
-// TODO: delete
+/// FIXME: delete
 void GameMenu::readJoinGameControls(Window *window, string &user, string &pass)
 {
 }

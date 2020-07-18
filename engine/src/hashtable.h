@@ -19,7 +19,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-// TODO: Review this and gnuhash.h to see if it can be removed in favour of std functionality
+/// FIXME: Review this and gnuhash.h to see if it can be removed in favour of std functionality
 
 #ifndef _HASHTABLE_H_
 #define _HASHTABLE_H_

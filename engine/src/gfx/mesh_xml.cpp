@@ -1797,7 +1797,7 @@ void Mesh::PostProcessLoading(MeshXML *xml, const vector<string> &textureOverrid
             ind.push_back(ix);
             xml->linestrips[a][k].SetNormal(xml->vertices[ix].GetNormal());
         }
-    // TODO: add alpha handling
+    /// FIXME: add alpha handling
 
     // check for per-polygon flat shading
     unsigned int trimax = xml->tris.size() / 3;

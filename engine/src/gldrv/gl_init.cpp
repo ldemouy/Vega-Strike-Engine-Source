@@ -491,7 +491,7 @@ void init_opengl_extensions()
 
         if (vsExtensionSupported("GL_EXT_framebuffer_sRGB"))
         {
-            // TODO: GL_EXT_framebuffer_sRGB allows us to query sRGB capability easily.
+            /// FIXME: GL_EXT_framebuffer_sRGB allows us to query sRGB capability easily.
             // The ARB variant requires us to use GLX and GLW stuff, which would be harder to do portably
             // For now, we'll just assume the ARB variant supports it, since it's quite probable that it
             // does for most framebuffer visuals.

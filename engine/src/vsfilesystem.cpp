@@ -908,7 +908,7 @@ void InitPaths(string conf, string subdir)
 
     // Setup the directory lists we know about - note these are relative paths to datadir or homedir
     //----- THE Directories vector contains the resource/volume files name without extension or the main directory to
-    //files
+    // files
     Directories[UnitFile] = sharedunits;
     // Have to put it in first place otherwise VS will find default unit file
     SubDirectories[UnitFile].push_back("subunits");
@@ -968,8 +968,8 @@ void InitPaths(string conf, string subdir)
     CreateDirectoryHome("save");
 
     // We will be able to automatically add mods files (set of resources or even directory structure similar to the data
-    // tree) by just adding a subdirectory named with the mod name in the subdirectory "mods"... I just have to implement
-    // that and then add all mods/ subdirs in Rootdir vector
+    // tree) by just adding a subdirectory named with the mod name in the subdirectory "mods"... I just have to
+    // implement that and then add all mods/ subdirs in Rootdir vector
     Rootdir.push_back(homedir);
     InitMods();
     Rootdir.push_back(datadir);
@@ -2360,7 +2360,7 @@ int scandir(const char *dirname, struct dirent ***namelist, int (*select)(const 
         ret = GetLastError();
         if (ret != ERROR_NO_MORE_FILES)
         {
-            // TODO: return some error code
+            /// FIXME: return some error code
         }
         free(findIn);
         *namelist = dir;
@@ -2394,7 +2394,7 @@ int scandir(const char *dirname, struct dirent ***namelist, int (*select)(const 
     ret = GetLastError();
     if (ret != ERROR_NO_MORE_FILES)
     {
-        // TODO: return some error code
+        /// FIXME: return some error code
     }
     FindClose(h);
 

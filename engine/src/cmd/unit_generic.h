@@ -131,9 +131,9 @@ class Mount
     // the size that this mount can hold. May be any bitwise combination of weapon_info::MOUNT_SIZE
     unsigned int size; // short fix
                        //-1 is infinite
-    int ammo;   // short
-    int volume; //-1 is infinite //short fix
-                // The data behind this weapon. May be accordingly damaged as time goes on
+    int ammo;          // short
+    int volume;        //-1 is infinite //short fix
+                       // The data behind this weapon. May be accordingly damaged as time goes on
     enum MOUNTSTATUS
     {
         REQUESTED,
@@ -277,7 +277,7 @@ class Unit
     void LoadRow(class CSVRow &row, std::string unitMod, std::string *netxml = nullptr);
     virtual ~Unit();
 
-    // TODO: implement enum class as type safe bitmask...
+    /// FIXMEME: implement enum class as type safe bitmask...
     // http://blog.bitwigglers.org/using-enum-classes-as-type-safe-bitmasks/
     enum Damages
     {
@@ -770,7 +770,7 @@ class Unit
     float afterburnenergy; // short fix
     int afterburntype;     // 0--energy, 1--fuel
                        //-1 means it is off. -2 means it doesn't exist. otherwise it's engaged to destination (positive
-                       //number) Moment of intertia of this unit
+                       // number) Moment of intertia of this unit
     float Momentofinertia;
     Vector SavedAccel;
     Vector SavedAngAccel;
@@ -805,7 +805,7 @@ class Unit
         }
     } limits;
     //-1 is not available... ranges between 0 32767 for "how invisible" unit currently is (32768... -32768) being
-    //visible)
+    // visible)
     int cloaking; // short fix
                   // the minimum cloaking value...
     int cloakmin; // short fix
@@ -824,7 +824,7 @@ class Unit
         INVISCAMERA = 0x4
     };
     unsigned char invisible; // 1 means turn off glow, 2 means turn off ship
-    // corners of object
+                             // corners of object
 
   public:
     Vector corner_min, corner_max;

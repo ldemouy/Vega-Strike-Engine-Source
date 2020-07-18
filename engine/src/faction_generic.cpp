@@ -5,7 +5,7 @@ using namespace FactionUtil;
 
 vector<std::shared_ptr<Faction>> factions; // the factions
 
-// TODO: look at switching over to Range Based for loops
+/// FIXME: look at switching over to Range Based for loops
 
 void Faction::ParseAllAllies()
 {

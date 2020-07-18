@@ -65,7 +65,7 @@ class Occluder
         double distance = (pos - light).Magnitude() - rSize - lightSize;
         float inner = (rSize - lightSize);
         float outer = (rSize + lightSize);
-        // TODO: Think
+        /// FIXME: Think
 
         // Inner cone tangent is (rSize - lSize) / distance
         // Outer cone tangent is (rSize + lSize) / distance

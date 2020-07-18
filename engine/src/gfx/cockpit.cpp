@@ -1632,7 +1632,7 @@ void GameCockpit::TriggerEvents(Unit *un)
             break;
             case JUMP_FAILED:
             case DOCK_FAILED:
-                // TODO
+                /// FIXME
                 break;
             default:
                 break;

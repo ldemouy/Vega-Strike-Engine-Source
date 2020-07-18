@@ -11,7 +11,7 @@
 
 class Unit;
 
-// TODO: Attempt to figure out purpose of this rather than just using std collections.
+/// FIXME: Attempt to figure out purpose of this rather than just using std collections.
 // It feels like a wrapper class just for the sake of being a wrapper.
 /*
  * UnitCollection is the list container for units.

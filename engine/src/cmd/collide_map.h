@@ -7,6 +7,9 @@
 #include <limits>
 #endif
 #include <vector>
+/// FIXME: Investigate further to see if usage can be replaced by
+/// a std::map
+
 /* Arbitrarily use Set for ALL PLATFORMS -hellcatv */
 class Unit;
 class Bolt;

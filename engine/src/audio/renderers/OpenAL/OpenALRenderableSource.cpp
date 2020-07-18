@@ -176,7 +176,7 @@ void OpenALRenderableSource::seekImpl(Timestamp time)
     {
         // This version of the AL does not support seeking
         // fail silently
-        // TODO: must log the fact to console as a warning
+        /// FIXME: must log the fact to console as a warning
     }
     else
     {

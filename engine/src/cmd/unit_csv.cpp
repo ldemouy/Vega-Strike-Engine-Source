@@ -435,7 +435,7 @@ void AddDocks(Unit *thus, Unit::XML &xml, const string &docks)
     string::size_type ofs = 0;
     int overlap = 1;
 
-    // TODO: Someone should check blame here. It doesn't look right.
+    /// FIXME: Someone should check blame here. It doesn't look right.
     {
         int nelem = 0;
         while ((ofs = docks.find('{', ofs)) != string::npos)

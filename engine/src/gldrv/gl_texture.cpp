@@ -358,7 +358,7 @@ GFXBOOL /*GFXDRVAPI*/ GFXCreateTexture(int width, int height, TEXTUREFORMAT text
     case TEXTURERECT:
         textures[*handle].targets = GL_TEXTURE_RECTANGLE_ARB;
         break;
-    default: // TODO: Compiler Complains about missing TEXTURE3D, check if it's disabled everywhere or what.
+    default: /// FIXME: Compiler Complains about missing TEXTURE3D, check if it's disabled everywhere or what.
         break;
     }
     // for those libs with stubbed out handle gen't

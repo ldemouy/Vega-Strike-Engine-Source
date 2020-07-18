@@ -649,7 +649,7 @@ int32_t AUDCreateSoundWAV(const std::string &s, const bool LOOP)
 
 int32_t AUDCreateSoundMP3(const std::string &s, const bool music, const bool LOOP)
 {
-    // TODO: investigate if this function is actually meant to do anything
+    /// FIXME: investigate if this function is actually meant to do anything
 #ifdef HAVE_AL
     assert(0);
     if ((game_options.Music && !music) || (game_options.Music && music))

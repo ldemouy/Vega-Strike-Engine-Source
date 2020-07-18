@@ -380,7 +380,7 @@ void GamePlanet::Draw(const Transformation &quat, const Matrix &m)
             shine->Draw();
     }
 }
-// TODO: Investigate if can be removed
+/// FIXME: Investigate if can be removed
 void GamePlanet::ProcessTerrains()
 {
     while (!PlanetTerrainDrawQueue.empty())

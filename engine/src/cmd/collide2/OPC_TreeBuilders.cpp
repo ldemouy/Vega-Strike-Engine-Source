@@ -45,7 +45,7 @@ bool AABBTreeOfTrianglesBuilder::ComputeGlobalBox(const uint32_t *primitives, ui
         return false;
 
     // Initialize global box
-    // TODO: figure out if ironic
+    /// FIXME: figure out if ironic
     Point Min(std::numeric_limits<float>::max(), std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
     Point Max(std::numeric_limits<float>::min(), std::numeric_limits<float>::min(), std::numeric_limits<float>::min());
 
