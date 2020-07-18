@@ -279,12 +279,6 @@ class CollideTable
     UnitHash3d<char[coltablesize], char[coltableacc], char[tablehuge]> c;
 };
 
-void AddCollideQueue(LineCollide &, StarSystem *ss);
-bool TableLocationChanged(const QVector &, const QVector &);
-bool TableLocationChanged(const LineCollide &, const QVector &, const QVector &);
-void KillCollideTable(LineCollide *lc, StarSystem *ss);
-bool EradicateCollideTable(LineCollide *lc, StarSystem *ss);
-
 class csOPCODECollider;
 const unsigned int collideTreesMaxTrees = 16;
 struct collideTrees

@@ -145,8 +145,7 @@ SET(LIBCMD_SOURCES
     src/cmd/bolt_generic.cpp
     src/cmd/building_generic.cpp
     src/cmd/collection.cpp
-    src/cmd/collide_map.cpp
-    src/cmd/collide.cpp
+    src/cmd/collide_map.cpp    
     src/cmd/container.cpp
     src/cmd/csv.cpp
     src/cmd/missile_generic.cpp

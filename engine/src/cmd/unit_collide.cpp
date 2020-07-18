@@ -15,7 +15,6 @@
 
 #include "hashtable.h"
 
-#include "collide.h"
 #include "configxml.h"
 #include "vs_globals.h"
 #include "vsfilesystem.h"
@@ -568,4 +567,80 @@ float Unit::querySphereNoRecurse(const QVector &start, const QVector &end, float
             return c;
     }
     return 0.0f;
+}
+static Hashtable<std::string, collideTrees, 127> unitColliders;
+
+collideTrees::collideTrees(const std::string &hk, csOPCODECollider *cT, csOPCODECollider *cS)
+    : hash_key(hk), colShield(cS)
+{
+    for (unsigned int i = 0; i < collideTreesMaxTrees; ++i)
+    {
+        rapidColliders[i] = nullptr;
+    }
+    rapidColliders[0] = cT;
+
+    refcount = 1;
+    unitColliders.Put(hash_key, this);
+}
+float loge2 = log(2.f);
+
+csOPCODECollider *collideTrees::colTree(Unit *un, const Vector &othervelocity)
+{
+    const float const_factor = 1;
+    float magsqr = un->GetVelocity().MagnitudeSquared();
+    float newmagsqr = (un->GetVelocity() - othervelocity).MagnitudeSquared();
+    float speedsquared = const_factor * const_factor * (magsqr > newmagsqr ? newmagsqr : magsqr);
+    static uint32_t max_collide_trees =
+        static_cast<uint32_t>(XMLSupport::parse_int(vs_config->getVariable("physics", "max_collide_trees", "16384")));
+    if (un->rSize() * un->rSize() > SIMULATION_ATOM * SIMULATION_ATOM * speedsquared || max_collide_trees == 1)
+    {
+        return rapidColliders[0];
+    }
+    if (rapidColliders[0] == nullptr)
+    {
+        return nullptr;
+    }
+    if (un->rSize() <= 0.) // Shouldn't happen bug I've seen this for asteroid fields...
+    {
+        return nullptr;
+    }
+    // Force pow to 0 in order to avoid nan problems...
+    uint32_t pow = 0;
+    if (pow >= collideTreesMaxTrees || pow >= max_collide_trees)
+    {
+        pow = collideTreesMaxTrees - 1;
+    }
+    int val = 1 << pow;
+    if (rapidColliders[pow] == nullptr)
+    {
+        rapidColliders[pow] = un->getCollideTree(Vector(1, 1, val));
+    }
+    return rapidColliders[pow];
+}
+
+collideTrees *collideTrees::Get(const std::string &hash_key)
+{
+    return unitColliders.Get(hash_key);
+}
+
+void collideTrees::Dec()
+{
+    refcount--;
+    if (refcount == 0)
+    {
+        unitColliders.Delete(hash_key);
+        for (uint32_t i = 0; i < collideTreesMaxTrees; ++i)
+        {
+            if (rapidColliders[i])
+            {
+                delete rapidColliders[i];
+            }
+        }
+        if (colShield)
+        {
+            delete colShield;
+        }
+        delete this;
+        return;
+    }
 }

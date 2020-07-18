@@ -259,3 +259,8 @@ void Bolt::Destroy(unsigned int index)
     }
     BoltDestroyGeneric(this, index, decal, isBall);
 }
+
+bool Bolt::Collide(Collidable::CollideRef index)
+{
+    return _Universe->activeStarSystem()->collidemap[Unit::UNIT_BOLT]->CheckCollisions(this, **location);
+}

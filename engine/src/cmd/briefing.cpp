@@ -172,7 +172,7 @@ Vector Briefing::GetPosition(uint32_t which)
     }
     return Vector(0, 0, 0);
 }
-int Briefing::AddStarship(const char *fn, int32_t faction, const Vector &pos)
+int32_t Briefing::AddStarship(const char *fn, int32_t faction, const Vector &pos)
 {
     Ship *tmp = new Ship(fn, faction, pos);
     if (tmp->LoadFailed())

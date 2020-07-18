@@ -54,7 +54,7 @@ class Briefing
     void Render();
     void Update();
     //-1 returns file not found
-    int AddStarship(const char *filename, int32_t faction, const Vector &);
+    int32_t AddStarship(const char *filename, int32_t faction, const Vector &);
     void RemoveStarship(uint32_t);
     void EnqueueOrder(uint32_t, const Vector &destination, float time);
     void OverrideOrder(uint32_t, const Vector &destination, float time);
