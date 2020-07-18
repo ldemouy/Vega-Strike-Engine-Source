@@ -16,6 +16,7 @@
  **************************************************************************/
 
 #include "central.h"
+
 struct category CATS;
 struct group GROUPS;
 struct global_settings CONFIG;

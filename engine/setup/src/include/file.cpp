@@ -14,6 +14,7 @@
  *   any later version.                                                    *
  *                                                                         *
  **************************************************************************/
+#include "central.h"
 #include <string>
 #include <sys/stat.h>
 
@@ -145,9 +146,9 @@ void LoadMainConfig(void)
     }
 }
 
-//Reads the config file to get the header information
-//The program segfaults with incorrect header information
-//I should add error checking for that
+// Reads the config file to get the header information
+// The program segfaults with incorrect header information
+// I should add error checking for that
 string mangle_config(string config)
 {
     return string(origpath) + string("/") + config;
@@ -185,14 +186,14 @@ void LoadConfig(void)
     {
         parm = line;
         if (parm[0] == '<')
-            parm += 5; //Line might start with '<!-- '. Our code is inside these comments
+            parm += 5; // Line might start with '<!-- '. Our code is inside these comments
         if (parm[0] != '#')
-            continue; //A line not starting with # can't be a config setting
+            continue; // A line not starting with # can't be a config setting
         if (parm[1] == '#')
-            continue; //A line with a 2nd # is an ignored line
-        chomp(parm);  //Get rid of the \n at the end of the line
+            continue; // A line with a 2nd # is an ignored line
+        chomp(parm);  // Get rid of the \n at the end of the line
         parm++;
-        n_parm = next_parm(parm); //next_parm is a line splitter included with general.c
+        n_parm = next_parm(parm); // next_parm is a line splitter included with general.c
         if (strcmp("groups", parm) == 0)
         {
             parm = n_parm;
@@ -265,10 +266,10 @@ void LoadConfig(void)
 
 void Modconfig(int setting, const char *name, const char *group)
 {
-    FILE *rp, *wp; //read and write
+    FILE *rp, *wp; // read and write
     char line[MAX_READ + 1], write[MAX_READ + 1], mid[MAX_READ + 1];
     char *p, *parm, *n_parm, *start_write, *end_write;
-    int commenting = 0; //0 if scanning, 1 if adding comments, 2 if removing comments
+    int commenting = 0; // 0 if scanning, 1 if adding comments, 2 if removing comments
     int skip;
     if (useGameConfig() || (rp = fopen(CONFIG.config_file, "r")) == nullptr)
     {
@@ -292,21 +293,22 @@ void Modconfig(int setting, const char *name, const char *group)
         strncpy(write, line, MAX_READ);
         skip = 0;
         start_write = line;
-        parm = xml_pre_chomp_comment(start_write); //Gets the start of the comment block
-        //If there's no <!--, we might still be in a comment block, but xml_pre_chomp_comment() wouldn't know that
+        parm = xml_pre_chomp_comment(start_write); // Gets the start of the comment block
+        // If there's no <!--, we might still be in a comment block, but xml_pre_chomp_comment() wouldn't know that
         if (parm[0] == '\0' && start_write[0] != '\0')
         {
             n_parm = parm;
             parm = start_write;
             start_write = n_parm;
         }
-        end_write = xml_chomp_comment(parm); //Gets the end of the comment block
-                                             //parm is everything inside <!-- -->, start_write and end_write
-                                             //is everything else (excluding <!-- -->
-        strncpy(mid, parm, MAX_READ);        //Mid is used to keep the data inside the comments in memory
+        end_write = xml_chomp_comment(parm); // Gets the end of the comment block
+                                             // parm is everything inside <!-- -->, start_write and end_write
+                                             // is everything else (excluding <!-- -->
+        strncpy(mid, parm, MAX_READ); // Mid is used to keep the data inside the comments in memory
         mid[strlen(parm)] = '\0';
         n_parm = next_parm(parm);
-        //if (parm[0] == '#' && parm[1] == '#') { fprintf(wp, "%s\n", write); continue; }   We no longer use double # for comments
+        // if (parm[0] == '#' && parm[1] == '#') { fprintf(wp, "%s\n", write); continue; }   We no longer use double #
+        // for comments
         if (parm[0] != '#' || (parm[1] == '#' && parm[0] == '#'))
         {
             fprintf(wp, "%s\n", write);
@@ -329,7 +331,7 @@ void Modconfig(int setting, const char *name, const char *group)
                 fprintf(wp, "%s\n", write);
             commenting = 0;
             skip = 1;
-            //fprintf(wp, "%s\n", write);
+            // fprintf(wp, "%s\n", write);
             continue;
         }
         if (strcmp("#groups", parm) == 0)
@@ -360,18 +362,19 @@ void Modconfig(int setting, const char *name, const char *group)
             fprintf(wp, "%s\n", write);
             continue;
         }
-        //Comments are now <!-- --> and are controlled at the start and end of the block. No longer need to comment each line
+        // Comments are now <!-- --> and are controlled at the start and end of the block. No longer need to comment
+        // each line
         /*		if (commenting == 2) {
- *                       parm = write;
- *                       if (parm[0] == '#') { parm++; }
- *                       fprintf(wp, "%s\n", parm);
- *                       continue;
- *               }
- *               if (commenting == 1) {
- *                       fprintf(wp, "#%s\n", write);
- *                       continue;
- *               }
- */
+         *                       parm = write;
+         *                       if (parm[0] == '#') { parm++; }
+         *                       fprintf(wp, "%s\n", parm);
+         *                       continue;
+         *               }
+         *               if (commenting == 1) {
+         *                       fprintf(wp, "#%s\n", write);
+         *                       continue;
+         *               }
+         */
         if (parm[0] != '#')
         {
             fprintf(wp, "%s\n", write);
@@ -412,11 +415,11 @@ void Modconfig(int setting, const char *name, const char *group)
         else
             fprintf(wp, "%s", mid);
         fprintf(wp, "%s\n", end_write);
-        //fprintf(wp, "%s\n", write);
+        // fprintf(wp, "%s\n", write);
     }
     fclose(wp);
     fclose(rp);
-    //Now we commit the changes
+    // Now we commit the changes
     if ((rp = fopen(CONFIG.temp_file, "r")) == nullptr)
     {
         if ((rp = fopen(mangle_config(CONFIG.temp_file).c_str(), "r")) == nullptr)
@@ -428,10 +431,10 @@ void Modconfig(int setting, const char *name, const char *group)
     }
     string tmp1 = CONFIG.config_file;
     /*
- *       if(origconfig) {
- *               tmp1 = mangle_config (CONFIG.config_file);
- *       }
- */
+     *       if(origconfig) {
+     *               tmp1 = mangle_config (CONFIG.config_file);
+     *       }
+     */
     if ((wp = fopen(tmp1.c_str(), "w")) == nullptr)
     {
         tmp1 = mangle_config(CONFIG.config_file);

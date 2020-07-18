@@ -22,20 +22,23 @@
 // Which interface to use. Only have one of these uncommented
 // If you're using 'build' to compile, you will need to move any files not being linked to dont_link
 // If you're using make or VC++, your results may vary
-//#define GTK
+#define GTK
 //#define CONSOLE
 
 #define VERSION "1.1"
 
 #ifdef GTK
-#include <gtk/gtk.h>
+#include <gtk-3.0/gtk/gtk.h>
 #endif
 
 #include "display.h"
 
 #include <stdio.h>
+
 #include <stdlib.h>
+
 #include "general.h"
+
 #include "file.h"
 
 #ifndef MAX_READ
@@ -51,32 +54,32 @@ char *GetInfo(char *category);
 char *GetSetting(char *group);
 struct category *GetCatStruct(char *name);
 struct group *GetGroupStruct(char *name);
-struct catagory *GetNameFromInfo(char *info);
+struct category *GetNameFromInfo(char *info);
 
 typedef struct _GtkWidget GtkWidget;
 struct category
 {
-	char *group;
-	char *name;
-	char *info;
-	GtkWidget *button;
-	struct category *next;
+    char *group;
+    char *name;
+    char *info;
+    GtkWidget *button;
+    struct category *next;
 };
 
 struct group
 {
-	char *name;
-	char *setting;
-	struct group *next;
+    char *name;
+    char *setting;
+    struct group *next;
 };
 
 struct global_settings
 {
-	char *program_name;
-	char *config_file;
-	char *temp_file;
-	char *data_path;
-	int columns;
+    char *program_name;
+    char *config_file;
+    char *temp_file;
+    char *data_path;
+    int columns;
 };
 
 // The structs are used primarily for the interface
@@ -84,4 +87,4 @@ extern struct category CATS;
 extern struct group GROUPS;
 extern struct global_settings CONFIG;
 
-#endif //CENTRAL_H
+#endif // CENTRAL_H

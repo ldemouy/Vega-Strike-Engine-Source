@@ -16,6 +16,7 @@
  **************************************************************************/
 #include "display.h"
 #ifdef GTK
+#include <gtk-3.0/gtk/gtk.h>
 void AddCats(GtkWidget *vbox, char *group, char *def);
 void ClickButton(GtkWidget *w, struct category *CUR);
 
@@ -106,7 +107,7 @@ void ShowMain(void)
         GtkWidget *menu = gtk_combo_box_text_new_with_entry();
         AddCats(menu, CURRENT->name, CURRENT->setting);
         /* This packs the button into the window (a gtk container). */
-        catagory *NEWCUR = &CATS;
+        category *NEWCUR = &CATS;
         int i = 0;
         do
         {

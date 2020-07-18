@@ -19,7 +19,7 @@
 #ifndef FILE_H
 #define FILE_H
 
-#include "central.h"
+//#include "central.h"
 
 void LoadMainConfig(void);
 void LoadConfig(void);
