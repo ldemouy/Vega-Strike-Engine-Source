@@ -9,6 +9,8 @@
 #include <string>
 #include <vector>
 
+/// FIXME: This file contains multiple independent types, evaluate separating them out
+
 struct DockingPorts
 {
     struct Type
@@ -135,8 +137,8 @@ struct DockingPorts
 struct DockedUnits
 {
     UnitContainer uc;
-    unsigned int whichdock;
-    DockedUnits(Unit *un, unsigned int w) : uc(un), whichdock(w)
+    uint32_t whichdock;
+    DockedUnits(Unit *un, uint32_t w) : uc(un), whichdock(w)
     {
     }
 };
@@ -147,7 +149,7 @@ class Cargo
     StringPool::Reference content;
     StringPool::Reference category;
     StringPool::Reference description;
-    int quantity;
+    int32_t quantity;
     float price;
     float mass;
     float volume;
@@ -259,7 +261,7 @@ class Cargo
     {
         return GetDescription();
     }
-    int GetQuantity() const
+    int32_t GetQuantity() const
     {
         return quantity;
     }
@@ -320,15 +322,15 @@ struct UnitImages
     float *cockpit_damage; // 0 is radar, 1 to MAXVDU is vdus and >MAXVDU is gauges
     /// how likely to fool missiles
     /// -2 = inactive L2, -1 = inactive L1, 0 = not available, 1 = active L1, 2 = active L2, etc...
-    int ecm;
+    int32_t ecm;
     /// holds the info for the repair bot type. 0 is no bot;
-    unsigned char repair_droid;
+    uint8_t repair_droid;
     float next_repair_time;
-    unsigned int next_repair_cargo; //(~0 : select randomly)
+    uint32_t next_repair_cargo; //(~0 : select randomly)
     /// How much energy cloaking takes per frame
     float cloakenergy;
     /// how fast this starship decloaks/close...if negative, decloaking
-    int cloakrate; // short fix
+    int32_t cloakrate; // short fix
     /// If this unit cloaks like glass or like fading
     bool cloakglass;
     /// if the unit is a wormhole
@@ -355,6 +357,7 @@ struct UnitImages
     float CommFunctionalityMax;
     float LifeSupportFunctionality;
     float LifeSupportFunctionalityMax;
+    /// FIXME: Switch to enum class
     enum GAUGES
     {
         // Image-based gauges
@@ -424,11 +427,11 @@ struct UnitImages
         FAW,
         MANEUVER,
         TRAVEL,
-        NOTAPPLICABLE,
+        NOT_APPLICABLE,
         READY,
         NODRIVE,
         TOOFAR,
-        NOTENOUGHENERGY,
+        NOT_ENOUGH_ENERGY,
         WARNING,
         NOMINAL,
         AUTOREADY
@@ -455,7 +458,7 @@ struct unorigdest
     StarSystem *orig;
     StarSystem *dest;
     float delay;
-    int animation;
+    int32_t animation;
     bool justloaded;
     bool ready;
     QVector final_location;

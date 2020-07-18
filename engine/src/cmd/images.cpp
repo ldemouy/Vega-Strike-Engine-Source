@@ -4,9 +4,13 @@ template <typename BOGUS> // added by chuck starchaser, to try to break dependen
 UnitImages<BOGUS>::~UnitImages()
 {
     if (pExplosion)
+    {
         delete pExplosion;
+    }
     if (pHudImage)
+    {
         delete pHudImage;
+    }
     VSDESTRUCT1
 }
 

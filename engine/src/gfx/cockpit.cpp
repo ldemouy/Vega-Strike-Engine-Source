@@ -1388,7 +1388,7 @@ float GameCockpit::LookupUnitStat(int stat, Unit *target)
             return (float)UnitImages<void>::ON;
     case UnitImages<void>::TURRETCONTROL_MODAL:
         if (0 == target->turretstatus)
-            return (float)UnitImages<void>::NOTAPPLICABLE;
+            return (float)UnitImages<void>::NOT_APPLICABLE;
         else if (2 == target->turretstatus) // FIXME -- need to check if turrets are active
             return (float)UnitImages<void>::ACTIVE;
         else if (3 == target->turretstatus) // FIXME -- need to check if turrets are in FireAtWill state
@@ -1400,10 +1400,10 @@ float GameCockpit::LookupUnitStat(int stat, Unit *target)
             return (target->GetComputerData().ecmactive ? (float)UnitImages<void>::ACTIVE
                                                         : (float)UnitImages<void>::READY);
         else
-            return (float)UnitImages<void>::NOTAPPLICABLE;
+            return (float)UnitImages<void>::NOT_APPLICABLE;
     case UnitImages<void>::CLOAK_MODAL:
         if (-1 == target->cloaking)
-            return (float)UnitImages<void>::NOTAPPLICABLE;
+            return (float)UnitImages<void>::NOT_APPLICABLE;
         else if (((int)(-2147483647) - 1) == target->cloaking)
             return (float)UnitImages<void>::READY;
         else if (target->cloaking == target->cloakmin)
@@ -1444,7 +1444,7 @@ float GameCockpit::LookupUnitStat(int stat, Unit *target)
         if (-2 == target->GetJumpStatus().drive)
             return (float)UnitImages<void>::NODRIVE;
         else if (target->GetWarpEnergy() < target->GetJumpStatus().energy)
-            return (float)UnitImages<void>::NOTENOUGHENERGY;
+            return (float)UnitImages<void>::NOT_ENOUGH_ENERGY;
         else if (target->graphicOptions.InWarp) // FIXME
             return (float)UnitImages<void>::OFF;
         else if (jumpok)
@@ -1790,7 +1790,7 @@ void GameCockpit::DrawGauges(Unit *un)
             case UnitImages<void>::TRAVEL:
                 modevalue = "TRAVEL";
                 break;
-            case UnitImages<void>::NOTAPPLICABLE:
+            case UnitImages<void>::NOT_APPLICABLE:
                 modevalue = "N / A";
                 break;
             case UnitImages<void>::READY:
@@ -1802,7 +1802,7 @@ void GameCockpit::DrawGauges(Unit *un)
             case UnitImages<void>::TOOFAR:
                 modevalue = "TOO FAR";
                 break;
-            case UnitImages<void>::NOTENOUGHENERGY:
+            case UnitImages<void>::NOT_ENOUGH_ENERGY:
                 modevalue = "LOW ENERGY";
                 break;
             case UnitImages<void>::WARNING:
