@@ -257,11 +257,6 @@ int64_t mem_tell(void *datasource)
     return (int64_t)fp->loc;
 }
 
-int32_t cant_seek(void *datasource, ogg_int64_t offset, int32_t whence)
-{
-    return -1;
-}
-
 int32_t mem_seek(void *datasource, ogg_int64_t offset, int32_t whence)
 {
     fake_file *fp = (fake_file *)datasource;
@@ -652,11 +647,6 @@ int32_t AUDCreateSoundWAV(const std::string &s, const bool LOOP)
     return AUDCreateSoundWAV(s, false, LOOP);
 }
 
-int32_t AUDCreateMusicWAV(const std::string &s, const bool LOOP)
-{
-    return AUDCreateSoundWAV(s, true, LOOP);
-}
-
 int32_t AUDCreateSoundMP3(const std::string &s, const bool music, const bool LOOP)
 {
     // TODO: investigate if this function is actually meant to do anything
@@ -715,11 +705,6 @@ int32_t AUDCreateSoundMP3(const std::string &s, const bool LOOP)
     return AUDCreateSoundMP3(s, false, LOOP);
 }
 
-int32_t AUDCreateMusicMP3(const std::string &s, const bool LOOP)
-{
-    return AUDCreateSoundMP3(s, true, LOOP);
-}
-
 int32_t AUDCreateSound(const std::string &s, const bool LOOP)
 {
     if (s.end() - 1 >= s.begin())
@@ -731,22 +716,6 @@ int32_t AUDCreateSound(const std::string &s, const bool LOOP)
         else
         {
             return AUDCreateSoundWAV(s, LOOP);
-        }
-    }
-    return -1;
-}
-
-int32_t AUDCreateMusic(const std::string &s, const bool LOOP)
-{
-    if (s.end() - 1 >= s.begin())
-    {
-        if (*(s.end() - 1) == 'v')
-        {
-            return AUDCreateMusicWAV(s, LOOP);
-        }
-        else
-        {
-            return AUDCreateMusicMP3(s, LOOP);
         }
     }
     return -1;
@@ -1093,24 +1062,3 @@ void AUDPlay(const int32_t &sound, const QVector &pos, const Vector &vel, const 
 /* Supported on Windows, but the headers might be out of date. */
 #define AL_SEC_OFFSET 0x1024
 #endif
-
-float AUDGetCurrentPosition(const int32_t &sound)
-{
-#ifdef HAVE_AL
-    ALfloat rv;
-    alGetSourcef(sound, AL_SEC_OFFSET, &rv);
-    return float(rv);
-#else
-    return 0;
-#endif
-}
-
-void AUDPausePlaying(const int32_t &sound)
-{
-#ifdef HAVE_AL
-    if (sound >= 0 && sound < (int)sounds.size())
-    {
-        // alSourcePlay( sounds[sound].source() );
-    }
-#endif
-}

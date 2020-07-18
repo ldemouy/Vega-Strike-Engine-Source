@@ -18,16 +18,11 @@ float AUDGetListenerGain();
 int32_t AUDCreateSoundWAV(const std::string &, const bool LOOP = false);
 /// creates a buffer for an mp3 sound if one doesn't already exist, then creates a source
 int32_t AUDCreateSoundMP3(const std::string &, const bool LOOP = false);
-/// creates a buffer if one doesn't already exists, and then creates a source
-int32_t AUDCreateMusicWAV(const std::string &, const bool LOOP = false);
-/// creates a buffer for an mp3 sound if one doesn't already exist, then creates a source
-int32_t AUDCreateMusicMP3(const std::string &, const bool LOOP = false);
 /// copies other sound loaded through AUDCreateSound
 int32_t AUDCreateSound(int32_t sound, const bool LOOP = false);
 /// guesses the type of sound by extension
 int32_t AUDCreateSound(const std::string &, const bool LOOP = false);
-/// guesses the type of sound by extension
-int32_t AUDCreateMusic(const std::string &, const bool LOOP = false);
+
 void AUDStopAllSounds(int32_t except_this_one = -1);
 int32_t AUDHighestSoundPlaying();
 /// deletes a given sound
@@ -46,15 +41,11 @@ void AUDStopPlaying(const int32_t &sound);
 void AUDStartPlaying(const int32_t &sound);
 /// Queries if the sound should be culled. If not, plays
 void AUDPlay(const int32_t &sound, const QVector &pos, const Vector &vel, const float gain);
-/// Pauses a loaded sound
-void AUDPausePlaying(const int32_t &sound);
 /// Changes the volume (generally 0 or between 1 and 1000)
 void AUDChangeVolume(float volume);
 float AUDGetVolume();
 /// changes the scale used for doppler...generally between 0 for off or .01 and 10
 void AUDChangeDoppler(float doppler);
-/// Gets the current playback position in seconds (precision is system&driver-dependant)
-float AUDGetCurrentPosition(const int32_t &sound);
 /// Gets current doppler val
 float AUDGetDoppler();
 //#define PERFRAMESOUND
