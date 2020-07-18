@@ -22,8 +22,8 @@ void ClickButton(GtkWidget *w, struct category *CUR);
 #ifdef _WIN32
 //#include <process.h>
 #define WIN32_LEAN_AND_MEAN
-#include <windows.h>
 #include <shellapi.h>
+#include <windows.h>
 #else
 #include <unistd.h>
 #endif
@@ -36,231 +36,239 @@ static GtkWidget *window, *main_vbox;
 
 void exit_0(GtkWidget *w, void *arg)
 {
-	exit(0);
+    exit(0);
 }
 
 void InitGraphics(int *argc, char ***argv)
 {
-	gtk_init(argc, argv);
-	GET_TITLE; // sets title;
-	GET_STATIC_TEXT;
-	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_default_size(GTK_WINDOW(window), 600, 400);
-	gtk_window_set_title(GTK_WINDOW(window), title);
+    gtk_init(argc, argv);
+    GET_TITLE; // sets title;
+    GET_STATIC_TEXT;
+    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_default_size(GTK_WINDOW(window), 600, 400);
+    gtk_window_set_title(GTK_WINDOW(window), title);
 
-	gtk_signal_connect(GTK_OBJECT(window), "destroy", GTK_SIGNAL_FUNC(exit_0), nullptr);
-	gtk_signal_connect(GTK_OBJECT(window), "delete_event", GTK_SIGNAL_FUNC(exit_0), nullptr);
+    g_signal_connect(G_OBJECT(window), "destroy", G_CALLBACK(exit_0), NULL);
+    g_signal_connect(G_OBJECT(window), "delete_event", G_CALLBACK(exit_0), NULL);
 
-	gtk_container_set_border_width(GTK_CONTAINER(window), 0);
+    gtk_container_set_border_width(GTK_CONTAINER(window), 0);
 
-	main_vbox = gtk_vbox_new(false, 1);
-	gtk_container_border_width(GTK_CONTAINER(main_vbox), 1);
-	gtk_container_add(GTK_CONTAINER(window), main_vbox);
+    main_vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 1);
+    gtk_container_set_border_width(GTK_CONTAINER(main_vbox), 1);
+    gtk_container_add(GTK_CONTAINER(window), main_vbox);
 
-	GtkWidget *lbl = gtk_label_new(static_text);
-	gtk_container_add(GTK_CONTAINER(main_vbox), lbl);
-	gtk_widget_show(lbl);
-	gtk_widget_show(main_vbox);
-	gtk_widget_realize(window);
+    GtkWidget *lbl = gtk_label_new(static_text);
+    gtk_container_add(GTK_CONTAINER(main_vbox), lbl);
+    gtk_widget_show(lbl);
+    gtk_widget_show(main_vbox);
+    gtk_widget_realize(window);
 
-	gtk_widget_show(window);
+    gtk_widget_show(window);
 }
 void myexit(int exitval)
 {
-	std::string readme_path(CONFIG.data_path);
+    std::string readme_path(CONFIG.data_path);
 
 #ifdef _WIN32
-	readme_path += "\\documentation\\readme.txt";
-	int err = (int)ShellExecute(nullptr, "open", readme_path.c_str(), "", "", 1);
+    readme_path += "\\documentation\\readme.txt";
+    int err = (int)ShellExecute(NULL, "open", readme_path.c_str(), "", "", 1);
 #else
-	readme_path += "/documentation/readme.txt";
-	execlp("xdg-open", "xdg-open", readme_path.c_str(), nullptr); //Will this work in Linux?
-#endif
-	exit(0); //exitval);
+    readme_path += "/documentation/readme.txt";
+    execlp("xdg-open", "xdg-open", readme_path.c_str(), NULL); // Will this work in Linux?
+#endif exit(0); // exitval);
 }
 
 void ShowMain(void)
 {
-	struct group *CURRENT;
-	int count = 1;
-	int column = 1;
-	GtkWidget *hbox, *vbox, *label, *button;
-	CURRENT = &GROUPS;
-	hbox = 0;
-	do
-	{
-		if (CURRENT->name == nullptr)
-		{
-			continue;
-		}
-		//		cout << count << ") " << CURRENT->name << " [" << GetInfo(CURRENT->setting) << "]\n";
-		count++;
-		if (column == 1)
-		{
-			hbox = gtk_hbox_new(false, 2);
-		}
-		vbox = gtk_vbox_new(false, 0);
-		label = gtk_label_new(CURRENT->name);
-		gtk_container_add(GTK_CONTAINER(vbox), label);
-		gtk_widget_show(label);
+    struct group *CURRENT;
+    int count = 1;
+    int column = 1;
+    GtkWidget *hbox, *vbox, *label, *button;
+    CURRENT = &GROUPS;
+    hbox = 0;
+    do
+    {
+        if (CURRENT->name == nullptr)
+        {
+            continue;
+        }
+        //		cout << count << ") " << CURRENT->name << " [" << GetInfo(CURRENT->setting) << "]\n";
+        count++;
+        if (column == 1)
+        {
+            hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 2);
+        }
+        vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 2);
+        label = gtk_label_new(CURRENT->name);
+        gtk_container_add(GTK_CONTAINER(vbox), label);
+        gtk_widget_show(label);
 #ifndef USE_RADIO
-		GtkWidget *menu = gtk_option_menu_new();
-		GtkWidget *my_menu = gtk_menu_new();
-		AddCats(my_menu, CURRENT->name, CURRENT->setting);
-		gtk_option_menu_set_menu(GTK_OPTION_MENU(menu), my_menu);
-		/* This packs the button into the window (a gtk container). */
-		category *NEWCUR = &CATS;
-		int i = 0;
-		do
-		{
-			//			printf(" %d",i);
-			if (NEWCUR->name == nullptr)
-			{
-				continue;
-			}
-			if (strcmp(CURRENT->name, NEWCUR->group) != 0)
-			{
-				continue;
-			}
-			if (strcmp(NEWCUR->name, CURRENT->setting) == 0)
-			{
-				//				printf("|||%s|||",GetInfo(NEWCUR->name));
-				gtk_option_menu_set_history(GTK_OPTION_MENU(menu), i);
-				break;
-			}
-			i++;
-		} while ((NEWCUR = NEWCUR->next) != nullptr);
-		//		printf("\n\n");
-		gtk_widget_show(menu);
-		gtk_container_add(GTK_CONTAINER(vbox), menu);
+        GtkWidget *menu = gtk_combo_box_text_new_with_entry();
+        AddCats(menu, CURRENT->name, CURRENT->setting);
+        /* This packs the button into the window (a gtk container). */
+        catagory *NEWCUR = &CATS;
+        int i = 0;
+        do
+        {
+            //			printf(" %d",i);
+            if (NEWCUR->name == NULL)
+            {
+                continue;
+            }
+            if (strcmp(CURRENT->name, NEWCUR->group) != 0)
+            {
+                continue;
+            }
+            if (strcmp(NEWCUR->name, CURRENT->setting) == 0)
+            {
+                break;
+            }
+            i++;
+        } while ((NEWCUR = NEWCUR->next) != nullptr);
+        //		printf("\n\n");
+        gtk_widget_show(menu);
+        gtk_container_add(GTK_CONTAINER(vbox), menu);
+        g_signal_connect(G_OBJECT(menu), "changed", G_CALLBACK(ClickButton), CURRENT);
 #else
-		AddCats(vbox, CURRENT->name, CURRENT->setting);
+        AddCats(vbox, CURRENT->name, CURRENT->setting);
 #endif
-		gtk_container_add(GTK_CONTAINER(hbox), vbox);
-		gtk_widget_show(vbox);
-		if (column == CONFIG.columns)
-		{
-			column = 0;
-			gtk_container_add(GTK_CONTAINER(main_vbox), hbox);
-			gtk_widget_show(hbox);
-		}
-		column++;
-	} while ((CURRENT = CURRENT->next) != nullptr);
-	if (column != 1)
-	{
-		gtk_container_add(GTK_CONTAINER(main_vbox), hbox);
-		gtk_widget_show(hbox);
-	}
-	vbox = gtk_vbox_new(false, 2);
-	button = gtk_button_new_with_label("Save Settings and View Readme");
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(myexit), nullptr);
-	gtk_widget_show(button);
-	gtk_container_add(GTK_CONTAINER(vbox), button);
-	button = gtk_button_new_with_label("Save Settings and Exit");
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(exit_0), nullptr);
-	gtk_widget_show(button);
-	gtk_container_add(GTK_CONTAINER(vbox), button);
-	gtk_container_add(GTK_CONTAINER(main_vbox), vbox);
-	gtk_widget_show(vbox);
-	gtk_main();
+        gtk_container_add(GTK_CONTAINER(hbox), vbox);
+        gtk_widget_show(vbox);
+        if (column == CONFIG.columns)
+        {
+            column = 0;
+            gtk_container_add(GTK_CONTAINER(main_vbox), hbox);
+            gtk_widget_show(hbox);
+        }
+        column++;
+    } while ((CURRENT = CURRENT->next) != nullptr);
+    if (column != 1)
+    {
+        gtk_container_add(GTK_CONTAINER(main_vbox), hbox);
+        gtk_widget_show(hbox);
+    }
+    vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 2);
+    button = gtk_button_new_with_label("Save Settings and View Readme");
+    g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(myexit), NULL);
+    gtk_widget_show(button);
+    gtk_container_add(GTK_CONTAINER(vbox), button);
+    button = gtk_button_new_with_label("Save Settings and Exit");
+    g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(exit_0), NULL);
+    gtk_widget_show(button);
+    gtk_container_add(GTK_CONTAINER(vbox), button);
+    gtk_container_add(GTK_CONTAINER(main_vbox), vbox);
+    gtk_widget_show(vbox);
+    gtk_main();
 }
 
 void AddCats(GtkWidget *vbox, char *group, char *def)
 {
-	struct category *CUR;
-#ifdef USE_RADIO
-	GSList *radiogroup = nullptr;
+    struct category *CUR;
+    char *info = NULL;
+#ifdef USE_RADIO GSList *radiogroup = nullptr;
 #endif
-	CUR = &CATS;
-	do
-	{
-		GtkWidget *button;
-		if (CUR->name == nullptr)
-		{
-			continue;
-		}
-		if (strcmp(group, CUR->group) != 0)
-		{
-			continue;
-		}
+    CUR = &CATS;
+    do
+    {
+        if (CUR->name == NULL)
+        {
+            continue;
+        }
+        if (strcmp(group, CUR->group) != 0)
+        {
+            continue;
+        }
+        if (CUR->info == NULL)
+        {
+            info = CUR->name;
+        }
+        else
+        {
+            info = CUR->info;
+        }
 #ifndef USE_RADIO
-		button = gtk_menu_item_new_with_label(GetInfo(CUR->name));
-		gtk_widget_show(button);
-		gtk_menu_append(GTK_MENU(vbox), button);
-		gtk_signal_connect(GTK_OBJECT(button), "activate", GTK_SIGNAL_FUNC(ClickButton), CUR);
+        //		button=gtk_menu_item_new_with_label(GetInfo(info));
+        // gtk_widget_show(button);
+        gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(vbox), CUR->name, info);
+        if (strcmp(CUR->name, def) == 0)
+        {
+            gtk_combo_box_set_active_id(GTK_COMBO_BOX(vbox), CUR->name);
+        }
 #else
-		if (strcmp(CUR->name, def) == 0)
-		{
-			int length = strlen(GetInfo(CUR->name)) + 3;
-			char *new_text = (char *)malloc(length + 1);
-			sprintf(new_text, "[%s]", GetInfo(CUR->name));
-			new_text[length] = '\0';
-			button = gtk_radio_button_new_with_label(radiogroup, new_text);
-			free(new_text);
-		}
-		else
-		{
-			button = gtk_radio_button_new_with_label(radiogroup, GetInfo(CUR->name));
-		}
-		radiogroup = gtk_radio_button_group(GTK_RADIO_BUTTON(button));
-		gtk_widget_show(button);
-		gtk_container_add(GTK_CONTAINER(vbox), button);
-		if (strcmp(CUR->name, def) == 0)
-		{
-			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), TRUE);
-		}
-		gtk_signal_connect(GTK_OBJECT(button), "toggled", GTK_SIGNAL_FUNC(ClickButton), CUR);
-//		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(ClickButton), CUR);
+        GtkWidget *button;
+        if (strcmp(CUR->name, def) == 0)
+        {
+            int length = strlen(GetInfo(CUR->name)) + 3;
+            char *new_text = (char *)malloc(length + 1);
+            sprintf(new_text, "[%s]", GetInfo(info));
+            new_text[length] = '\0';
+            button = gtk_radio_button_new_with_label(radiogroup, new_text);
+            free(new_text);
+        }
+        else
+        {
+            button = gtk_radio_button_new_with_label(radiogroup, GetInfo(info));
+        }
+        radiogroup = gtk_radio_button_group(GTK_RADIO_BUTTON(button));
+        gtk_widget_show(button);
+        gtk_container_add(GTK_CONTAINER(vbox), button);
+        if (strcmp(CUR->name, def) == 0)
+        {
+            gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(vbox), TRUE);
+        }
+        g_signal_connect(G_OBJECT(vbox), "toggled", G_CALLBACK(ClickButton), CUR);
+        g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(ClickButton), CUR);
+        CUR->button = button;
 #endif
-		CUR->button = button;
-	} while ((CUR = CUR->next) != nullptr);
+    } while ((CUR = CUR->next) != nullptr);
 }
 
 void ClickButton(GtkWidget *w, struct category *CUR)
 {
-	struct category *OLD;
-	struct group *NEW;
-	char *new_text, *old;
+    struct category *OLD;
+    struct group *NEW;
+    char *new_value, *new_text, *old;
 
 #ifdef USE_RADIO
-	int length;
-	length = strlen(GetInfo(CUR->name)) + 3;
+    int length;
+    length = strlen(GetInfo(CUR->name)) + 3;
 
-	if (!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)))
-	{
-		// Deactivate event--we don't care.
-		return;
-	}
-	GtkWidget *label = GTK_BIN(CUR->button)->child;
+    if (!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)))
+    {
+        // Deactivate event--we don't care.
+        return;
+    }
+    GtkWidget *label = GTK_BIN(CUR->button)->child;
 #endif
 
-	old = GetSetting(CUR->group);
-	OLD = GetCatStruct(old);
-	NEW = GetGroupStruct(CUR->group);
+    old = GetSetting(CUR->group);
+    OLD = GetCatStruct(old);
+    NEW = GetGroupStruct(CUR->group);
 
-	if (OLD == CUR)
-	{
-		return;
-	}
+    if (OLD == CUR)
+    {
+        return;
+    }
 #ifdef USE_RADIO
-	new_text = (char *)malloc(length + 1);
-	sprintf(new_text, "[%s]", GetInfo(CUR->name));
-	new_text[length] = '\0';
-	gtk_label_set_text(GTK_LABEL(label), new_text);
+    new_text = (char *)malloc(length + 1);
+    sprintf(new_text, "[%s]", GetInfo(CUR->name));
+    new_text[length] = '\0';
+    gtk_label_set_text(GTK_LABEL(label), new_text);
 
-	// Reallocate just in case the GetInfo() is smaller than the name
-	free(new_text);
+    // Reallocate just in case the GetInfo() is smaller than the name
+    free(new_text);
 #endif
-	new_text = (char *)malloc(strlen(CUR->name) + 1);
-	sprintf(new_text, "%s", CUR->name);
 
-	NEW->setting = new_text;
+    new_value = gtk_combo_box_text_get_active_text(GTK_COMBO_BOX_TEXT(w));
+    new_text = (char *)malloc(strlen(CUR->name) + 1);
+    sprintf(new_text, "%s", GetNameFromInfo(new_value)->name);
+    NEW->setting = new_text;
 
 #ifdef USE_RADIO
-	label = GTK_BIN(OLD->button)->child;
-	gtk_label_set_text(GTK_LABEL(label), GetInfo(OLD->name));
+    label = GTK_BIN(OLD->button)->child;
+    gtk_label_set_text(GTK_LABEL(label), GetInfo(OLD->name));
 #endif
-	DisableSetting(OLD->name, OLD->group);
-	EnableSetting(CUR->name, CUR->group);
+    DisableSetting(OLD->name, OLD->group);
+    EnableSetting(CUR->name, CUR->group);
 }
 #endif

@@ -1,6 +1,6 @@
 #====================================
 # @file   : CMakeLists.txt
-# @version: 2020-02-12
+# @version: 2020-06-07
 # @created: 2008-06-08
 # @author : safemode
 # @author : Anth0rx
@@ -20,7 +20,7 @@
 
 CMAKE_MINIMUM_REQUIRED(VERSION 3.17)
 SET(CMAKE_CXX_STANDARD 17)
-ADD_COMPILE_OPTIONS(-Wall -Wextra)
+#ADD_COMPILE_OPTIONS(-Wall -Wextra)
 ADD_COMPILE_OPTIONS(-g)
 
 PROJECT(vsUTCS)
@@ -541,11 +541,11 @@ ENDIF (ENABLE_PIE)
 
 
 # Debug target block.
-SET(CMAKE_CXX_FLAGS_DEBUG " ${BUILD_OPT} ${CPU_OPTS} ${DEFINES} -include config.h -pipe -g2 -Wall -fvisibility=hidden" CACHE STRING
+SET(CMAKE_CXX_FLAGS_DEBUG " ${BUILD_OPT} ${CPU_OPTS} ${DEFINES} -include config.h -pipe -Og -g3 -Wall -fvisibility=hidden" CACHE STRING
     "Flags used by the C++ compiler during debug builds."
     FORCE
 )
-SET(CMAKE_C_FLAGS_DEBUG "  ${BUILD_OPT} ${CPU_OPTS} ${DEFINES} -include config.h -pipe -g2 -Wall -Wno-unused-function -Wno-unused-variable -fvisibility=hidden" CACHE STRING
+SET(CMAKE_C_FLAGS_DEBUG "  ${BUILD_OPT} ${CPU_OPTS} ${DEFINES} -include config.h -pipe -Og -g3 -Wall -Wno-unused-function -Wno-unused-variable -fvisibility=hidden" CACHE STRING
     "Flags used by the C compiler during debug builds."
     FORCE
 )
@@ -653,27 +653,53 @@ ELSE (PYTHONLIBS_FOUND OR PYTHON_LIBRARIES AND PYTHON_INCLUDE_DIRS)
 ENDIF (PYTHONLIBS_FOUND OR PYTHON_LIBRARIES AND PYTHON_INCLUDE_DIRS)
 
 # Find Boost with boost_python library
-UNSET(Boost_PYTHON_LIBRARY CACHE)
-UNSET(Boost_PYTHON_LIBRARY_DEBUG CACHE)
-UNSET(Boost_PYTHON_LIBRARY_RELEASE CACHE)
-UNSET(Boost_PYTHON3_LIBRARY CACHE)
-UNSET(Boost_PYTHON3_LIBRARY_DEBUG CACHE)
-UNSET(Boost_PYTHON3_LIBRARY_RELEASE CACHE)
-UNSET(Boost_python3_FOUND CACHE)
-UNSET(Boost_python_FOUND CACHE)
-IF (USE_PYTHON_3)
-    MESSAGE("++ Looking for System Boost::python3")
-    FIND_PACKAGE(Boost COMPONENTS python38 log log_setup REQUIRED)    
-ENDIF (USE_PYTHON_3)
+OPTION(USE_SYSTEM_BOOST "Use system boost" ON)
+IF (USE_SYSTEM_BOOST)
+    FIND_PACKAGE(Boost)
+    IF (Boost_FOUND)
+        MESSAGE("++ Found System Boost version : ${Boost_VERSION}")
 
-IF (Boost_FOUND)
-    MESSAGE("++ Found System Boost version : ${Boost_VERSION}")
-    IF (Boost_python3_FOUND)
-        MESSAGE("++ Found System Boost::python3 : ${Boost_PYTHON3_LIBRARY}")
-    ENDIF (Boost_python3_FOUND)
-    IF (Boost_python_FOUND)
-        MESSAGE("++ Found System Boost::python (py2) : ${Boost_PYTHON_LIBRARY}")
-    ENDIF (Boost_python_FOUND)
+        # With boost version 1.67 and above, python components are specified with a version suffix
+        # (`python27`, `python38`) instead of their invocation name (`python`, `python3`)
+        IF (Boost_VERSION VERSION_GREATER_EQUAL 1.67)
+            STRING(REPLACE "." ";" PYTHONLIBS_VERSION_LIST ${PYTHONLIBS_VERSION_STRING})
+            LIST(GET PYTHONLIBS_VERSION_LIST 0 PYTHON_VERSION_MAJOR)
+            LIST(GET PYTHONLIBS_VERSION_LIST 1 PYTHON_VERSION_MINOR)
+            SET(BOOST_PYTHON_COMPONENT "python${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}")
+        ELSEIF (USE_PYTHON_3)
+                SET(BOOST_PYTHON_COMPONENT "python3")
+        ELSE (Boost_VERSION VERSION_GREATER_EQUAL 1.67)
+                SET(BOOST_PYTHON_COMPONENT "python")
+        ENDIF (Boost_VERSION VERSION_GREATER_EQUAL 1.67)
+
+        UNSET(Boost_${BOOST_PYTHON_COMPONENT}_FOUND)
+        MESSAGE("++ Looking for System Boost::python")
+        FIND_PACKAGE(Boost COMPONENTS ${BOOST_PYTHON_COMPONENT} log log_setup REQUIRED)
+        IF (Boost_python3_FOUND)
+            MESSAGE("++ Found System Boost::python3 : ${Boost_PYTHON3_LIBRARY}")
+        ELSEIF (Boost_python_FOUND)
+            MESSAGE("++ Found System Boost::python (py2) : ${Boost_PYTHON_LIBRARY}")
+        ELSEIF (Boost_${BOOST_PYTHON_COMPONENT}_FOUND)
+            MESSAGE("++ Found System Boost::python")
+        ENDIF (Boost_python3_FOUND)
+
+        SET(BOOST_PYTHON_NO_PY_SIGNATURES 1)
+        SET(TST_INCLUDES ${TST_INCLUDES} ${Boost_INCLUDE_DIRS})
+        SET(TST_LIBS ${TST_LIBS} ${Boost_LIBRARIES})
+        INCLUDE_DIRECTORIES(${TST_INCLUDES})
+    ELSE (Boost_FOUND)
+        SET(USE_SYSTEM_BOOST OFF)
+    ENDIF (Boost_FOUND)
+ENDIF (USE_SYSTEM_BOOST)
+
+IF (NOT USE_SYSTEM_BOOST)
+    MESSAGE("++ Using Internal Boost")
+    # This is just to cleanup advanced variable viewing, since they're not used anyway
+    UNSET(Boost_INCLUDE_DIRS)
+    UNSET(Boost_LIBRARIES)
+    UNSET(Boost_INCLUDE_DIR)
+    UNSET(Boost_LIBRARY_DIRS)
+    SET(Boost_DIR ../ext/)
     SET(BOOST_PYTHON_NO_PY_SIGNATURES 1)
     SET(TST_INCLUDES ${TST_INCLUDES} ${Boost_INCLUDE_DIRS})
     SET(TST_LIBS ${TST_LIBS} ${Boost_LIBRARIES})
@@ -894,28 +920,33 @@ MARK_AS_ADVANCED(FORCE
     AVFORMAT_INCLUDE_DIR
     HAVE_AVFORMAT_H
     HAVE_AVCODEC_H
-    HAVE_AVIO_H    
-    CMAKE_BACKWARDS_COMPATIBILITY    
-    GTK2_ATK_INCLUDE_DIR
-    GTK2_ATK_LIBRARY
-    GTK2_CAIRO_INCLUDE_DIR
-    GTK2_CAIRO_LIBRARY
-    GTK2_GDK_INCLUDE_DIR
-    GTK2_GDK_LIBRARY
-    GTK2_GDK_PIXBUF_LIBRARY
-    GTK2_GDK_PIXBUF_INCLUDE_DIR
-    GTK2_GLIBCONFIG_INCLUDE_DIR
-    GTK2_GLIB_INCLUDE_DIR
-    GTK2_GLIB_LIBRARY
-    GTK2_GMODULE_LIBRARY
-    GTK2_GOBJECT_LIBRARY
-    GTK2_PANGO_INCLUDE_DIR
-    GTK2_PANGO_LIBRARY
-    GTK2_GTHREAD_LIBRARY
-    GTK2_GTKGL_INCLUDE_DIR
-    GTK2_GTKGL_LIBRARY
-    GTK2_GTK_INCLUDE_DIR
-    GTK2_GTK_LIBRARY
+    HAVE_AVIO_H
+    HAVE_FFMPEG_SWSCALE_H
+    CMAKE_BACKWARDS_COMPATIBILITY
+    FFMPEG_INCLUDE_DIR
+    FFMPEG_FOUND
+    FFMPEG_LIBRARIES
+    FFMPEG_DEFINITIONS
+    GTK3_ATK_INCLUDE_DIR
+    GTK3_ATK_LIBRARY
+    GTK3_CAIRO_INCLUDE_DIR
+    GTK3_CAIRO_LIBRARY
+    GTK3_GDK_INCLUDE_DIR
+    GTK3_GDK_LIBRARY
+    GTK3_GDK_PIXBUF_LIBRARY
+    GTK3_GDK_PIXBUF_INCLUDE_DIR
+    GTK3_GLIBCONFIG_INCLUDE_DIR
+    GTK3_GLIB_INCLUDE_DIR
+    GTK3_GLIB_LIBRARY
+    GTK3_GMODULE_LIBRARY
+    GTK3_GOBJECT_LIBRARY
+    GTK3_PANGO_INCLUDE_DIR
+    GTK3_PANGO_LIBRARY
+    GTK3_GTHREAD_LIBRARY
+    GTK3_GTKGL_INCLUDE_DIR
+    GTK3_GTKGL_LIBRARY
+    GTK3_GTK_INCLUDE_DIR
+    GTK3_GTK_LIBRARY
     LIBRARY_OUTPUT_PATH
     OPENAL_INCLUDE_DIR
     OPENAL_LIBRARY

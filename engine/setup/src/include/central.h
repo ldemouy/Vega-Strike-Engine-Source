@@ -51,6 +51,8 @@ char *GetInfo(char *category);
 char *GetSetting(char *group);
 struct category *GetCatStruct(char *name);
 struct group *GetGroupStruct(char *name);
+struct catagory *GetNameFromInfo(char *info);
+
 typedef struct _GtkWidget GtkWidget;
 struct category
 {
