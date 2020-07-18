@@ -24,10 +24,10 @@ enum Names
     FACTIONS,
     FACTION,
     NAME,
-    LOGORGB,
-    LOGOA,
-    SECLOGORGB,
-    SECLOGOA,
+    LOGO_RGB,
+    LOGO_A,
+    SEC_LOGO_RGB,
+    SEC_LOGO_A,
     RELATION,
     STATS,
     FRIEND,
@@ -40,12 +40,12 @@ enum Names
     SEX,
     BASE_ONLY,
     DOCKABLE_ONLY,
-    SPARKRED,
-    SPARKGREEN,
-    SPARKBLUE,
-    SPARKALPHA,
-    SHIPMODIFIER,
-    ISCITIZEN
+    SPARK_RED,
+    SPARK_GREEN,
+    SPARK_BLUE,
+    SPARK_ALPHA,
+    SHIP_MODIFIER,
+    IS_CITIZEN
 };
 
 const EnumMap::Pair element_names[] = {EnumMap::Pair("UNKNOWN", UNKNOWN),
@@ -57,18 +57,18 @@ const EnumMap::Pair element_names[] = {EnumMap::Pair("UNKNOWN", UNKNOWN),
                                        EnumMap::Pair("CommAnimation", COMM_ANIMATION),
                                        EnumMap::Pair("MoodAnimation", MOOD_ANIMATION),
                                        EnumMap::Pair("Explosion", EXPLOSION),
-                                       EnumMap::Pair("ShipModifier", SHIPMODIFIER)};
+                                       EnumMap::Pair("ShipModifier", SHIP_MODIFIER)};
 
 const EnumMap::Pair attribute_names[] = {
-    EnumMap::Pair("UNKNOWN", UNKNOWN),       EnumMap::Pair("name", NAME),
-    EnumMap::Pair("SparkRed", SPARKRED),     EnumMap::Pair("SparkGreen", SPARKGREEN),
-    EnumMap::Pair("SparkBlue", SPARKBLUE),   EnumMap::Pair("SparkAlpha", SPARKALPHA),
-    EnumMap::Pair("logoRGB", LOGORGB),       EnumMap::Pair("logoA", LOGOA),
-    EnumMap::Pair("secLogoRGB", SECLOGORGB), EnumMap::Pair("secLogoA", SECLOGOA),
-    EnumMap::Pair("relation", RELATION),     EnumMap::Pair("Conversation", CONVERSATION),
-    EnumMap::Pair("Contraband", CONTRABAND), EnumMap::Pair("sex", SEX),
-    EnumMap::Pair("base_only", BASE_ONLY),   EnumMap::Pair("dockable_only", DOCKABLE_ONLY),
-    EnumMap::Pair("citizen", ISCITIZEN)};
+    EnumMap::Pair("UNKNOWN", UNKNOWN),         EnumMap::Pair("name", NAME),
+    EnumMap::Pair("SparkRed", SPARK_RED),      EnumMap::Pair("SparkGreen", SPARK_GREEN),
+    EnumMap::Pair("SparkBlue", SPARK_BLUE),    EnumMap::Pair("SparkAlpha", SPARK_ALPHA),
+    EnumMap::Pair("logoRGB", LOGO_RGB),        EnumMap::Pair("logoA", LOGO_A),
+    EnumMap::Pair("secLogoRGB", SEC_LOGO_RGB), EnumMap::Pair("secLogoA", SEC_LOGO_A),
+    EnumMap::Pair("relation", RELATION),       EnumMap::Pair("Conversation", CONVERSATION),
+    EnumMap::Pair("Contraband", CONTRABAND),   EnumMap::Pair("sex", SEX),
+    EnumMap::Pair("base_only", BASE_ONLY),     EnumMap::Pair("dockable_only", DOCKABLE_ONLY),
+    EnumMap::Pair("citizen", IS_CITIZEN)};
 
 const EnumMap element_map(element_names, 10);
 
@@ -112,7 +112,7 @@ void Faction::beginElement(void *userData, const XML_Char *names, const XML_Char
             }
         }
         break;
-    case SHIPMODIFIER:
+    case SHIP_MODIFIER:
         assert(unitlevel == 2);
         unitlevel++;
         {
@@ -181,47 +181,53 @@ void Faction::beginElement(void *userData, const XML_Char *names, const XML_Char
         // factions[factions.size()-1];
         for (iter = attributes.begin(); iter != attributes.end(); iter++)
         {
-            switch (attribute_map.lookup((*iter).name))
+            switch (attribute_map.lookup(iter->name))
             {
-            case SPARKRED:
-                factions.back()->sparkcolor[0] = XMLSupport::parse_float((*iter).value);
+            case SPARK_RED:
+                factions.back()->sparkcolor[0] = XMLSupport::parse_float(iter->value);
                 break;
-            case SPARKGREEN:
-                factions.back()->sparkcolor[1] = XMLSupport::parse_float((*iter).value);
+            case SPARK_GREEN:
+                factions.back()->sparkcolor[1] = XMLSupport::parse_float(iter->value);
                 break;
-            case SPARKBLUE:
-                factions.back()->sparkcolor[2] = XMLSupport::parse_float((*iter).value);
+            case SPARK_BLUE:
+                factions.back()->sparkcolor[2] = XMLSupport::parse_float(iter->value);
                 break;
-            case SPARKALPHA:
-                factions.back()->sparkcolor[3] = XMLSupport::parse_float((*iter).value);
+            case SPARK_ALPHA:
+                factions.back()->sparkcolor[3] = XMLSupport::parse_float(iter->value);
                 break;
             case NAME:
-                factions[factions.size() - 1]->factionname = new char[strlen((*iter).value.c_str()) + 1];
+                factions[factions.size() - 1]->factionname = new char[strlen(iter->value.c_str()) + 1];
 
-                strcpy(factions[factions.size() - 1]->factionname, (*iter).value.c_str());
+                strcpy(factions[factions.size() - 1]->factionname, iter->value.c_str());
                 if (strcmp(factions[factions.size() - 1]->factionname, "neutral") == 0)
+                {
                     FactionUtil::neutralfac = factions.size() - 1;
+                }
                 if (strcmp(factions[factions.size() - 1]->factionname, "planets") == 0)
+                {
                     FactionUtil::planetfac = factions.size() - 1;
+                }
                 if (strcmp(factions[factions.size() - 1]->factionname, "upgrades") == 0)
+                {
                     FactionUtil::upgradefac = factions.size() - 1;
+                }
                 break;
             case CONTRABAND:
-                contrabandlists.back() = ((*iter).value);
+                contrabandlists.back() = (iter->value);
                 break;
-            case ISCITIZEN:
-                factions.back()->citizen = XMLSupport::parse_bool((*iter).value);
+            case IS_CITIZEN:
+                factions.back()->citizen = XMLSupport::parse_bool(iter->value);
                 break;
-            case LOGORGB:
-                factions[factions.size() - 1]->logoName = (*iter).value;
+            case LOGO_RGB:
+                factions[factions.size() - 1]->logoName = iter->value;
                 break;
-            case LOGOA:
-                factions[factions.size() - 1]->logoAlphaName = (*iter).value;
+            case LOGO_A:
+                factions[factions.size() - 1]->logoAlphaName = iter->value;
                 break;
-            case SECLOGORGB:
+            case SEC_LOGO_RGB:
                 factions[factions.size() - 1]->secondaryLogoName = secString;
                 break;
-            case SECLOGOA:
+            case SEC_LOGO_A:
                 factions[factions.size() - 1]->secondaryLogoAlphaName = secStringAlph;
                 break;
             }
@@ -236,26 +242,26 @@ void Faction::beginElement(void *userData, const XML_Char *names, const XML_Char
         assert(factions.size() > 0);
         for (iter = attributes.begin(); iter != attributes.end(); iter++)
         {
-            switch (attribute_map.lookup((*iter).name))
+            switch (attribute_map.lookup(iter->name))
             {
             case NAME:
 
                 factions[factions.size() - 1]->faction[factions[factions.size() - 1]->faction.size() - 1].stats.name =
-                    new char[strlen((*iter).value.c_str()) + 1];
+                    new char[strlen(iter->value.c_str()) + 1];
 
                 strcpy(factions[factions.size() - 1]
                            ->faction[factions[factions.size() - 1]->faction.size() - 1]
                            .stats.name,
-                       (*iter).value.c_str());
+                       iter->value.c_str());
                 break;
             case RELATION:
                 factions[factions.size() - 1]->faction[factions[factions.size() - 1]->faction.size() - 1].relationship =
-                    parse_float((*iter).value);
+                    parse_float(iter->value);
                 break;
             case CONVERSATION:
                 factions[factions.size() - 1]
                     ->faction[factions[factions.size() - 1]->faction.size() - 1]
-                    .conversation.reset(new FSM((*iter).value));
+                    .conversation.reset(new FSM(iter->value));
                 break;
             }
         }
@@ -304,9 +310,13 @@ void Faction::LoadXML(const char *filename, char *xmlbuffer, int buflength)
     XML_SetUserData(parser, nullptr);
     XML_SetElementHandler(parser, &Faction::beginElement, &Faction::endElement);
     if (buflength != 0 && xmlbuffer != nullptr)
+    {
         XML_Parse(parser, xmlbuffer, buflength, 1);
+    }
     else
+    {
         XML_Parse(parser, (f.ReadFull()).c_str(), f.Size(), 1);
+    }
     XML_ParserFree(parser);
     ParseAllAllies();
 
@@ -343,7 +353,7 @@ void Faction::LoadXML(const char *filename, char *xmlbuffer, int buflength)
             cache.insert(Cache::value_type(myCommFile, myComm));
         }
 
-        for (unsigned int j = 0; j < factions[i]->faction.size(); j++)
+        for (uint32_t j = 0; j < factions[i]->faction.size(); j++)
         {
             std::string jointCommFile = fact->factionname + std::string("to") + factions[j]->factionname + fileSuffix;
             std::shared_ptr<FSM> jointComm;
@@ -377,8 +387,12 @@ void Faction::LoadXML(const char *filename, char *xmlbuffer, int buflength)
 
 void FactionUtil::LoadContrabandLists()
 {
-    for (unsigned int i = 0; i < factions.size() && i < contrabandlists.size(); i++)
+    for (uint32_t i = 0; i < factions.size() && i < contrabandlists.size(); i++)
+    {
         if (contrabandlists[i].length() > 0)
+        {
             factions[i]->contraband.reset(UnitFactory::createUnit(contrabandlists[i].c_str(), true, i));
+        }
+    }
     contrabandlists.clear();
 }
