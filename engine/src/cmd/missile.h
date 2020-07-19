@@ -2,7 +2,9 @@
 #define MISSILE_H_
 
 #include "cmd/unit_util.h"
+#include "configxml.h"
 #include "missile_generic.h"
+#include "unit.h"
 
 class GameMissile : public GameUnit<Missile>
 {
@@ -16,7 +18,9 @@ class GameMissile : public GameUnit<Missile>
         static bool missilesparkle =
             XMLSupport::parse_bool(vs_config->getVariable("graphics", "missilesparkle", "false"));
         if (missilesparkle)
+        {
             maxhull *= 4;
+        }
     }
 
     friend class UnitFactory;

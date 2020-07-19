@@ -35,7 +35,9 @@ void StarSystem::UpdateMissiles()
                 enum clsptr type = un->isUnit();
                 if (collideroids || type != ASTEROIDPTR) // could check for more, unless someone wants planet-killer
                                                          // missiles, but what it would change?
+                {
                     dischargedMissiles.back()->ApplyDamage(un);
+                }
             }
         }
         delete dischargedMissiles.back();
@@ -60,32 +62,48 @@ void MissileEffect::DoApplyDamage(Unit *parent, Unit *un, float distance, float 
             for (const Unit *subun; (subun = *ki); ++ki)
             {
                 if (subun->Killed())
+                {
                     continue;
+                }
                 double r = subun->rSize();
                 double d = (pos - subun->Position()).Magnitude() - r;
                 if (d > radius)
+                {
                     continue;
+                }
                 if (d < 0.01)
+                {
                     d = 0.01;
+                }
                 total_area += (r * r) / (d * d);
             }
         }
         if (total_area > 0)
+        {
             VSFileSystem::vs_dprintf(1, "Missile subunit damage of %.3f%%\n", (total_area * (100.0 / 4.0 * M_PI)));
+        }
         if (total_area < 4.0 * M_PI)
+        {
             total_area = 4.0 * M_PI;
+        }
 
         auto i = un->getSubUnits();
         for (Unit *subun; (subun = *i); ++i)
         {
             if (subun->Killed())
+            {
                 continue;
+            }
             double r = subun->rSize();
             double d = (pos - subun->Position()).Magnitude() - r;
             if (d > radius)
+            {
                 continue;
+            }
             if (d < 0.01)
+            {
                 d = 0.01;
+            }
             double a = (r * r) / (d * d * total_area);
             DoApplyDamage(parent, subun, d, a * damage_fraction);
             damage_left -= a;
@@ -109,9 +127,13 @@ void MissileEffect::ApplyDamage(Unit *smaller)
     if (distance < radius)
     { // "smaller->isUnit() != MISSILEPTR &&" was removed - why disable antimissiles?
         if (distance < 0)
+        {
             distance = 0.f; // it's inside the bounding sphere, so we'll not reduce the effect
+        }
         if (radialmultiplier < .001)
+        {
             radialmultiplier = .001;
+        }
         float dist_part = distance / radialmultiplier; // radialmultiplier is radius of the set damage
         float damage_mul;
         if (dist_part > 1.f)
@@ -175,7 +197,9 @@ void Missile::reactToCollision(Unit *smaller, const QVector &biglocation, const 
     static bool doesmissilebounce =
         XMLSupport::parse_bool(vs_config->getVariable("physics", "missile_bounce", "false"));
     if (doesmissilebounce)
+    {
         Unit::reactToCollision(smaller, biglocation, bignormal, smalllocation, smallnormal, dist);
+    }
     VSFileSystem::vs_dprintf(1, "Missile collided with %s\n", smaller->name.get().c_str());
     if (smaller->isUnit() != MISSILEPTR)
     {
@@ -184,7 +208,9 @@ void Missile::reactToCollision(Unit *smaller, const QVector &biglocation, const 
         Velocity = smaller->Velocity;
         Discharge();
         if (!killed)
+        {
             DealDamageToHull(smalllocation.Cast(), hull + 1); // should kill, applying addmissile effect
+        }
     }
 }
 
@@ -198,14 +224,11 @@ Unit *getNearestTarget(Unit *me)
     double minrange = FLT_MAX;
     for (auto i = _Universe->activeStarSystem()->getUnitList().createIterator(); (un = (*i)); ++i)
     {
-        if (un == me)
+        if (un == me || un->isUnit() != UNITPTR || un->hull < 0 || UnitUtil::getFactionRelation(me, un) >= 0)
+        {
             continue;
-        if (un->isUnit() != UNITPTR)
-            continue;
-        if (un->hull < 0)
-            continue;
-        if (UnitUtil::getFactionRelation(me, un) >= 0)
-            continue;
+        }
+
         double temp = (un->Position() - pos).Magnitude() - un->rSize();
         if (targ == nullptr)
         {
@@ -220,11 +243,13 @@ Unit *getNearestTarget(Unit *me)
     if (targ == nullptr)
     {
         for (auto i = _Universe->activeStarSystem()->getUnitList().createIterator(); (un = (*i)); ++i)
+        {
             if (UnitUtil::isSun(un))
             {
                 targ = un;
                 break;
             }
+        }
     }
     return targ;
 }
@@ -244,7 +269,7 @@ void Missile::UpdatePhysics2(const Transformation &trans, const Transformation &
         {
             static size_t max_ecm = (size_t)XMLSupport::parse_int(vs_config->getVariable("physics", "max_ecm", "4"));
             size_t missile_hash = ((size_t)this) / 16383;
-            if ((int)(missile_hash % max_ecm) < UnitUtil::getECM(targ))
+            if ((int32_t)(missile_hash % max_ecm) < UnitUtil::getECM(targ))
             {
                 Target(nullptr); // go wild
             }
@@ -256,6 +281,7 @@ void Missile::UpdatePhysics2(const Transformation &trans, const Transformation &
 
                 Unit *su;
                 for (; (su = *i) != nullptr; ++i)
+                {
                     if (su->attackPreference() == pointdef)
                     {
                         if (su->Target() == nullptr)
@@ -269,28 +295,37 @@ void Missile::UpdatePhysics2(const Transformation &trans, const Transformation &
                             }
                         }
                     }
+                }
             }
         }
     }
     if (retarget == -1)
     {
         if (targ)
+        {
             retarget = 1;
+        }
         else
+        {
             retarget = 0;
+        }
     }
     if (retarget && targ == nullptr)
+    {
         Target(nullptr); // BROKEN
+    }
     if (had_target && !(Unit::Target()))
     {
         static float max_lost_target_live_time =
             XMLSupport::parse_float(vs_config->getVariable("physics", "max_lost_target_live_time", "30"));
         if (time > max_lost_target_live_time)
+        {
             time = max_lost_target_live_time;
+        }
     }
     Unit::UpdatePhysics2(trans, old_physical_state, accel, difficulty, transmat, CumulativeVelocity, ResolveLast, uc);
     this->time -= SIMULATION_ATOM;
-    if (nullptr != targ && !discharged)
+    if (targ != nullptr && !discharged)
     {
         QVector endpos = Position();
         QVector startpos = endpos - (SIMULATION_ATOM * GetVelocity());
@@ -322,5 +357,7 @@ void Missile::UpdatePhysics2(const Transformation &trans, const Transformation &
         }
     }
     if (time < 0)
+    {
         DealDamageToHull(Vector(.1, .1, .1), hull + 1);
+    }
 }

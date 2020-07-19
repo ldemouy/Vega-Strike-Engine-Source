@@ -35,7 +35,7 @@ class Missile : public Unit
 {
   public:
   protected:
-    Missile(std::vector<Mesh *> m, bool b, int i) : Unit(m, b, i)
+    Missile(std::vector<Mesh *> meshes, bool subunit, int32_t faction) : Unit(meshes, subunit, faction)
     {
     }
     virtual float ExplosionRadius();
@@ -47,7 +47,7 @@ class Missile : public Unit
     float detonation_radius;
     bool discharged;
     bool had_target;
-    signed char retarget;
+    int8_t retarget;
 
   public:
     void Discharge();
@@ -96,10 +96,6 @@ class Missile : public Unit
     Missile()
     {
     }
-    /// copy constructor forbidden
-    // Missile( const Missile& );
-    /// assignment operator forbidden
-    // Missile& operator=( const Missile& );
 };
 
 #endif
