@@ -17,6 +17,8 @@
 #include "vsfilesystem.h"
 #include "weapon_xml.h"
 
+/// FIXME: Split mount out of unit_generic.h
+
 extern char SERVER;
 Mount::Mount()
 {
@@ -51,10 +53,14 @@ float Mount::ComputeAnimatedFrame(Mesh *gun)
         if (ref.gun)
         {
             if (ref.gun->Ready())
+            {
                 return getNewTime() + type->Refire() - ref.gun->refireTime() -
                        interpolation_blend_factor * SIMULATION_ATOM;
+            }
             else
+            {
                 return getNewTime() * gun->getFramesPerSecond();
+            }
         }
         else
         {
@@ -64,9 +70,13 @@ float Mount::ComputeAnimatedFrame(Mesh *gun)
     else
     {
         if (ref.refire < type->Refire())
+        {
             return getNewTime() * gun->getFramesPerSecond();
+        }
         else
+        {
             return getNewTime() + type->Refire() - ref.refire - interpolation_blend_factor * SIMULATION_ATOM;
+        }
     }
 }
 Mount::Mount(const string &filename, int am, int vol, float xyscale, float zscale, float func, float maxfunc,
@@ -82,9 +92,13 @@ Mount::Mount(const string &filename, int am, int vol, float xyscale, float zscal
 
     static float zscalestat = XMLSupport::parse_float(vs_config->getVariable("graphics", "weapon_zscale", "1"));
     if (xyscale == -1)
+    {
         xyscale = xyscalestat;
+    }
     if (zscale == -1)
+    {
         zscale = zscalestat;
+    }
     this->zscale = zscale;
     this->xyscale = xyscale;
     ammo = am;
@@ -120,7 +134,9 @@ void Mount::UnFire()
 {
     processed = UNFIRED;
     if (status != ACTIVE || ref.gun == nullptr || type->type != weapon_info::BEAM)
+    {
         return;
+    }
     ref.gun->Destabilize();
 }
 
@@ -143,12 +159,18 @@ void Mount::ReplaceMounts(Unit *un, const Mount *other)
     this->bank = thisbank;
     ref.gun = nullptr;
     if (type->type != weapon_info::BEAM)
+    {
         ref.refire = type->Refire();
+    }
     this->ReplaceSound();
     if (other->ammo == -1)
+    {
         ammo = -1;
+    }
     else if (other->ammo != -1 && ammo == -1)
+    {
         ammo = 0; // zero ammo if other was not zero earlier.
+    }
     un->setAverageGunSpeed();
 }
 double Mount::Percentage(const Mount *newammo) const
@@ -156,7 +178,9 @@ double Mount::Percentage(const Mount *newammo) const
     float percentage = 1. / 1024;
     int thingstocompare = 0;
     if (status == UNCHOSEN || status == DESTROYED)
+    {
         return percentage;
+    }
     if (newammo->ammo == -1)
     {
         if (ammo != -1)
@@ -167,9 +191,13 @@ double Mount::Percentage(const Mount *newammo) const
         {
             if (newammo->type->Range == type->Range && newammo->type->Damage == type->Damage &&
                 newammo->type->PhaseDamage == type->PhaseDamage)
+            {
                 return 1;
+            }
             if (newammo->type->weapon_name == type->weapon_name)
+            {
                 return 1;
+            }
         }
     }
     else if (newammo->ammo > 0)
@@ -180,27 +208,39 @@ double Mount::Percentage(const Mount *newammo) const
         {
             if (newammo->type->Range == type->Range && newammo->type->Damage == type->Damage &&
                 newammo->type->PhaseDamage == type->PhaseDamage)
+            {
                 return 1;
+            }
             if (newammo->type->weapon_name == type->weapon_name)
+            {
                 return 1;
+            }
         }
     }
     if (newammo->type->Range)
     {
         if (type->Range > newammo->type->Range)
+        {
             percentage += .25;
+        }
         thingstocompare++;
     }
     if (newammo->type->Damage + 100 * newammo->type->PhaseDamage)
     {
         if (type->Damage + 100 * type->PhaseDamage > newammo->type->Damage + 100 * newammo->type->PhaseDamage)
+        {
             percentage += .75;
+        }
         thingstocompare++;
     }
     if (thingstocompare)
+    {
         return percentage / thingstocompare;
+    }
     else
+    {
         return 1. / 1024;
+    }
 }
 extern void GetMadAt(Unit *un, Unit *parent, int numhits = 0);
 
@@ -211,19 +251,26 @@ bool Mount::PhysicsAlignedFire(Unit *caller, const Transformation &Cumulative, c
 {
     using namespace VSFileSystem;
     if (time_to_lock > 0)
+    {
         target = nullptr;
+    }
     static bool lock_disrupted_by_false_fire =
         XMLSupport::parse_bool(vs_config->getVariable("physics", "out_of_arc_fire_disrupts_lock", "false"));
     if (lock_disrupted_by_false_fire)
+    {
         time_to_lock = type->LockTime;
+    }
     if (processed == FIRED)
     {
         if (type->type == weapon_info::BEAM || type->isMissile())
-            // Missiles and beams set to processed.
+        { // Missiles and beams set to processed.
             processed = PROCESSED;
+        }
         else if (ref.refire < type->Refire() || type->EnergyRate > caller->energy)
-            // Wait until refire has expired and reactor has produced enough energy for the next bolt.
+        // Wait until refire has expired and reactor has produced enough energy for the next bolt.
+        {
             return true; // Not ready to refire yet.  But don't stop firing.
+        }
 
         Unit *temp;
         Transformation tmp(orient, pos.Cast());
@@ -236,26 +283,38 @@ bool Mount::PhysicsAlignedFire(Unit *caller, const Transformation &Cumulative, c
         if (autotrack && nullptr != target)
         {
             if (!AdjustMatrix(mat, velocity, target, type->Speed, autotrack >= 2, trackingcone))
+            {
                 if (!firemissingautotrackers)
+                {
                     return false;
+                }
+            }
         }
         else if (this->size & weapon_info::AUTOTRACKING)
         {
             if (!firemissingautotrackers)
+            {
                 return false;
+            }
         }
         if (type->type != weapon_info::BEAM)
         {
             ref.refire = 0;
             if (ammo > 0)
-                ammo--;
+            {
+                {
+                    ammo--;
+                }
+            }
         }
         else
         {
             static bool reduce_beam_ammo =
                 XMLSupport::parse_bool(vs_config->getVariable("physics", "reduce_beam_ammo", "0"));
             if (ammo > 0 && reduce_beam_ammo)
+            {
                 ammo--;
+            }
         }
         time_to_lock = type->LockTime;
         switch (type->type)
@@ -264,7 +323,9 @@ bool Mount::PhysicsAlignedFire(Unit *caller, const Transformation &Cumulative, c
             break;
         case weapon_info::BEAM:
             if (ref.gun)
+            {
                 ref.gun->Init(Transformation(orient, pos.Cast()), *type, owner, caller);
+            }
             break;
         case weapon_info::BOLT:
         case weapon_info::BALL:
@@ -344,7 +405,9 @@ bool Mount::PhysicsAlignedFire(Unit *caller, const Transformation &Cumulative, c
                     temp->EnqueueAI(new AIScript((type->file + ".xai").c_str()));
                     temp->EnqueueAI(new Orders::FireAllYouGot);
                     if (match_speed_with_target)
+                    {
                         temp->GetComputerData().velocity_ref.SetUnit(target);
+                    }
                 }
                 else
                 {
@@ -363,7 +426,9 @@ bool Mount::PhysicsAlignedFire(Unit *caller, const Transformation &Cumulative, c
                     {
                         int i = 0;
                         while (relat < temp->getRelation(target) && i++ < 100)
+                        {
                             GetMadAt(target, temp, 2);
+                        }
                     }
                     // pissed off					getMadAt(target, 10); // how do I cause an attack here?
                 }
@@ -379,9 +444,13 @@ bool Mount::PhysicsAlignedFire(Unit *caller, const Transformation &Cumulative, c
             CopyMatrix(temp->cumulative_transformation_matrix, m);
             _Universe->activeStarSystem()->AddUnit(temp);
             temp->UpdateCollideQueue(_Universe->activeStarSystem(), hint);
-            for (unsigned int locind = 0; locind < Unit::NUM_COLLIDE_MAPS; ++locind)
+            for (uint32_t locind = 0; locind < Unit::NUM_COLLIDE_MAPS; ++locind)
+            {
                 if (!is_null(temp->location[locind]))
+                {
                     hint[locind] = temp->location[locind];
+                }
+            }
 
             break;
         }
@@ -490,16 +559,24 @@ bool Mount::NextMountCloser(Mount *nextmount, Unit *firer)
 bool Mount::Fire(Unit *firer, void *owner, bool Missile, bool listen_to_owner)
 {
     if (ammo == 0)
+    {
         processed = UNFIRED;
+    }
     if (processed == FIRED || status != ACTIVE || (type->isMissile() != Missile) || ammo == 0)
+    {
         return false;
+    }
     if (type->type == weapon_info::BEAM)
     {
         bool fireit = ref.gun == nullptr;
         if (!fireit)
+        {
             fireit = ref.gun->Ready();
+        }
         else
+        {
             ref.gun = new Beam(Transformation(orient, pos.Cast()), *type, owner, firer, sound);
+        }
         if (fireit)
         {
             ref.gun->ListenToOwner(listen_to_owner);
@@ -511,8 +588,9 @@ bool Mount::Fire(Unit *firer, void *owner, bool Missile, bool listen_to_owner)
     {
         processed = FIRED;
         if (owner == _Universe->AccessCockpit()->GetParent())
+        {
             forcefeedback->playLaser();
-        ;
+        }
 
         return true;
     }
@@ -522,8 +600,12 @@ void Mount::PhysicsAlignedUnfire()
 {
     // Stop Playing SOund?? No, that's done in the beam, must not be aligned
     if (processed == UNFIRED)
+    {
         if (AUDIsPlaying(sound))
+        {
             AUDStopPlaying(sound);
+        }
+    }
 }
 
 void Mount::ReplaceSound()
