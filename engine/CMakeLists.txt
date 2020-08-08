@@ -93,11 +93,6 @@ SET(LIBSCRIPT_SOURCES
     src/cmd/script/script_call_unit_generic.cpp                
 )
 
-SET(LIBCMDSCRIPTSERVER_SOURCES
-    src/cmd/script/flightgroup_server.cpp
-    src/cmd/script/script_call_unit_server.cpp
-)
-
 SET(LIBAI_SOURCES
     src/cmd/ai/aggressive.cpp
     src/cmd/ai/autodocking.cpp
@@ -163,20 +158,6 @@ SET(LIBCMD_SOURCES
     src/cmd/unit_util_generic.cpp
     src/cmd/unit_xml.cpp
     src/cmd/weapon_xml.cpp
-)
-
-SET(LIBCMDSERVER_SOURCES
-    src/cmd/atmosphere_server.cpp
-    src/cmd/base_util_server.cpp
-    src/cmd/beam_server.cpp
-    src/cmd/bolt_server.cpp
-    src/cmd/unit_factory_server.cpp
-    src/cmd/unit_functions_server.cpp
-    src/cmd/unit_util_server.cpp
-    src/cmd/unit_server.cpp
-    src/cmd/pilot_server.cpp
-    src/cmd/images_server.cpp
-    src/cmd/faction_xml_server.cpp
 )
 
 SET(LIBGFXGENERIC_SOURCES
@@ -268,14 +249,6 @@ SET(LIBGFXCLIENT_SOURCES
     src/gfx/warptrail.cpp
 )
 
-SET(LIBGFXSERVER_SOURCES
-    src/gfx/sphere_server.cpp
-    src/gfx/vsbox_server.cpp
-    src/gfx/mesh_server.cpp
-    src/gfx/background_server.cpp
-    src/gfx/mesh_bin_server.cpp
-)
-
 SET(LIBROOTGENERIC_SOURCES
     src/configxml.cpp
     src/easydom.cpp
@@ -328,15 +301,6 @@ SET(LIBROOTCLIENT_SOURCES
     src/star_system.cpp
     src/universe_util.cpp
     src/universe.cpp
-)
-
-SET(LIBROOTSERVER_SOURCES
-    src/force_feedback_server.cpp
-    src/faction_util_server.cpp
-    src/gfxlib_struct_server.cpp
-    src/libaudioserver.cpp
-    src/libserver.cpp
-    src/universe_util_server.cpp
 )
 
 SET(LIBAUDIO_SOURCES
